@@ -2,7 +2,8 @@
   "name": "oai-ts-core",
   "version": "0.0.1",
   "scripts": {
-    "test": "karma start karma-config.js",
+    "test": "karma start karma-single.js",
+    "dev": "karma start karma-continuous.js",
     "tsc": "tsc",
     "tsc:w": "tsc -w"
   },

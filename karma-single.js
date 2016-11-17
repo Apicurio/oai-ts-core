@@ -35,11 +35,11 @@ module.exports = function(config) {
     // test results reporter to use
     // possible values: "dots", "progress"
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ["progress", "summary", "karma-typescript"],
+    reporters: ["progress", "summary"/*, "karma-typescript"*/],
 
     summaryReporter: {
       // 'failed', 'skipped' or 'all'
-      show: 'failed',
+      show: 'all',
       // Limit the spec label to this length
       specLength: 50,
       overviewColumn: true
@@ -67,7 +67,7 @@ module.exports = function(config) {
 
 
     // enable / disable watching file and executing tests whenever any file changes
-    autoWatch: true,
+    autoWatch: false,
 
 
     // start these browsers
@@ -77,7 +77,7 @@ module.exports = function(config) {
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: false,
+    singleRun: true,
 
     // Concurrency level
     // how many browser should be started simultaneous
