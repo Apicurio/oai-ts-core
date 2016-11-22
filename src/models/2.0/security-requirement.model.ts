@@ -14,16 +14,18 @@ import {OasNode} from "../node.model";
  */
 export class Oas20SecurityRequirement extends OasNode {
 
-    public _name: string;
-    public _scopes: string[];
+    public _items: Oas20SecurityRequirementItems = new Oas20SecurityRequirementItems();
 
     /**
-     * Gets the name of the security requirement - this must match one of the security
-     * definitions declared earlier in the document.
-     * @return {string}
+     * Gets the names of all the security requirements.
+     * @return {string[]}
      */
-    public name(): string {
-        return this._name;
+    public securityRequirementNames(): string[] {
+        let rval: string[] = [];
+        for (let pname in this._items) {
+            rval.push(pname);
+        }
+        return rval;
     }
 
     /**
@@ -31,8 +33,20 @@ export class Oas20SecurityRequirement extends OasNode {
      * type of security is oauth2.
      * @return {string[]}
      */
-    public scopes(): string[] {
-        return this._scopes;
+    public scopes(name: string): string[] {
+        return this._items[name];
+    }
+
+    /**
+     * Adds a security requirement item.
+     * @param name
+     * @param scopes
+     */
+    public addSecurityRequirementItem(name: string, scopes?: string[]) {
+        if (!scopes) {
+            scopes = [];
+        }
+        this._items[name] = scopes;
     }
 
     /**
@@ -43,5 +57,11 @@ export class Oas20SecurityRequirement extends OasNode {
         let viz: IOas20NodeVisitor = <IOas20NodeVisitor> visitor;
         viz.visitSecurityRequirement(this);
     }
+
+}
+
+export class Oas20SecurityRequirementItems {
+
+    [key: string]: string[];
 
 }

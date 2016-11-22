@@ -31,7 +31,7 @@ import {Oas20PathItem} from "./path-item.model";
  */
 export class Oas20Paths extends OasExtensibleNode {
 
-    private _pathItems: Oas20PathItems;
+    private _pathItems: Oas20PathItems = new Oas20PathItems();
 
     /**
      * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.

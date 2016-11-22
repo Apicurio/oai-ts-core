@@ -18,11 +18,13 @@ import {Oas20Headers} from "../models/2.0/headers.model";
 import {Oas20Header} from "../models/2.0/header.model";
 import {Oas20Example} from "../models/2.0/example.model";
 import {Oas20Items} from "../models/2.0/items.model";
-import {OasExtensibleNode} from "../models/enode.model";
+import {Oas20Tag} from "../models/2.0/tag.model";
+import {OasNode} from "../models/node.model";
 
 export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
 
     private result: any;
+    private _modelIdToJS: any = <any>{};
 
     /**
      * Returns the result that was built up during the visit of the model.
@@ -54,19 +56,6 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
     }
 
     /**
-     * Adds extensions to the js object.
-     * @param node
-     * @param json
-     */
-    private addExtensions(node: OasExtensibleNode, json: any) {
-        if (node.extensions()) {
-            for (let ext of node.extensions()) {
-                json[ext.name] = ext.value;
-            }
-        }
-    }
-
-    /**
      * Visits a node.
      * @param node
      */
@@ -78,9 +67,12 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
             basePath: node.basePath,
             schemes: node.schemes,
             consumes: node.consumes,
-            produces: node.produces
+            produces: node.produces,
+            security: null,
+            tags: null,
+            externalDocs: null
         };
-        this.addExtensions(node, root);
+        this.updateIndex(node, root);
         this.result = root;
     }
 
@@ -97,8 +89,8 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
             license: null,
             version: node.version
         };
-        this.addExtensions(node, info);
         this.result.info = info;
+        this.updateIndex(node, info);
     }
 
     /**
@@ -111,8 +103,8 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
             url: node.url,
             email: node.email
         };
-        this.addExtensions(node, contact);
         this.result.info.contact = contact;
+        this.updateIndex(node, contact);
     }
 
     /**
@@ -124,8 +116,8 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
             name: node.name,
             url: node.url,
         };
-        this.addExtensions(node, license);
         this.result.info.license = license;
+        this.updateIndex(node, license);
     }
 
     /**
@@ -133,7 +125,8 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     public visitExtension(node: OasExtension): void {
-        // this is done via a call from each of the visit methods to avoid needing context here
+        let jsObject: any = this.lookup(node.parent().modelId());
+        jsObject[node.name] = node.value;
     }
 
     /**
@@ -161,76 +154,131 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * Visits a node.
      * @param node
      */
-    public visitParameter(oas20Parameter: Oas20Parameter): void {
+    public visitParameter(node: Oas20Parameter): void {
     }
 
     /**
      * Visits a node.
      * @param node
      */
-    public visitReference(oas20Reference: Oas20Reference): void {
+    public visitReference(node: Oas20Reference): void {
     }
 
     /**
      * Visits a node.
      * @param node
      */
-    public visitExternalDocumentation(oas20ExternalDocumentation: Oas20ExternalDocumentation): void {
+    public visitExternalDocumentation(node: Oas20ExternalDocumentation): void {
+        let parentJS: any = this.lookup(node.parent().modelId());
+        parentJS.externalDocs = {
+            description: node.description,
+            url: node.url
+        }
+        this.updateIndex(node, parentJS.externalDocs);
     }
 
     /**
      * Visits a node.
      * @param node
      */
-    public visitSecurityRequirement(oas20SecurityRequirement: Oas20SecurityRequirement): void {
+    public visitSecurityRequirement(node: Oas20SecurityRequirement): void {
+        let parentJS: any = this.lookup(node.parent().modelId());
+        let securityRequirements: any[] = parentJS["security"];
+        if (!securityRequirements) {
+            securityRequirements = [];
+            parentJS.security = securityRequirements;
+        }
+        let securityReq: any = <any>{};
+        for (let name of node.securityRequirementNames()) {
+            securityReq[name] = node.scopes(name);
+        }
+        securityRequirements.push(securityReq);
+        this.updateIndex(node, securityReq);
     }
 
     /**
      * Visits a node.
      * @param node
      */
-    public visitResponses(oas20Responses: Oas20Responses): void {
+    public visitResponses(node: Oas20Responses): void {
     }
 
     /**
      * Visits a node.
      * @param node
      */
-    public visitResponse(oas20Response: Oas20Response): void {
+    public visitResponse(node: Oas20Response): void {
     }
 
     /**
      * Visits a node.
      * @param node
      */
-    public visitSchema(oas20Schema: Oas20Schema): void {
+    public visitSchema(node: Oas20Schema): void {
     }
 
     /**
      * Visits a node.
      * @param node
      */
-    public visitHeaders(oas20Headers: Oas20Headers): void {
+    public visitHeaders(node: Oas20Headers): void {
     }
 
     /**
      * Visits a node.
      * @param node
      */
-    public visitHeader(oas20Header: Oas20Header): void {
+    public visitHeader(node: Oas20Header): void {
     }
 
     /**
      * Visits a node.
      * @param node
      */
-    public visitExample(oas20Example: Oas20Example): void {
+    public visitExample(node: Oas20Example): void {
     }
 
     /**
      * Visits a node.
      * @param node
      */
-    public visitItems(oas20Items: Oas20Items): void {
+    public visitItems(node: Oas20Items): void {
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitTag(node: Oas20Tag): void {
+        if (!this.result.tags) {
+            this.result.tags = [];
+        }
+        let tag: any = {
+            name: node.name,
+            description: node.description,
+            externalDocs: null
+        };
+        this.result.tags.push(tag);
+        this.updateIndex(node, tag);
+    }
+
+    /**
+     * Indexes the javascript object by the ModelId of the model it was created from.  This allows
+     * quick lookup (mapping) from the model to the JS object.
+     * @param node
+     * @param jsObject
+     */
+    private updateIndex(node: OasNode, jsObject: any) {
+        this._modelIdToJS[node.modelId()] = jsObject;
+    }
+
+    /**
+     * Lookup a JS object from the ID of the model it came from.
+     * @param modelId
+     * @return {any}
+     */
+    private lookup(modelId: number): any {
+        let rval: any = this._modelIdToJS[modelId];
+        return rval;
     }
 }

@@ -19,6 +19,7 @@ import {Oas20Header} from "../models/2.0/header.model";
 import {Oas20Example} from "../models/2.0/example.model";
 import {Oas20Items} from "../models/2.0/items.model";
 import {IOasNodeVisitor, IOas20NodeVisitor} from "./visitor.iface";
+import {Oas20Tag} from "../models/2.0/tag.model";
 
 /**
  * Base class for node visitors that are only interested in a subset of the node types
@@ -38,7 +39,6 @@ export abstract class OasNodeVisitorAdapter implements IOasNodeVisitor {
  * the subset of methods desired.
  */
 export class Oas20NodeVisitorAdapter extends OasNodeVisitorAdapter implements IOas20NodeVisitor {
-
     public visitInfo(node: Oas20Info): void {}
     public visitContact(node: Oas20Contact): void {}
     public visitLicense(node: Oas20License): void {}
@@ -56,4 +56,5 @@ export class Oas20NodeVisitorAdapter extends OasNodeVisitorAdapter implements IO
     public visitHeader(oas20Header: Oas20Header): void {}
     public visitExample(oas20Example: Oas20Example): void {}
     public visitItems(oas20Items: Oas20Items): void {}
+    public visitTag(oas20Tag: Oas20Tag): void {}
 }

@@ -20,6 +20,7 @@ import {Oas20Example} from "../models/2.0/example.model";
 import {Oas20Items} from "../models/2.0/items.model";
 import {OasNode} from "../models/node.model";
 import {OasExtensibleNode} from "../models/enode.model";
+import {Oas20Tag} from "../models/2.0/tag.model";
 
 /**
  * Used to traverse an OAS 2.0 tree and call an included visitor for each node.
@@ -37,7 +38,7 @@ export class Oas20Traverser implements IOas20NodeVisitor {
      * down until this node and all child nodes have been visited.
      * @param node
      */
-    public traverse(node: OasNode) {
+    public traverse(node: OasNode): void {
         node.accept(this);
     }
 
@@ -45,9 +46,21 @@ export class Oas20Traverser implements IOas20NodeVisitor {
      * Traverse into the given node, unless it's null.
      * @param node
      */
-    private traverseIfNotNull(node: OasNode) {
+    private traverseIfNotNull(node: OasNode): void {
         if (node) {
             node.accept(this);
+        }
+    }
+
+    /**
+     * Traverse the items of the given array.
+     * @param items
+     */
+    private traverseArray(items: OasNode[]): void {
+        if (items) {
+            for (let item of items) {
+                this.traverseIfNotNull(item);
+            }
         }
     }
 
@@ -55,21 +68,20 @@ export class Oas20Traverser implements IOas20NodeVisitor {
      * Traverse the extension nodes, if any are found.
      * @param node
      */
-    private traverseExtensions(node: OasExtensibleNode) {
-        if (node.extensions()) {
-            for (let ext of node.extensions()) {
-                this.traverseIfNotNull(ext);
-            }
-        }
+    private traverseExtensions(node: OasExtensibleNode): void {
+        this.traverseArray(node.extensions());
     }
 
     /**
      * Visit the document.
      * @param node
      */
-    visitDocument(node: Oas20Document) {
+    visitDocument(node: Oas20Document): void {
         node.accept(this.visitor);
         this.traverseIfNotNull(node.info);
+        this.traverseArray(node.security);
+        this.traverseArray(node.tags);
+        this.traverseIfNotNull(node.externalDocs);
         this.traverseExtensions(node);
     }
 
@@ -77,7 +89,7 @@ export class Oas20Traverser implements IOas20NodeVisitor {
      * Visit the info object.
      * @param node
      */
-    visitInfo(node: Oas20Info) {
+    visitInfo(node: Oas20Info): void {
         node.accept(this.visitor);
         this.traverseIfNotNull(node.contact);
         this.traverseIfNotNull(node.license);
@@ -88,7 +100,7 @@ export class Oas20Traverser implements IOas20NodeVisitor {
      * Visit the contact object.
      * @param node
      */
-    visitContact(node: Oas20Contact) {
+    visitContact(node: Oas20Contact): void {
         node.accept(this.visitor);
         this.traverseExtensions(node);
     }
@@ -97,7 +109,7 @@ export class Oas20Traverser implements IOas20NodeVisitor {
      * Visit the license object.
      * @param node
      */
-    visitLicense(node: Oas20License) {
+    visitLicense(node: Oas20License): void {
         node.accept(this.visitor);
         this.traverseExtensions(node);
     }
@@ -106,7 +118,7 @@ export class Oas20Traverser implements IOas20NodeVisitor {
      * Visit the extension.
      * @param node
      */
-    visitExtension(node: OasExtension) {
+    visitExtension(node: OasExtension): void {
         node.accept(this.visitor);
     }
 
@@ -114,98 +126,110 @@ export class Oas20Traverser implements IOas20NodeVisitor {
      * Visit the paths.
      * @param node
      */
-    visitPaths(node: Oas20Paths) {
+    visitPaths(node: Oas20Paths): void {
     }
 
     /**
      * Visit the path item.
      * @param node
      */
-    visitPathItem(node: Oas20PathItem) {
+    visitPathItem(node: Oas20PathItem): void {
     }
 
     /**
      * Visit the operation.
      * @param node
      */
-    visitOperation(node: Oas20Operation) {
+    visitOperation(node: Oas20Operation): void {
     }
 
     /**
      * Visit the parameter.
      * @param node
      */
-    visitParameter(oas20Parameter: Oas20Parameter): void {
+    visitParameter(node: Oas20Parameter): void {
     }
 
     /**
      * Visit the reference.
      * @param node
      */
-    visitReference(oas20Reference: Oas20Reference): void {
+    visitReference(node: Oas20Reference): void {
     }
 
     /**
      * Visit the external doc.
      * @param node
      */
-    visitExternalDocumentation(oas20ExternalDocumentation: Oas20ExternalDocumentation): void {
+    visitExternalDocumentation(node: Oas20ExternalDocumentation): void {
+        node.accept(this.visitor);
+        this.traverseExtensions(node);
     }
 
     /**
      * Visit the security requirement.
      * @param node
      */
-    visitSecurityRequirement(oas20SecurityRequirement: Oas20SecurityRequirement): void {
+    visitSecurityRequirement(node: Oas20SecurityRequirement): void {
+        node.accept(this.visitor);
     }
 
     /**
      * Visit the responses.
      * @param node
      */
-    visitResponses(oas20Responses: Oas20Responses): void {
+    visitResponses(node: Oas20Responses): void {
     }
 
     /**
      * Visit the response.
      * @param node
      */
-    visitResponse(oas20Response: Oas20Response): void {
+    visitResponse(node: Oas20Response): void {
     }
 
     /**
      * Visit the schema.
      * @param node
      */
-    visitSchema(oas20Schema: Oas20Schema): void {
+    visitSchema(node: Oas20Schema): void {
     }
 
     /**
      * Visit the headers.
      * @param node
      */
-    visitHeaders(oas20Headers: Oas20Headers): void {
+    visitHeaders(node: Oas20Headers): void {
     }
 
     /**
      * Visit the header.
      * @param node
      */
-    visitHeader(oas20Header: Oas20Header): void {
+    visitHeader(node: Oas20Header): void {
     }
 
     /**
      * Visit the example.
      * @param node
      */
-    visitExample(oas20Example: Oas20Example): void {
+    visitExample(node: Oas20Example): void {
     }
 
     /**
      * Visit the items.
      * @param node
      */
-    visitItems(oas20Items: Oas20Items): void {
+    visitItems(node: Oas20Items): void {
+    }
+
+    /**
+     * Visit the tag.
+     * @param node
+     */
+    visitTag(node: Oas20Tag): void {
+        node.accept(this.visitor);
+        this.traverseExtensions(node);
     }
 
 }

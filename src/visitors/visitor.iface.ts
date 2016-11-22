@@ -18,6 +18,7 @@ import {Oas20Headers} from "../models/2.0/headers.model";
 import {Oas20Header} from "../models/2.0/header.model";
 import {Oas20Example} from "../models/2.0/example.model";
 import {Oas20Items} from "../models/2.0/items.model";
+import {Oas20Tag} from "../models/2.0/tag.model";
 
 /**
  * Classes that wish to visit a OAS node or tree must implement this interface.  The
@@ -71,5 +72,7 @@ export interface IOas20NodeVisitor extends IOasNodeVisitor {
     visitExample(oas20Example: Oas20Example): void;
 
     visitItems(oas20Items: Oas20Items): void;
+
+    visitTag(oas20Tag: Oas20Tag): void;
 
 }
