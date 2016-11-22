@@ -1,8 +1,8 @@
 ///<reference path="../node_modules/@types/jasmine/index.d.ts"/>
 
 import {OasDocumentFactory} from "../src/main";
-import {Oas20Document} from "../src/models/2.0/document.bean";
 import {OasVisitorUtil} from "../src/visitors/visitor.utils";
+import {Oas20Document} from "../src/models/2.0/document.model";
 
 describe("Empty Document Test (2.0)", () => {
 
@@ -16,6 +16,25 @@ describe("Empty Document Test (2.0)", () => {
 
     it("Document not null", () => {
         expect(document).not.toBeNull();
+    });
+
+    it("Document with core meta-data", () => {
+        document.host = "example.org";
+        document.basePath = "/api";
+        document.schemes = ["http", "https"];
+        document.consumes = [ "application/xml", "application/json" ];
+        document.produces = [ "application/xml", "application/json" ];
+
+        let jsObj: any = OasVisitorUtil.model2js(document);
+        expect(jsObj).toEqual({
+            swagger: "2.0",
+            host: "example.org",
+            basePath: "/api",
+            schemes: ["http", "https"],
+            consumes: [ "application/xml", "application/json" ],
+            produces: [ "application/xml", "application/json" ]
+
+        });
     });
 
     it("Document with simple info", () => {

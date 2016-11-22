@@ -1,6 +1,6 @@
 
-import {OasDocument} from "../document.bean";
-import {Oas20Info} from "./info.bean";
+import {OasDocument} from "../document.model";
+import {Oas20Info} from "./info.model";
 
 /**
  * Models an OAS 2.0 document.
@@ -39,7 +39,7 @@ export class Oas20Document extends OasDocument {
      * Creates an OAS 2.0 info object.
      * @return {Oas20Info}
      */
-    public createInfo() {
+    public createInfo(): Oas20Info {
         let rval: Oas20Info = new Oas20Info();
         rval._ownerDocument = this;
         rval._parent = this;

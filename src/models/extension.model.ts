@@ -1,4 +1,4 @@
-import {OasNode} from "./node.bean";
+import {OasNode} from "./node.model";
 import {IOasNodeVisitor} from "../visitors/visitor.iface";
 
 /**

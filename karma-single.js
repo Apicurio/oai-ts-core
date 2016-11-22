@@ -15,8 +15,10 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      "src/**/*.ts",
-      "tests/**/*.ts"
+        "src/**/*.ts",
+        "tests/**/*.ts",
+        "node_modules/karma-read-json/karma-read-json.js",
+        { pattern: "tests/fixtures/**/*.json", included: false }
     ],
 
 
@@ -35,7 +37,7 @@ module.exports = function(config) {
     // test results reporter to use
     // possible values: "dots", "progress"
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ["progress", "summary"/*, "karma-typescript"*/],
+    reporters: ["progress", "summary", "karma-typescript"],
 
     summaryReporter: {
       // 'failed', 'skipped' or 'all'

@@ -1,5 +1,5 @@
-import {OasExtension} from "./extension.bean";
-import {OasExtensibleNode} from "./enode.bean";
+import {OasExtension} from "./extension.model";
+import {OasExtensibleNode} from "./enode.model";
 import {IOasNodeVisitor} from "../visitors/visitor.iface";
 
 /**

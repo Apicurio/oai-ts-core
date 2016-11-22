@@ -1,10 +1,26 @@
-import {Oas20Contact} from "./contact.bean";
-import {Oas20License} from "./license.bean";
-import {OasExtensibleNode} from "../enode.bean";
+import {Oas20Contact} from "./contact.model";
+import {Oas20License} from "./license.model";
+import {OasExtensibleNode} from "../enode.model";
 import {IOasNodeVisitor, IOas20NodeVisitor} from "../../visitors/visitor.iface";
 
 /**
- * Models an OAS 2.0 Info object.
+ * Models an OAS 2.0 Info object.  Example:
+ *
+ * {
+ *   "title": "Swagger Sample App",
+ *   "description": "This is a sample server Petstore server.",
+ *   "termsOfService": "http://swagger.io/terms/",
+ *   "contact": {
+ *     "name": "API Support",
+ *     "url": "http://www.swagger.io/support",
+ *     "email": "support@swagger.io"
+ *   },
+ *   "license": {
+ *     "name": "Apache 2.0",
+ *     "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+ *   },
+ *   "version": "1.0.1"
+ * }
  */
 export class Oas20Info extends OasExtensibleNode {
 
@@ -28,7 +44,7 @@ export class Oas20Info extends OasExtensibleNode {
      * Creates an OAS 2.0 contact object.
      * @return {Oas20Contact}
      */
-    public createContact() {
+    public createContact(): Oas20Contact {
         let rval: Oas20Contact = new Oas20Contact();
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
@@ -39,7 +55,7 @@ export class Oas20Info extends OasExtensibleNode {
      * Creates an OAS 2.0 license object.
      * @return {Oas20License}
      */
-    public createLicense() {
+    public createLicense(): Oas20License {
         let rval: Oas20License = new Oas20License();
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;

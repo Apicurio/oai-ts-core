@@ -1,5 +1,5 @@
 
-import {OasNode} from "../models/node.bean";
+import {OasNode} from "../models/node.model";
 import {IOasNodeVisitor, IOas20NodeVisitor} from "./visitor.iface";
 import {Oas20Traverser} from "./traverser";
 import {Oas20ModelToJSVisitor} from "./model2js.visitor";

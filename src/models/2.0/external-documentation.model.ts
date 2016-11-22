@@ -1,15 +1,19 @@
 
-import {OasNode} from "../node.bean";
 import {IOasNodeVisitor, IOas20NodeVisitor} from "../../visitors/visitor.iface";
+import {OasExtensibleNode} from "../enode.model";
 
 /**
- * Models an OAS 2.0 Contact object.
+ * Models an OAS 2.0 External Documentation object.  Example:
+ *
+ * {
+ *   "description": "Find more info here",
+ *   "url": "https://swagger.io"
+ * }
  */
-export class Oas20Contact extends OasNode {
+export class Oas20ExternalDocumentation extends OasExtensibleNode {
 
-    public name: string;
+    public description: string;
     public url: string;
-    public email: string;
 
     /**
      * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.
@@ -17,7 +21,7 @@ export class Oas20Contact extends OasNode {
      */
     public accept(visitor: IOasNodeVisitor): void {
         let viz: IOas20NodeVisitor = <IOas20NodeVisitor> visitor;
-        viz.visitContact(this);
+        viz.visitExternalDocumentation(this);
     }
 
 }

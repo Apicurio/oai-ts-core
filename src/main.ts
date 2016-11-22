@@ -1,6 +1,6 @@
 
-import {OasDocument} from "./models/document.bean";
-import {Oas20Document} from "./models/2.0/document.bean";
+import {OasDocument} from "./models/document.model";
+import {Oas20Document} from "./models/2.0/document.model";
 
 /**
  * The main factory for creating new OAS Documents.  This can be used to create a new, empty

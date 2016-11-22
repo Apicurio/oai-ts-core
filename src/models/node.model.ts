@@ -1,5 +1,5 @@
-import {OasExtension} from "./extension.bean";
-import {OasDocument} from "./document.bean";
+import {OasExtension} from "./extension.model";
+import {OasDocument} from "./document.model";
 import {IOasNodeVisitor} from "../visitors/visitor.iface";
 
 /**
@@ -10,8 +10,6 @@ export abstract class OasNode {
 
     public _ownerDocument: OasDocument;
     public _parent: OasNode;
-
-    public extensions: OasExtension[];
 
     /**
      * Gets the owner document.

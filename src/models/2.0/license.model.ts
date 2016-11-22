@@ -1,11 +1,15 @@
-
-import {OasNode} from "../node.bean";
 import {IOasNodeVisitor, IOas20NodeVisitor} from "../../visitors/visitor.iface";
+import {OasExtensibleNode} from "../enode.model";
 
 /**
- * Models an OAS 2.0 License object.
+ * Models an OAS 2.0 License object.  Example:
+ *
+ * {
+ *   "name": "Apache 2.0",
+ *   "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+ * }
  */
-export class Oas20License extends OasNode {
+export class Oas20License extends OasExtensibleNode {
 
     public name: string;
     public url: string;
