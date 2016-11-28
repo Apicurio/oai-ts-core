@@ -73,13 +73,13 @@ export class Oas20Paths extends OasExtensibleNode {
 
     /**
      * Creates an OAS 2.0 path item object.
+     * @param path
      * @return {Oas20PathItem}
      */
-    public createPathItem(name: string): Oas20PathItem {
-        let rval: Oas20PathItem = new Oas20PathItem();
+    public createPathItem(path: string): Oas20PathItem {
+        let rval: Oas20PathItem = new Oas20PathItem(path);
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
-        this._pathItems[name] = rval;
         return rval;
     }
 

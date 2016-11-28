@@ -9,6 +9,9 @@ import {Oas20SecurityRequirement} from "../models/2.0/security-requirement.model
 import {Oas20SecurityDefinitions} from "../models/2.0/security-definitions.model";
 import {Oas20SecurityScheme} from "../models/2.0/security-scheme.model";
 import {Oas20Scopes} from "../models/2.0/scopes.model";
+import {Oas20PathItem} from "../models/2.0/path-item.model";
+import {Oas20Paths} from "../models/2.0/paths.model";
+import {Oas20Operation} from "../models/2.0/operation.model";
 
 /**
  * This class reads a javascript object and turns it into a OAS 2.0 model.  It is obviously
@@ -35,6 +38,10 @@ export class Oas20JS2ModelReader {
         let schemes: string[] = jsData["schemes"];
         let consumes: string[] = jsData["consumes"];
         let produces: string[] = jsData["produces"];
+        let paths: any = jsData["paths"];
+        // let definitions: any = jsData["definitions"];
+        // let parameters: any = jsData["parameters"];
+        // let responses: any = jsData["responses"];
         let securityDefinitions: any[] = jsData["securityDefinitions"];
         let security: any[] = jsData["security"];
         let tags: any = jsData["tags"];
@@ -50,6 +57,11 @@ export class Oas20JS2ModelReader {
         if (schemes) { docModel.schemes = schemes; }
         if (consumes) { docModel.consumes = consumes; }
         if (produces) { docModel.produces = produces; }
+        if (paths) {
+            let pathsModel: Oas20Paths = docModel.createPaths();
+            this.readPaths(paths, pathsModel);
+            docModel.paths = pathsModel;
+        }
         if (securityDefinitions) {
             let securityDefinitionsModel: Oas20SecurityDefinitions = docModel.createSecurityDefinitions();
             this.readSecurityDefinitions(securityDefinitions, securityDefinitionsModel);
@@ -250,6 +262,7 @@ export class Oas20JS2ModelReader {
             schemeModel.scopes = scopesModel;
         }
 
+        this.readExtensions(scheme, schemeModel);
     }
 
     /**
@@ -262,5 +275,121 @@ export class Oas20JS2ModelReader {
             let description: string = scopes[scope];
             scopesModel.addScope(scope, description);
         }
+        this.readExtensions(scopes, scopesModel);
+    }
+
+    /**
+     * Reads an OAS 2.0 Paths object from the given JS data.
+     * @param paths
+     * @param pathsModel
+     */
+    private readPaths(paths: any, pathsModel: Oas20Paths): void {
+        for (let path in paths) {
+            let pathItem: any = paths[path];
+            let pathItemModel: Oas20PathItem = pathsModel.createPathItem(path);
+            this.readPathItem(pathItem, pathItemModel);
+            pathsModel.addPathItem(path, pathItemModel);
+        }
+        this.readExtensions(paths, pathsModel);
+    }
+
+    /**
+     * Reads an OAS 2.0 PathItem object from the given JS data.
+     * @param pathItem
+     * @param pathItemModel
+     */
+    private readPathItem(pathItem: any, pathItemModel: Oas20PathItem): void {
+        let $ref: string = pathItem["$ref"];
+        let get: any = pathItem["get"];
+        let put: any = pathItem["put"];
+        let post: any = pathItem["post"];
+        let _delete: any = pathItem["delete"];
+        let options: any = pathItem["options"];
+        let head: any = pathItem["head"];
+        let patch: any = pathItem["patch"];
+        let parameters: any[] = pathItem["parameters"];
+
+        if ($ref) { pathItemModel.$ref = $ref; }
+        if (get) {
+            let opModel: Oas20Operation = pathItemModel.createOperation("get");
+            this.readOperation(get, opModel);
+            pathItemModel.get = opModel;
+        }
+        if (put) {
+            let opModel: Oas20Operation = pathItemModel.createOperation("put");
+            this.readOperation(put, opModel);
+            pathItemModel.put = opModel;
+        }
+        if (post) {
+            let opModel: Oas20Operation = pathItemModel.createOperation("post");
+            this.readOperation(post, opModel);
+            pathItemModel.post = opModel;
+        }
+        if (_delete) {
+            let opModel: Oas20Operation = pathItemModel.createOperation("delete");
+            this.readOperation(_delete, opModel);
+            pathItemModel.delete = opModel;
+        }
+        if (options) {
+            let opModel: Oas20Operation = pathItemModel.createOperation("options");
+            this.readOperation(options, opModel);
+            pathItemModel.options = opModel;
+        }
+        if (head) {
+            let opModel: Oas20Operation = pathItemModel.createOperation("head");
+            this.readOperation(head, opModel);
+            pathItemModel.head = opModel;
+        }
+        if (patch) {
+            let opModel: Oas20Operation = pathItemModel.createOperation("patch");
+            this.readOperation(patch, opModel);
+            pathItemModel.patch = opModel;
+        }
+        if (parameters) {
+            // TODO read the parameters here!
+        }
+
+        this.readExtensions(pathItem, pathItemModel);
+    }
+
+    /**
+     * Reads an OAS 2.0 Operation object from the given JS data.
+     * @param operation
+     * @param operationModel
+     */
+    private readOperation(operation: any, operationModel: Oas20Operation): void {
+        let tags: string[] = operation["tags"];
+        let summary: string = operation["summary"];
+        let description: string = operation["description"];
+        let externalDocs: Oas20ExternalDocumentation = operation["externalDocs"];
+        let operationId: string = operation["operationId"];
+        let consumes: string[] = operation["consumes"];
+        let produces: string[] = operation["produces"];
+        let parameters: any[] = operation["parameters"];
+        let responses: any = operation["responses"];
+        let schemes: string[] = operation["schemes"];
+        let deprecated: boolean = operation["deprecated"];
+        let security: any[] = operation["security"];
+
+        if (tags) { operationModel.tags = tags; }
+        if (summary) { operationModel.summary = summary; }
+        if (description) { operationModel.description = description; }
+        if (externalDocs) { operationModel.externalDocs = externalDocs; }
+        if (operationId) { operationModel.operationId = operationId; }
+        if (consumes) { operationModel.consumes = consumes; }
+        if (produces) { operationModel.produces = produces; }
+        if (parameters) {
+            // TODO read the params here
+        }
+        if (responses) {
+            // TODO read the responses here
+        }
+        if (schemes) { operationModel.schemes = schemes; }
+        if (deprecated) { operationModel.deprecated = deprecated; }
+        if (security) {
+            // TODO read the security here
+        }
+
+        this.readExtensions(operation, operationModel);
     }
 }

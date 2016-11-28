@@ -53,6 +53,7 @@ import {OasExtensibleNode} from "../enode.model";
  */
 export class Oas20PathItem extends OasExtensibleNode {
 
+    private _path: string;
     public $ref: string;
     public get: Oas20Operation;
     public put: Oas20Operation;
@@ -62,6 +63,23 @@ export class Oas20PathItem extends OasExtensibleNode {
     public head: Oas20Operation;
     public patch: Oas20Operation;
     public parameters: (Oas20Parameter | Oas20Reference)[];
+
+    /**
+     * Constructor.
+     * @param path
+     */
+    constructor(path: string) {
+        super();
+        this._path = path;
+    }
+
+    /**
+     * Returns the path this object is mapped to.
+     * @return {string}
+     */
+    public path(): string {
+        return this._path;
+    }
 
     /**
      * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.
@@ -74,13 +92,36 @@ export class Oas20PathItem extends OasExtensibleNode {
 
     /**
      * Creates an OAS 2.0 operation object.
+     * @param method
      * @return {Oas20Operation}
      */
-    public createOperation(): Oas20Operation {
-        let rval: Oas20Operation = new Oas20Operation();
+    public createOperation(method: string): Oas20Operation {
+        let rval: Oas20Operation = new Oas20Operation(method);
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;
+    }
+
+    /**
+     * Creates a child parameter.
+     * @return {Oas20Parameter}
+     */
+    public createParameter(): Oas20Parameter {
+        let rval: Oas20Parameter = new Oas20Parameter();
+        rval._ownerDocument = this._ownerDocument;
+        rval._parent = this;
+        return rval;
+    }
+
+    /**
+     * Adds a parameter.
+     * @param param
+     */
+    public addParameter(param: Oas20Parameter | Oas20Reference): void {
+        if (!this.parameters) {
+            this.parameters = [];
+        }
+        this.parameters.push(param);
     }
 
 }

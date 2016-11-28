@@ -67,6 +67,7 @@ import {Oas20Responses} from "./responses.model";
  */
 export class Oas20Operation extends OasExtensibleNode {
 
+    private _method: string;
     public tags: string[];
     public summary: string;
     public description: string;
@@ -81,12 +82,84 @@ export class Oas20Operation extends OasExtensibleNode {
     public security: Oas20SecurityRequirement[];
 
     /**
+     * Constructor.
+     * @param method
+     */
+    constructor(method: string) {
+        super();
+        this._method = method;
+    }
+
+    /**
+     * Gets the method for this operation (get, put, post, etc).
+     * @return {string}
+     */
+    public method(): string {
+        return this._method;
+    }
+
+    /**
      * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.
      * @param visitor
      */
     public accept(visitor: IOasNodeVisitor): void {
         let viz: IOas20NodeVisitor = <IOas20NodeVisitor> visitor;
         viz.visitOperation(this);
+    }
+
+    /**
+     * Creates a child external documentation model.
+     * @return {Oas20ExternalDocumentation}
+     */
+    public createExternalDocumentation(): Oas20ExternalDocumentation {
+        let rval: Oas20ExternalDocumentation = new Oas20ExternalDocumentation();
+        rval._ownerDocument = this._ownerDocument;
+        rval._parent = this;
+        return rval;
+    }
+
+    /**
+     * Creates a child parameter model.
+     * @return {Oas20Parameter}
+     */
+    public createParameter(): Oas20Parameter {
+        let rval: Oas20Parameter = new Oas20Parameter();
+        rval._ownerDocument = this._ownerDocument;
+        rval._parent = this;
+        return rval;
+    }
+
+    /**
+     * Creates a child reference model.
+     * @return {Oas20Reference}
+     */
+    public createReference(): Oas20Reference {
+        let rval: Oas20Reference = new Oas20Reference();
+        rval._ownerDocument = this._ownerDocument;
+        rval._parent = this;
+        return rval;
+    }
+
+    /**
+     * Creates a child responses model.
+     * @return {Oas20Responses}
+     */
+    public createResponses(): Oas20Responses {
+        let rval: Oas20Responses = new Oas20Responses();
+        rval._ownerDocument = this._ownerDocument;
+        rval._parent = this;
+        return rval;
+    }
+
+    /**
+     * Creates a child security requirement model.
+     * @return {Oas20SecurityRequirement}
+     */
+    public createSecurityRequirement(): Oas20SecurityRequirement {
+        let rval: Oas20SecurityRequirement = new Oas20SecurityRequirement();
+        rval._ownerDocument = this._ownerDocument;
+        rval._parent = this;
+        return rval;
     }
 
 }

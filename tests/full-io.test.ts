@@ -6,7 +6,7 @@ import {Oas20Document} from "../src/models/2.0/document.model";
 
 declare var readJSON
 
-describe("Full I/O (2.0)", () => {
+describe("Full I/O (2.0) - Basics", () => {
 
     let docReader: Oas20JS2ModelReader;
 
@@ -70,6 +70,24 @@ describe("Full I/O (2.0)", () => {
 
     it("Complete Security Definitions", () => {
         let json: any = readJSON('tests/fixtures/full-io/2.0/complete-securityDefinitions.json');
+        let document: Oas20Document = docReader.read(json);
+        let jsObj: any = OasVisitorUtil.model2js(document);
+        expect(jsObj).toEqual(json);
+    });
+
+});
+
+
+describe("Full I/O (2.0) - Paths", () => {
+
+    let docReader: Oas20JS2ModelReader;
+
+    beforeEach(() => {
+        docReader = new Oas20JS2ModelReader();
+    });
+
+    it("Paths 001 (GET)", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/paths-001-get.json');
         let document: Oas20Document = docReader.read(json);
         let jsObj: any = OasVisitorUtil.model2js(document);
         expect(jsObj).toEqual(json);

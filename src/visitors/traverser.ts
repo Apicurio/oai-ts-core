@@ -82,6 +82,7 @@ export class Oas20Traverser implements IOas20NodeVisitor {
     visitDocument(node: Oas20Document): void {
         node.accept(this.visitor);
         this.traverseIfNotNull(node.info);
+        this.traverseIfNotNull(node.paths);
         this.traverseIfNotNull(node.securityDefinitions);
         this.traverseArray(node.security);
         this.traverseArray(node.tags);
@@ -131,6 +132,12 @@ export class Oas20Traverser implements IOas20NodeVisitor {
      * @param node
      */
     visitPaths(node: Oas20Paths): void {
+        node.accept(this.visitor);
+        for (let pathName of node.pathItemNames()) {
+            let pathItem: Oas20PathItem = node.pathItem(pathName);
+            this.traverseIfNotNull(pathItem);
+        }
+        this.traverseExtensions(node);
     }
 
     /**
@@ -138,6 +145,16 @@ export class Oas20Traverser implements IOas20NodeVisitor {
      * @param node
      */
     visitPathItem(node: Oas20PathItem): void {
+        node.accept(this.visitor);
+        this.traverseIfNotNull(node.get);
+        this.traverseIfNotNull(node.put);
+        this.traverseIfNotNull(node.post);
+        this.traverseIfNotNull(node.delete);
+        this.traverseIfNotNull(node.options);
+        this.traverseIfNotNull(node.head);
+        this.traverseIfNotNull(node.patch);
+        this.traverseArray(node.parameters);
+        this.traverseExtensions(node);
     }
 
     /**
@@ -145,6 +162,12 @@ export class Oas20Traverser implements IOas20NodeVisitor {
      * @param node
      */
     visitOperation(node: Oas20Operation): void {
+        node.accept(this.visitor);
+        this.traverseIfNotNull(node.externalDocs);
+        this.traverseArray(node.parameters);
+        this.traverseIfNotNull(node.responses);
+        this.traverseArray(node.security);
+        this.traverseExtensions(node);
     }
 
     /**

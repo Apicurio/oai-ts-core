@@ -71,6 +71,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
             schemes: node.schemes,
             consumes: node.consumes,
             produces: node.produces,
+            paths: null,
             security: null,
             tags: null,
             externalDocs: null
@@ -137,6 +138,14 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     public visitPaths(node: Oas20Paths): void {
+        let paths: any = null;
+        if ((node.pathItemNames() && node.pathItemNames().length > 0) ||
+            (node.extensions() && node.extensions().length > 0) )
+        {
+            paths = <any>{};
+        }
+        this.result.paths = paths;
+        this.updateIndex(node, paths);
     }
 
     /**
@@ -144,6 +153,20 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     public visitPathItem(node: Oas20PathItem): void {
+        let parentJS: any = this.lookup(node.parent().modelId());
+        let pathItem: any = {
+            "$ref" : node.$ref,
+            "get" : null,
+            "put" : null,
+            "post" : null,
+            "delete" : null,
+            "options" : null,
+            "head" : null,
+            "patch" : null,
+            "parameters" : null
+        }
+        parentJS[node.path()] = pathItem;
+        this.updateIndex(node, pathItem);
     }
 
     /**
@@ -151,6 +174,23 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     public visitOperation(node: Oas20Operation): void {
+        let parentJS: any = this.lookup(node.parent().modelId());
+        let operation: any = {
+            "tags" : node.tags,
+            "summary" : node.summary,
+            "description" : node.description,
+            "externalDocs" : null,
+            "operationId" : node.operationId,
+            "consumes" : node.consumes,
+            "produces" : node.produces,
+            "parameters" : null,
+            "responses" : null,
+            "schemes" : node.schemes,
+            "deprecated" : node.deprecated,
+            "security" : null
+        }
+        parentJS[node.method()] = operation;
+        this.updateIndex(node, operation);
     }
 
     /**

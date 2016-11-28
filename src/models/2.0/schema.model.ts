@@ -9,6 +9,8 @@ import {IOasNodeVisitor, IOas20NodeVisitor} from "../../visitors/visitor.iface";
  */
 export class Oas20Schema extends OasExtensibleNode {
 
+    public $ref: string;
+
     /**
      * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.
      * @param visitor
