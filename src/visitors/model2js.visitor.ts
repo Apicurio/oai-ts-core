@@ -20,6 +20,9 @@ import {Oas20Example} from "../models/2.0/example.model";
 import {Oas20Items} from "../models/2.0/items.model";
 import {Oas20Tag} from "../models/2.0/tag.model";
 import {OasNode} from "../models/node.model";
+import {Oas20SecurityDefinitions} from "../models/2.0/security-definitions.model";
+import {Oas20SecurityScheme} from "../models/2.0/security-scheme.model";
+import {Oas20Scopes} from "../models/2.0/scopes.model";
 
 export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
 
@@ -260,6 +263,55 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
         };
         this.result.tags.push(tag);
         this.updateIndex(node, tag);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    visitSecurityDefinitions(node: Oas20SecurityDefinitions): void {
+        let parent: any = this.lookup(node.parent().modelId());
+        let secDefs: any = <any>{};
+        for (let name in node.securitySchemeNames()) {
+            secDefs[name] = null;
+        }
+        parent.securityDefinitions = secDefs;
+        this.updateIndex(node, secDefs);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    visitSecurityScheme(node: Oas20SecurityScheme): void {
+        let parent: any = this.lookup(node.parent().modelId());
+        let scheme: any = {
+            type: node.type,
+            description: node.description,
+            name: node.name,
+            in: node.in,
+            flow: node.flow,
+            authorizationUrl: node.authorizationUrl,
+            tokenUrl: node.tokenUrl,
+            scopes: null
+        };
+        parent[node.schemeName()] = scheme;
+        this.updateIndex(node, scheme);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    visitScopes(node: Oas20Scopes): void {
+        let parent: any = this.lookup(node.parent().modelId());
+        let scopes: any = <any>{};
+        for (let scope of node.scopes()) {
+            let desc: string = node.getScopeDescription(scope);
+            scopes[scope] = desc;
+        }
+        parent.scopes = scopes;
+        this.updateIndex(node, scopes);
     }
 
     /**

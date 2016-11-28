@@ -21,6 +21,9 @@ import {Oas20Items} from "../models/2.0/items.model";
 import {OasNode} from "../models/node.model";
 import {OasExtensibleNode} from "../models/enode.model";
 import {Oas20Tag} from "../models/2.0/tag.model";
+import {Oas20Scopes} from "../models/2.0/scopes.model";
+import {Oas20SecurityDefinitions} from "../models/2.0/security-definitions.model";
+import {Oas20SecurityScheme} from "../models/2.0/security-scheme.model";
 
 /**
  * Used to traverse an OAS 2.0 tree and call an included visitor for each node.
@@ -79,6 +82,7 @@ export class Oas20Traverser implements IOas20NodeVisitor {
     visitDocument(node: Oas20Document): void {
         node.accept(this.visitor);
         this.traverseIfNotNull(node.info);
+        this.traverseIfNotNull(node.securityDefinitions);
         this.traverseArray(node.security);
         this.traverseArray(node.tags);
         this.traverseIfNotNull(node.externalDocs);
@@ -230,6 +234,35 @@ export class Oas20Traverser implements IOas20NodeVisitor {
     visitTag(node: Oas20Tag): void {
         node.accept(this.visitor);
         this.traverseExtensions(node);
+    }
+
+    /**
+     * Visit the security definitions.
+     * @param node
+     */
+    visitSecurityDefinitions(node: Oas20SecurityDefinitions): void {
+        node.accept(this.visitor);
+        for (let schemeName of node.securitySchemeNames()) {
+            this.traverse(node.securityScheme(schemeName));
+        }
+    }
+
+    /**
+     * Visit the security scheme.
+     * @param node
+     */
+    visitSecurityScheme(node: Oas20SecurityScheme): void {
+        node.accept(this.visitor);
+        this.traverseIfNotNull(node.scopes);
+        this.traverseExtensions(node);
+    }
+
+    /**
+     * Visit the scopes.
+     * @param node
+     */
+    visitScopes(node: Oas20Scopes): void {
+        node.accept(this.visitor);
     }
 
 }

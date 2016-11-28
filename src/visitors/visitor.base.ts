@@ -20,6 +20,9 @@ import {Oas20Example} from "../models/2.0/example.model";
 import {Oas20Items} from "../models/2.0/items.model";
 import {IOasNodeVisitor, IOas20NodeVisitor} from "./visitor.iface";
 import {Oas20Tag} from "../models/2.0/tag.model";
+import {Oas20SecurityDefinitions} from "../models/2.0/security-definitions.model";
+import {Oas20SecurityScheme} from "../models/2.0/security-scheme.model";
+import {Oas20Scopes} from "../models/2.0/scopes.model";
 
 /**
  * Base class for node visitors that are only interested in a subset of the node types
@@ -45,16 +48,19 @@ export class Oas20NodeVisitorAdapter extends OasNodeVisitorAdapter implements IO
     public visitPaths(node: Oas20Paths): void {}
     public visitPathItem(node: Oas20PathItem): void {}
     public visitOperation(node: Oas20Operation): void {}
-    public visitParameter(oas20Parameter: Oas20Parameter): void {}
-    public visitReference(oas20Reference: Oas20Reference): void {}
-    public visitExternalDocumentation(oas20ExternalDocumentation: Oas20ExternalDocumentation): void {}
-    public visitSecurityRequirement(oas20SecurityRequirement: Oas20SecurityRequirement): void {}
-    public visitResponses(oas20Responses: Oas20Responses): void {}
-    public visitResponse(oas20Response: Oas20Response): void {}
-    public visitSchema(oas20Schema: Oas20Schema): void {}
-    public visitHeaders(oas20Headers: Oas20Headers): void {}
-    public visitHeader(oas20Header: Oas20Header): void {}
-    public visitExample(oas20Example: Oas20Example): void {}
-    public visitItems(oas20Items: Oas20Items): void {}
-    public visitTag(oas20Tag: Oas20Tag): void {}
+    public visitParameter(node: Oas20Parameter): void {}
+    public visitReference(node: Oas20Reference): void {}
+    public visitExternalDocumentation(node: Oas20ExternalDocumentation): void {}
+    public visitSecurityRequirement(node: Oas20SecurityRequirement): void {}
+    public visitResponses(node: Oas20Responses): void {}
+    public visitResponse(node: Oas20Response): void {}
+    public visitSchema(node: Oas20Schema): void {}
+    public visitHeaders(node: Oas20Headers): void {}
+    public visitHeader(node: Oas20Header): void {}
+    public visitExample(node: Oas20Example): void {}
+    public visitItems(node: Oas20Items): void {}
+    public visitTag(node: Oas20Tag): void {}
+    public visitSecurityDefinitions(node: Oas20SecurityDefinitions): void {}
+    public visitSecurityScheme(node: Oas20SecurityScheme): void {}
+    public visitScopes(node: Oas20Scopes): void {}
 }

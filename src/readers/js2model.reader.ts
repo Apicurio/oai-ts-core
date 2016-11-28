@@ -6,6 +6,9 @@ import {OasExtensibleNode} from "../models/enode.model";
 import {Oas20Tag} from "../models/2.0/tag.model";
 import {Oas20ExternalDocumentation} from "../models/2.0/external-documentation.model";
 import {Oas20SecurityRequirement} from "../models/2.0/security-requirement.model";
+import {Oas20SecurityDefinitions} from "../models/2.0/security-definitions.model";
+import {Oas20SecurityScheme} from "../models/2.0/security-scheme.model";
+import {Oas20Scopes} from "../models/2.0/scopes.model";
 
 /**
  * This class reads a javascript object and turns it into a OAS 2.0 model.  It is obviously
@@ -32,6 +35,7 @@ export class Oas20JS2ModelReader {
         let schemes: string[] = jsData["schemes"];
         let consumes: string[] = jsData["consumes"];
         let produces: string[] = jsData["produces"];
+        let securityDefinitions: any[] = jsData["securityDefinitions"];
         let security: any[] = jsData["security"];
         let tags: any = jsData["tags"];
         let externalDocs: any = jsData["externalDocs"];
@@ -46,6 +50,11 @@ export class Oas20JS2ModelReader {
         if (schemes) { docModel.schemes = schemes; }
         if (consumes) { docModel.consumes = consumes; }
         if (produces) { docModel.produces = produces; }
+        if (securityDefinitions) {
+            let securityDefinitionsModel: Oas20SecurityDefinitions = docModel.createSecurityDefinitions();
+            this.readSecurityDefinitions(securityDefinitions, securityDefinitionsModel);
+            docModel.securityDefinitions = securityDefinitionsModel;
+        }
         if (security) {
             let securityModels: Oas20SecurityRequirement[] = [];
             for (let sec of security) {
@@ -158,7 +167,7 @@ export class Oas20JS2ModelReader {
      * @param tag
      * @param tagModel
      */
-    private readTag(tag: any, tagModel: Oas20Tag) {
+    private readTag(tag: any, tagModel: Oas20Tag): void {
         let name: string = tag["name"];
         let description: string = tag["description"];
         let externalDocs: any = tag["externalDocs"];
@@ -179,7 +188,7 @@ export class Oas20JS2ModelReader {
      * @param externalDocs
      * @param externalDocsModel
      */
-    private readExternalDocumentation(externalDocs: any, externalDocsModel: Oas20ExternalDocumentation) {
+    private readExternalDocumentation(externalDocs: any, externalDocsModel: Oas20ExternalDocumentation): void {
         let description: string = externalDocs["description"];
         let url: any = externalDocs["url"];
 
@@ -194,9 +203,64 @@ export class Oas20JS2ModelReader {
      * @param sec
      * @param secModel
      */
-    private readSecurityRequirement(sec: any, secModel: Oas20SecurityRequirement) {
+    private readSecurityRequirement(sec: any, secModel: Oas20SecurityRequirement): void {
         for (let name in sec) {
             secModel.addSecurityRequirementItem(name, sec[name]);
+        }
+    }
+
+    /**
+     * Reads an OAS 2.0 Security Definitions object from the given javascript data.
+     * @param securityDefinitions
+     * @param securityDefinitionsModel
+     */
+    private readSecurityDefinitions(securityDefinitions: any[], securityDefinitionsModel: Oas20SecurityDefinitions): void {
+        for (let name in securityDefinitions) {
+            let scheme: any = securityDefinitions[name];
+            let schemeModel: Oas20SecurityScheme = securityDefinitionsModel.createSecurityScheme(name);
+            this.readSecurityScheme(scheme, schemeModel);
+        }
+    }
+
+    /**
+     * Reads an OAS 2.0 Security Schema object from the given javascript data.
+     * @param scheme
+     * @param schemeModel
+     */
+    private readSecurityScheme(scheme: any, schemeModel: Oas20SecurityScheme): void {
+        let type: string = scheme["type"];
+        let description: string = scheme["description"];
+        let name: string = scheme["name"];
+        let _in: string = scheme["in"];
+        let flow: string = scheme["flow"];
+        let authorizationUrl: string = scheme["authorizationUrl"];
+        let tokenUrl: string = scheme["tokenUrl"];
+        let scopes: any = scheme["scopes"];
+
+        if (type) { schemeModel.type = type; }
+        if (description) { schemeModel.description = description; }
+        if (name) { schemeModel.name = name; }
+        if (_in) { schemeModel.in = _in; }
+        if (flow) { schemeModel.flow = flow; }
+        if (authorizationUrl) { schemeModel.authorizationUrl = authorizationUrl; }
+        if (tokenUrl) { schemeModel.tokenUrl = tokenUrl; }
+        if (scopes) {
+            let scopesModel: Oas20Scopes = schemeModel.createScopes();
+            this.readScopes(scopes, scopesModel);
+            schemeModel.scopes = scopesModel;
+        }
+
+    }
+
+    /**
+     * Reads an OAS 2.0 Scopes object from the given javascript data.
+     * @param scopes
+     * @param scopesModel
+     */
+    private readScopes(scopes: any, scopesModel: Oas20Scopes): void {
+        for (let scope in scopes) {
+            let description: string = scopes[scope];
+            scopesModel.addScope(scope, description);
         }
     }
 }

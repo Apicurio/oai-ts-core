@@ -54,8 +54,22 @@ describe("Full I/O (2.0)", () => {
         expect(jsObj).toEqual(json);
     });
 
+    it("Simple Security Definitions", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/simple-securityDefinitions.json');
+        let document: Oas20Document = docReader.read(json);
+        let jsObj: any = OasVisitorUtil.model2js(document);
+        expect(jsObj).toEqual(json);
+    });
+
     it("Simple Security Requirements", () => {
         let json: any = readJSON('tests/fixtures/full-io/2.0/simple-security.json');
+        let document: Oas20Document = docReader.read(json);
+        let jsObj: any = OasVisitorUtil.model2js(document);
+        expect(jsObj).toEqual(json);
+    });
+
+    it("Complete Security Definitions", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/complete-securityDefinitions.json');
         let document: Oas20Document = docReader.read(json);
         let jsObj: any = OasVisitorUtil.model2js(document);
         expect(jsObj).toEqual(json);

@@ -19,6 +19,9 @@ import {Oas20Header} from "../models/2.0/header.model";
 import {Oas20Example} from "../models/2.0/example.model";
 import {Oas20Items} from "../models/2.0/items.model";
 import {Oas20Tag} from "../models/2.0/tag.model";
+import {Oas20SecurityDefinitions} from "../models/2.0/security-definitions.model";
+import {Oas20SecurityScheme} from "../models/2.0/security-scheme.model";
+import {Oas20Scopes} from "../models/2.0/scopes.model";
 
 /**
  * Classes that wish to visit a OAS node or tree must implement this interface.  The
@@ -51,28 +54,34 @@ export interface IOas20NodeVisitor extends IOasNodeVisitor {
 
     visitOperation(node: Oas20Operation): void;
 
-    visitParameter(oas20Parameter: Oas20Parameter): void;
+    visitParameter(node: Oas20Parameter): void;
 
-    visitReference(oas20Reference: Oas20Reference): void;
+    visitReference(node: Oas20Reference): void;
 
-    visitExternalDocumentation(oas20ExternalDocumentation: Oas20ExternalDocumentation): void;
+    visitExternalDocumentation(node: Oas20ExternalDocumentation): void;
 
-    visitSecurityRequirement(oas20SecurityRequirement: Oas20SecurityRequirement): void;
+    visitSecurityRequirement(node: Oas20SecurityRequirement): void;
 
-    visitResponses(oas20Responses: Oas20Responses): void;
+    visitResponses(node: Oas20Responses): void;
 
-    visitResponse(oas20Response: Oas20Response): void;
+    visitResponse(node: Oas20Response): void;
 
-    visitSchema(oas20Schema: Oas20Schema): void;
+    visitSchema(node: Oas20Schema): void;
 
-    visitHeaders(oas20Headers: Oas20Headers): void;
+    visitHeaders(node: Oas20Headers): void;
 
-    visitHeader(oas20Header: Oas20Header): void;
+    visitHeader(node: Oas20Header): void;
 
-    visitExample(oas20Example: Oas20Example): void;
+    visitExample(node: Oas20Example): void;
 
-    visitItems(oas20Items: Oas20Items): void;
+    visitItems(node: Oas20Items): void;
 
-    visitTag(oas20Tag: Oas20Tag): void;
+    visitTag(node: Oas20Tag): void;
+
+    visitSecurityDefinitions(node: Oas20SecurityDefinitions): void;
+
+    visitSecurityScheme(node: Oas20SecurityScheme): void;
+
+    visitScopes(node: Oas20Scopes): void;
 
 }

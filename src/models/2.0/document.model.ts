@@ -4,6 +4,7 @@ import {Oas20Info} from "./info.model";
 import {Oas20Tag} from "./tag.model";
 import {Oas20ExternalDocumentation} from "./external-documentation.model";
 import {Oas20SecurityRequirement} from "./security-requirement.model";
+import {Oas20SecurityDefinitions} from "./security-definitions.model";
 
 /**
  * Models an OAS 2.0 document.
@@ -21,7 +22,7 @@ export class Oas20Document extends OasDocument {
     // public definitions: Oas20Definitions;
     // public parameters: Oas20ParametersDefinitions;
     // public responses: Oas20ResponsesDefinitions;
-    // public securityDefinitions: Oas20SecurityDefinitions;
+    public securityDefinitions: Oas20SecurityDefinitions;
     public security: Oas20SecurityRequirement[];
     public tags: Oas20Tag[];
     public externalDocs: Oas20ExternalDocumentation;
@@ -75,6 +76,17 @@ export class Oas20Document extends OasDocument {
         }
         this.tags.push(tag);
         return tag;
+    }
+
+    /**
+     * Creates an OAS 2.0 Security Definition object.
+     * @return {Oas20SecurityDefinition}
+     */
+    public createSecurityDefinitions(): Oas20SecurityDefinitions {
+        let rval: Oas20SecurityDefinitions = new Oas20SecurityDefinitions();
+        rval._ownerDocument = this.ownerDocument();
+        rval._parent = this;
+        return rval;
     }
 
     /**
