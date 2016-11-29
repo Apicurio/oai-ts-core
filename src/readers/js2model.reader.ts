@@ -12,12 +12,28 @@ import {Oas20Scopes} from "../models/2.0/scopes.model";
 import {Oas20PathItem} from "../models/2.0/path-item.model";
 import {Oas20Paths} from "../models/2.0/paths.model";
 import {Oas20Operation} from "../models/2.0/operation.model";
+import {Oas20Parameter} from "../models/2.0/parameter.model";
+import {Oas20Schema} from "../models/2.0/schema.model";
+import {Oas20Items, Oas20ItemsType, Oas20ItemsCollectionFormat} from "../models/2.0/items.model";
 
 /**
  * This class reads a javascript object and turns it into a OAS 2.0 model.  It is obviously
  * assumed that the javascript data actually does represent an OAS 2.0 document.
  */
 export class Oas20JS2ModelReader {
+
+    /**
+     * Returns true if the given thing is defined.
+     * @param thing
+     * @return {boolean}
+     */
+    private isDefined(thing: any): boolean {
+        if (typeof thing === "undefined" || thing === null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 
     /**
      * Reads the given javascript data and returns an OAS 2.0 document.  Throws an error if
@@ -47,27 +63,27 @@ export class Oas20JS2ModelReader {
         let tags: any = jsData["tags"];
         let externalDocs: any = jsData["externalDocs"];
 
-        if (info) {
+        if (this.isDefined(info)) {
             let infoModel: Oas20Info = docModel.createInfo();
             this.readInfo(info, infoModel);
             docModel.info = infoModel;
         }
-        if (host) { docModel.host = host; }
-        if (basePath) { docModel.basePath = basePath; }
-        if (schemes) { docModel.schemes = schemes; }
-        if (consumes) { docModel.consumes = consumes; }
-        if (produces) { docModel.produces = produces; }
-        if (paths) {
+        if (this.isDefined(host)) { docModel.host = host; }
+        if (this.isDefined(basePath)) { docModel.basePath = basePath; }
+        if (this.isDefined(schemes)) { docModel.schemes = schemes; }
+        if (this.isDefined(consumes)) { docModel.consumes = consumes; }
+        if (this.isDefined(produces)) { docModel.produces = produces; }
+        if (this.isDefined(paths)) {
             let pathsModel: Oas20Paths = docModel.createPaths();
             this.readPaths(paths, pathsModel);
             docModel.paths = pathsModel;
         }
-        if (securityDefinitions) {
+        if (this.isDefined(securityDefinitions)) {
             let securityDefinitionsModel: Oas20SecurityDefinitions = docModel.createSecurityDefinitions();
             this.readSecurityDefinitions(securityDefinitions, securityDefinitionsModel);
             docModel.securityDefinitions = securityDefinitionsModel;
         }
-        if (security) {
+        if (this.isDefined(security)) {
             let securityModels: Oas20SecurityRequirement[] = [];
             for (let sec of security) {
                 let secModel: Oas20SecurityRequirement = docModel.createSecurityRequirement();
@@ -76,7 +92,7 @@ export class Oas20JS2ModelReader {
             }
             docModel.security = securityModels;
         }
-        if (tags) {
+        if (this.isDefined(tags)) {
             let tagModels: Oas20Tag[] = [];
             for (let tag of tags) {
                 let tagModel: Oas20Tag = docModel.createTag();
@@ -85,7 +101,7 @@ export class Oas20JS2ModelReader {
             }
             docModel.tags = tagModels;
         }
-        if (externalDocs) {
+        if (this.isDefined(externalDocs)) {
             let externalDocsModel: Oas20ExternalDocumentation = docModel.createExternalDocumentation();
             this.readExternalDocumentation(externalDocs, externalDocsModel);
             docModel.externalDocs = externalDocsModel;
@@ -124,20 +140,20 @@ export class Oas20JS2ModelReader {
         let license: Oas20License = info["license"];
         let version: string = info["version"];
 
-        if (title) { infoModel.title = title; }
-        if (description) { infoModel.description = description; }
-        if (termsOfService) { infoModel.termsOfService = termsOfService; }
-        if (contact) {
+        if (this.isDefined(title)) { infoModel.title = title; }
+        if (this.isDefined(description)) { infoModel.description = description; }
+        if (this.isDefined(termsOfService)) { infoModel.termsOfService = termsOfService; }
+        if (this.isDefined(contact)) {
             let contactModel: Oas20Contact = infoModel.createContact();
             this.readContact(contact, contactModel);
             infoModel.contact = contactModel;
         }
-        if (license) {
+        if (this.isDefined(license)) {
             let licenseModel: Oas20License = infoModel.createLicense();
             this.readLicense(license, licenseModel);
             infoModel.license = licenseModel;
         }
-        if (version) { infoModel.version = version; }
+        if (this.isDefined(version)) { infoModel.version = version; }
 
         this.readExtensions(info, infoModel);
     }
@@ -152,9 +168,9 @@ export class Oas20JS2ModelReader {
         let url: string = contact["url"];
         let email: string = contact["email"];
 
-        if (name) { contactModel.name = name; }
-        if (url) { contactModel.url = url; }
-        if (email) { contactModel.email = email; }
+        if (this.isDefined(name)) { contactModel.name = name; }
+        if (this.isDefined(url)) { contactModel.url = url; }
+        if (this.isDefined(email)) { contactModel.email = email; }
 
         this.readExtensions(contact, contactModel);
     }
@@ -168,8 +184,8 @@ export class Oas20JS2ModelReader {
         let name: string = license["name"];
         let url: string = license["url"];
 
-        if (name) { licenseModel.name = name; }
-        if (url) { licenseModel.url = url; }
+        if (this.isDefined(name)) { licenseModel.name = name; }
+        if (this.isDefined(url)) { licenseModel.url = url; }
 
         this.readExtensions(license, licenseModel);
     }
@@ -184,9 +200,9 @@ export class Oas20JS2ModelReader {
         let description: string = tag["description"];
         let externalDocs: any = tag["externalDocs"];
 
-        if (name) { tagModel.name = name; }
-        if (description) { tagModel.description = description; }
-        if (externalDocs) {
+        if (this.isDefined(name)) { tagModel.name = name; }
+        if (this.isDefined(description)) { tagModel.description = description; }
+        if (this.isDefined(externalDocs)) {
             let externalDocsModel: Oas20ExternalDocumentation = tagModel.createExternalDocumentation();
             this.readExternalDocumentation(externalDocs, externalDocsModel);
             tagModel.externalDocs = externalDocsModel;
@@ -204,8 +220,8 @@ export class Oas20JS2ModelReader {
         let description: string = externalDocs["description"];
         let url: any = externalDocs["url"];
 
-        if (description) { externalDocsModel.description = description; }
-        if (url) { externalDocsModel.url = url; }
+        if (this.isDefined(description)) { externalDocsModel.description = description; }
+        if (this.isDefined(url)) { externalDocsModel.url = url; }
 
         this.readExtensions(externalDocs, externalDocsModel);
     }
@@ -243,20 +259,20 @@ export class Oas20JS2ModelReader {
         let type: string = scheme["type"];
         let description: string = scheme["description"];
         let name: string = scheme["name"];
-        let _in: string = scheme["in"];
+        let in_: string = scheme["in"];
         let flow: string = scheme["flow"];
         let authorizationUrl: string = scheme["authorizationUrl"];
         let tokenUrl: string = scheme["tokenUrl"];
         let scopes: any = scheme["scopes"];
 
-        if (type) { schemeModel.type = type; }
-        if (description) { schemeModel.description = description; }
-        if (name) { schemeModel.name = name; }
-        if (_in) { schemeModel.in = _in; }
-        if (flow) { schemeModel.flow = flow; }
-        if (authorizationUrl) { schemeModel.authorizationUrl = authorizationUrl; }
-        if (tokenUrl) { schemeModel.tokenUrl = tokenUrl; }
-        if (scopes) {
+        if (this.isDefined(type)) { schemeModel.type = type; }
+        if (this.isDefined(description)) { schemeModel.description = description; }
+        if (this.isDefined(name)) { schemeModel.name = name; }
+        if (this.isDefined(in_)) { schemeModel.in = in_; }
+        if (this.isDefined(flow)) { schemeModel.flow = flow; }
+        if (this.isDefined(authorizationUrl)) { schemeModel.authorizationUrl = authorizationUrl; }
+        if (this.isDefined(tokenUrl)) { schemeModel.tokenUrl = tokenUrl; }
+        if (this.isDefined(scopes)) {
             let scopesModel: Oas20Scopes = schemeModel.createScopes();
             this.readScopes(scopes, scopesModel);
             schemeModel.scopes = scopesModel;
@@ -303,50 +319,54 @@ export class Oas20JS2ModelReader {
         let get: any = pathItem["get"];
         let put: any = pathItem["put"];
         let post: any = pathItem["post"];
-        let _delete: any = pathItem["delete"];
+        let delete_: any = pathItem["delete"];
         let options: any = pathItem["options"];
         let head: any = pathItem["head"];
         let patch: any = pathItem["patch"];
         let parameters: any[] = pathItem["parameters"];
 
-        if ($ref) { pathItemModel.$ref = $ref; }
-        if (get) {
+        if (this.isDefined($ref)) { pathItemModel.$ref = $ref; }
+        if (this.isDefined(get)) {
             let opModel: Oas20Operation = pathItemModel.createOperation("get");
             this.readOperation(get, opModel);
             pathItemModel.get = opModel;
         }
-        if (put) {
+        if (this.isDefined(put)) {
             let opModel: Oas20Operation = pathItemModel.createOperation("put");
             this.readOperation(put, opModel);
             pathItemModel.put = opModel;
         }
-        if (post) {
+        if (this.isDefined(post)) {
             let opModel: Oas20Operation = pathItemModel.createOperation("post");
             this.readOperation(post, opModel);
             pathItemModel.post = opModel;
         }
-        if (_delete) {
+        if (this.isDefined(delete_)) {
             let opModel: Oas20Operation = pathItemModel.createOperation("delete");
-            this.readOperation(_delete, opModel);
+            this.readOperation(delete_, opModel);
             pathItemModel.delete = opModel;
         }
-        if (options) {
+        if (this.isDefined(options)) {
             let opModel: Oas20Operation = pathItemModel.createOperation("options");
             this.readOperation(options, opModel);
             pathItemModel.options = opModel;
         }
-        if (head) {
+        if (this.isDefined(head)) {
             let opModel: Oas20Operation = pathItemModel.createOperation("head");
             this.readOperation(head, opModel);
             pathItemModel.head = opModel;
         }
-        if (patch) {
+        if (this.isDefined(patch)) {
             let opModel: Oas20Operation = pathItemModel.createOperation("patch");
             this.readOperation(patch, opModel);
             pathItemModel.patch = opModel;
         }
-        if (parameters) {
-            // TODO read the parameters here!
+        if (this.isDefined(parameters)) {
+            for (let parameter of parameters) {
+                let paramModel: Oas20Parameter = pathItemModel.createParameter();
+                this.readParameter(parameter, paramModel);
+                pathItemModel.addParameter(paramModel);
+            }
         }
 
         this.readExtensions(pathItem, pathItemModel);
@@ -371,25 +391,148 @@ export class Oas20JS2ModelReader {
         let deprecated: boolean = operation["deprecated"];
         let security: any[] = operation["security"];
 
-        if (tags) { operationModel.tags = tags; }
-        if (summary) { operationModel.summary = summary; }
-        if (description) { operationModel.description = description; }
-        if (externalDocs) { operationModel.externalDocs = externalDocs; }
-        if (operationId) { operationModel.operationId = operationId; }
-        if (consumes) { operationModel.consumes = consumes; }
-        if (produces) { operationModel.produces = produces; }
-        if (parameters) {
-            // TODO read the params here
+        if (this.isDefined(tags)) { operationModel.tags = tags; }
+        if (this.isDefined(summary)) { operationModel.summary = summary; }
+        if (this.isDefined(description)) { operationModel.description = description; }
+        if (this.isDefined(externalDocs)) { operationModel.externalDocs = externalDocs; }
+        if (this.isDefined(operationId)) { operationModel.operationId = operationId; }
+        if (this.isDefined(consumes)) { operationModel.consumes = consumes; }
+        if (this.isDefined(produces)) { operationModel.produces = produces; }
+        if (this.isDefined(parameters)) {
+            for (let parameter of parameters) {
+                let paramModel: Oas20Parameter = operationModel.createParameter();
+                this.readParameter(parameter, paramModel);
+                operationModel.addParameter(paramModel);
+            }
         }
-        if (responses) {
+        if (this.isDefined(responses)) {
             // TODO read the responses here
         }
-        if (schemes) { operationModel.schemes = schemes; }
-        if (deprecated) { operationModel.deprecated = deprecated; }
-        if (security) {
+        if (this.isDefined(schemes)) { operationModel.schemes = schemes; }
+        if (this.isDefined(deprecated)) { operationModel.deprecated = deprecated; }
+        if (this.isDefined(security)) {
             // TODO read the security here
         }
 
         this.readExtensions(operation, operationModel);
+    }
+
+    /**
+     * Reads an OAS 2.0 Parameter object from the given JS data.
+     * @param parameter
+     * @param paramModel
+     */
+    private readParameter(parameter: string, paramModel: Oas20Parameter): void {
+        this.readItems(parameter, paramModel);
+
+        let $ref: string = parameter["$ref"];
+        let name: string = parameter["name"];
+        let in_: string = parameter["in"];
+        let description: string = parameter["description"];
+        let required: boolean = parameter["required"];
+        let schema: any = parameter["schema"];
+        let allowEmptyValue: boolean = parameter["allowEmptyValue"];
+
+        if (this.isDefined($ref)) { paramModel.$ref = $ref; }
+        if (this.isDefined(name)) { paramModel.name = name; }
+        if (this.isDefined(in_)) { paramModel.in = in_; }
+        if (this.isDefined(description)) { paramModel.description = description; }
+        if (this.isDefined(required)) { paramModel.required = required; }
+        if (this.isDefined(schema)) {
+            let schemaModel: Oas20Schema = paramModel.createSchema();
+            this.readSchema(schema, schemaModel);
+            paramModel.schema = schemaModel;
+        }
+        if (this.isDefined(allowEmptyValue)) { paramModel.allowEmptyValue = allowEmptyValue; }
+
+        this.readExtensions(parameter, paramModel);
+    }
+
+    /**
+     * Reads an OAS 2.0 Schema object from the given JS data.
+     * @param schema
+     * @param schemaModel
+     */
+    private readSchema(schema: any, schemaModel: Oas20Schema) {
+        // TODO read a schema here
+
+        let $ref: string = schema["$ref"];
+
+        if (this.isDefined($ref)) { schemaModel.$ref = $ref; }
+
+        this.readExtensions(schema, schemaModel);
+    }
+
+    /**
+     * Reads an OAS 2.0 Items object from the given JS data.
+     * @param items
+     * @param itemsModel
+     */
+    private readItems(items: string, itemsModel: Oas20Items) {
+        let type: string = items["type"];
+        let format: string = items["format"];
+        let itemsChild: any = items["items"];
+        let collectionFormat: string = items["collectionFormat"];
+        let default_: any = items["default"];
+        let maximum: number = items["maximum"];
+        let exclusiveMaximum: boolean = items["exclusiveMaximum"];
+        let minimum: number = items["minimum"];
+        let exclusiveMinimum: boolean = items["exclusiveMinimum"];
+        let maxLength: number = items["maxLength"]; // Require: integer
+        let minLength: number = items["minLength"]; // Require: integer
+        let pattern: string = items["pattern"];
+        let maxItems: number = items["maxItems"]; // Require: integer
+        let minItems: number = items["minItems"]; // Require: integer
+        let uniqueItems: boolean = items["uniqueItems"];
+        let enum_: any[] = items["enum"];
+        let multipleOf: number = items["multipleOf"];
+
+        if (this.isDefined(type)) { itemsModel.type = this.toOas20ItemsType(type); }
+        if (this.isDefined(format)) { itemsModel.format = format; }
+        if (this.isDefined(itemsChild)) {
+            let itemsChildModel: Oas20Items = itemsModel.createItems();
+            this.readItems(itemsChild, itemsChildModel);
+            itemsModel.items = itemsChildModel;
+        }
+        if (this.isDefined(collectionFormat)) { itemsModel.collectionFormat = this.toOas20ItemsCollectionFormat(collectionFormat); }
+        if (this.isDefined(default_)) { itemsModel.default = default_; }
+        if (this.isDefined(maximum)) { itemsModel.maximum = maximum; }
+        if (this.isDefined(exclusiveMaximum)) { itemsModel.exclusiveMaximum = exclusiveMaximum; }
+        if (this.isDefined(minimum)) { itemsModel.minimum = minimum; }
+        if (this.isDefined(exclusiveMinimum)) { itemsModel.exclusiveMinimum = exclusiveMinimum; }
+        if (this.isDefined(maxLength)) { itemsModel.maxLength = maxLength; }
+        if (this.isDefined(minLength)) { itemsModel.minLength = minLength; }
+        if (this.isDefined(pattern)) { itemsModel.pattern = pattern; }
+        if (this.isDefined(maxItems)) { itemsModel.maxItems = maxItems; }
+        if (this.isDefined(minItems)) { itemsModel.minItems = minItems; }
+        if (this.isDefined(uniqueItems)) { itemsModel.uniqueItems = uniqueItems; }
+        if (this.isDefined(enum_)) { itemsModel.enum = enum_; }
+        if (this.isDefined(multipleOf)) { itemsModel.multipleOf = multipleOf; }
+
+        this.readExtensions(items, itemsModel);
+    }
+
+    /**
+     * Converts from String to an Oas20ItemsType.
+     * @param type
+     * @return {Oas20ItemsType}
+     */
+    private toOas20ItemsType(type: string): Oas20ItemsType {
+        if (type == null) {
+            return null;
+        }
+        return Oas20ItemsType[type];
+    }
+
+    /**
+     * Converts from String to an Oas20ItemsType.
+     * @param format
+     * @return {Oas20ItemsCollectionFormat}
+     */
+    private toOas20ItemsCollectionFormat(format: string): Oas20ItemsCollectionFormat {
+        if (format == null) {
+            return null;
+        }
+        return Oas20ItemsCollectionFormat[format];
     }
 }

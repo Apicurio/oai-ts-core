@@ -1,6 +1,5 @@
 import {OasDocument} from "../models/document.model";
 import {OasExtension} from "../models/extension.model";
-import {Oas20Document} from "../models/2.0/document.model";
 import {Oas20Info} from "../models/2.0/info.model";
 import {Oas20Contact} from "../models/2.0/contact.model";
 import {Oas20License} from "../models/2.0/license.model";
@@ -8,7 +7,6 @@ import {Oas20Paths} from "../models/2.0/paths.model";
 import {Oas20PathItem} from "../models/2.0/path-item.model";
 import {Oas20Operation} from "../models/2.0/operation.model";
 import {Oas20Parameter} from "../models/2.0/parameter.model";
-import {Oas20Reference} from "../models/2.0/reference.model";
 import {Oas20ExternalDocumentation} from "../models/2.0/external-documentation.model";
 import {Oas20SecurityRequirement} from "../models/2.0/security-requirement.model";
 import {Oas20Responses} from "../models/2.0/responses.model";
@@ -49,7 +47,6 @@ export class Oas20NodeVisitorAdapter extends OasNodeVisitorAdapter implements IO
     public visitPathItem(node: Oas20PathItem): void {}
     public visitOperation(node: Oas20Operation): void {}
     public visitParameter(node: Oas20Parameter): void {}
-    public visitReference(node: Oas20Reference): void {}
     public visitExternalDocumentation(node: Oas20ExternalDocumentation): void {}
     public visitSecurityRequirement(node: Oas20SecurityRequirement): void {}
     public visitResponses(node: Oas20Responses): void {}

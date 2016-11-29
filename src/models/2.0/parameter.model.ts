@@ -1,8 +1,8 @@
 
 import {IOasNodeVisitor, IOas20NodeVisitor} from "../../visitors/visitor.iface";
-import {OasExtensibleNode} from "../enode.model";
 import {Oas20Schema} from "./schema.model";
 import {Oas20Items} from "./items.model";
+import {IOasReferenceNode} from "../reference.model";
 
 /**
  * Models an OAS 2.0 Parameter object.  Example:
@@ -17,8 +17,9 @@ import {Oas20Items} from "./items.model";
  *   }
  * }
  */
-export class Oas20Parameter extends Oas20Items {
+export class Oas20Parameter extends Oas20Items implements IOasReferenceNode {
 
+    public $ref: string;
     public name: string;
     public in: string;
     public description: string;

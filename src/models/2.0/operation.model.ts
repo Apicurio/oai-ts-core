@@ -1,7 +1,6 @@
 
 import {IOasNodeVisitor, IOas20NodeVisitor} from "../../visitors/visitor.iface";
 import {Oas20Parameter} from "./parameter.model";
-import {Oas20Reference} from "./reference.model";
 import {OasExtensibleNode} from "../enode.model";
 import {Oas20ExternalDocumentation} from "./external-documentation.model";
 import {Oas20SecurityRequirement} from "./security-requirement.model";
@@ -75,7 +74,7 @@ export class Oas20Operation extends OasExtensibleNode {
     public operationId: string;
     public consumes: string[];
     public produces: string[];
-    public parameters: (Oas20Parameter | Oas20Reference)[];
+    public parameters: Oas20Parameter[];
     public responses: Oas20Responses;
     public schemes: string[];
     public deprecated: boolean;
@@ -130,14 +129,14 @@ export class Oas20Operation extends OasExtensibleNode {
     }
 
     /**
-     * Creates a child reference model.
-     * @return {Oas20Reference}
+     * Adds a parameter.
+     * @param parameter
      */
-    public createReference(): Oas20Reference {
-        let rval: Oas20Reference = new Oas20Reference();
-        rval._ownerDocument = this._ownerDocument;
-        rval._parent = this;
-        return rval;
+    public addParameter(parameter: Oas20Parameter): void {
+        if (this.parameters == null) {
+            this.parameters = [];
+        }
+        this.parameters.push(parameter);
     }
 
     /**

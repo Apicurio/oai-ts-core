@@ -5,12 +5,14 @@ import {OasExtensibleNode} from "../enode.model";
 import {Oas20Schema} from "./schema.model";
 import {Oas20Headers} from "./headers.model";
 import {Oas20Example} from "./example.model";
+import {IOasReferenceNode} from "../reference.model";
 
 /**
  * Models an OAS 2.0 Response object.  Example:
  */
-export class Oas20Response extends OasExtensibleNode {
+export class Oas20Response extends OasExtensibleNode implements IOasReferenceNode {
 
+    public $ref: string;
     public description: string;
     public schema: Oas20Schema;
     public headers: Oas20Headers;

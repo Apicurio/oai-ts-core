@@ -8,7 +8,6 @@ import {Oas20Paths} from "../models/2.0/paths.model";
 import {Oas20PathItem} from "../models/2.0/path-item.model";
 import {Oas20Operation} from "../models/2.0/operation.model";
 import {Oas20Parameter} from "../models/2.0/parameter.model";
-import {Oas20Reference} from "../models/2.0/reference.model";
 import {Oas20ExternalDocumentation} from "../models/2.0/external-documentation.model";
 import {Oas20SecurityRequirement} from "../models/2.0/security-requirement.model";
 import {Oas20Responses} from "../models/2.0/responses.model";
@@ -55,8 +54,6 @@ export interface IOas20NodeVisitor extends IOasNodeVisitor {
     visitOperation(node: Oas20Operation): void;
 
     visitParameter(node: Oas20Parameter): void;
-
-    visitReference(node: Oas20Reference): void;
 
     visitExternalDocumentation(node: Oas20ExternalDocumentation): void;
 

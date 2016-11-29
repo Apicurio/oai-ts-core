@@ -34,6 +34,16 @@ export class Oas20Items extends OasExtensibleNode {
         viz.visitItems(this);
     }
 
+    /**
+     * Creates a child items model.
+     * @return {Oas20Items}
+     */
+    public createItems(): Oas20Items {
+        let rval: Oas20Items = new Oas20Items();
+        rval._ownerDocument = this._ownerDocument;
+        rval._parent = this;
+        return rval;
+    }
 }
 
 
@@ -43,5 +53,5 @@ export enum Oas20ItemsType {
 
 
 export enum Oas20ItemsCollectionFormat {
-    csv, ssv, tsv, pipes
+    csv, ssv, tsv, pipes, multi
 }

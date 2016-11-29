@@ -1,6 +1,5 @@
 import {OasExtensibleNode} from "../enode.model";
 import {IOasNodeVisitor, IOas20NodeVisitor} from "../../visitors/visitor.iface";
-import {Oas20Reference} from "./reference.model";
 import {Oas20Response} from "./response.model";
 
 /**
@@ -24,7 +23,7 @@ import {Oas20Response} from "./response.model";
  */
 export class Oas20Responses extends OasExtensibleNode {
 
-    private default: Oas20Response | Oas20Reference;
+    private default: Oas20Response;
     private _responses: Oas20ResponseItems;
 
     /**
@@ -41,7 +40,7 @@ export class Oas20Responses extends OasExtensibleNode {
      * @param statusCode
      * @return {Oas20Response}
      */
-    public response(statusCode: string): Oas20Response | Oas20Reference {
+    public response(statusCode: string): Oas20Response {
         return this._responses[statusCode];
     }
 
@@ -50,7 +49,7 @@ export class Oas20Responses extends OasExtensibleNode {
      * @param name
      * @param response
      */
-    public addResponse(statusCode: string, response: Oas20Response | Oas20Reference) {
+    public addResponse(statusCode: string, response: Oas20Response): void {
         this._responses[statusCode] = response;
     }
 
@@ -76,17 +75,9 @@ export class Oas20Responses extends OasExtensibleNode {
         return rval;
     }
 
-    public createReference($ref: string): Oas20Reference {
-        let rval: Oas20Reference = new Oas20Reference();
-        rval._ownerDocument = this._ownerDocument;
-        rval._parent = this;
-        rval.$ref = $ref;
-        return rval;
-    }
-
 }
 
 
 export class Oas20ResponseItems {
-    [key: string]: Oas20Response | Oas20Reference;
+    [key: string]: Oas20Response;
 }

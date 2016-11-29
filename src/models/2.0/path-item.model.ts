@@ -2,7 +2,6 @@
 import {IOasNodeVisitor, IOas20NodeVisitor} from "../../visitors/visitor.iface";
 import {Oas20Operation} from "./operation.model";
 import {Oas20Parameter} from "./parameter.model";
-import {Oas20Reference} from "./reference.model";
 import {OasExtensibleNode} from "../enode.model";
 
 /**
@@ -62,7 +61,7 @@ export class Oas20PathItem extends OasExtensibleNode {
     public options: Oas20Operation;
     public head: Oas20Operation;
     public patch: Oas20Operation;
-    public parameters: (Oas20Parameter | Oas20Reference)[];
+    public parameters: Oas20Parameter[];
 
     /**
      * Constructor.
@@ -117,7 +116,7 @@ export class Oas20PathItem extends OasExtensibleNode {
      * Adds a parameter.
      * @param param
      */
-    public addParameter(param: Oas20Parameter | Oas20Reference): void {
+    public addParameter(param: Oas20Parameter): void {
         if (!this.parameters) {
             this.parameters = [];
         }

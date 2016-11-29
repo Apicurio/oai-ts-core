@@ -8,7 +8,6 @@ import {Oas20Paths} from "../models/2.0/paths.model";
 import {Oas20PathItem} from "../models/2.0/path-item.model";
 import {Oas20Operation} from "../models/2.0/operation.model";
 import {Oas20Parameter} from "../models/2.0/parameter.model";
-import {Oas20Reference} from "../models/2.0/reference.model";
 import {Oas20ExternalDocumentation} from "../models/2.0/external-documentation.model";
 import {Oas20SecurityRequirement} from "../models/2.0/security-requirement.model";
 import {Oas20Responses} from "../models/2.0/responses.model";
@@ -175,13 +174,10 @@ export class Oas20Traverser implements IOas20NodeVisitor {
      * @param node
      */
     visitParameter(node: Oas20Parameter): void {
-    }
-
-    /**
-     * Visit the reference.
-     * @param node
-     */
-    visitReference(node: Oas20Reference): void {
+        node.accept(this.visitor);
+        this.traverseIfNotNull(node.schema);
+        this.traverseIfNotNull(node.items);
+        this.traverseExtensions(node);
     }
 
     /**
@@ -220,6 +216,8 @@ export class Oas20Traverser implements IOas20NodeVisitor {
      * @param node
      */
     visitSchema(node: Oas20Schema): void {
+        node.accept(this.visitor);
+        this.traverseExtensions(node);
     }
 
     /**
@@ -248,6 +246,9 @@ export class Oas20Traverser implements IOas20NodeVisitor {
      * @param node
      */
     visitItems(node: Oas20Items): void {
+        node.accept(this.visitor);
+        this.traverseIfNotNull(node.items);
+        this.traverseExtensions(node);
     }
 
     /**
