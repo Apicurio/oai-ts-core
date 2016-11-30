@@ -216,9 +216,6 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
             "schema" : null,
             "allowEmptyValue" : node.allowEmptyValue
         };
-        if (node.required !== null) {
-            console.info("Not null .required: %s", JSON.stringify(parameter));
-        }
         parameter = Object.assign({}, parameter, items);
         parentJS.parameters.push(parameter);
         this.updateIndex(node, parameter);
@@ -261,6 +258,12 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     public visitResponses(node: Oas20Responses): void {
+        let parentJS: any = this.lookup(node.parent().modelId());
+        let responses: any = {
+            default: null
+        };
+        parentJS.responses = responses;
+        this.updateIndex(node, responses);
     }
 
     /**
@@ -268,6 +271,20 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     public visitResponse(node: Oas20Response): void {
+        let parentJS: any = this.lookup(node.parent().modelId());
+        let response: any = {
+            $ref: node.$ref,
+            description: node.description,
+            schema: null,
+            headers: null,
+            examples: null
+        };
+        if (node.statusCode() === null || node.statusCode() === "default") {
+            parentJS.default = response;
+        } else {
+            parentJS[node.statusCode()] = response;
+        }
+        this.updateIndex(node, response);
     }
 
     /**
@@ -288,6 +305,12 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     public visitHeaders(node: Oas20Headers): void {
+        if (node.headerNames().length > 0) {
+            let parentJS: any = this.lookup(node.parent().modelId());
+            let headers: any = {};
+            parentJS.headers = headers;
+            this.updateIndex(node, headers);
+        }
     }
 
     /**
@@ -295,6 +318,14 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     public visitHeader(node: Oas20Header): void {
+        let parentJS: any = this.lookup(node.parent().modelId());
+        let headerOnly: any = {
+            description: node.description
+        };
+        let items: any = this.createItemsObject(node);
+        let header: any = Object.assign({}, headerOnly, items);
+        parentJS[node.headerName()] = header;
+        this.updateIndex(node, header);
     }
 
     /**

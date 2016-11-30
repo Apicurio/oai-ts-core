@@ -6,16 +6,17 @@
         "summary": "List Pets",
         "description": "Returns all pets from the system that the user has access to",
         "operationId": "listPets",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "schemes": [
-          "http", "https"
-        ],
-        "deprecated": false
+        "security" : [
+          {
+            "api_key": []
+          },
+          {
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
+          }
+        ]
       }
     }
   }

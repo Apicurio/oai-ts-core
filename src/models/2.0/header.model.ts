@@ -12,7 +12,25 @@ import {Oas20Items} from "./items.model";
  */
 export class Oas20Header extends Oas20Items {
 
+    private _headerName: string;
     public description: string;
+
+    /**
+     * Constructor.
+     * @param headerName
+     */
+    constructor(headerName: string) {
+        super();
+        this._headerName = headerName;
+    }
+
+    /**
+     * Gets the header name.
+     * @return {string}
+     */
+    public headerName(): string {
+        return this._headerName;
+    }
 
     /**
      * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.

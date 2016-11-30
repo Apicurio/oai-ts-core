@@ -23,7 +23,7 @@ import {Oas20Response} from "./response.model";
  */
 export class Oas20Responses extends OasExtensibleNode {
 
-    private default: Oas20Response;
+    public default: Oas20Response;
     private _responses: Oas20ResponseItems;
 
     /**
@@ -50,13 +50,26 @@ export class Oas20Responses extends OasExtensibleNode {
      * @param response
      */
     public addResponse(statusCode: string, response: Oas20Response): void {
+        if (this._responses == null) {
+            this._responses = new Oas20ResponseItems();
+        }
         this._responses[statusCode] = response;
     }
 
     /**
-     * Gets a list of all the response names.
+     * Removes a single response child model.
+     * @param statusCode
      */
-    public responseNames(): string[] {
+    public removeResponse(statusCode: string): void {
+        if (this._responses && this._responses[statusCode]) {
+            delete this._responses[statusCode];
+        }
+    }
+
+    /**
+     * Gets a list of all the response status codes.
+     */
+    public responseStatusCodes(): string[] {
         let rval: string[] = [];
         for (let pname in this._responses) {
             rval.push(pname);
@@ -66,10 +79,11 @@ export class Oas20Responses extends OasExtensibleNode {
 
     /**
      * Creates an OAS 2.0 response object.
+     * @param statusCode
      * @return {Oas20Response}
      */
-    public createResponse(name: string): Oas20Response {
-        let rval: Oas20Response = new Oas20Response();
+    public createResponse(statusCode?: string): Oas20Response {
+        let rval: Oas20Response = new Oas20Response(statusCode);
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;

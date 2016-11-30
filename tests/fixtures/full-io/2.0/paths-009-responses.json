@@ -15,7 +15,20 @@
         "schemes": [
           "http", "https"
         ],
-        "deprecated": false
+        "responses": {
+          "200": {
+            "description": "a pet to be returned",
+            "schema": {
+              "$ref": "#/definitions/Pet"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/ErrorModel"
+            }
+          }
+        }
       }
     }
   }

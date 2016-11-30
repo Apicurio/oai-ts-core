@@ -202,6 +202,13 @@ export class Oas20Traverser implements IOas20NodeVisitor {
      * @param node
      */
     visitResponses(node: Oas20Responses): void {
+        node.accept(this.visitor);
+        for (let name of node.responseStatusCodes()) {
+            let response: Oas20Response = node.response(name);
+            this.traverseIfNotNull(response);
+        }
+        this.traverseIfNotNull(node.default);
+        this.traverseExtensions(node);
     }
 
     /**
@@ -209,6 +216,11 @@ export class Oas20Traverser implements IOas20NodeVisitor {
      * @param node
      */
     visitResponse(node: Oas20Response): void {
+        node.accept(this.visitor);
+        this.traverseIfNotNull(node.schema);
+        this.traverseIfNotNull(node.headers);
+        this.traverseIfNotNull(node.examples);
+        this.traverseExtensions(node);
     }
 
     /**
@@ -225,6 +237,11 @@ export class Oas20Traverser implements IOas20NodeVisitor {
      * @param node
      */
     visitHeaders(node: Oas20Headers): void {
+        node.accept(this.visitor);
+        for (let hname of node.headerNames()) {
+            let header: Oas20Header = node.header(hname);
+            this.traverseIfNotNull(header);
+        }
     }
 
     /**
@@ -232,6 +249,9 @@ export class Oas20Traverser implements IOas20NodeVisitor {
      * @param node
      */
     visitHeader(node: Oas20Header): void {
+        node.accept(this.visitor);
+        this.traverseIfNotNull(node.items);
+        this.traverseExtensions(node);
     }
 
     /**
@@ -239,6 +259,7 @@ export class Oas20Traverser implements IOas20NodeVisitor {
      * @param node
      */
     visitExample(node: Oas20Example): void {
+        node.accept(this.visitor);
     }
 
     /**

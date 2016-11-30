@@ -33,6 +33,61 @@ export class Oas20Headers extends OasNode {
         viz.visitHeaders(this);
     }
 
+    /**
+     * Gets a single header by name.
+     * @param headerName
+     * @return {Oas20Header}
+     */
+    public header(headerName: string): Oas20Header {
+        return this._headers[headerName];
+    }
+
+    /**
+     * Returns all the header names.
+     * @return {string[]}
+     */
+    public headerNames(): string[] {
+        let rval: string[] = [];
+        for (let name in this._headers) {
+            rval.push(name);
+        }
+        return rval;
+    }
+
+    /**
+     * Removes a single header.
+     * @param headerName
+     */
+    public removeHeader(headerName: string): void {
+        if (this._headers && this._headers[headerName]) {
+            delete this._headers[headerName];
+        }
+    }
+
+    /**
+     * Adds a header.
+     * @param headerName
+     * @param header
+     */
+    public addHeader(headerName: string, header: Oas20Header): void {
+        if (this._headers == null) {
+            this._headers = new Oas20HeaderItems();
+        }
+        this._headers[headerName] = header;
+    }
+
+    /**
+     * Creates a header model.
+     * @param headerName
+     * @return {Oas20Header}
+     */
+    public createHeader(headerName: string): Oas20Header {
+        let rval: Oas20Header = new Oas20Header(headerName);
+        rval._ownerDocument = this._ownerDocument;
+        rval._parent = this;
+        return rval;
+    }
+
 }
 
 

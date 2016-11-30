@@ -9,14 +9,46 @@ import {IOasReferenceNode} from "../reference.model";
 
 /**
  * Models an OAS 2.0 Response object.  Example:
+ *
+ * {
+ *   "description": "A complex object array response",
+ *   "schema": {
+ *     "type": "array",
+ *     "items": {
+ *       "$ref": "#/definitions/VeryComplexType"
+ *     }
+ *   }
+ * }
  */
 export class Oas20Response extends OasExtensibleNode implements IOasReferenceNode {
 
+    private _statusCode: string; // null if 'default'
     public $ref: string;
     public description: string;
     public schema: Oas20Schema;
     public headers: Oas20Headers;
     public examples: Oas20Example;
+
+    /**
+     * Constructor.
+     * @param statusCode
+     */
+    constructor(statusCode: string) {
+        super();
+        if (statusCode) {
+            this._statusCode = statusCode;
+        } else {
+            this._statusCode = null;
+        }
+    }
+
+    /**
+     * Gets the status code.
+     * @return {string}
+     */
+    public statusCode(): string {
+        return this._statusCode;
+    }
 
     /**
      * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.

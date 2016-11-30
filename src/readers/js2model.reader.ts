@@ -15,6 +15,11 @@ import {Oas20Operation} from "../models/2.0/operation.model";
 import {Oas20Parameter} from "../models/2.0/parameter.model";
 import {Oas20Schema} from "../models/2.0/schema.model";
 import {Oas20Items, Oas20ItemsType, Oas20ItemsCollectionFormat} from "../models/2.0/items.model";
+import {Oas20Responses} from "../models/2.0/responses.model";
+import {Oas20Response} from "../models/2.0/response.model";
+import {Oas20Headers} from "../models/2.0/headers.model";
+import {Oas20Example} from "../models/2.0/example.model";
+import {Oas20Header} from "../models/2.0/header.model";
 
 /**
  * This class reads a javascript object and turns it into a OAS 2.0 model.  It is obviously
@@ -33,6 +38,30 @@ export class Oas20JS2ModelReader {
         } else {
             return true;
         }
+    }
+
+    /**
+     * Converts from String to an Oas20ItemsType.
+     * @param type
+     * @return {Oas20ItemsType}
+     */
+    private toOas20ItemsType(type: string): Oas20ItemsType {
+        if (type == null) {
+            return null;
+        }
+        return Oas20ItemsType[type];
+    }
+
+    /**
+     * Converts from String to an Oas20ItemsType.
+     * @param format
+     * @return {Oas20ItemsCollectionFormat}
+     */
+    private toOas20ItemsCollectionFormat(format: string): Oas20ItemsCollectionFormat {
+        if (format == null) {
+            return null;
+        }
+        return Oas20ItemsCollectionFormat[format];
     }
 
     /**
@@ -301,6 +330,7 @@ export class Oas20JS2ModelReader {
      */
     private readPaths(paths: any, pathsModel: Oas20Paths): void {
         for (let path in paths) {
+            if (path.startsWith("x-")) { continue; }
             let pathItem: any = paths[path];
             let pathItemModel: Oas20PathItem = pathsModel.createPathItem(path);
             this.readPathItem(pathItem, pathItemModel);
@@ -381,7 +411,7 @@ export class Oas20JS2ModelReader {
         let tags: string[] = operation["tags"];
         let summary: string = operation["summary"];
         let description: string = operation["description"];
-        let externalDocs: Oas20ExternalDocumentation = operation["externalDocs"];
+        let externalDocs: any = operation["externalDocs"];
         let operationId: string = operation["operationId"];
         let consumes: string[] = operation["consumes"];
         let produces: string[] = operation["produces"];
@@ -394,7 +424,11 @@ export class Oas20JS2ModelReader {
         if (this.isDefined(tags)) { operationModel.tags = tags; }
         if (this.isDefined(summary)) { operationModel.summary = summary; }
         if (this.isDefined(description)) { operationModel.description = description; }
-        if (this.isDefined(externalDocs)) { operationModel.externalDocs = externalDocs; }
+        if (this.isDefined(externalDocs)) {
+            let externalDocsModel: Oas20ExternalDocumentation = operationModel.createExternalDocumentation();
+            this.readExternalDocumentation(externalDocs, externalDocsModel);
+            operationModel.externalDocs = externalDocsModel;
+        }
         if (this.isDefined(operationId)) { operationModel.operationId = operationId; }
         if (this.isDefined(consumes)) { operationModel.consumes = consumes; }
         if (this.isDefined(produces)) { operationModel.produces = produces; }
@@ -406,12 +440,18 @@ export class Oas20JS2ModelReader {
             }
         }
         if (this.isDefined(responses)) {
-            // TODO read the responses here
+            let responsesModel: Oas20Responses = operationModel.createResponses();
+            this.readResponses(responses, responsesModel);
+            operationModel.responses = responsesModel;
         }
         if (this.isDefined(schemes)) { operationModel.schemes = schemes; }
         if (this.isDefined(deprecated)) { operationModel.deprecated = deprecated; }
         if (this.isDefined(security)) {
-            // TODO read the security here
+            for (let securityRequirement of security) {
+                let securityRequirementModel: Oas20SecurityRequirement = operationModel.createSecurityRequirement();
+                this.readSecurityRequirement(securityRequirement, securityRequirementModel);
+                operationModel.addSecurityRequirement(securityRequirementModel);
+            }
         }
 
         this.readExtensions(operation, operationModel);
@@ -444,8 +484,6 @@ export class Oas20JS2ModelReader {
             paramModel.schema = schemaModel;
         }
         if (this.isDefined(allowEmptyValue)) { paramModel.allowEmptyValue = allowEmptyValue; }
-
-        this.readExtensions(parameter, paramModel);
     }
 
     /**
@@ -513,26 +551,93 @@ export class Oas20JS2ModelReader {
     }
 
     /**
-     * Converts from String to an Oas20ItemsType.
-     * @param type
-     * @return {Oas20ItemsType}
+     * Reads an OAS 2.0 Responses object from the given JS data.
+     * @param responses
+     * @param responsesModel
      */
-    private toOas20ItemsType(type: string): Oas20ItemsType {
-        if (type == null) {
-            return null;
+    private readResponses(responses: any, responsesModel: Oas20Responses): void {
+        let default_: any = responses["default"];
+        if (this.isDefined(default_)) {
+            let defaultModel: Oas20Response = responsesModel.createResponse();
+            this.readResponse(default_, defaultModel);
+            responsesModel.default = defaultModel;
         }
-        return Oas20ItemsType[type];
+
+        for (let statusCode in responses) {
+            if (statusCode.startsWith("x-")) { continue; }
+            if (statusCode === "default") { continue; }
+            let response: any = responses[statusCode];
+            let responseModel: Oas20Response = responsesModel.createResponse(statusCode);
+            this.readResponse(response, responseModel);
+            responsesModel.addResponse(statusCode, responseModel);
+        }
+        this.readExtensions(responses, responsesModel);
     }
 
     /**
-     * Converts from String to an Oas20ItemsType.
-     * @param format
-     * @return {Oas20ItemsCollectionFormat}
+     * Reads an OAS 2.0 Response object from the given JS data.
+     * @param response
+     * @param responseModel
      */
-    private toOas20ItemsCollectionFormat(format: string): Oas20ItemsCollectionFormat {
-        if (format == null) {
-            return null;
+    private readResponse(response: any, responseModel: Oas20Response) {
+        let $ref: string = response["$ref"];
+        let description: string = response["description"];
+        let schema: any = response["schema"];
+        let headers: any = response["headers"];
+        let examples: any = response["examples"];
+
+        if (this.isDefined($ref)) { responseModel.$ref = $ref; }
+        if (this.isDefined(description)) { responseModel.description = description; }
+        if (this.isDefined(schema)) {
+            let schemaModel: Oas20Schema = responseModel.createSchema();
+            this.readSchema(schema, schemaModel);
+            responseModel.schema = schemaModel;
         }
-        return Oas20ItemsCollectionFormat[format];
+        if (this.isDefined(headers)) {
+            let headersModel: Oas20Headers = responseModel.createHeaders();
+            this.readHeaders(headers, headersModel);
+            responseModel.headers = headersModel;
+        }
+        if (this.isDefined(examples)) {
+            let exampleModel: Oas20Example = responseModel.createExample();
+            this.readExample(examples, exampleModel);
+            responseModel.examples = exampleModel;
+        }
+        this.readExtensions(response, responseModel);
+    }
+
+    /**
+     * Reads an OAS 2.0 Headers object from the given JS data.
+     * @param headers
+     * @param headersModel
+     */
+    private readHeaders(headers: any, headersModel: Oas20Headers): void {
+        for (let headerName in headers) {
+            let header: any = headers[headerName];
+            let headerModel: Oas20Header = headersModel.createHeader(headerName);
+            this.readHeader(header, headerModel);
+            headersModel.addHeader(headerName, headerModel);
+        }
+    }
+
+    /**
+     * Reads an OAS 2.0 Example object from the given JS data.
+     * @param examples
+     * @param exampleModel
+     */
+    private readExample(examples: any, exampleModel: Oas20Example): void {
+        // TODO implement this!
+    }
+
+    /**
+     * Reads an OAS 2.0 Header object from the given JS data.
+     * @param header
+     * @param headerModel
+     */
+    private readHeader(header: any, headerModel: Oas20Header): void {
+        let description: string = header["description"];
+
+        if (this.isDefined(description)) { headerModel.description = description; }
+        this.readItems(header, headerModel);
     }
 }

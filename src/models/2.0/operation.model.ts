@@ -161,4 +161,14 @@ export class Oas20Operation extends OasExtensibleNode {
         return rval;
     }
 
+    /**
+     * Adds a security requirement child.
+     * @param securityRequirement
+     */
+    public addSecurityRequirement(securityRequirement: Oas20SecurityRequirement): void {
+        if (this.security == null) {
+            this.security = [];
+        }
+        this.security.push(securityRequirement);
+    }
 }

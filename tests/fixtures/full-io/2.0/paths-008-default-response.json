@@ -15,7 +15,14 @@
         "schemes": [
           "http", "https"
         ],
-        "deprecated": false
+        "responses": {
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/ErrorModel"
+            }
+          }
+        }
       }
     }
   }
