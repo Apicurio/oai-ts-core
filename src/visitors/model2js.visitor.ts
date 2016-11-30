@@ -333,6 +333,14 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     public visitExample(node: Oas20Example): void {
+        let parentJS: any = this.lookup(node.parent().modelId());
+        let examples: any = {};
+        for (let ct of node.exampleContentTypes()) {
+            console.info("Writing example with ct: %s", ct);
+            let example: any = node.example(ct);
+            examples[ct] = example;
+        }
+        parentJS.examples = examples;
     }
 
     /**

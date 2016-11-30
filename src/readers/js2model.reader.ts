@@ -626,7 +626,10 @@ export class Oas20JS2ModelReader {
      * @param exampleModel
      */
     private readExample(examples: any, exampleModel: Oas20Example): void {
-        // TODO implement this!
+        for (let contentType in examples) {
+            let example: any = examples[contentType];
+            exampleModel.addExample(contentType, example);
+        }
     }
 
     /**

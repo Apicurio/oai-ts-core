@@ -157,4 +157,11 @@ describe("Full I/O (2.0) - Paths", () => {
         expect(jsObj).toEqual(json);
     });
 
+    it("Paths 011 (Response w/ Examples)", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/paths-011-response-with-examples.json');
+        let document: Oas20Document = docReader.read(json);
+        let jsObj: any = OasVisitorUtil.model2js(document);
+        expect(jsObj).toEqual(json);
+    });
+
 });
