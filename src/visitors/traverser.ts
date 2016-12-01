@@ -12,7 +12,10 @@ import {Oas20ExternalDocumentation} from "../models/2.0/external-documentation.m
 import {Oas20SecurityRequirement} from "../models/2.0/security-requirement.model";
 import {Oas20Responses} from "../models/2.0/responses.model";
 import {Oas20Response} from "../models/2.0/response.model";
-import {Oas20Schema} from "../models/2.0/schema.model";
+import {
+    Oas20Schema, Oas20PropertySchema, Oas20AdditionalPropertiesSchema,
+    Oas20AllOfSchema, Oas20DefinitionSchema
+} from "../models/2.0/schema.model";
 import {Oas20Headers} from "../models/2.0/headers.model";
 import {Oas20Header} from "../models/2.0/header.model";
 import {Oas20Example} from "../models/2.0/example.model";
@@ -23,6 +26,8 @@ import {Oas20Tag} from "../models/2.0/tag.model";
 import {Oas20Scopes} from "../models/2.0/scopes.model";
 import {Oas20SecurityDefinitions} from "../models/2.0/security-definitions.model";
 import {Oas20SecurityScheme} from "../models/2.0/security-scheme.model";
+import {Oas20XML} from "../models/2.0/xml.model";
+import {Oas20Definitions} from "../models/2.0/definitions.model";
 
 /**
  * Used to traverse an OAS 2.0 tree and call an included visitor for each node.
@@ -82,6 +87,7 @@ export class Oas20Traverser implements IOas20NodeVisitor {
         node.accept(this.visitor);
         this.traverseIfNotNull(node.info);
         this.traverseIfNotNull(node.paths);
+        this.traverseIfNotNull(node.definitions);
         this.traverseIfNotNull(node.securityDefinitions);
         this.traverseArray(node.security);
         this.traverseArray(node.tags);
@@ -229,7 +235,53 @@ export class Oas20Traverser implements IOas20NodeVisitor {
      */
     visitSchema(node: Oas20Schema): void {
         node.accept(this.visitor);
-        this.traverseExtensions(node);
+        this.traverseIfNotNull(node.items);
+        this.traverseArray(node.allOf);
+        let propNames: string[] = node.propertyNames();
+        if (propNames && propNames.length > 0) {
+            for (let propName of propNames) {
+                let prop: Oas20Schema = node.property(propName);
+                this.traverseIfNotNull(prop);
+            }
+        }
+        if (typeof node.additionalProperties !== "boolean") {
+            this.traverseIfNotNull(node.additionalProperties);
+        }
+        this.traverseIfNotNull(node.xml);
+        this.traverseIfNotNull(node.externalDocs);
+    }
+
+    /**
+     * Visit the schema.
+     * @param node
+     */
+    visitPropertySchema(node: Oas20PropertySchema): void {
+        this.visitSchema(node);
+    }
+
+    /**
+     * Visit the schema.
+     * @param node
+     */
+    visitDefinitionSchema(node: Oas20DefinitionSchema): void {
+        console.info("Traversing definition schema.");
+        this.visitSchema(node);
+    }
+
+    /**
+     * Visit the schema.
+     * @param node
+     */
+    visitAdditionalPropertiesSchema(node: Oas20AdditionalPropertiesSchema): void {
+        this.visitSchema(node);
+    }
+
+    /**
+     * Visit the schema.
+     * @param node
+     */
+    visitAllOfSchema(node: Oas20AllOfSchema): void {
+        this.visitSchema(node);
     }
 
     /**
@@ -308,6 +360,28 @@ export class Oas20Traverser implements IOas20NodeVisitor {
      */
     visitScopes(node: Oas20Scopes): void {
         node.accept(this.visitor);
+    }
+
+    /**
+     * Visit the scopes.
+     * @param node
+     */
+    visitXML(node: Oas20XML): void {
+        node.accept(this.visitor);
+        this.traverseExtensions(node);
+    }
+
+    /**
+     * Visit the definitions.
+     * @param node
+     */
+    visitDefinitions(node: Oas20Definitions): void {
+        console.info("Traversing definitions.");
+        node.accept(this.visitor);
+        for (let name of node.definitionNames()) {
+            let definition: Oas20DefinitionSchema = node.definition(name);
+            this.traverseIfNotNull(definition);
+        }
     }
 
 }

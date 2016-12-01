@@ -48,7 +48,7 @@ export class Oas20Items extends OasExtensibleNode {
 
 
 export enum Oas20ItemsType {
-    string, number, integer, boolean, array
+    string, number, integer, boolean, array, object
 }
 
 

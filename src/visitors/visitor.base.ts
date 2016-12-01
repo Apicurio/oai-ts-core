@@ -11,7 +11,10 @@ import {Oas20ExternalDocumentation} from "../models/2.0/external-documentation.m
 import {Oas20SecurityRequirement} from "../models/2.0/security-requirement.model";
 import {Oas20Responses} from "../models/2.0/responses.model";
 import {Oas20Response} from "../models/2.0/response.model";
-import {Oas20Schema} from "../models/2.0/schema.model";
+import {
+    Oas20Schema, Oas20PropertySchema, Oas20AdditionalPropertiesSchema,
+    Oas20AllOfSchema, Oas20DefinitionSchema
+} from "../models/2.0/schema.model";
 import {Oas20Headers} from "../models/2.0/headers.model";
 import {Oas20Header} from "../models/2.0/header.model";
 import {Oas20Example} from "../models/2.0/example.model";
@@ -21,6 +24,8 @@ import {Oas20Tag} from "../models/2.0/tag.model";
 import {Oas20SecurityDefinitions} from "../models/2.0/security-definitions.model";
 import {Oas20SecurityScheme} from "../models/2.0/security-scheme.model";
 import {Oas20Scopes} from "../models/2.0/scopes.model";
+import {Oas20XML} from "../models/2.0/xml.model";
+import {Oas20Definitions} from "../models/2.0/definitions.model";
 
 /**
  * Base class for node visitors that are only interested in a subset of the node types
@@ -60,4 +65,10 @@ export class Oas20NodeVisitorAdapter extends OasNodeVisitorAdapter implements IO
     public visitSecurityDefinitions(node: Oas20SecurityDefinitions): void {}
     public visitSecurityScheme(node: Oas20SecurityScheme): void {}
     public visitScopes(node: Oas20Scopes): void {}
+    public visitXML(node: Oas20XML): void {}
+    public visitPropertySchema(node: Oas20PropertySchema): void {}
+    public visitAdditionalPropertiesSchema(node: Oas20AdditionalPropertiesSchema): void {}
+    public visitAllOfSchema(node: Oas20AllOfSchema): void {}
+    public visitDefinitionSchema(node: Oas20DefinitionSchema): void {}
+    public visitDefinitions(node: Oas20Definitions): void {}
 }

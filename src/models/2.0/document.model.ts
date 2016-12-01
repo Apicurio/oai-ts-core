@@ -7,6 +7,7 @@ import {Oas20SecurityRequirement} from "./security-requirement.model";
 import {Oas20SecurityDefinitions} from "./security-definitions.model";
 import {Oas20PathItem} from "./path-item.model";
 import {Oas20Paths} from "./paths.model";
+import {Oas20Definitions} from "./definitions.model";
 
 /**
  * Models an OAS 2.0 document.
@@ -21,7 +22,7 @@ export class Oas20Document extends OasDocument {
     public consumes: string[];
     public produces: string[];
     public paths: Oas20Paths = new Oas20Paths();
-    // public definitions: Oas20Definitions;
+    public definitions: Oas20Definitions;
     // public parameters: Oas20ParametersDefinitions;
     // public responses: Oas20ResponsesDefinitions;
     public securityDefinitions: Oas20SecurityDefinitions;
@@ -47,6 +48,17 @@ export class Oas20Document extends OasDocument {
      */
     public createInfo(): Oas20Info {
         let rval: Oas20Info = new Oas20Info();
+        rval._ownerDocument = this;
+        rval._parent = this;
+        return rval;
+    }
+
+    /**
+     * Creates an OAS 2.0 Definitions object.
+     * @return {Oas20Info}
+     */
+    public createDefinitions(): Oas20Definitions {
+        let rval: Oas20Definitions = new Oas20Definitions();
         rval._ownerDocument = this;
         rval._parent = this;
         return rval;

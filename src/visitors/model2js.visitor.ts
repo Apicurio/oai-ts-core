@@ -12,7 +12,10 @@ import {Oas20ExternalDocumentation} from "../models/2.0/external-documentation.m
 import {Oas20SecurityRequirement} from "../models/2.0/security-requirement.model";
 import {Oas20Responses} from "../models/2.0/responses.model";
 import {Oas20Response} from "../models/2.0/response.model";
-import {Oas20Schema} from "../models/2.0/schema.model";
+import {
+    Oas20Schema, Oas20PropertySchema, Oas20AdditionalPropertiesSchema,
+    Oas20AllOfSchema, Oas20DefinitionSchema
+} from "../models/2.0/schema.model";
 import {Oas20Headers} from "../models/2.0/headers.model";
 import {Oas20Header} from "../models/2.0/header.model";
 import {Oas20Example} from "../models/2.0/example.model";
@@ -22,6 +25,8 @@ import {OasNode} from "../models/node.model";
 import {Oas20SecurityDefinitions} from "../models/2.0/security-definitions.model";
 import {Oas20SecurityScheme} from "../models/2.0/security-scheme.model";
 import {Oas20Scopes} from "../models/2.0/scopes.model";
+import {Oas20XML} from "../models/2.0/xml.model";
+import {Oas20Definitions} from "../models/2.0/definitions.model";
 
 /**
  * Visitor used to convert from a Model into a JavaScript object that conforms
@@ -241,7 +246,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
     public visitSecurityRequirement(node: Oas20SecurityRequirement): void {
         let parentJS: any = this.lookup(node.parent().modelId());
         let securityRequirements: any[] = parentJS["security"];
-        if (!securityRequirements) {
+        if (!this.isDefined(securityRequirements)) {
             securityRequirements = [];
             parentJS.security = securityRequirements;
         }
@@ -293,12 +298,63 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      */
     public visitSchema(node: Oas20Schema): void {
         let parentJS: any = this.lookup(node.parent().modelId());
-        let schema: any = {
-            $ref: node.$ref
-        };
+        let schema: any = this.createSchemaObject(node);
         parentJS.schema = schema;
         this.updateIndex(node, schema);
     }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    visitPropertySchema(node: Oas20PropertySchema): void {
+        let parentJS: any = this.lookup(node.parent().modelId());
+        let schema: any = this.createSchemaObject(node);
+        if (!this.isDefined(parentJS.properties)) {
+            parentJS.properties = {};
+        }
+        parentJS.properties[node.propertyName()] = schema;
+        this.updateIndex(node, schema);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    visitDefinitionSchema(node: Oas20DefinitionSchema): void {
+        console.info("model2js def schema: %s", node.definitionName());
+        let parentJS: any = this.lookup(node.parent().modelId());
+        console.info("model2js def schema parent: %s", JSON.stringify(parentJS));
+        let schema: any = this.createSchemaObject(node);
+        parentJS[node.definitionName()] = schema;
+        this.updateIndex(node, schema);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    visitAdditionalPropertiesSchema(node: Oas20AdditionalPropertiesSchema): void {
+        let parentJS: any = this.lookup(node.parent().modelId());
+        let schema: any = this.createSchemaObject(node);
+        parentJS.additionalProperties = schema;
+        this.updateIndex(node, schema);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    visitAllOfSchema(node: Oas20AllOfSchema): void {
+        let parentJS: any = this.lookup(node.parent().modelId());
+        let schema: any = this.createSchemaObject(node);
+        if (!this.isDefined(parentJS.allOf)) {
+            parentJS.allOf = [];
+        }
+        parentJS.allOf.push(schema);
+        this.updateIndex(node, schema);
+    }
+
 
     /**
      * Visits a node.
@@ -336,7 +392,6 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
         let parentJS: any = this.lookup(node.parent().modelId());
         let examples: any = {};
         for (let ct of node.exampleContentTypes()) {
-            console.info("Writing example with ct: %s", ct);
             let example: any = node.example(ct);
             examples[ct] = example;
         }
@@ -359,7 +414,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     public visitTag(node: Oas20Tag): void {
-        if (!this.result.tags) {
+        if (!this.isDefined(this.result.tags)) {
             this.result.tags = [];
         }
         let tag: any = {
@@ -418,6 +473,37 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
         }
         parent.scopes = scopes;
         this.updateIndex(node, scopes);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    visitXML(node: Oas20XML): void {
+        let parent: any = this.lookup(node.parent().modelId());
+        let xml: any = {
+            name: node.name,
+            namespace: node.namespace,
+            prefix: node.prefix,
+            attribute: node.attribute,
+            wrapped: node.wrapped
+        };
+        parent.xml = xml;
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    visitDefinitions(node: Oas20Definitions): void {
+        let defNames: string[] = node.definitionNames();
+        console.info("model2js visitDefinitions: " + JSON.stringify(defNames));
+        if (defNames && defNames.length > 0) {
+            let parent: any = this.lookup(node.parent().modelId());
+            let definitions: any = {};
+            parent.definitions = definitions;
+            this.updateIndex(node, definitions);
+        }
     }
 
     /**
@@ -488,6 +574,47 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
             return null;
         }
         return Oas20ItemsCollectionFormat[format];
+    }
+
+    /**
+     * Shared method used to create a schema JS object.
+     * @param node
+     * @return {any}
+     */
+    private createSchemaObject(node: Oas20Schema) {
+        let parentJS: any = this.lookup(node.parent().modelId());
+        let schemaOnly: any = {
+            $ref: node.$ref,
+            title: node.title,
+            description: node.description,
+            maxProperties: node.maxProperties,
+            minProperties: node.minProperties,
+            required: node.required,
+            allOf: null,
+            properties: null,
+            additionalProperties: null,
+            discriminator: node.discriminator,
+            readOnly: node.readOnly,
+            xml: null,
+            externalDocs: null,
+            example: node.example
+        };
+        let items: any = this.createItemsObject(node);
+        let schema: any = Object.assign({}, schemaOnly, items);
+        return schema;
+    }
+
+    /**
+     * Returns true if the given thing is defined.
+     * @param thing
+     * @return {boolean}
+     */
+    private isDefined(thing: any): boolean {
+        if (typeof thing === "undefined" || thing === null) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
 }
