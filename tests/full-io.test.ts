@@ -20,56 +20,56 @@ describe("Full I/O (2.0) - Basics", () => {
     });
 
     it("Simplest possible 2.0 spec", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/simplest.json');
+        let json: any = readJSON('tests/fixtures/full-io/2.0/simple/simplest.json');
         let document: Oas20Document = docReader.read(json);
         let jsObj: any = OasVisitorUtil.model2js(document);
         expect(jsObj).toEqual(json);
     });
 
     it("Simple Info object", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/simple-info.json');
+        let json: any = readJSON('tests/fixtures/full-io/2.0/simple/simple-info.json');
         let document: Oas20Document = docReader.read(json);
         let jsObj: any = OasVisitorUtil.model2js(document);
         expect(jsObj).toEqual(json);
     });
 
     it("Info object with extensions", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/simple-info-extensions.json');
+        let json: any = readJSON('tests/fixtures/full-io/2.0/simple/simple-info-extensions.json');
         let document: Oas20Document = docReader.read(json);
         let jsObj: any = OasVisitorUtil.model2js(document);
         expect(jsObj).toEqual(json);
     });
 
     it("Simple Tags list", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/simple-tags.json');
+        let json: any = readJSON('tests/fixtures/full-io/2.0/simple/simple-tags.json');
         let document: Oas20Document = docReader.read(json);
         let jsObj: any = OasVisitorUtil.model2js(document);
         expect(jsObj).toEqual(json);
     });
 
     it("Simple External Documentation", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/simple-externalDocs.json');
+        let json: any = readJSON('tests/fixtures/full-io/2.0/simple/simple-externalDocs.json');
         let document: Oas20Document = docReader.read(json);
         let jsObj: any = OasVisitorUtil.model2js(document);
         expect(jsObj).toEqual(json);
     });
 
     it("Simple Security Definitions", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/simple-securityDefinitions.json');
+        let json: any = readJSON('tests/fixtures/full-io/2.0/simple/simple-securityDefinitions.json');
         let document: Oas20Document = docReader.read(json);
         let jsObj: any = OasVisitorUtil.model2js(document);
         expect(jsObj).toEqual(json);
     });
 
     it("Simple Security Requirements", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/simple-security.json');
+        let json: any = readJSON('tests/fixtures/full-io/2.0/simple/simple-security.json');
         let document: Oas20Document = docReader.read(json);
         let jsObj: any = OasVisitorUtil.model2js(document);
         expect(jsObj).toEqual(json);
     });
 
     it("Complete Security Definitions", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/complete-securityDefinitions.json');
+        let json: any = readJSON('tests/fixtures/full-io/2.0/complete/complete-securityDefinitions.json');
         let document: Oas20Document = docReader.read(json);
         let jsObj: any = OasVisitorUtil.model2js(document);
         expect(jsObj).toEqual(json);
@@ -86,85 +86,85 @@ describe("Full I/O (2.0) - Paths", () => {
         docReader = new Oas20JS2ModelReader();
     });
 
-    it("Paths 001 (GET)", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/paths-001-get.json');
+    it("Paths (GET)", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-get.json');
         let document: Oas20Document = docReader.read(json);
         let jsObj: any = OasVisitorUtil.model2js(document);
         expect(jsObj).toEqual(json);
     });
 
-    it("Paths 002 (GET + Params)", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/paths-002-get-with-params.json');
+    it("Paths (GET + Params)", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-get-with-params.json');
         let document: Oas20Document = docReader.read(json);
         let jsObj: any = OasVisitorUtil.model2js(document);
         expect(jsObj).toEqual(json);
     });
 
-    it("Paths 003 (Path + Params)", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/paths-003-path-with-params.json');
+    it("Paths (Path + Params)", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-path-with-params.json');
         let document: Oas20Document = docReader.read(json);
         let jsObj: any = OasVisitorUtil.model2js(document);
         expect(jsObj).toEqual(json);
     });
 
-    it("Paths 004 (All Ops)", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/paths-004-all-operations.json');
+    it("Paths (All Ops)", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-all-operations.json');
         let document: Oas20Document = docReader.read(json);
         let jsObj: any = OasVisitorUtil.model2js(document);
         expect(jsObj).toEqual(json);
     });
 
-    it("Paths 005 (Ref)", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/paths-005-ref.json');
+    it("Paths (Ref)", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-ref.json');
         let document: Oas20Document = docReader.read(json);
         let jsObj: any = OasVisitorUtil.model2js(document);
         expect(jsObj).toEqual(json);
     });
 
-    it("Paths 006 (External Docs)", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/paths-006-externalDocs.json');
+    it("Paths (External Docs)", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-externalDocs.json');
         let document: Oas20Document = docReader.read(json);
         let jsObj: any = OasVisitorUtil.model2js(document);
         expect(jsObj).toEqual(json);
     });
 
-    it("Paths 007 (Security)", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/paths-007-security.json');
+    it("Paths (Security)", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-security.json');
         let document: Oas20Document = docReader.read(json);
         let jsObj: any = OasVisitorUtil.model2js(document);
         expect(jsObj).toEqual(json);
     });
 
-    it("Paths 008 (Default Response)", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/paths-008-default-response.json');
+    it("Paths (Default Response)", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-default-response.json');
         let document: Oas20Document = docReader.read(json);
         let jsObj: any = OasVisitorUtil.model2js(document);
         expect(jsObj).toEqual(json);
     });
 
-    it("Paths 009 (Responses)", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/paths-009-responses.json');
+    it("Paths (Responses)", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-responses.json');
         let document: Oas20Document = docReader.read(json);
         let jsObj: any = OasVisitorUtil.model2js(document);
         expect(jsObj).toEqual(json);
     });
 
-    it("Paths 010 (Response w/ Headers)", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/paths-010-response-with-headers.json');
+    it("Paths (Response w/ Headers)", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-response-with-headers.json');
         let document: Oas20Document = docReader.read(json);
         let jsObj: any = OasVisitorUtil.model2js(document);
         expect(jsObj).toEqual(json);
     });
 
-    it("Paths 011 (Response w/ Examples)", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/paths-011-response-with-examples.json');
+    it("Paths (Response w/ Examples)", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-response-with-examples.json');
         let document: Oas20Document = docReader.read(json);
         let jsObj: any = OasVisitorUtil.model2js(document);
         expect(jsObj).toEqual(json);
     });
 
-    it("Paths 012 (Response w/ Schema)", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/paths-012-response-with-schema.json');
+    it("Paths (Response w/ Schema)", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-response-with-schema.json');
         let document: Oas20Document = docReader.read(json);
         let jsObj: any = OasVisitorUtil.model2js(document);
         expect(jsObj).toEqual(json);

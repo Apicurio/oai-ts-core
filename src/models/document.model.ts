@@ -1,4 +1,3 @@
-import {OasExtension} from "./extension.model";
 import {OasExtensibleNode} from "./enode.model";
 import {IOasNodeVisitor} from "../visitors/visitor.iface";
 
@@ -12,24 +11,6 @@ export abstract class OasDocument extends OasExtensibleNode {
      * Returns the version of the specification of this document.
      */
     public abstract getSpecVersion(): string;
-
-    /**
-     * Creates an extension node with this document as the ownerDocument.
-     * @param name (optional)
-     * @param value (optional)
-     * @return {OasExtension}
-     */
-    public createExtension(name?: string, value?: any) {
-        let rval: OasExtension = new OasExtension();
-        rval._ownerDocument = this;
-        if (name) {
-            rval.name = name;
-        }
-        if (value) {
-            rval.value = value;
-        }
-        return rval;
-    }
 
     /**
      * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.
