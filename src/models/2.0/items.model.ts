@@ -1,13 +1,14 @@
 
 import {IOasNodeVisitor, IOas20NodeVisitor} from "../../visitors/visitor.iface";
 import {OasExtensibleNode} from "../enode.model";
+import {JsonSchemaType} from "../json-schema";
 
 /**
  * Models an OAS 2.0 Items object.  Example:
  */
 export class Oas20Items extends OasExtensibleNode {
 
-    public type: Oas20ItemsType; // required
+    public type: JsonSchemaType; // required
     public format: string;
     public items: Oas20Items; // required if type is 'array'
     public collectionFormat: Oas20ItemsCollectionFormat;
@@ -44,11 +45,6 @@ export class Oas20Items extends OasExtensibleNode {
         rval._parent = this;
         return rval;
     }
-}
-
-
-export enum Oas20ItemsType {
-    string, number, integer, boolean, array, object
 }
 
 

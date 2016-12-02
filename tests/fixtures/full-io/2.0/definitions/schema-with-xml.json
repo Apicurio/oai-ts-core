@@ -1,0 +1,24 @@
+{
+  "swagger" : "2.0",
+  "definitions" : {
+    "Person": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32",
+          "xml": {
+            "attribute": true
+          }
+        },
+        "name": {
+          "type": "string",
+          "xml": {
+            "namespace": "http://swagger.io/schema/sample",
+            "prefix": "sample"
+          }
+        }
+      }
+    }
+  }
+}

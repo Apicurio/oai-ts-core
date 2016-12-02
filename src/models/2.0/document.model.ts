@@ -8,6 +8,8 @@ import {Oas20SecurityDefinitions} from "./security-definitions.model";
 import {Oas20PathItem} from "./path-item.model";
 import {Oas20Paths} from "./paths.model";
 import {Oas20Definitions} from "./definitions.model";
+import {Oas20ParametersDefinitions} from "./parameters-definitions.model";
+import {Oas20ResponsesDefinitions} from "./responses-definitions.model";
 
 /**
  * Models an OAS 2.0 document.
@@ -23,8 +25,8 @@ export class Oas20Document extends OasDocument {
     public produces: string[];
     public paths: Oas20Paths = new Oas20Paths();
     public definitions: Oas20Definitions;
-    // public parameters: Oas20ParametersDefinitions;
-    // public responses: Oas20ResponsesDefinitions;
+    public parameters: Oas20ParametersDefinitions;
+    public responses: Oas20ResponsesDefinitions;
     public securityDefinitions: Oas20SecurityDefinitions;
     public security: Oas20SecurityRequirement[];
     public tags: Oas20Tag[];
@@ -144,6 +146,28 @@ export class Oas20Document extends OasDocument {
      */
     public createPaths(): Oas20Paths {
         let rval: Oas20Paths = new Oas20Paths();
+        rval._ownerDocument = this.ownerDocument();
+        rval._parent = this;
+        return rval;
+    }
+
+    /**
+     * Creates an OAS 2.0 Responses Definitions object.
+     * @return {Oas20ResponsesDefinitions}
+     */
+    public createResponsesDefinitions(): Oas20ResponsesDefinitions {
+        let rval: Oas20ResponsesDefinitions = new Oas20ResponsesDefinitions();
+        rval._ownerDocument = this.ownerDocument();
+        rval._parent = this;
+        return rval;
+    }
+
+    /**
+     * Creates an OAS 2.0 Responses Definitions object.
+     * @return {Oas20ParametersDefinitions}
+     */
+    public createParametersDefinitions(): Oas20ParametersDefinitions {
+        let rval: Oas20ParametersDefinitions = new Oas20ParametersDefinitions();
         rval._ownerDocument = this.ownerDocument();
         rval._parent = this;
         return rval;

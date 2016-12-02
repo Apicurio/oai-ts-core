@@ -12,19 +12,22 @@ import {Oas20Scopes} from "../models/2.0/scopes.model";
 import {Oas20PathItem} from "../models/2.0/path-item.model";
 import {Oas20Paths} from "../models/2.0/paths.model";
 import {Oas20Operation} from "../models/2.0/operation.model";
-import {Oas20Parameter} from "../models/2.0/parameter.model";
+import {Oas20Parameter, Oas20ParameterDefinition, Oas20ParameterBase} from "../models/2.0/parameter.model";
 import {
     Oas20Schema, Oas20AdditionalPropertiesSchema, Oas20PropertySchema,
-    Oas20DefinitionSchema
+    Oas20DefinitionSchema, Oas20ItemsSchema
 } from "../models/2.0/schema.model";
-import {Oas20Items, Oas20ItemsType, Oas20ItemsCollectionFormat} from "../models/2.0/items.model";
+import {Oas20Items, Oas20ItemsCollectionFormat} from "../models/2.0/items.model";
 import {Oas20Responses} from "../models/2.0/responses.model";
-import {Oas20Response} from "../models/2.0/response.model";
+import {Oas20Response, Oas20ResponseDefinition, Oas20ResponseBase} from "../models/2.0/response.model";
 import {Oas20Headers} from "../models/2.0/headers.model";
 import {Oas20Example} from "../models/2.0/example.model";
 import {Oas20Header} from "../models/2.0/header.model";
 import {Oas20XML} from "../models/2.0/xml.model";
 import {Oas20Definitions} from "../models/2.0/definitions.model";
+import {Oas20ParametersDefinitions} from "../models/2.0/parameters-definitions.model";
+import {Oas20ResponsesDefinitions} from "../models/2.0/responses-definitions.model";
+import {JsonSchemaType} from "../models/json-schema";
 
 /**
  * This class reads a javascript object and turns it into a OAS 2.0 model.  It is obviously
@@ -46,19 +49,19 @@ export class Oas20JS2ModelReader {
     }
 
     /**
-     * Converts from String to an Oas20ItemsType.
+     * Converts from String to an JsonSchemaType.
      * @param type
-     * @return {Oas20ItemsType}
+     * @return {JsonSchemaType}
      */
-    private toOas20ItemsType(type: string): Oas20ItemsType {
+    private toJsonSchemaType(type: string): JsonSchemaType {
         if (type == null) {
             return null;
         }
-        return Oas20ItemsType[type];
+        return JsonSchemaType[type];
     }
 
     /**
-     * Converts from String to an Oas20ItemsType.
+     * Converts from String to an JsonSchemaType.
      * @param format
      * @return {Oas20ItemsCollectionFormat}
      */
@@ -90,8 +93,8 @@ export class Oas20JS2ModelReader {
         let produces: string[] = jsData["produces"];
         let paths: any = jsData["paths"];
         let definitions: any = jsData["definitions"];
-        // let parameters: any = jsData["parameters"];
-        // let responses: any = jsData["responses"];
+        let parameters: any = jsData["parameters"];
+        let responses: any = jsData["responses"];
         let securityDefinitions: any[] = jsData["securityDefinitions"];
         let security: any[] = jsData["security"];
         let tags: any = jsData["tags"];
@@ -112,6 +115,20 @@ export class Oas20JS2ModelReader {
             this.readDefinitions(definitions, definitionsModel);
             docModel.definitions = definitionsModel;
         }
+
+        if (this.isDefined(parameters)) {
+            let parametersDefinitionsModel: Oas20ParametersDefinitions = docModel.createParametersDefinitions();
+            this.readParametersDefinitions(parameters, parametersDefinitionsModel);
+            docModel.parameters = parametersDefinitionsModel;
+        }
+        if (this.isDefined(responses)) {
+            let responsesDefinitionsModel: Oas20ResponsesDefinitions = docModel.createResponsesDefinitions();
+            this.readResponsesDefinitions(responses, responsesDefinitionsModel);
+            docModel.responses = responsesDefinitionsModel;
+        }
+
+
+
         if (this.isDefined(paths)) {
             let pathsModel: Oas20Paths = docModel.createPaths();
             this.readPaths(paths, pathsModel);
@@ -157,7 +174,7 @@ export class Oas20JS2ModelReader {
      * @param jsData
      * @param model
      */
-    public readExtensions(jsData:any, model: OasExtensibleNode): void {
+    private readExtensions(jsData:any, model: OasExtensibleNode): void {
         for (let key in jsData) {
             if (key.startsWith("x-")) {
                 let val: any = jsData[key];
@@ -473,9 +490,20 @@ export class Oas20JS2ModelReader {
      * @param paramModel
      */
     public readParameter(parameter: string, paramModel: Oas20Parameter): void {
+        let $ref: string = parameter["$ref"];
+        if (this.isDefined($ref)) { paramModel.$ref = $ref; }
+
+        this.readParameterBase(parameter, paramModel);
+    }
+
+    /**
+     * Reads an OAS 2.0 Parameter object from the given JS data.
+     * @param parameter
+     * @param paramModel
+     */
+    private readParameterBase(parameter: string, paramModel: Oas20ParameterBase): void {
         this.readItems(parameter, paramModel);
 
-        let $ref: string = parameter["$ref"];
         let name: string = parameter["name"];
         let in_: string = parameter["in"];
         let description: string = parameter["description"];
@@ -483,7 +511,6 @@ export class Oas20JS2ModelReader {
         let schema: any = parameter["schema"];
         let allowEmptyValue: boolean = parameter["allowEmptyValue"];
 
-        if (this.isDefined($ref)) { paramModel.$ref = $ref; }
         if (this.isDefined(name)) { paramModel.name = name; }
         if (this.isDefined(in_)) { paramModel.in = in_; }
         if (this.isDefined(description)) { paramModel.description = description; }
@@ -503,14 +530,32 @@ export class Oas20JS2ModelReader {
      */
     public readSchema(schema: any, schemaModel: Oas20Schema) {
         let $ref: string = schema["$ref"];
+        let format: string = schema["format"];
         let title: string = schema["title"];
         let description: string = schema["description"];
+        let default_: any = schema["default"];
+        let multipleOf: number = schema["multipleOf"];
+        let maximum: number = schema["maximum"];
+        let exclusiveMaximum: boolean = schema["exclusiveMaximum"];
+        let minimum: number = schema["minimum"];
+        let exclusiveMinimum: boolean = schema["exclusiveMinimum"];
+        let maxLength: number = schema["maxLength"]; // Require: integer
+        let minLength: number = schema["minLength"]; // Require: integer
+        let pattern: string = schema["pattern"];
+        let maxItems: number = schema["maxItems"]; // Require: integer
+        let minItems: number = schema["minItems"]; // Require: integer
+        let uniqueItems: boolean = schema["uniqueItems"];
         let maxProperties: number = schema["maxProperties"];
         let minProperties: number = schema["minProperties"];
         let required: boolean = schema["required"];
+        let enum_: any[] = schema["enum"];
+        let type: string = schema["type"];
+
+        let items: Oas20Schema[] = schema["items"];
         let allOf: Oas20Schema[] = schema["allOf"];
         let properties: any = schema["properties"];
         let additionalProperties: boolean | Oas20Schema = schema["additionalProperties"];
+
         let discriminator: string = schema["discriminator"];
         let readOnly: boolean = schema["readOnly"];
         let xml: Oas20XML = schema["xml"];
@@ -518,11 +563,36 @@ export class Oas20JS2ModelReader {
         let example: any = schema["example"];
 
         if (this.isDefined($ref)) { schemaModel.$ref = $ref; }
+        if (this.isDefined(format)) { schemaModel.format = format; }
         if (this.isDefined(title)) { schemaModel.title = title; }
         if (this.isDefined(description)) { schemaModel.description = description; }
+        if (this.isDefined(default_)) { schemaModel.default = default_; }
+        if (this.isDefined(multipleOf)) { schemaModel.multipleOf = multipleOf; }
+        if (this.isDefined(maximum)) { schemaModel.maximum = maximum; }
+        if (this.isDefined(exclusiveMaximum)) { schemaModel.exclusiveMaximum = exclusiveMaximum; }
+        if (this.isDefined(minimum)) { schemaModel.minimum = minimum; }
+        if (this.isDefined(exclusiveMinimum)) { schemaModel.exclusiveMinimum = exclusiveMinimum; }
+        if (this.isDefined(maxLength)) { schemaModel.maxLength = maxLength; }
+        if (this.isDefined(minLength)) { schemaModel.minLength = minLength; }
+        if (this.isDefined(pattern)) { schemaModel.pattern = pattern; }
+        if (this.isDefined(maxItems)) { schemaModel.maxItems = maxItems; }
+        if (this.isDefined(minItems)) { schemaModel.minItems = minItems; }
+        if (this.isDefined(uniqueItems)) { schemaModel.uniqueItems = uniqueItems; }
         if (this.isDefined(maxProperties)) { schemaModel.maxProperties = maxProperties; }
         if (this.isDefined(minProperties)) { schemaModel.minProperties = minProperties; }
         if (this.isDefined(required)) { schemaModel.required = required; }
+        if (this.isDefined(enum_)) { schemaModel.enum = enum_; }
+        if (this.isDefined(type)) { schemaModel.type = this.toJsonSchemaType(type); }
+
+        if (this.isDefined(items)) {
+            if (Array.isArray(items)) {
+                // TODO read an array of items schemas here
+            } else {
+                let itemsSchemaModel: Oas20ItemsSchema = schemaModel.createItemsSchema();
+                this.readSchema(items, itemsSchemaModel);
+                schemaModel.items = itemsSchemaModel;
+            }
+        }
         if (this.isDefined(allOf)) {
             let schemaModels: Oas20Schema[] = [];
             for (let allOfSchema of allOf) {
@@ -541,14 +611,18 @@ export class Oas20JS2ModelReader {
             }
         }
         if (this.isDefined(additionalProperties)) {
+            console.info("Reading additional properties: %s", JSON.stringify(additionalProperties));
             if (typeof additionalProperties === "boolean") {
+                console.info("  -is boolean");
                 schemaModel.additionalProperties = <boolean>additionalProperties;
             } else {
+                console.info("  -is object (creating schema object)");
                 let additionalPropertiesModel: Oas20AdditionalPropertiesSchema = schemaModel.createAdditionalPropertiesSchema();
                 this.readSchema(additionalProperties, additionalPropertiesModel);
                 schemaModel.additionalProperties = additionalPropertiesModel;
             }
         }
+
         if (this.isDefined(discriminator)) { schemaModel.discriminator = discriminator; }
         if (this.isDefined(readOnly)) { schemaModel.readOnly = readOnly; }
         if (this.isDefined(xml)) {
@@ -563,7 +637,7 @@ export class Oas20JS2ModelReader {
         }
         if (this.isDefined(example)) { schemaModel.example = example; }
 
-        this.readItems(schema, schemaModel);
+        this.readExtensions(items, schemaModel);
     }
 
     /**
@@ -590,7 +664,7 @@ export class Oas20JS2ModelReader {
         let enum_: any[] = items["enum"];
         let multipleOf: number = items["multipleOf"];
 
-        if (this.isDefined(type)) { itemsModel.type = this.toOas20ItemsType(type); }
+        if (this.isDefined(type)) { itemsModel.type = this.toJsonSchemaType(type); }
         if (this.isDefined(format)) { itemsModel.format = format; }
         if (this.isDefined(itemsChild)) {
             let itemsChildModel: Oas20Items = itemsModel.createItems();
@@ -646,12 +720,22 @@ export class Oas20JS2ModelReader {
      */
     public readResponse(response: any, responseModel: Oas20Response) {
         let $ref: string = response["$ref"];
+        if (this.isDefined($ref)) { responseModel.$ref = $ref; }
+
+        this.readResponseBase(response, responseModel);
+    }
+
+    /**
+     * Reads an OAS 2.0 Response object from the given JS data.
+     * @param response
+     * @param responseModel
+     */
+    private readResponseBase(response: any, responseModel: Oas20ResponseBase) {
         let description: string = response["description"];
         let schema: any = response["schema"];
         let headers: any = response["headers"];
         let examples: any = response["examples"];
 
-        if (this.isDefined($ref)) { responseModel.$ref = $ref; }
         if (this.isDefined(description)) { responseModel.description = description; }
         if (this.isDefined(schema)) {
             let schemaModel: Oas20Schema = responseModel.createSchema();
@@ -741,6 +825,34 @@ export class Oas20JS2ModelReader {
             let definitionSchemaModel: Oas20DefinitionSchema = definitionsModel.createDefinitionSchema(definitionName);
             this.readSchema(definition, definitionSchemaModel);
             definitionsModel.addDefinition(definitionName, definitionSchemaModel);
+        }
+    }
+
+    /**
+     * Reads an OAS 2.0 Parameters Definitions object from the given JS data.
+     * @param parameters
+     * @param parametersDefinitionsModel
+     */
+    public readParametersDefinitions(parameters: any, parametersDefinitionsModel: Oas20ParametersDefinitions) {
+        for (let parameterName in parameters) {
+            let parameter: any = parameters[parameterName];
+            let parameterModel: Oas20ParameterDefinition = parametersDefinitionsModel.createParameter(parameterName);
+            this.readParameterBase(parameter, parameterModel);
+            parametersDefinitionsModel.addParameter(parameterName, parameterModel);
+        }
+    }
+
+    /**
+     * Reads an OAS 2.0 Responses Definitions object from the given JS data.
+     * @param responses
+     * @param responsesDefinitionsModel
+     */
+    public readResponsesDefinitions(responses: any, responsesDefinitionsModel: Oas20ResponsesDefinitions) {
+        for (let responseName in responses) {
+            let response: any = responses[responseName];
+            let responseModel: Oas20ResponseDefinition = responsesDefinitionsModel.createResponse(responseName);
+            this.readResponseBase(response, responseModel);
+            responsesDefinitionsModel.addResponse(responseName, responseModel);
         }
     }
 }

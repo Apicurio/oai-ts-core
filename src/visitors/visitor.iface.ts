@@ -7,14 +7,14 @@ import {Oas20License} from "../models/2.0/license.model";
 import {Oas20Paths} from "../models/2.0/paths.model";
 import {Oas20PathItem} from "../models/2.0/path-item.model";
 import {Oas20Operation} from "../models/2.0/operation.model";
-import {Oas20Parameter} from "../models/2.0/parameter.model";
+import {Oas20Parameter, Oas20ParameterDefinition} from "../models/2.0/parameter.model";
 import {Oas20ExternalDocumentation} from "../models/2.0/external-documentation.model";
 import {Oas20SecurityRequirement} from "../models/2.0/security-requirement.model";
 import {Oas20Responses} from "../models/2.0/responses.model";
-import {Oas20Response} from "../models/2.0/response.model";
+import {Oas20Response, Oas20ResponseDefinition} from "../models/2.0/response.model";
 import {
     Oas20Schema, Oas20PropertySchema, Oas20AdditionalPropertiesSchema,
-    Oas20AllOfSchema, Oas20DefinitionSchema
+    Oas20AllOfSchema, Oas20DefinitionSchema, Oas20ItemsSchema
 } from "../models/2.0/schema.model";
 import {Oas20Headers} from "../models/2.0/headers.model";
 import {Oas20Header} from "../models/2.0/header.model";
@@ -26,6 +26,8 @@ import {Oas20SecurityScheme} from "../models/2.0/security-scheme.model";
 import {Oas20Scopes} from "../models/2.0/scopes.model";
 import {Oas20XML} from "../models/2.0/xml.model";
 import {Oas20Definitions} from "../models/2.0/definitions.model";
+import {Oas20ParametersDefinitions} from "../models/2.0/parameters-definitions.model";
+import {Oas20ResponsesDefinitions} from "../models/2.0/responses-definitions.model";
 
 /**
  * Classes that wish to visit a OAS node or tree must implement this interface.  The
@@ -60,6 +62,8 @@ export interface IOas20NodeVisitor extends IOasNodeVisitor {
 
     visitParameter(node: Oas20Parameter): void;
 
+    visitParameterDefinition(node: Oas20ParameterDefinition): void;
+
     visitExternalDocumentation(node: Oas20ExternalDocumentation): void;
 
     visitSecurityRequirement(node: Oas20SecurityRequirement): void;
@@ -67,6 +71,8 @@ export interface IOas20NodeVisitor extends IOasNodeVisitor {
     visitResponses(node: Oas20Responses): void;
 
     visitResponse(node: Oas20Response): void;
+
+    visitResponseDefinition(node: Oas20ResponseDefinition): void;
 
     visitSchema(node: Oas20Schema): void;
 
@@ -96,6 +102,12 @@ export interface IOas20NodeVisitor extends IOasNodeVisitor {
 
     visitAllOfSchema(node: Oas20AllOfSchema): void;
 
+    visitItemsSchema(node: Oas20ItemsSchema): void;
+
     visitDefinitions(node: Oas20Definitions): void;
+
+    visitParametersDefinitions(node: Oas20ParametersDefinitions): void;
+
+    visitResponsesDefinitions(node: Oas20ResponsesDefinitions): void;
 
 }

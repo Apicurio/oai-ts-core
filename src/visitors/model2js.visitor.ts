@@ -7,19 +7,19 @@ import {OasExtension} from "../models/extension.model";
 import {Oas20Paths} from "../models/2.0/paths.model";
 import {Oas20PathItem} from "../models/2.0/path-item.model";
 import {Oas20Operation} from "../models/2.0/operation.model";
-import {Oas20Parameter} from "../models/2.0/parameter.model";
+import {Oas20Parameter, Oas20ParameterDefinition, Oas20ParameterBase} from "../models/2.0/parameter.model";
 import {Oas20ExternalDocumentation} from "../models/2.0/external-documentation.model";
 import {Oas20SecurityRequirement} from "../models/2.0/security-requirement.model";
 import {Oas20Responses} from "../models/2.0/responses.model";
-import {Oas20Response} from "../models/2.0/response.model";
+import {Oas20Response, Oas20ResponseDefinition, Oas20ResponseBase} from "../models/2.0/response.model";
 import {
     Oas20Schema, Oas20PropertySchema, Oas20AdditionalPropertiesSchema,
-    Oas20AllOfSchema, Oas20DefinitionSchema
+    Oas20AllOfSchema, Oas20DefinitionSchema, Oas20ItemsSchema
 } from "../models/2.0/schema.model";
 import {Oas20Headers} from "../models/2.0/headers.model";
 import {Oas20Header} from "../models/2.0/header.model";
 import {Oas20Example} from "../models/2.0/example.model";
-import {Oas20Items, Oas20ItemsType, Oas20ItemsCollectionFormat} from "../models/2.0/items.model";
+import {Oas20Items, Oas20ItemsCollectionFormat} from "../models/2.0/items.model";
 import {Oas20Tag} from "../models/2.0/tag.model";
 import {OasNode} from "../models/node.model";
 import {Oas20SecurityDefinitions} from "../models/2.0/security-definitions.model";
@@ -27,6 +27,9 @@ import {Oas20SecurityScheme} from "../models/2.0/security-scheme.model";
 import {Oas20Scopes} from "../models/2.0/scopes.model";
 import {Oas20XML} from "../models/2.0/xml.model";
 import {Oas20Definitions} from "../models/2.0/definitions.model";
+import {Oas20ParametersDefinitions} from "../models/2.0/parameters-definitions.model";
+import {Oas20ResponsesDefinitions} from "../models/2.0/responses-definitions.model";
+import {JsonSchemaType} from "../models/json-schema";
 
 /**
  * Visitor used to convert from a Model into a JavaScript object that conforms
@@ -203,17 +206,12 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
     }
 
     /**
-     * Visits a node.
+     * Creates a JS object for a Parameter base object.
      * @param node
      */
-    public visitParameter(node: Oas20Parameter): void {
-        let parentJS: any = this.lookup(node.parent().modelId());
-        if (parentJS.parameters == null) {
-            parentJS.parameters = [];
-        }
+    private createParameterObject(node: Oas20ParameterBase): any {
         let items: any = this.createItemsObject(node);
         let parameter: any = {
-            "$ref" : node.$ref,
             "name" : node.name,
             "in" : node.in,
             "description" : node.description,
@@ -222,7 +220,35 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
             "allowEmptyValue" : node.allowEmptyValue
         };
         parameter = Object.assign({}, parameter, items);
+        return parameter;
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitParameter(node: Oas20Parameter): void {
+        let parentJS: any = this.lookup(node.parent().modelId());
+        if (parentJS.parameters == null) {
+            parentJS.parameters = [];
+        }
+        let parameter: any = this.createParameterObject(node);
+        let paramRef: any = {
+            "$ref" : node.$ref
+        };
+        parameter = Object.assign({}, paramRef, parameter);
         parentJS.parameters.push(parameter);
+        this.updateIndex(node, parameter);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitParameterDefinition(node: Oas20ParameterDefinition): void {
+        let parentJS: any = this.lookup(node.parent().modelId());
+        let parameter: any = this.createParameterObject(node);
+        parentJS[node.parameterName()] = parameter;
         this.updateIndex(node, parameter);
     }
 
@@ -272,23 +298,45 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
     }
 
     /**
-     * Visits a node.
+     * Creates a JS object for a response base instance.
      * @param node
      */
-    public visitResponse(node: Oas20Response): void {
-        let parentJS: any = this.lookup(node.parent().modelId());
-        let response: any = {
-            $ref: node.$ref,
+    private createResponseObject(node: Oas20ResponseBase): any {
+        return {
             description: node.description,
             schema: null,
             headers: null,
             examples: null
         };
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitResponse(node: Oas20Response): void {
+        let parentJS: any = this.lookup(node.parent().modelId());
+        let response: any = this.createResponseObject(node);
+        let responseRef: any = {
+            $ref: node.$ref
+        };
+        response = Object.assign({}, responseRef, response);
         if (node.statusCode() === null || node.statusCode() === "default") {
             parentJS.default = response;
         } else {
             parentJS[node.statusCode()] = response;
         }
+        this.updateIndex(node, response);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    visitResponseDefinition(node: Oas20ResponseDefinition): void {
+        let parentJS: any = this.lookup(node.parent().modelId());
+        let response: any = this.createResponseObject(node);
+        parentJS[node.name()] = response;
         this.updateIndex(node, response);
     }
 
@@ -322,9 +370,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     visitDefinitionSchema(node: Oas20DefinitionSchema): void {
-        console.info("model2js def schema: %s", node.definitionName());
         let parentJS: any = this.lookup(node.parent().modelId());
-        console.info("model2js def schema parent: %s", JSON.stringify(parentJS));
         let schema: any = this.createSchemaObject(node);
         parentJS[node.definitionName()] = schema;
         this.updateIndex(node, schema);
@@ -355,6 +401,24 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
         this.updateIndex(node, schema);
     }
 
+    /**
+     * Visits a node.
+     * @param node
+     */
+    visitItemsSchema(node: Oas20ItemsSchema): void {
+        let parentJS: any = this.lookup(node.parent().modelId());
+        let schema: any = this.createSchemaObject(node);
+        if (!this.isDefined(parentJS.items)) {
+            parentJS.items = schema;
+        } else if (Array.isArray(parentJS.items)) {
+            parentJS.items.push(schema);
+        } else {
+            parentJS.items = [
+                parentJS.items, schema
+            ];
+        }
+        this.updateIndex(node, schema);
+    }
 
     /**
      * Visits a node.
@@ -497,12 +561,39 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      */
     visitDefinitions(node: Oas20Definitions): void {
         let defNames: string[] = node.definitionNames();
-        console.info("model2js visitDefinitions: " + JSON.stringify(defNames));
         if (defNames && defNames.length > 0) {
             let parent: any = this.lookup(node.parent().modelId());
             let definitions: any = {};
             parent.definitions = definitions;
             this.updateIndex(node, definitions);
+        }
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    visitParametersDefinitions(node: Oas20ParametersDefinitions): void {
+        let paramNames: string[] = node.parameterNames();
+        if (paramNames && paramNames.length > 0) {
+            let parent: any = this.lookup(node.parent().modelId());
+            let parameters: any = {};
+            parent.parameters = parameters;
+            this.updateIndex(node, parameters);
+        }
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    visitResponsesDefinitions(node: Oas20ResponsesDefinitions): void {
+        let responseNames: string[] = node.responseNames();
+        if (responseNames && responseNames.length > 0) {
+            let parent: any = this.lookup(node.parent().modelId());
+            let responses: any = {};
+            parent.responses = responses;
+            this.updateIndex(node, responses);
         }
     }
 
@@ -532,7 +623,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      */
     private createItemsObject(node: Oas20Items) {
         return {
-            type: this.fromOas20ItemsType(node.type),
+            type: this.fromJsonSchemaType(node.type),
             format: node.format,
             items: null,
             collectionFormat: this.fromOas20ItemsCollectionFormat(node.collectionFormat),
@@ -553,15 +644,15 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
     }
 
     /**
-     * Converts from an Oas20ItemsType to a string.
+     * Converts from an JsonSchemaType to a string.
      * @param type
      * @return {string}
      */
-    private fromOas20ItemsType(type: Oas20ItemsType): string {
+    private fromJsonSchemaType(type: JsonSchemaType): string {
         if (type == null) {
             return null;
         }
-        return Oas20ItemsType[type];
+        return JsonSchemaType[type];
     }
 
     /**
@@ -582,25 +673,44 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @return {any}
      */
     private createSchemaObject(node: Oas20Schema) {
-        let parentJS: any = this.lookup(node.parent().modelId());
-        let schemaOnly: any = {
+        let schema: any = {
             $ref: node.$ref,
+            format: node.format,
             title: node.title,
             description: node.description,
+            default: node.default,
+
+            multipleOf: node.multipleOf,
+            maximum: node.maximum,
+            exclusiveMaximum: node.exclusiveMaximum,
+            minimum: node.minimum,
+            exclusiveMinimum: node.exclusiveMinimum,
+            maxLength: node.maxLength,
+            minLength: node.minLength,
+            pattern: node.pattern,
+            maxItems: node.maxItems,
+            minItems: node.minItems,
+            uniqueItems: node.uniqueItems,
             maxProperties: node.maxProperties,
             minProperties: node.minProperties,
             required: node.required,
+            enum: node.enum,
+            type: this.fromJsonSchemaType(node.type),
+
+            items: null,
             allOf: null,
             properties: null,
             additionalProperties: null,
+
             discriminator: node.discriminator,
             readOnly: node.readOnly,
             xml: null,
             externalDocs: null,
             example: node.example
         };
-        let items: any = this.createItemsObject(node);
-        let schema: any = Object.assign({}, schemaOnly, items);
+        if (typeof node.additionalProperties === "boolean") {
+            schema.additionalProperties = node.additionalProperties;
+        }
         return schema;
     }
 

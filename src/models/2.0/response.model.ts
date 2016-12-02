@@ -7,6 +7,7 @@ import {Oas20Headers} from "./headers.model";
 import {Oas20Example} from "./example.model";
 import {IOasReferenceNode} from "../reference.model";
 
+
 /**
  * Models an OAS 2.0 Response object.  Example:
  *
@@ -20,44 +21,12 @@ import {IOasReferenceNode} from "../reference.model";
  *   }
  * }
  */
-export class Oas20Response extends OasExtensibleNode implements IOasReferenceNode {
+export abstract class Oas20ResponseBase extends OasExtensibleNode {
 
-    private _statusCode: string; // null if 'default'
-    public $ref: string;
     public description: string;
     public schema: Oas20Schema;
     public headers: Oas20Headers;
     public examples: Oas20Example;
-
-    /**
-     * Constructor.
-     * @param statusCode
-     */
-    constructor(statusCode: string) {
-        super();
-        if (statusCode) {
-            this._statusCode = statusCode;
-        } else {
-            this._statusCode = null;
-        }
-    }
-
-    /**
-     * Gets the status code.
-     * @return {string}
-     */
-    public statusCode(): string {
-        return this._statusCode;
-    }
-
-    /**
-     * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.
-     * @param visitor
-     */
-    public accept(visitor: IOasNodeVisitor): void {
-        let viz: IOas20NodeVisitor = <IOas20NodeVisitor> visitor;
-        viz.visitResponse(this);
-    }
 
     /**
      * Creates an OAS 2.0 schema object.
@@ -90,6 +59,89 @@ export class Oas20Response extends OasExtensibleNode implements IOasReferenceNod
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;
+    }
+
+}
+
+/**
+ * Extends the base Response class in order to also support references and to
+ * track the status code the response is mapped to.  This class is used when a
+ * response appears as part of a path/operation.
+ */
+export class Oas20Response extends Oas20ResponseBase implements IOasReferenceNode {
+
+    private _statusCode: string; // null if 'default'
+    public $ref: string;
+
+    /**
+     * Constructor.
+     * @param statusCode
+     */
+    constructor(statusCode: string) {
+        super();
+        if (statusCode) {
+            this._statusCode = statusCode;
+        } else {
+            this._statusCode = null;
+        }
+    }
+
+    /**
+     * Gets the status code.
+     * @return {string}
+     */
+    public statusCode(): string {
+        return this._statusCode;
+    }
+
+    /**
+     * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.
+     * @param visitor
+     */
+    public accept(visitor: IOasNodeVisitor): void {
+        let viz: IOas20NodeVisitor = <IOas20NodeVisitor> visitor;
+        viz.visitResponse(this);
+    }
+
+}
+
+
+/**
+ * Extends the base Response class in order to track the name of the response.  This class
+ * is used when the response is a globally defined, named response.
+ */
+export class Oas20ResponseDefinition extends Oas20ResponseBase {
+
+    private _name: string;
+
+    /**
+     * Constructor.
+     * @param name
+     */
+    constructor(name: string) {
+        super();
+        if (name) {
+            this._name = name;
+        } else {
+            this._name = null;
+        }
+    }
+
+    /**
+     * Gets the response name.
+     * @return {string}
+     */
+    public name(): string {
+        return this._name;
+    }
+
+    /**
+     * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.
+     * @param visitor
+     */
+    public accept(visitor: IOasNodeVisitor): void {
+        let viz: IOas20NodeVisitor = <IOas20NodeVisitor> visitor;
+        viz.visitResponseDefinition(this);
     }
 
 }

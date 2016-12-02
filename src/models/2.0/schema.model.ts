@@ -2,6 +2,9 @@ import {IOasNodeVisitor, IOas20NodeVisitor} from "../../visitors/visitor.iface";
 import {Oas20ExternalDocumentation} from "./external-documentation.model";
 import {Oas20Items} from "./items.model";
 import {Oas20XML} from "./xml.model";
+import {OasExtensibleNode} from "../enode.model";
+import {JsonSchemaType} from "../json-schema";
+
 
 /**
  * Models an OAS 2.0 Schema object.  Example:
@@ -25,17 +28,35 @@ import {Oas20XML} from "./xml.model";
  *     }
  *   }
  */
-export class Oas20Schema extends Oas20Items {
+export class Oas20Schema extends OasExtensibleNode {
 
     public $ref: string;
+    public format: string;
     public title: string;
     public description: string;
+    public default: any;
+    public multipleOf: number;
+    public maximum: number;
+    public exclusiveMaximum: boolean;
+    public minimum: number;
+    public exclusiveMinimum: boolean;
+    public maxLength: number;
+    public minLength: number;
+    public pattern: string;
+    public maxItems: number;
+    public minItems: number;
+    public uniqueItems: boolean;
     public maxProperties: number;
     public minProperties: number;
     public required: boolean;
+    public enum: any[];
+    public type: JsonSchemaType;
+
+    public items: (Oas20ItemsSchema | Oas20ItemsSchema[]);
     public allOf: Oas20AllOfSchema[];
     public properties: Oas20SchemaProperties;
     public additionalProperties: (boolean | Oas20AdditionalPropertiesSchema);
+
     public discriminator: string;
     public readOnly: boolean;
     public xml: Oas20XML;
@@ -79,6 +100,17 @@ export class Oas20Schema extends Oas20Items {
      */
     public createAllOfSchema(): Oas20AllOfSchema {
         let rval: Oas20AllOfSchema = new Oas20AllOfSchema();
+        rval._ownerDocument = this._ownerDocument;
+        rval._parent = this;
+        return rval;
+    }
+
+    /**
+     * Creates a child schema model.
+     * @return {Oas20Schema}
+     */
+    public createItemsSchema(): Oas20AllOfSchema {
+        let rval: Oas20ItemsSchema = new Oas20ItemsSchema();
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;
@@ -226,6 +258,36 @@ export class Oas20AllOfSchema extends Oas20Schema {
     public accept(visitor: IOasNodeVisitor): void {
         let viz: IOas20NodeVisitor = <IOas20NodeVisitor> visitor;
         viz.visitAllOfSchema(this);
+    }
+
+}
+
+
+/**
+ * Subclass of Schema to indicate that this is actually an "items" schema (a schema
+ * that is assigned to the 'items' property).
+ *
+ * http://json-schema.org/latest/json-schema-validation.html#rfc.section.5.9
+ * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#schemaObject
+ *
+ * Example:
+ *
+ * {
+ *   "items": [
+ *     { "type": "string" },
+ *     { "maxLength": 5 }
+ *   ]
+ * }
+ */
+export class Oas20ItemsSchema extends Oas20Schema {
+
+    /**
+     * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.
+     * @param visitor
+     */
+    public accept(visitor: IOasNodeVisitor): void {
+        let viz: IOas20NodeVisitor = <IOas20NodeVisitor> visitor;
+        viz.visitItemsSchema(this);
     }
 
 }
