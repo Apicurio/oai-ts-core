@@ -611,12 +611,9 @@ export class Oas20JS2ModelReader {
             }
         }
         if (this.isDefined(additionalProperties)) {
-            console.info("Reading additional properties: %s", JSON.stringify(additionalProperties));
             if (typeof additionalProperties === "boolean") {
-                console.info("  -is boolean");
                 schemaModel.additionalProperties = <boolean>additionalProperties;
             } else {
-                console.info("  -is object (creating schema object)");
                 let additionalPropertiesModel: Oas20AdditionalPropertiesSchema = schemaModel.createAdditionalPropertiesSchema();
                 this.readSchema(additionalProperties, additionalPropertiesModel);
                 schemaModel.additionalProperties = additionalPropertiesModel;

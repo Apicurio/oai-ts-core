@@ -37,6 +37,24 @@ describe("Empty Document Test (2.0)", () => {
         });
     });
 
+    it("Document with external docs", () => {
+        document.host = "example.org";
+        document.basePath = "/api";
+        document.setExternalDocumentation("more info about the API", "http://example.org/docs/#api");
+
+        let jsObj: any = OasVisitorUtil.model2js(document);
+        expect(jsObj).toEqual({
+            swagger: "2.0",
+            host: "example.org",
+            basePath: "/api",
+            externalDocs: {
+                description: "more info about the API",
+                url: "http://example.org/docs/#api"
+            }
+
+        });
+    });
+
     it("Document with simple info", () => {
         document.info = document.createInfo();
         document.info.title = "Document Title";
@@ -88,6 +106,36 @@ describe("Empty Document Test (2.0)", () => {
                 },
                 version: "1.0"
             }
+        });
+    });
+
+    it("Document with tags", () => {
+        document.info = document.createInfo();
+        document.info.title = "Document Title",
+        document.addTag("foo", "this is the foo tag");
+        document.addTag("bar", "this is the bar tag");
+        document.tags[0].setExternalDocumentation("More info about foo", "http://example.org/docs/#foo");
+
+        let jsObj: any = OasVisitorUtil.model2js(document);
+        expect(jsObj).toEqual({
+            swagger: "2.0",
+            info: {
+                title: "Document Title"
+            },
+            tags: [
+                {
+                    name: "foo",
+                    description: "this is the foo tag",
+                    externalDocs: {
+                        description: "More info about foo",
+                        url: "http://example.org/docs/#foo"
+                    }
+                },
+                {
+                    name: "bar",
+                    description: "this is the bar tag"
+                }
+            ]
         });
     });
 

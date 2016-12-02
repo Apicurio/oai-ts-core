@@ -39,7 +39,22 @@ import {JsonSchemaType} from "../models/json-schema";
 export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
 
     private result: any;
-    private _modelIdToJS: any = <any>{};
+    private _modelIdToJS: any;
+
+    /**
+     * Constructor.
+     */
+    constructor() {
+        this.reset();
+    }
+
+    /**
+     * Resets the visitor for a new run.
+     */
+    public reset(): void {
+        this.result = null;
+        this._modelIdToJS = <any>{};
+    }
 
     /**
      * Returns the result that was built up during the visit of the model.
@@ -89,7 +104,6 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
             externalDocs: null
         };
         this.updateIndex(node, root);
-        this.result = root;
     }
 
     /**
@@ -460,6 +474,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
             examples[ct] = example;
         }
         parentJS.examples = examples;
+        this.updateIndex(node, examples);
     }
 
     /**
@@ -553,6 +568,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
             wrapped: node.wrapped
         };
         parent.xml = xml;
+        this.updateIndex(node, xml);
     }
 
     /**
@@ -605,6 +621,10 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      */
     private updateIndex(node: OasNode, jsObject: any) {
         this._modelIdToJS[node.modelId()] = jsObject;
+        // Note: the first JS object created by the visitor is the result (we always traverse top-down).
+        if (this.result == null) {
+            this.result = jsObject;
+        }
     }
 
     /**

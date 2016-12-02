@@ -75,6 +75,13 @@ describe("Full I/O (2.0) - Basics", () => {
         expect(jsObj).toEqual(json);
     });
 
+    it("Complete Tags", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/complete/complete-tags.json');
+        let document: Oas20Document = docReader.read(json);
+        let jsObj: any = OasVisitorUtil.model2js(document);
+        expect(jsObj).toEqual(json);
+    });
+
 });
 
 
@@ -95,6 +102,13 @@ describe("Paths I/O (2.0)", () => {
 
     it("Paths (GET + Params)", () => {
         let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-get-with-params.json');
+        let document: Oas20Document = docReader.read(json);
+        let jsObj: any = OasVisitorUtil.model2js(document);
+        expect(jsObj).toEqual(json);
+    });
+
+    it("Paths (GET + Tags)", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-get-with-tags.json');
         let document: Oas20Document = docReader.read(json);
         let jsObj: any = OasVisitorUtil.model2js(document);
         expect(jsObj).toEqual(json);
@@ -170,6 +184,13 @@ describe("Paths I/O (2.0)", () => {
         expect(jsObj).toEqual(json);
     });
 
+    it("Paths (With Extensions)", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-with-extensions.json');
+        let document: Oas20Document = docReader.read(json);
+        let jsObj: any = OasVisitorUtil.model2js(document);
+        expect(jsObj).toEqual(json);
+    });
+
 });
 
 
@@ -197,6 +218,13 @@ describe("Definitions I/O (2.0)", () => {
 
     it("Schema With XML", () => {
         let json: any = readJSON('tests/fixtures/full-io/2.0/definitions/schema-with-xml.json');
+        let document: Oas20Document = docReader.read(json);
+        let jsObj: any = OasVisitorUtil.model2js(document);
+        expect(jsObj).toEqual(json);
+    });
+
+    it("Schema With Meta Data", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/definitions/schema-with-metaData.json');
         let document: Oas20Document = docReader.read(json);
         let jsObj: any = OasVisitorUtil.model2js(document);
         expect(jsObj).toEqual(json);

@@ -369,6 +369,7 @@ export class Oas20Traverser implements IOas20NodeVisitor {
      */
     visitTag(node: Oas20Tag): void {
         node.accept(this.visitor);
+        this.traverseIfNotNull(node.externalDocs);
         this.traverseExtensions(node);
     }
 

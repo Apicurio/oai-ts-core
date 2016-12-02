@@ -35,7 +35,8 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/User"
-            }
+            },
+            "allowEmptyValue": false
           },
           {
             "name": "id",
