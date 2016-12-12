@@ -251,6 +251,32 @@ describe("Definitions I/O (2.0)", () => {
         expect(jsObj).toEqual(json);
     });
 
+
+
+
+    it("Schema With Example", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/definitions/schema-with-example.json');
+        let document: Oas20Document = docReader.read(json);
+        let jsObj: any = OasVisitorUtil.model2js(document);
+        expect(jsObj).toEqual(json);
+    });
+
+    it("Schema With Composition", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/definitions/schema-with-composition.json');
+        let document: Oas20Document = docReader.read(json);
+        let jsObj: any = OasVisitorUtil.model2js(document);
+        expect(jsObj).toEqual(json);
+    });
+
+    it("Schema With Polymorphism", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/definitions/schema-with-polymorphism.json');
+        let document: Oas20Document = docReader.read(json);
+        let jsObj: any = OasVisitorUtil.model2js(document);
+        expect(jsObj).toEqual(json);
+    });
+
+
+
 });
 
 
