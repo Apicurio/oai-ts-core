@@ -191,6 +191,20 @@ describe("Paths I/O (2.0)", () => {
         expect(jsObj).toEqual(json);
     });
 
+    it("Paths :: Responses w/ Extensions", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-responses-with-extensions.json');
+        let document: Oas20Document = docReader.read(json);
+        let jsObj: any = OasVisitorUtil.model2js(document);
+        expect(jsObj).toEqual(json);
+    });
+
+    it("Paths :: Response w/ $ref", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-response-with-ref.json');
+        let document: Oas20Document = docReader.read(json);
+        let jsObj: any = OasVisitorUtil.model2js(document);
+        expect(jsObj).toEqual(json);
+    });
+
 });
 
 
@@ -251,9 +265,6 @@ describe("Definitions I/O (2.0)", () => {
         expect(jsObj).toEqual(json);
     });
 
-
-
-
     it("Schema With Example", () => {
         let json: any = readJSON('tests/fixtures/full-io/2.0/definitions/schema-with-example.json');
         let document: Oas20Document = docReader.read(json);
@@ -275,7 +286,26 @@ describe("Definitions I/O (2.0)", () => {
         expect(jsObj).toEqual(json);
     });
 
+    it("JSON Schema :: Basic", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/definitions/json-schema-basic.json');
+        let document: Oas20Document = docReader.read(json);
+        let jsObj: any = OasVisitorUtil.model2js(document);
+        expect(jsObj).toEqual(json);
+    });
 
+    it("JSON Schema :: Products", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/definitions/json-schema-products.json');
+        let document: Oas20Document = docReader.read(json);
+        let jsObj: any = OasVisitorUtil.model2js(document);
+        expect(jsObj).toEqual(json);
+    });
+
+    it("JSON Schema :: fstab", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/definitions/json-schema-fstab.json' );
+        let document: Oas20Document = docReader.read(json);
+        let jsObj: any = OasVisitorUtil.model2js(document);
+        expect(jsObj).toEqual(json);
+    });
 
 });
 
@@ -290,6 +320,13 @@ describe("Parameters I/O (2.0)", () => {
 
     it("Spec Example 1", () => {
         let json: any = readJSON('tests/fixtures/full-io/2.0/parameters/spec-example-1.json');
+        let document: Oas20Document = docReader.read(json);
+        let jsObj: any = OasVisitorUtil.model2js(document);
+        expect(jsObj).toEqual(json);
+    });
+
+    it("Array Parameters (items)", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/parameters/array-param.json');
         let document: Oas20Document = docReader.read(json);
         let jsObj: any = OasVisitorUtil.model2js(document);
         expect(jsObj).toEqual(json);

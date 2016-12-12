@@ -14,8 +14,10 @@
         "name": {
           "type": "string",
           "xml": {
+            "name": "xname",
             "namespace": "http://swagger.io/schema/sample",
-            "prefix": "sample"
+            "prefix": "sample",
+            "wrapped": false
           }
         }
       }
