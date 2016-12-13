@@ -155,11 +155,12 @@ export class Oas20Schema extends OasExtensibleNode {
      * @param propertyName
      * @param schema
      */
-    public addProperty(propertyName: string, schema: Oas20PropertySchema): void {
+    public addProperty(propertyName: string, schema: Oas20PropertySchema): Oas20PropertySchema {
         if (this.properties == null) {
             this.properties = new Oas20SchemaProperties();
         }
         this.properties[propertyName] = schema;
+        return schema;
     }
 
     /**

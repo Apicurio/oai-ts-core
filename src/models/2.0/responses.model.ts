@@ -49,11 +49,12 @@ export class Oas20Responses extends OasExtensibleNode {
      * @param name
      * @param response
      */
-    public addResponse(statusCode: string, response: Oas20Response): void {
+    public addResponse(statusCode: string, response: Oas20Response): Oas20Response {
         if (this._responses == null) {
             this._responses = new Oas20ResponseItems();
         }
         this._responses[statusCode] = response;
+        return response;
     }
 
     /**

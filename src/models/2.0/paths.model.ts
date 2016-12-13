@@ -56,8 +56,9 @@ export class Oas20Paths extends OasExtensibleNode {
      * @param name
      * @param pathItem
      */
-    public addPathItem(name: string, pathItem: Oas20PathItem) {
+    public addPathItem(name: string, pathItem: Oas20PathItem): Oas20PathItem {
         this._pathItems[name] = pathItem;
+        return pathItem;
     }
 
     /**

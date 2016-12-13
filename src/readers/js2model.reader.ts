@@ -15,7 +15,7 @@ import {Oas20Operation} from "../models/2.0/operation.model";
 import {Oas20Parameter, Oas20ParameterDefinition, Oas20ParameterBase} from "../models/2.0/parameter.model";
 import {
     Oas20Schema, Oas20AdditionalPropertiesSchema, Oas20PropertySchema,
-    Oas20DefinitionSchema, Oas20ItemsSchema
+    Oas20DefinitionSchema, Oas20ItemsSchema, Oas20AllOfSchema
 } from "../models/2.0/schema.model";
 import {Oas20Items, Oas20ItemsCollectionFormat} from "../models/2.0/items.model";
 import {Oas20Responses} from "../models/2.0/responses.model";
@@ -28,6 +28,8 @@ import {Oas20Definitions} from "../models/2.0/definitions.model";
 import {Oas20ParametersDefinitions} from "../models/2.0/parameters-definitions.model";
 import {Oas20ResponsesDefinitions} from "../models/2.0/responses-definitions.model";
 import {JsonSchemaType} from "../models/json-schema";
+import {IOas20NodeVisitor} from "../visitors/visitor.iface";
+import {OasExtension} from "../models/extension.model";
 
 /**
  * This class reads a javascript object and turns it into a OAS 2.0 model.  It is obviously
@@ -489,7 +491,7 @@ export class Oas20JS2ModelReader {
      * @param parameter
      * @param paramModel
      */
-    public readParameter(parameter: string, paramModel: Oas20Parameter): void {
+    public readParameter(parameter: any, paramModel: Oas20Parameter): void {
         let $ref: string = parameter["$ref"];
         if (this.isDefined($ref)) { paramModel.$ref = $ref; }
 
@@ -497,11 +499,20 @@ export class Oas20JS2ModelReader {
     }
 
     /**
+     * Reads an OAS 2.0 Parameter Definition from the given JS data.
+     * @param parameterDef
+     * @param paramDefModel
+     */
+    public readParameterDefinition(parameterDef: any, paramDefModel: Oas20ParameterDefinition): void {
+        this.readParameterBase(parameterDef, paramDefModel);
+    }
+
+    /**
      * Reads an OAS 2.0 Parameter object from the given JS data.
      * @param parameter
      * @param paramModel
      */
-    private readParameterBase(parameter: string, paramModel: Oas20ParameterBase): void {
+    private readParameterBase(parameter: any, paramModel: Oas20ParameterBase): void {
         this.readItems(parameter, paramModel);
 
         let name: string = parameter["name"];
@@ -596,7 +607,7 @@ export class Oas20JS2ModelReader {
         if (this.isDefined(allOf)) {
             let schemaModels: Oas20Schema[] = [];
             for (let allOfSchema of allOf) {
-                let allOfSchemaModel: Oas20Schema = schemaModel.createAllOfSchema();
+                let allOfSchemaModel: Oas20AllOfSchema = schemaModel.createAllOfSchema();
                 this.readSchema(allOfSchema, allOfSchemaModel);
                 schemaModels.push(allOfSchemaModel);
             }
@@ -642,7 +653,7 @@ export class Oas20JS2ModelReader {
      * @param items
      * @param itemsModel
      */
-    public readItems(items: string, itemsModel: Oas20Items) {
+    public readItems(items: any, itemsModel: Oas20Items) {
         let type: string = items["type"];
         let format: string = items["format"];
         let itemsChild: any = items["items"];
@@ -715,7 +726,7 @@ export class Oas20JS2ModelReader {
      * @param response
      * @param responseModel
      */
-    public readResponse(response: any, responseModel: Oas20Response) {
+    public readResponse(response: any, responseModel: Oas20Response): void {
         let $ref: string = response["$ref"];
         if (this.isDefined($ref)) { responseModel.$ref = $ref; }
 
@@ -723,11 +734,20 @@ export class Oas20JS2ModelReader {
     }
 
     /**
+     * Reads an OAS 2.0 Response Definition object from the given JS data.
+     * @param response
+     * @param responseDefModel
+     */
+    public readResponseDefinition(response: any, responseDefModel: Oas20ResponseDefinition): void {
+        this.readResponseBase(response, responseDefModel);
+    }
+
+    /**
      * Reads an OAS 2.0 Response object from the given JS data.
      * @param response
      * @param responseModel
      */
-    private readResponseBase(response: any, responseModel: Oas20ResponseBase) {
+    private readResponseBase(response: any, responseModel: Oas20ResponseBase): void {
         let description: string = response["description"];
         let schema: any = response["schema"];
         let headers: any = response["headers"];
@@ -816,7 +836,7 @@ export class Oas20JS2ModelReader {
      * @param definitions
      * @param definitionsModel
      */
-    private readDefinitions(definitions: any, definitionsModel: Oas20Definitions) {
+    public readDefinitions(definitions: any, definitionsModel: Oas20Definitions) {
         for (let definitionName in definitions) {
             let definition: any = definitions[definitionName];
             let definitionSchemaModel: Oas20DefinitionSchema = definitionsModel.createDefinitionSchema(definitionName);
@@ -833,9 +853,9 @@ export class Oas20JS2ModelReader {
     public readParametersDefinitions(parameters: any, parametersDefinitionsModel: Oas20ParametersDefinitions) {
         for (let parameterName in parameters) {
             let parameter: any = parameters[parameterName];
-            let parameterModel: Oas20ParameterDefinition = parametersDefinitionsModel.createParameter(parameterName);
-            this.readParameterBase(parameter, parameterModel);
-            parametersDefinitionsModel.addParameter(parameterName, parameterModel);
+            let parameterDefModel: Oas20ParameterDefinition = parametersDefinitionsModel.createParameter(parameterName);
+            this.readParameterDefinition(parameter, parameterDefModel);
+            parametersDefinitionsModel.addParameter(parameterName, parameterDefModel);
         }
     }
 
@@ -852,4 +872,154 @@ export class Oas20JS2ModelReader {
             responsesDefinitionsModel.addResponse(responseName, responseModel);
         }
     }
+}
+
+
+/**
+ * A visitor used to invoke the appropriate readXYZ() method on the Oas20JS2ModelReader
+ * class.  This is useful when reading a partial (non root) model from a JS object.  The
+ * caller still needs to first construct the appropriate model prior to reading into it.
+ */
+export class Oas20JS2ModelReaderVisitor implements IOas20NodeVisitor {
+
+    /**
+     * Constructor.
+     * @param reader
+     * @param jsData
+     */
+    constructor(private reader: Oas20JS2ModelReader, private jsData: any) {}
+
+
+    public visitDocument(node: Oas20Document): void {
+        // Not supported - call the reader directly if you want to read a full document.
+    }
+
+    public visitInfo(node: Oas20Info): void {
+        this.reader.readInfo(this.jsData, node);
+    }
+
+    public visitContact(node: Oas20Contact): void {
+        this.reader.readContact(this.jsData, node);
+    }
+
+    public visitLicense(node: Oas20License): void {
+        this.reader.readLicense(this.jsData, node);
+    }
+
+    public visitPaths(node: Oas20Paths): void {
+        this.reader.readPaths(this.jsData, node);
+    }
+
+    public visitPathItem(node: Oas20PathItem): void {
+        this.reader.readPathItem(this.jsData, node);
+    }
+
+    public visitOperation(node: Oas20Operation): void {
+        this.reader.readOperation(this.jsData, node);
+    }
+
+    public visitParameter(node: Oas20Parameter): void {
+        this.reader.readParameter(this.jsData, node);
+    }
+
+    public visitParameterDefinition(node: Oas20ParameterDefinition): void {
+        this.reader.readParameterDefinition(this.jsData, node);
+    }
+
+    public visitExternalDocumentation(node: Oas20ExternalDocumentation): void {
+        this.reader.readExternalDocumentation(this.jsData, node);
+    }
+
+    public visitSecurityRequirement(node: Oas20SecurityRequirement): void {
+        this.reader.readSecurityRequirement(this.jsData, node);
+    }
+
+    public visitResponses(node: Oas20Responses): void {
+        this.reader.readResponses(this.jsData, node);
+    }
+
+    public visitResponse(node: Oas20Response): void {
+        this.reader.readResponse(this.jsData, node);
+    }
+
+    public visitResponseDefinition(node: Oas20ResponseDefinition): void {
+        this.reader.readResponseDefinition(this.jsData, node);
+    }
+
+    public visitSchema(node: Oas20Schema): void {
+        this.reader.readSchema(this.jsData, node);
+    }
+
+    public visitHeaders(node: Oas20Headers): void {
+        this.reader.readHeaders(this.jsData, node);
+    }
+
+    public visitHeader(node: Oas20Header): void {
+        this.reader.readHeader(this.jsData, node);
+    }
+
+    public visitExample(node: Oas20Example): void {
+        this.reader.readExample(this.jsData, node);
+    }
+
+    public visitItems(node: Oas20Items): void {
+        this.reader.readItems(this.jsData, node);
+    }
+
+    public visitTag(node: Oas20Tag): void {
+        this.reader.readTag(this.jsData, node);
+    }
+
+    public visitSecurityDefinitions(node: Oas20SecurityDefinitions): void {
+        this.reader.readSecurityDefinitions(this.jsData, node);
+    }
+
+    public visitSecurityScheme(node: Oas20SecurityScheme): void {
+        this.reader.readSecurityScheme(this.jsData, node);
+    }
+
+    public visitScopes(node: Oas20Scopes): void {
+        this.reader.readScopes(this.jsData, node);
+    }
+
+    public visitXML(node: Oas20XML): void {
+        this.reader.readXML(this.jsData, node);
+    }
+
+    public visitDefinitionSchema(node: Oas20DefinitionSchema): void {
+        this.reader.readSchema(this.jsData, node);
+    }
+
+    public visitPropertySchema(node: Oas20PropertySchema): void {
+        this.reader.readSchema(this.jsData, node);
+    }
+
+    public visitAdditionalPropertiesSchema(node: Oas20AdditionalPropertiesSchema): void {
+        this.reader.readSchema(this.jsData, node);
+    }
+
+    public visitAllOfSchema(node: Oas20AllOfSchema): void {
+        this.reader.readSchema(this.jsData, node);
+    }
+
+    public visitItemsSchema(node: Oas20ItemsSchema): void {
+        this.reader.readSchema(this.jsData, node);
+    }
+
+    public visitDefinitions(node: Oas20Definitions): void {
+        this.reader.readDefinitions(this.jsData, node);
+    }
+
+    public visitParametersDefinitions(node: Oas20ParametersDefinitions): void {
+        this.reader.readParametersDefinitions(this.jsData, node);
+    }
+
+    public visitResponsesDefinitions(node: Oas20ResponsesDefinitions): void {
+        this.reader.readResponsesDefinitions(this.jsData, node);
+    }
+
+    public visitExtension(node: OasExtension): void {
+        // Not supported:  cannot read a single extension
+    }
+
 }

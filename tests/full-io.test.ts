@@ -6,6 +6,24 @@ import {Oas20Document} from "../src/models/2.0/document.model";
 
 declare var readJSON
 
+/**
+ * This function recursively sorts all objects by property name.  This is so that it is
+ * easier to compare two objects.
+ * @param original
+ * @return {any}
+ */
+function sortObj(original: any): any {
+    let sorted: any = {};
+    Object.keys(original).sort().forEach(function(key) {
+        let val: any = original[key];
+        if (typeof val === 'object') {
+            val = sortObj(val);
+        }
+        sorted[key] = val;
+    });
+    return sorted;
+}
+
 describe("Full I/O (2.0) - Basics", () => {
 
     let docReader: Oas20JS2ModelReader;
@@ -82,6 +100,21 @@ describe("Full I/O (2.0) - Basics", () => {
         expect(jsObj).toEqual(json);
     });
 
+    it("Complete Pet Store", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/complete/pet-store.json');
+        let document: Oas20Document = docReader.read(json);
+        let jsObj: any = OasVisitorUtil.model2js(document);
+
+        // let actual: any = sortObj(jsObj);
+        // let expected: any = sortObj(json);
+        //
+        // console.info("--- ACTUAL ---")
+        // console.info(JSON.stringify(actual));
+        // console.info("--- EXPECTED ---")
+        // console.info(JSON.stringify(expected));
+
+        expect(jsObj).toEqual(json);
+    });
 });
 
 
@@ -191,14 +224,14 @@ describe("Paths I/O (2.0)", () => {
         expect(jsObj).toEqual(json);
     });
 
-    it("Paths :: Responses w/ Extensions", () => {
+    it("Paths (Responses w/ Extensions)", () => {
         let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-responses-with-extensions.json');
         let document: Oas20Document = docReader.read(json);
         let jsObj: any = OasVisitorUtil.model2js(document);
         expect(jsObj).toEqual(json);
     });
 
-    it("Paths :: Response w/ $ref", () => {
+    it("Paths (Response w/ $ref)", () => {
         let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-response-with-ref.json');
         let document: Oas20Document = docReader.read(json);
         let jsObj: any = OasVisitorUtil.model2js(document);

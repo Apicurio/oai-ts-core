@@ -69,11 +69,12 @@ export class Oas20Headers extends OasNode {
      * @param headerName
      * @param header
      */
-    public addHeader(headerName: string, header: Oas20Header): void {
+    public addHeader(headerName: string, header: Oas20Header): Oas20Header {
         if (this._headers == null) {
             this._headers = new Oas20HeaderItems();
         }
         this._headers[headerName] = header;
+        return header;
     }
 
     /**

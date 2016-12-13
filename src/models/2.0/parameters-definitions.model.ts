@@ -51,10 +51,11 @@ export class Oas20ParametersDefinitions extends OasNode {
     /**
      * Adds a parameter.
      * @param name
-     * @param schema
+     * @param parameter
      */
-    public addParameter(name: string, schema: Oas20ParameterDefinition): void {
-        this._parameters[name] = schema;
+    public addParameter(name: string, parameter: Oas20ParameterDefinition): Oas20ParameterDefinition {
+        this._parameters[name] = parameter;
+        return parameter;
     }
 
     /**

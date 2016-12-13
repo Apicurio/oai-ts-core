@@ -47,10 +47,11 @@ export class Oas20ResponsesDefinitions extends OasNode {
     /**
      * Adds a response.
      * @param name
-     * @param schema
+     * @param response
      */
-    public addResponse(name: string, schema: Oas20ResponseDefinition): void {
-        this._responses[name] = schema;
+    public addResponse(name: string, response: Oas20ResponseDefinition): Oas20ResponseDefinition {
+        this._responses[name] = response;
+        return response;
     }
 
     /**

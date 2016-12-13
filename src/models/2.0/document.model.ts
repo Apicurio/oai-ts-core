@@ -23,7 +23,7 @@ export class Oas20Document extends OasDocument {
     public schemes: string[];
     public consumes: string[];
     public produces: string[];
-    public paths: Oas20Paths = new Oas20Paths();
+    public paths: Oas20Paths;
     public definitions: Oas20Definitions;
     public parameters: Oas20ParametersDefinitions;
     public responses: Oas20ResponsesDefinitions;

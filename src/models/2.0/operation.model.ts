@@ -132,11 +132,12 @@ export class Oas20Operation extends OasExtensibleNode {
      * Adds a parameter.
      * @param parameter
      */
-    public addParameter(parameter: Oas20Parameter): void {
+    public addParameter(parameter: Oas20Parameter): Oas20Parameter {
         if (this.parameters == null) {
             this.parameters = [];
         }
         this.parameters.push(parameter);
+        return parameter;
     }
 
     /**
@@ -165,10 +166,11 @@ export class Oas20Operation extends OasExtensibleNode {
      * Adds a security requirement child.
      * @param securityRequirement
      */
-    public addSecurityRequirement(securityRequirement: Oas20SecurityRequirement): void {
+    public addSecurityRequirement(securityRequirement: Oas20SecurityRequirement): Oas20SecurityRequirement {
         if (this.security == null) {
             this.security = [];
         }
         this.security.push(securityRequirement);
+        return securityRequirement;
     }
 }

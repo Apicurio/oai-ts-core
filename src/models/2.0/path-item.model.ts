@@ -116,11 +116,12 @@ export class Oas20PathItem extends OasExtensibleNode {
      * Adds a parameter.
      * @param param
      */
-    public addParameter(param: Oas20Parameter): void {
+    public addParameter(param: Oas20Parameter): Oas20Parameter {
         if (!this.parameters) {
             this.parameters = [];
         }
         this.parameters.push(param);
+        return param;
     }
 
 }

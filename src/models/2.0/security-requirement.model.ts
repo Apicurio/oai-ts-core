@@ -42,7 +42,7 @@ export class Oas20SecurityRequirement extends OasNode {
      * @param name
      * @param scopes
      */
-    public addSecurityRequirementItem(name: string, scopes?: string[]) {
+    public addSecurityRequirementItem(name: string, scopes?: string[]): void {
         if (!scopes) {
             scopes = [];
         }

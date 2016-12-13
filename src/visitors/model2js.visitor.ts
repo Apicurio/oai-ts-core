@@ -38,7 +38,7 @@ import {JsonSchemaType} from "../models/json-schema";
  */
 export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
 
-    private result: any;
+    private _result: any;
     private _modelIdToJS: any;
 
     /**
@@ -52,7 +52,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * Resets the visitor for a new run.
      */
     public reset(): void {
-        this.result = null;
+        this._result = null;
         this._modelIdToJS = <any>{};
     }
 
@@ -61,7 +61,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @return {any}
      */
     public getResult(): any {
-        return this.removeNullProperties(this.result);
+        return this.removeNullProperties(this._result);
     }
 
     /**
@@ -111,6 +111,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     public visitInfo(node: Oas20Info): void {
+        let parentJS: any = this.lookupParentJS(node);
         let info: any = {
             title: node.title,
             description: node.description,
@@ -119,7 +120,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
             license: null,
             version: node.version
         };
-        this.result.info = info;
+        parentJS.info = info;
         this.updateIndex(node, info);
     }
 
@@ -128,12 +129,13 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     public visitContact(node: Oas20Contact): void {
+        let parentJS: any = this.lookupParentJS(node);
         let contact: any = {
             name: node.name,
             url: node.url,
             email: node.email
         };
-        this.result.info.contact = contact;
+        parentJS.contact = contact;
         this.updateIndex(node, contact);
     }
 
@@ -142,11 +144,12 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     public visitLicense(node: Oas20License): void {
+        let parentJS: any = this.lookupParentJS(node);
         let license: any = {
             name: node.name,
             url: node.url,
         };
-        this.result.info.license = license;
+        parentJS.license = license;
         this.updateIndex(node, license);
     }
 
@@ -155,7 +158,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     public visitExtension(node: OasExtension): void {
-        let jsObject: any = this.lookup(node.parent().modelId());
+        let jsObject: any = this.lookupParentJS(node);
         jsObject[node.name] = node.value;
     }
 
@@ -170,7 +173,8 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
         {
             paths = <any>{};
         }
-        this.result.paths = paths;
+        let parentJS: any = this.lookupParentJS(node);
+        parentJS.paths = paths;
         this.updateIndex(node, paths);
     }
 
@@ -179,7 +183,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     public visitPathItem(node: Oas20PathItem): void {
-        let parentJS: any = this.lookup(node.parent().modelId());
+        let parentJS: any = this.lookupParentJS(node);
         let pathItem: any = {
             "$ref" : node.$ref,
             "get" : null,
@@ -200,7 +204,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     public visitOperation(node: Oas20Operation): void {
-        let parentJS: any = this.lookup(node.parent().modelId());
+        let parentJS: any = this.lookupParentJS(node);
         let operation: any = {
             "tags" : node.tags,
             "summary" : node.summary,
@@ -242,7 +246,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     public visitParameter(node: Oas20Parameter): void {
-        let parentJS: any = this.lookup(node.parent().modelId());
+        let parentJS: any = this.lookupParentJS(node);
         if (parentJS.parameters == null) {
             parentJS.parameters = [];
         }
@@ -260,7 +264,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     public visitParameterDefinition(node: Oas20ParameterDefinition): void {
-        let parentJS: any = this.lookup(node.parent().modelId());
+        let parentJS: any = this.lookupParentJS(node);
         let parameter: any = this.createParameterObject(node);
         parentJS[node.parameterName()] = parameter;
         this.updateIndex(node, parameter);
@@ -271,7 +275,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     public visitExternalDocumentation(node: Oas20ExternalDocumentation): void {
-        let parentJS: any = this.lookup(node.parent().modelId());
+        let parentJS: any = this.lookupParentJS(node);
         parentJS.externalDocs = {
             description: node.description,
             url: node.url
@@ -284,7 +288,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     public visitSecurityRequirement(node: Oas20SecurityRequirement): void {
-        let parentJS: any = this.lookup(node.parent().modelId());
+        let parentJS: any = this.lookupParentJS(node);
         let securityRequirements: any[] = parentJS["security"];
         if (!this.isDefined(securityRequirements)) {
             securityRequirements = [];
@@ -303,7 +307,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     public visitResponses(node: Oas20Responses): void {
-        let parentJS: any = this.lookup(node.parent().modelId());
+        let parentJS: any = this.lookupParentJS(node);
         let responses: any = {
             default: null
         };
@@ -329,7 +333,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     public visitResponse(node: Oas20Response): void {
-        let parentJS: any = this.lookup(node.parent().modelId());
+        let parentJS: any = this.lookupParentJS(node);
         let response: any = this.createResponseObject(node);
         let responseRef: any = {
             $ref: node.$ref
@@ -348,7 +352,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     visitResponseDefinition(node: Oas20ResponseDefinition): void {
-        let parentJS: any = this.lookup(node.parent().modelId());
+        let parentJS: any = this.lookupParentJS(node);
         let response: any = this.createResponseObject(node);
         parentJS[node.name()] = response;
         this.updateIndex(node, response);
@@ -359,7 +363,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     public visitSchema(node: Oas20Schema): void {
-        let parentJS: any = this.lookup(node.parent().modelId());
+        let parentJS: any = this.lookupParentJS(node);
         let schema: any = this.createSchemaObject(node);
         parentJS.schema = schema;
         this.updateIndex(node, schema);
@@ -370,7 +374,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     visitPropertySchema(node: Oas20PropertySchema): void {
-        let parentJS: any = this.lookup(node.parent().modelId());
+        let parentJS: any = this.lookupParentJS(node);
         let schema: any = this.createSchemaObject(node);
         if (!this.isDefined(parentJS.properties)) {
             parentJS.properties = {};
@@ -384,7 +388,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     visitDefinitionSchema(node: Oas20DefinitionSchema): void {
-        let parentJS: any = this.lookup(node.parent().modelId());
+        let parentJS: any = this.lookupParentJS(node);
         let schema: any = this.createSchemaObject(node);
         parentJS[node.definitionName()] = schema;
         this.updateIndex(node, schema);
@@ -395,7 +399,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     visitAdditionalPropertiesSchema(node: Oas20AdditionalPropertiesSchema): void {
-        let parentJS: any = this.lookup(node.parent().modelId());
+        let parentJS: any = this.lookupParentJS(node);
         let schema: any = this.createSchemaObject(node);
         parentJS.additionalProperties = schema;
         this.updateIndex(node, schema);
@@ -406,7 +410,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     visitAllOfSchema(node: Oas20AllOfSchema): void {
-        let parentJS: any = this.lookup(node.parent().modelId());
+        let parentJS: any = this.lookupParentJS(node);
         let schema: any = this.createSchemaObject(node);
         if (!this.isDefined(parentJS.allOf)) {
             parentJS.allOf = [];
@@ -420,7 +424,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     visitItemsSchema(node: Oas20ItemsSchema): void {
-        let parentJS: any = this.lookup(node.parent().modelId());
+        let parentJS: any = this.lookupParentJS(node);
         let schema: any = this.createSchemaObject(node);
         if (!this.isDefined(parentJS.items)) {
             parentJS.items = schema;
@@ -440,7 +444,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      */
     public visitHeaders(node: Oas20Headers): void {
         if (node.headerNames().length > 0) {
-            let parentJS: any = this.lookup(node.parent().modelId());
+            let parentJS: any = this.lookupParentJS(node);
             let headers: any = {};
             parentJS.headers = headers;
             this.updateIndex(node, headers);
@@ -452,7 +456,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     public visitHeader(node: Oas20Header): void {
-        let parentJS: any = this.lookup(node.parent().modelId());
+        let parentJS: any = this.lookupParentJS(node);
         let headerOnly: any = {
             description: node.description
         };
@@ -467,7 +471,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     public visitExample(node: Oas20Example): void {
-        let parentJS: any = this.lookup(node.parent().modelId());
+        let parentJS: any = this.lookupParentJS(node);
         let examples: any = {};
         for (let ct of node.exampleContentTypes()) {
             let example: any = node.example(ct);
@@ -482,7 +486,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     public visitItems(node: Oas20Items): void {
-        let parentJS: any = this.lookup(node.parent().modelId());
+        let parentJS: any = this.lookupParentJS(node);
         let items: any = this.createItemsObject(node);
         parentJS.items = items;
         this.updateIndex(node, items);
@@ -493,15 +497,16 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     public visitTag(node: Oas20Tag): void {
-        if (!this.isDefined(this.result.tags)) {
-            this.result.tags = [];
+        let parentJS: any = this.lookupParentJS(node);
+        if (!this.isDefined(parentJS.tags)) {
+            parentJS.tags = [];
         }
         let tag: any = {
             name: node.name,
             description: node.description,
             externalDocs: null
         };
-        this.result.tags.push(tag);
+        parentJS.tags.push(tag);
         this.updateIndex(node, tag);
     }
 
@@ -510,7 +515,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     visitSecurityDefinitions(node: Oas20SecurityDefinitions): void {
-        let parent: any = this.lookup(node.parent().modelId());
+        let parent: any = this.lookupParentJS(node);
         let secDefs: any = <any>{};
         for (let name in node.securitySchemeNames()) {
             secDefs[name] = null;
@@ -524,7 +529,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     visitSecurityScheme(node: Oas20SecurityScheme): void {
-        let parent: any = this.lookup(node.parent().modelId());
+        let parent: any = this.lookupParentJS(node);
         let scheme: any = {
             type: node.type,
             description: node.description,
@@ -544,7 +549,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     visitScopes(node: Oas20Scopes): void {
-        let parent: any = this.lookup(node.parent().modelId());
+        let parent: any = this.lookupParentJS(node);
         let scopes: any = <any>{};
         for (let scope of node.scopes()) {
             let desc: string = node.getScopeDescription(scope);
@@ -559,7 +564,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @param node
      */
     visitXML(node: Oas20XML): void {
-        let parent: any = this.lookup(node.parent().modelId());
+        let parent: any = this.lookupParentJS(node);
         let xml: any = {
             name: node.name,
             namespace: node.namespace,
@@ -578,7 +583,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
     visitDefinitions(node: Oas20Definitions): void {
         let defNames: string[] = node.definitionNames();
         if (defNames && defNames.length > 0) {
-            let parent: any = this.lookup(node.parent().modelId());
+            let parent: any = this.lookupParentJS(node);
             let definitions: any = {};
             parent.definitions = definitions;
             this.updateIndex(node, definitions);
@@ -592,7 +597,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
     visitParametersDefinitions(node: Oas20ParametersDefinitions): void {
         let paramNames: string[] = node.parameterNames();
         if (paramNames && paramNames.length > 0) {
-            let parent: any = this.lookup(node.parent().modelId());
+            let parent: any = this.lookupParentJS(node);
             let parameters: any = {};
             parent.parameters = parameters;
             this.updateIndex(node, parameters);
@@ -606,7 +611,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
     visitResponsesDefinitions(node: Oas20ResponsesDefinitions): void {
         let responseNames: string[] = node.responseNames();
         if (responseNames && responseNames.length > 0) {
-            let parent: any = this.lookup(node.parent().modelId());
+            let parent: any = this.lookupParentJS(node);
             let responses: any = {};
             parent.responses = responses;
             this.updateIndex(node, responses);
@@ -622,8 +627,8 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
     private updateIndex(node: OasNode, jsObject: any) {
         this._modelIdToJS[node.modelId()] = jsObject;
         // Note: the first JS object created by the visitor is the result (we always traverse top-down).
-        if (this.result == null) {
-            this.result = jsObject;
+        if (this._result == null) {
+            this._result = jsObject;
         }
     }
 
@@ -634,7 +639,28 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      */
     private lookup(modelId: number): any {
         let rval: any = this._modelIdToJS[modelId];
+
+        // If not found, return a throwaway object (this would happen when doing a partial
+        // read of a subsection of a OAS document).
+        if (!this.isDefined(rval)) {
+            return {};
+        }
         return rval;
+    }
+
+    /**
+     * Lookup a JS object using the model ID of the node's parent.
+     * @param node
+     * @return {any}
+     */
+    private lookupParentJS(node: OasNode): any {
+        if (node === null) {
+            console.info("Node is null!!");
+        }
+        if (!node.parent()) {
+            console.info("Node Parent is falsy! " + node);
+        }
+        return this.lookup(node.parent().modelId());
     }
 
     /**

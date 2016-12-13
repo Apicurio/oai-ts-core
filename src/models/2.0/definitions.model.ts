@@ -60,8 +60,9 @@ export class Oas20Definitions extends OasNode {
      * @param name
      * @param schema
      */
-    public addDefinition(name: string, schema: Oas20DefinitionSchema): void {
+    public addDefinition(name: string, schema: Oas20DefinitionSchema): Oas20DefinitionSchema {
         this._definitions[name] = schema;
+        return schema;
     }
 
     /**
