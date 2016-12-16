@@ -139,4 +139,15 @@ describe("Empty Document Test (2.0)", () => {
         });
     });
 
+    it("Document with attributes", () => {
+        document.host = "example.org";
+        document.basePath = "/api";
+
+        expect(document.n_attribute("Hello", "World")).toBeUndefined();
+        expect(document.n_attribute("Hello")).toEqual("World");
+        expect(document.n_attribute("foo")).toBeUndefined();
+        expect(document.n_attribute("Hello", "Universe")).toEqual("World");
+        expect(document.n_attribute("Hello")).toEqual("Universe");
+    });
+
 });

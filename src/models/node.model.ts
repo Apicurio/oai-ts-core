@@ -13,6 +13,7 @@ export abstract class OasNode {
     public _ownerDocument: OasDocument;
     public _parent: OasNode;
     public _modelId: number = __modelIdCounter++;
+    public _attributes: OasNodeAttributes = new OasNodeAttributes();
 
     /**
      * Gets the owner document.
@@ -43,5 +44,28 @@ export abstract class OasNode {
      * @param visitor
      */
     public abstract accept(visitor: IOasNodeVisitor): void;
+
+    /**
+     * Gets or sets a node attribute.  When setting the attribute, the previous value
+     * will be returned. Otherwise the current value is returned.
+     * @param name
+     * @param value
+     * @return {any}
+     */
+    public n_attribute(name: string, value?: any): any {
+        if (value === undefined) {
+            return this._attributes[name];
+        } else {
+            let pvalue: any = this._attributes[name];
+            this._attributes[name] = value;
+            return pvalue;
+        }
+    }
+}
+
+
+export class OasNodeAttributes {
+
+    [key: string]: any;
 
 }
