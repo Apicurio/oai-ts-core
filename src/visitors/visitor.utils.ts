@@ -33,17 +33,4 @@ export class OasVisitorUtil {
         }
     }
 
-    /**
-     * Convenience method to convert from a model to a plain JS object, suitable for JSONifying.
-     * @param node
-     */
-    public static model2js(node: OasNode): any {
-        if (node._ownerDocument.getSpecVersion() === "2.0") {
-            let visitor: Oas20ModelToJSVisitor = new Oas20ModelToJSVisitor();
-            OasVisitorUtil.visitTree(node, visitor);
-            return visitor.getResult();
-        } else {
-            throw new Error("OAS version " + node._ownerDocument.getSpecVersion() + " not supported.");
-        }
-    }
 }

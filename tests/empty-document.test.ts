@@ -1,17 +1,16 @@
 ///<reference path="../node_modules/@types/jasmine/index.d.ts"/>
 
-import {OasDocumentFactory} from "../src/main";
-import {OasVisitorUtil} from "../src/visitors/visitor.utils";
 import {Oas20Document} from "../src/models/2.0/document.model";
+import {OasLibraryUtils} from "../src/library.utils";
 
 describe("Empty Document Test (2.0)", () => {
 
-    let docFactory: OasDocumentFactory;
+    let library: OasLibraryUtils;
     let document: Oas20Document;
 
     beforeEach(() => {
-        docFactory = new OasDocumentFactory();
-        document = <Oas20Document> docFactory.createEmpty("2.0");
+        library = new OasLibraryUtils();
+        document = <Oas20Document> library.createDocument("2.0");
     });
 
     it("Document not null", () => {
@@ -25,7 +24,7 @@ describe("Empty Document Test (2.0)", () => {
         document.consumes = [ "application/xml", "application/json" ];
         document.produces = [ "application/xml", "application/json" ];
 
-        let jsObj: any = OasVisitorUtil.model2js(document);
+        let jsObj: any = library.writeNode(document);
         expect(jsObj).toEqual({
             swagger: "2.0",
             host: "example.org",
@@ -42,7 +41,7 @@ describe("Empty Document Test (2.0)", () => {
         document.basePath = "/api";
         document.setExternalDocumentation("more info about the API", "http://example.org/docs/#api");
 
-        let jsObj: any = OasVisitorUtil.model2js(document);
+        let jsObj: any = library.writeNode(document);
         expect(jsObj).toEqual({
             swagger: "2.0",
             host: "example.org",
@@ -61,7 +60,7 @@ describe("Empty Document Test (2.0)", () => {
         document.info.description = "Document description.";
         document.info.version = "1.0";
 
-        let jsObj: any = OasVisitorUtil.model2js(document);
+        let jsObj: any = library.writeNode(document);
         expect(jsObj).toEqual({
             swagger: "2.0",
             info: {
@@ -88,7 +87,7 @@ describe("Empty Document Test (2.0)", () => {
         document.info.license.name = "Apache 2.0";
         document.info.license.url = "http://www.apache.org/licenses/LICENSE-2.0";
 
-        let jsObj: any = OasVisitorUtil.model2js(document);
+        let jsObj: any = library.writeNode(document);
         expect(jsObj).toEqual({
             swagger: "2.0",
             info: {
@@ -116,7 +115,7 @@ describe("Empty Document Test (2.0)", () => {
         document.addTag("bar", "this is the bar tag");
         document.tags[0].setExternalDocumentation("More info about foo", "http://example.org/docs/#foo");
 
-        let jsObj: any = OasVisitorUtil.model2js(document);
+        let jsObj: any = library.writeNode(document);
         expect(jsObj).toEqual({
             swagger: "2.0",
             info: {

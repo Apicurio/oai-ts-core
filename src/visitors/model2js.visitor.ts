@@ -671,7 +671,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
         return {
             type: this.fromJsonSchemaType(node.type),
             format: node.format,
-            items: null,
+            items: <any>null,
             collectionFormat: this.fromOas20ItemsCollectionFormat(node.collectionFormat),
             default: node.default,
             maximum: node.maximum,
