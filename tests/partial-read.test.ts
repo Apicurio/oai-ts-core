@@ -1,4 +1,5 @@
 ///<reference path="../node_modules/@types/jasmine/index.d.ts"/>
+///<reference path="@types/karma-read-json/index.d.ts"/>
 
 import {Oas20Document} from "../src/models/2.0/document.model";
 import {Oas20Info} from "../src/models/2.0/info.model";
@@ -6,8 +7,6 @@ import {Oas20Operation} from "../src/models/2.0/operation.model";
 import {Oas20PathItem} from "../src/models/2.0/path-item.model";
 import {Oas20ResponseDefinition} from "../src/models/2.0/response.model";
 import {OasLibraryUtils} from "../src/library.utils";
-
-declare var readJSON:any;
 
 describe("Partial Read (2.0)", () => {
 

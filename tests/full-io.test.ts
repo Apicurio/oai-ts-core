@@ -1,9 +1,9 @@
 ///<reference path="../node_modules/@types/jasmine/index.d.ts"/>
+///<reference path="@types/karma-read-json/index.d.ts"/>
 
 import {Oas20Document} from "../src/models/2.0/document.model";
 import {OasLibraryUtils} from "../src/library.utils";
 
-declare var readJSON:any;
 
 /**
  * This function recursively sorts all objects by property name.  This is so that it is
