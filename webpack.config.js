@@ -2,7 +2,7 @@ var webpack = require("webpack"),
     path = require("path"),
     yargs = require("yargs");
 
-var libraryName = "OAI",
+var libraryName = "dist/bundles/OAI.umd",
     plugins = [],
     outputFile;
 
@@ -19,7 +19,7 @@ var config = {
     ],
     devtool: "source-map",
     output: {
-        path: path.join(__dirname, "/dist"),
+        path: path.join(__dirname, "/"),
         filename: outputFile,
         library: libraryName,
         libraryTarget: "umd",
@@ -36,13 +36,7 @@ var config = {
         root: path.resolve("./src"),
         extensions: [ '', '.js', '.ts' ]
     },
-    plugins: plugins,
-
-    // Individual Plugin Options
-    tslint: {
-        emitErrors: true,
-        failOnHint: true
-    }
+    plugins: plugins
 };
 
 module.exports = config;

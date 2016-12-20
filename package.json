@@ -1,20 +1,30 @@
 {
   "name": "oai-ts-core",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A library to read and write OpenAPI documents.",
-  "main": "dist/OAI.min.js",
+  "main": "bundles/OAI.umd.min.js",
+  "module": "index.js",
+  "typings": "index.d.ts",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/EricWittmann/oai-ts-core"
+  },
+  "typings": "index.d.ts",
+  "typescript": {
+    "definition": "index.d.ts"
+  },
   "scripts": {
     "test": "karma start karma-single.js",
     "dev": "karma start karma-continuous.js",
-    "build-dev": "webpack",
-    "build-prod": "webpack -p"
+    "build": "rimraf dist && tsc && webpack && webpack -p && cpx package.json dist && cpx module/*.* dist"
   },
-  "license": "Apache-2.0",
-  "repository": "https://github.com/EricWittmann/oai-ts-core",
   "dependencies": {
     "@types/core-js": "0.9.34"
   },
   "devDependencies": {
+    "cpx": "1.5.0",
+    "rimraf": "2.5.4",
     "@types/jasmine": "2.5.38",
     "jasmine-core": "2.5.2",
     "karma": "1.3.0",
