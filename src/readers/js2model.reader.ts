@@ -195,7 +195,7 @@ export class Oas20JS2ModelReader {
      */
     private readExtensions(jsData:any, model: OasExtensibleNode): void {
         for (let key in jsData) {
-            if (key.startsWith("x-")) {
+            if (key.indexOf("x-") === 0) {
                 let val: any = jsData[key];
                 model.addExtension(key, val);
             }
@@ -376,7 +376,7 @@ export class Oas20JS2ModelReader {
      */
     public readPaths(paths: any, pathsModel: Oas20Paths): void {
         for (let path in paths) {
-            if (path.startsWith("x-")) { continue; }
+            if (path.indexOf("x-") === 0) { continue; }
             let pathItem: any = paths[path];
             let pathItemModel: Oas20PathItem = pathsModel.createPathItem(path);
             this.readPathItem(pathItem, pathItemModel);
@@ -728,7 +728,7 @@ export class Oas20JS2ModelReader {
         }
 
         for (let statusCode in responses) {
-            if (statusCode.startsWith("x-")) { continue; }
+            if (statusCode.indexOf("x-") === 0) { continue; }
             if (statusCode === "default") { continue; }
             let response: any = responses[statusCode];
             let responseModel: Oas20Response = responsesModel.createResponse(statusCode);

@@ -1,17 +1,27 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "declaration": true,
+    "stripInternal": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "module": "commonjs",
     "noImplicitAny": true,
     "noFallthroughCasesInSwitch": true,
     "suppressImplicitAnyIndexErrors": true,
     "preserveConstEnums": true,
     "removeComments": false,
+    "module": "es2015",
+    "moduleResolution": "node",
+    "outDir": "./dist",
+    "rootDir": ".",
     "sourceMap": true,
-    "target": "es5"
+    "inlineSources": true,
+    "target": "es5",
+    "lib": ["es2015", "dom"],
+    "skipLibCheck": true
   },
+  "files": [
+    "index.ts"
+  ],
   "exclude": [
     "node_modules", "tests"
   ]

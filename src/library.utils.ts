@@ -46,7 +46,7 @@ export class OasLibraryUtils {
             return factory.createFromObject(source);
         }
         if (typeof source === "string") {
-            if (source.startsWith("{")) {
+            if (source.indexOf("{") === 0) {
                 return factory.createFromJson(source);
             } else {
                 return factory.createEmpty(source);

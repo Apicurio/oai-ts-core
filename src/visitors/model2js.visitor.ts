@@ -254,7 +254,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
             "schema" : null,
             "allowEmptyValue" : node.allowEmptyValue
         };
-        parameter = Object.assign({}, parameter, items);
+        parameter = this.merge(parameter, items);
         return parameter;
     }
 
@@ -271,7 +271,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
         let paramRef: any = {
             "$ref" : node.$ref
         };
-        parameter = Object.assign({}, paramRef, parameter);
+        parameter = this.merge(paramRef, parameter);
         parentJS.parameters.push(parameter);
         this.updateIndex(node, parameter);
     }
@@ -355,7 +355,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
         let responseRef: any = {
             $ref: node.$ref
         };
-        response = Object.assign({}, responseRef, response);
+        response = this.merge(responseRef, response);
         if (node.statusCode() === null || node.statusCode() === "default") {
             parentJS.default = response;
         } else {
@@ -478,7 +478,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
             description: node.description
         };
         let items: any = this.createItemsObject(node);
-        let header: any = Object.assign({}, headerOnly, items);
+        let header: any = this.merge(headerOnly, items);
         parentJS[node.headerName()] = header;
         this.updateIndex(node, header);
     }
@@ -788,6 +788,25 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
         } else {
             return true;
         }
+    }
+
+    /**
+     * Merges multiple objects into a single object.  This is done by iterating through
+     * all properties of all objects and assigning them as properties of a new object.  The
+     * result is a new object with all the properties of all objects passed to the method.
+     * @param objects
+     */
+    private merge(...objects: any[]): any {
+        let rval: any = <any>new Object();
+
+        for (let object of objects) {
+            for (let key in object) {
+                let val: any = object[key];
+                rval[key] = val;
+            }
+        }
+
+        return rval;
     }
 
 }

@@ -1,6 +1,6 @@
 {
   "name": "oai-ts-core",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A library to read and write OpenAPI documents.",
   "main": "bundles/OAI.umd.min.js",
   "module": "index.js",
@@ -17,14 +17,18 @@
   "scripts": {
     "test": "karma start karma-single.js",
     "dev": "karma start karma-continuous.js",
-    "build": "rimraf dist && tsc && webpack && webpack -p && cpx package.json dist && cpx module/*.* dist"
+    "clean": "rimraf dist",
+    "compile": "tsc -p ./tsconfig-package.json",
+    "rollup": "mkdirp ./dist/bundles && rollup -c rollup.config.js",
+    "package": "rimraf dist && tsc -p tsconfig-package.json && cpx package.json dist && cpx module/*.* dist && mkdirp ./dist/bundles && rollup -c rollup.config.js"
   },
   "dependencies": {
-    "@types/core-js": "0.9.34"
+    "core-js": "2.4.1"
   },
   "devDependencies": {
     "cpx": "1.5.0",
     "rimraf": "2.5.4",
+    "mkdirp": "0.5.1",
     "@types/jasmine": "2.5.38",
     "jasmine-core": "2.5.2",
     "karma": "1.3.0",
@@ -35,8 +39,7 @@
     "karma-summary-reporter": "1.3.3",
     "karma-read-json": "1.1.0",
     "typescript": "2.1.4",
-    "webpack": "1.14.0",
-    "ts-loader": "1.3.3",
-    "yargs": "6.5.0"
+    "rollup": "0.37.2",
+    "rollup-plugin-commonjs": "6.0.0"
   }
 }
