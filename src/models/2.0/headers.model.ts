@@ -18,6 +18,7 @@
 import {IOasNodeVisitor, IOas20NodeVisitor} from "../../visitors/visitor.iface";
 import {OasNode} from "../node.model";
 import {Oas20Header} from "./header.model";
+import {IOasIndexedNode} from "../inode.model";
 
 /**
  * Models an OAS 2.0 Headers object.  Example:
@@ -37,7 +38,7 @@ import {Oas20Header} from "./header.model";
  *     }
  * }
  */
-export class Oas20Headers extends OasNode {
+export class Oas20Headers extends OasNode implements IOasIndexedNode<Oas20Header> {
 
     private _headers: Oas20HeaderItems;
 
@@ -75,10 +76,12 @@ export class Oas20Headers extends OasNode {
      * Removes a single header.
      * @param headerName
      */
-    public removeHeader(headerName: string): void {
-        if (this._headers && this._headers[headerName]) {
+    public removeHeader(headerName: string): Oas20Header {
+        let rval: Oas20Header = this._headers[headerName];
+        if (this._headers && rval) {
             delete this._headers[headerName];
         }
+        return rval;
     }
 
     /**
@@ -104,6 +107,22 @@ export class Oas20Headers extends OasNode {
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;
+    }
+
+    getItem(name: string): Oas20Header {
+        return this.header(name);
+    }
+
+    getItemNames(): string[] {
+        return this.headerNames();
+    }
+
+    addItem(name: string, item: Oas20Header): void {
+        this.addHeader(name, item);
+    }
+
+    deleteItem(name: string): Oas20Header {
+        return this.removeHeader(name);
     }
 
 }

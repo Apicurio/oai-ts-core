@@ -322,6 +322,7 @@ export class Oas20JS2ModelReader {
             let scheme: any = securityDefinitions[name];
             let schemeModel: Oas20SecurityScheme = securityDefinitionsModel.createSecurityScheme(name);
             this.readSecurityScheme(scheme, schemeModel);
+            securityDefinitionsModel.addSecurityScheme(name, schemeModel);
         }
     }
 

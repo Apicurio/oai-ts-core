@@ -23,11 +23,9 @@ import {OasLibraryUtils} from "../src/library.utils";
 describe("Partial Write (2.0)", () => {
 
     let library: OasLibraryUtils;
-    let document: Oas20Document;
 
     beforeEach(() => {
         library = new OasLibraryUtils();
-        document = <Oas20Document> library.createDocument("2.0");
     });
 
     it("Info", () => {

@@ -18,6 +18,7 @@
 import {OasExtensibleNode} from "../enode.model";
 import {IOasNodeVisitor, IOas20NodeVisitor} from "../../visitors/visitor.iface";
 import {Oas20Response} from "./response.model";
+import {IOasIndexedNode} from "../inode.model";
 
 /**
  * Models an OAS 2.0 Responses object.  The Responses object can have any number of child
@@ -38,7 +39,7 @@ import {Oas20Response} from "./response.model";
  *   }
  * }
  */
-export class Oas20Responses extends OasExtensibleNode {
+export class Oas20Responses extends OasExtensibleNode implements IOasIndexedNode<Oas20Response> {
 
     public default: Oas20Response;
     private _responses: Oas20ResponseItems;
@@ -78,10 +79,12 @@ export class Oas20Responses extends OasExtensibleNode {
      * Removes a single response child model.
      * @param statusCode
      */
-    public removeResponse(statusCode: string): void {
-        if (this._responses && this._responses[statusCode]) {
+    public removeResponse(statusCode: string): Oas20Response {
+        let rval: Oas20Response = this._responses[statusCode];
+        if (this._responses && rval) {
             delete this._responses[statusCode];
         }
+        return rval;
     }
 
     /**
@@ -105,6 +108,22 @@ export class Oas20Responses extends OasExtensibleNode {
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;
+    }
+
+    getItem(name: string): Oas20Response {
+        return this.response(name);
+    }
+
+    getItemNames(): string[] {
+        return this.responseStatusCodes();
+    }
+
+    addItem(name: string, item: Oas20Response): void {
+        this.addResponse(name, item);
+    }
+
+    deleteItem(name: string): Oas20Response {
+        return this.removeResponse(name);
     }
 
 }

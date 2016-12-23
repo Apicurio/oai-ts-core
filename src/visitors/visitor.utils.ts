@@ -17,8 +17,12 @@
 
 import {OasNode} from "../models/node.model";
 import {IOasNodeVisitor, IOas20NodeVisitor} from "./visitor.iface";
-import {Oas20Traverser} from "./traverser";
+import {Oas20Traverser, Oas20ReverseTraverser, IOasTraverser} from "./traverser";
 import {Oas20ModelToJSVisitor} from "./model2js.visitor";
+
+export enum OasTraverserDirection {
+    up, down
+}
 
 /**
  * Some static convenience methods for visiting an OAS node/tree.
@@ -40,9 +44,14 @@ export class OasVisitorUtil {
      * @param node the node to traverse and visit
      * @param visitor the visitor to call for each node visited
      */
-    public static visitTree(node: OasNode, visitor: IOasNodeVisitor) {
+    public static visitTree(node: OasNode, visitor: IOasNodeVisitor, direction: OasTraverserDirection = OasTraverserDirection.down) {
         if (node.ownerDocument().getSpecVersion() === "2.0") {
-            let traverser: Oas20Traverser = new Oas20Traverser(<IOas20NodeVisitor> visitor);
+            let traverser: IOasTraverser;
+            if (direction === OasTraverserDirection.up) {
+                traverser = new Oas20ReverseTraverser(<IOas20NodeVisitor> visitor);
+            } else {
+                traverser = new Oas20Traverser(<IOas20NodeVisitor> visitor);
+            }
             traverser.traverse(node);
         } else {
             throw new Error("OAS version " + node.ownerDocument().getSpecVersion() + " not supported.");

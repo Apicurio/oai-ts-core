@@ -18,6 +18,7 @@
 import {IOasNodeVisitor, IOas20NodeVisitor} from "../../visitors/visitor.iface";
 import {OasNode} from "../node.model";
 import {Oas20SecurityScheme} from "./security-scheme.model";
+import {IOasIndexedNode} from "../inode.model";
 
 /**
  * Models an OAS 2.0 Security Definitions object.  Example:
@@ -39,7 +40,7 @@ import {Oas20SecurityScheme} from "./security-scheme.model";
  *   }
  * }
  */
-export class Oas20SecurityDefinitions extends OasNode {
+export class Oas20SecurityDefinitions extends OasNode implements IOasIndexedNode<Oas20SecurityScheme> {
 
     private _items: Oas20SecuritySchemeItems = new Oas20SecuritySchemeItems();
 
@@ -73,13 +74,24 @@ export class Oas20SecurityDefinitions extends OasNode {
     }
 
     /**
+     * Adds a security scheme child node.
+     * @param name
+     * @param scheme
+     */
+    public addSecurityScheme(name: string, scheme: Oas20SecurityScheme): void {
+        this._items[name] = scheme;
+    }
+
+    /**
      * Removes a single security scheme by name.
      * @param name
      */
-    public removeSecurityScheme(name: string): void {
-        if (this._items[name]) {
+    public removeSecurityScheme(name: string): Oas20SecurityScheme {
+        let rval: Oas20SecurityScheme = this._items[name];
+        if (this._items && rval) {
             delete this._items[name];
         }
+        return rval;
     }
 
     /**
@@ -91,8 +103,23 @@ export class Oas20SecurityDefinitions extends OasNode {
         let rval: Oas20SecurityScheme = new Oas20SecurityScheme(name);
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
-        this._items[name] = rval;
         return rval;
+    }
+
+    getItem(name: string): Oas20SecurityScheme {
+        return this.securityScheme(name);
+    }
+
+    getItemNames(): string[] {
+        return this.securitySchemeNames();
+    }
+
+    addItem(name: string, item: Oas20SecurityScheme): void {
+        this.addSecurityScheme(name, item);
+    }
+
+    deleteItem(name: string): Oas20SecurityScheme {
+        return this.removeSecurityScheme(name);
     }
 
 }

@@ -18,6 +18,7 @@
 import {IOasNodeVisitor, IOas20NodeVisitor} from "../../visitors/visitor.iface";
 import {OasNode} from "../node.model";
 import {Oas20DefinitionSchema} from "./schema.model";
+import {IOasIndexedNode} from "../inode.model";
 
 /**
  * Models an OAS 2.0 Definitions object.  The Definitions object can have any number of child
@@ -50,7 +51,7 @@ import {Oas20DefinitionSchema} from "./schema.model";
  *   }
  * }
  */
-export class Oas20Definitions extends OasNode {
+export class Oas20Definitions extends OasNode implements IOasIndexedNode<Oas20DefinitionSchema> {
 
     private _definitions: Oas20DefinitionItems = new Oas20DefinitionItems();
 
@@ -86,8 +87,12 @@ export class Oas20Definitions extends OasNode {
      * Removes a definition by name.
      * @param name
      */
-    public removeDefinition(name: string): void {
-        delete this._definitions[name];
+    public removeDefinition(name: string): Oas20DefinitionSchema {
+        let rval: Oas20DefinitionSchema = this._definitions[name];
+        if (this._definitions && rval) {
+            delete this._definitions[name];
+        }
+        return rval;
     }
 
     /**
@@ -111,6 +116,22 @@ export class Oas20Definitions extends OasNode {
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;
+    }
+
+    getItem(name: string): Oas20DefinitionSchema {
+        return this.definition(name);
+    }
+
+    getItemNames(): string[] {
+        return this.definitionNames();
+    }
+
+    addItem(name: string, item: Oas20DefinitionSchema): void {
+        this.addDefinition(name, item);
+    }
+
+    deleteItem(name: string): Oas20DefinitionSchema {
+        return this.removeDefinition(name);
     }
 
 }

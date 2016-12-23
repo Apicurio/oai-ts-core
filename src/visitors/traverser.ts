@@ -49,12 +49,22 @@ import {Oas20ParametersDefinitions} from "../models/2.0/parameters-definitions.m
 import {Oas20ResponsesDefinitions} from "../models/2.0/responses-definitions.model";
 
 /**
+ * Interface implemented by all traversers.
+ */
+export interface IOasTraverser {
+
+    traverse(node: OasNode): void;
+
+}
+
+
+/**
  * Used to traverse an OAS 2.0 tree and call an included visitor for each node.
  */
-export class Oas20Traverser implements IOas20NodeVisitor {
+export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
 
     /**
-     * Contstructor.
+     * Constructor.
      * @param visitor
      */
     constructor(private visitor: IOas20NodeVisitor) {}
@@ -462,6 +472,193 @@ export class Oas20Traverser implements IOas20NodeVisitor {
             let response: Oas20ResponseDefinition = node.response(name);
             this.traverseIfNotNull(response);
         }
+    }
+
+}
+
+
+/**
+ * Used to traverse up an OAS 2.0 tree and call an included visitor for each node.
+ */
+export class Oas20ReverseTraverser implements IOas20NodeVisitor, IOasTraverser {
+
+    /**
+     * Constructor.
+     * @param visitor
+     */
+    constructor(private visitor: IOas20NodeVisitor) {
+    }
+
+    /**
+     * Traverse the given node.
+     * @param node
+     */
+    public traverse(node: OasNode): void {
+        node.accept(this);
+    }
+
+    visitDocument(node: Oas20Document): void {
+        node.accept(this.visitor);
+    }
+
+    visitInfo(node: Oas20Info): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitContact(node: Oas20Contact): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitLicense(node: Oas20License): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitPaths(node: Oas20Paths): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitPathItem(node: Oas20PathItem): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitOperation(node: Oas20Operation): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitParameter(node: Oas20Parameter): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitParameterDefinition(node: Oas20ParameterDefinition): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitExternalDocumentation(node: Oas20ExternalDocumentation): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitSecurityRequirement(node: Oas20SecurityRequirement): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitResponses(node: Oas20Responses): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitResponse(node: Oas20Response): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitResponseDefinition(node: Oas20ResponseDefinition): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitSchema(node: Oas20Schema): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitHeaders(node: Oas20Headers): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitHeader(node: Oas20Header): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitExample(node: Oas20Example): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitItems(node: Oas20Items): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitTag(node: Oas20Tag): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitSecurityDefinitions(node: Oas20SecurityDefinitions): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitSecurityScheme(node: Oas20SecurityScheme): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitScopes(node: Oas20Scopes): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitXML(node: Oas20XML): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitDefinitionSchema(node: Oas20DefinitionSchema): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitPropertySchema(node: Oas20PropertySchema): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitAdditionalPropertiesSchema(node: Oas20AdditionalPropertiesSchema): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitAllOfSchema(node: Oas20AllOfSchema): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitItemsSchema(node: Oas20ItemsSchema): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitDefinitions(node: Oas20Definitions): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitParametersDefinitions(node: Oas20ParametersDefinitions): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitResponsesDefinitions(node: Oas20ResponsesDefinitions): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitExtension(node: OasExtension): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
     }
 
 }
