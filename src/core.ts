@@ -49,7 +49,11 @@ export * from "./models/2.0/tag.model";
 export * from "./models/2.0/xml.model";
 
 export * from "./library.utils";
+
 export * from "./visitors/visitor.base";
 export * from "./visitors/visitor.iface";
 export * from "./visitors/visitor.utils";
 export * from "./visitors/traverser";
+
+export * from "./validation/validation";
+export * from "./validation/validation.visitor";

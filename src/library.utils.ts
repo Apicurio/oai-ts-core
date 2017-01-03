@@ -21,6 +21,8 @@ import {OasNode} from "./models/node.model";
 import {Oas20JS2ModelReader, Oas20JS2ModelReaderVisitor} from "./readers/js2model.reader";
 import {Oas20ModelToJSVisitor} from "./visitors/model2js.visitor";
 import {OasVisitorUtil} from "./visitors/visitor.utils";
+import {Oas20ValidationVisitor} from "./validation/validation.visitor";
+import {OasValidationError} from "./validation/validation";
 
 /**
  * Represents the global OAS library entry point.  This is used, for example, when
@@ -89,6 +91,26 @@ export class OasLibraryUtils {
             let visitor: Oas20ModelToJSVisitor = new Oas20ModelToJSVisitor();
             OasVisitorUtil.visitTree(node, visitor);
             return visitor.getResult();
+        } else {
+            throw new Error("OAS version " + node._ownerDocument.getSpecVersion() + " not supported.");
+        }
+    }
+
+    /**
+     * Validates the given OAS model.
+     * @param node
+     * @param recursive
+     * @return {any}
+     */
+    public validate(node: OasNode, recursive: boolean = true): OasValidationError[] {
+        if (node._ownerDocument.getSpecVersion() === "2.0") {
+            let visitor: Oas20ValidationVisitor = new Oas20ValidationVisitor();
+            if (recursive) {
+                OasVisitorUtil.visitTree(node, visitor);
+            } else {
+                node.accept(visitor);
+            }
+            return visitor.getValidationErrors();
         } else {
             throw new Error("OAS version " + node._ownerDocument.getSpecVersion() + " not supported.");
         }

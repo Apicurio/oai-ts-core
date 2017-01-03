@@ -142,6 +142,21 @@ describe("Node Path (Create)", () => {
         expect(actual).toEqual(expected);
     });
 
+    it("Security Scheme", () => {
+        let json: any = readJSON('tests/fixtures/paths/2.0/pet-store.json');
+        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+
+        let node: OasNode = document.securityDefinitions.securityScheme("petstore_auth");
+        let viz: Oas20NodePathVisitor = new Oas20NodePathVisitor();
+
+        OasVisitorUtil.visitTree(node, viz, OasTraverserDirection.up);
+        let path: OasNodePath = viz.path();
+        let actual: string = path.toString();
+        let expected: string = "/securityDefinitions[petstore_auth]";
+
+        expect(actual).toEqual(expected);
+    });
+
 });
 
 
@@ -221,6 +236,18 @@ describe("Node Path (Resolve)", () => {
         let resolvedNode: OasNode = path.resolve(document);
 
         let expectedNode: OasNode = document.tags[0].externalDocs;
+        let actualNode: any = resolvedNode;
+        expect(actualNode).toEqual(expectedNode);
+    });
+
+    it("Security Scheme", () => {
+        let json: any = readJSON('tests/fixtures/paths/2.0/pet-store.json');
+        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+
+        let path: OasNodePath = new OasNodePath("/securityDefinitions[petstore_auth]");
+        let resolvedNode: OasNode = path.resolve(document);
+
+        let expectedNode: OasNode = document.securityDefinitions.securityScheme("petstore_auth");
         let actualNode: any = resolvedNode;
         expect(actualNode).toEqual(expectedNode);
     });

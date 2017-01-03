@@ -86,7 +86,6 @@ export class OasNodePath {
      * @return {undefined}
      */
     public resolve(document: OasDocument): OasNode {
-        console.info("Resolving path: " + this.toString());
         let node: OasNode = document;
         for (let segment of this._segments) {
             node = segment.resolve(node);

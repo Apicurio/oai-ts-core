@@ -671,12 +671,6 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      * @return {any}
      */
     private lookupParentJS(node: OasNode): any {
-        if (node === null) {
-            console.info("Node is null!!");
-        }
-        if (!node.parent()) {
-            console.info("Node Parent is falsy! " + node);
-        }
         return this.lookup(node.parent().modelId());
     }
 

@@ -189,7 +189,7 @@ export class Oas20NodePathVisitor implements IOas20NodeVisitor {
     }
 
     visitSecurityScheme(node: Oas20SecurityScheme): void {
-        this._index = node.name;
+        this._index = node.schemeName();
     }
 
     visitScopes(node: Oas20Scopes): void {

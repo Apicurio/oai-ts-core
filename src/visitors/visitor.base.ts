@@ -116,6 +116,24 @@ export class Oas20CompositeVisitor implements IOas20NodeVisitor {
     }
 
     /**
+     * Adds a single visitor to the list.
+     * @param visitor
+     */
+    public addVisitor(visitor: IOas20NodeVisitor): void {
+        this._visitors.push(visitor);
+    }
+
+    /**
+     * Adds multiple visitors to the list.
+     * @param visitors
+     */
+    public addVisitors(visitors: IOas20NodeVisitor[]): void {
+        for (let visitor of visitors) {
+            this._visitors.push(visitor);
+        }
+    }
+
+    /**
      * Called to accept all of the visitors contained by this composite.  This basically
      * iterates through all the visitors and calls node.accept(visitor) on each.
      * @param node
