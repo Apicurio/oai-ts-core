@@ -20,9 +20,11 @@ import {OasDocumentFactory} from "./factories/document.factory";
 import {OasNode} from "./models/node.model";
 import {Oas20JS2ModelReader, Oas20JS2ModelReaderVisitor} from "./readers/js2model.reader";
 import {Oas20ModelToJSVisitor} from "./visitors/model2js.visitor";
-import {OasVisitorUtil} from "./visitors/visitor.utils";
+import {OasVisitorUtil, OasTraverserDirection} from "./visitors/visitor.utils";
 import {Oas20ValidationVisitor} from "./validation/validation.visitor";
 import {OasValidationError} from "./validation/validation";
+import {OasNodePath} from "./models/node-path";
+import {Oas20NodePathVisitor} from "./visitors/path.visitor";
 
 /**
  * Represents the global OAS library entry point.  This is used, for example, when
@@ -111,6 +113,21 @@ export class OasLibraryUtils {
                 node.accept(visitor);
             }
             return visitor.getValidationErrors();
+        } else {
+            throw new Error("OAS version " + node._ownerDocument.getSpecVersion() + " not supported.");
+        }
+    }
+
+    /**
+     * Creates a node path for a given data model node.
+     * @param node
+     * @return {OasNodePath}
+     */
+    public createNodePath(node: OasNode): OasNodePath {
+        if (node._ownerDocument.getSpecVersion() === "2.0") {
+            let viz: Oas20NodePathVisitor = new Oas20NodePathVisitor();
+            OasVisitorUtil.visitTree(node, viz, OasTraverserDirection.up);
+            return viz.path();
         } else {
             throw new Error("OAS version " + node._ownerDocument.getSpecVersion() + " not supported.");
         }

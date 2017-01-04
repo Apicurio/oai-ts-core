@@ -19,13 +19,7 @@
  */
 
 import {Oas20Document} from "../src/models/2.0/document.model";
-import {Oas20Info} from "../src/models/2.0/info.model";
-import {Oas20Operation} from "../src/models/2.0/operation.model";
-import {Oas20PathItem} from "../src/models/2.0/path-item.model";
-import {Oas20ResponseDefinition} from "../src/models/2.0/response.model";
 import {OasLibraryUtils} from "../src/library.utils";
-import {Oas20NodePathVisitor} from "../src/visitors/path.visitor";
-import {OasVisitorUtil, OasTraverserDirection} from "../src/visitors/visitor.utils";
 import {OasNodePath} from "../src/models/node-path";
 import {OasNode} from "../src/models/node.model";
 
@@ -42,10 +36,8 @@ describe("Node Path (Create)", () => {
         let document: Oas20Document = <Oas20Document> library.createDocument(json);
 
         let node: OasNode = document.info;
-        let viz: Oas20NodePathVisitor = new Oas20NodePathVisitor();
+        let path: OasNodePath = library.createNodePath(node);
 
-        OasVisitorUtil.visitTree(node, viz, OasTraverserDirection.up);
-        let path: OasNodePath = viz.path();
         let actual: string = path.toString();
         let expected: string = "/info";
 
@@ -57,10 +49,8 @@ describe("Node Path (Create)", () => {
         let document: Oas20Document = <Oas20Document> library.createDocument(json);
 
         let node: OasNode = document.tags[0].externalDocs;
-        let viz: Oas20NodePathVisitor = new Oas20NodePathVisitor();
+        let path: OasNodePath = library.createNodePath(node);
 
-        OasVisitorUtil.visitTree(node, viz, OasTraverserDirection.up);
-        let path: OasNodePath = viz.path();
         let actual: string = path.toString();
         let expected: string = "/tags[0]/externalDocs";
 
@@ -72,10 +62,8 @@ describe("Node Path (Create)", () => {
         let document: Oas20Document = <Oas20Document> library.createDocument(json);
 
         let node: OasNode = document.paths.pathItem("/pet");
-        let viz: Oas20NodePathVisitor = new Oas20NodePathVisitor();
+        let path: OasNodePath = library.createNodePath(node);
 
-        OasVisitorUtil.visitTree(node, viz, OasTraverserDirection.up);
-        let path: OasNodePath = viz.path();
         let actual: string = path.toString();
         let expected: string = "/paths[/pet]";
 
@@ -87,10 +75,8 @@ describe("Node Path (Create)", () => {
         let document: Oas20Document = <Oas20Document> library.createDocument(json);
 
         let node: OasNode = document.paths.pathItem("/pet/{petId}").get.responses.response("200");
-        let viz: Oas20NodePathVisitor = new Oas20NodePathVisitor();
+        let path: OasNodePath = library.createNodePath(node);
 
-        OasVisitorUtil.visitTree(node, viz, OasTraverserDirection.up);
-        let path: OasNodePath = viz.path();
         let actual: string = path.toString();
         let expected: string = "/paths[/pet/{petId}]/get/responses[200]";
 
@@ -102,10 +88,8 @@ describe("Node Path (Create)", () => {
         let document: Oas20Document = <Oas20Document> library.createDocument(json);
 
         let node: OasNode = document.paths.pathItem("/user/{username}").put.parameters[1].schema;
-        let viz: Oas20NodePathVisitor = new Oas20NodePathVisitor();
+        let path: OasNodePath = library.createNodePath(node);
 
-        OasVisitorUtil.visitTree(node, viz, OasTraverserDirection.up);
-        let path: OasNodePath = viz.path();
         let actual: string = path.toString();
         let expected: string = "/paths[/user/{username}]/put/parameters[1]/schema";
 
@@ -117,10 +101,8 @@ describe("Node Path (Create)", () => {
         let document: Oas20Document = <Oas20Document> library.createDocument(json);
 
         let node: OasNode = document.definitions.definition("Order");
-        let viz: Oas20NodePathVisitor = new Oas20NodePathVisitor();
+        let path: OasNodePath = library.createNodePath(node);
 
-        OasVisitorUtil.visitTree(node, viz, OasTraverserDirection.up);
-        let path: OasNodePath = viz.path();
         let actual: string = path.toString();
         let expected: string = "/definitions[Order]";
 
@@ -132,10 +114,8 @@ describe("Node Path (Create)", () => {
         let document: Oas20Document = <Oas20Document> library.createDocument(json);
 
         let node: OasNode = document.definitions.definition("Pet").properties["photoUrls"].xml;
-        let viz: Oas20NodePathVisitor = new Oas20NodePathVisitor();
+        let path: OasNodePath = library.createNodePath(node);
 
-        OasVisitorUtil.visitTree(node, viz, OasTraverserDirection.up);
-        let path: OasNodePath = viz.path();
         let actual: string = path.toString();
         let expected: string = "/definitions[Pet]/properties[photoUrls]/xml";
 
@@ -147,10 +127,8 @@ describe("Node Path (Create)", () => {
         let document: Oas20Document = <Oas20Document> library.createDocument(json);
 
         let node: OasNode = document.securityDefinitions.securityScheme("petstore_auth");
-        let viz: Oas20NodePathVisitor = new Oas20NodePathVisitor();
+        let path: OasNodePath = library.createNodePath(node);
 
-        OasVisitorUtil.visitTree(node, viz, OasTraverserDirection.up);
-        let path: OasNodePath = viz.path();
         let actual: string = path.toString();
         let expected: string = "/securityDefinitions[petstore_auth]";
 
