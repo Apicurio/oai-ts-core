@@ -1,6 +1,6 @@
 {
   "name": "oai-ts-core",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A library to read and write OpenAPI documents.",
   "main": "bundles/OAI.umd.min.js",
   "module": "index.js",
