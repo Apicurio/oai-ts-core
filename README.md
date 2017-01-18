@@ -10,17 +10,17 @@ model. The data model can then be read or manipulated. It can also be validated.
 The data model can be accessed directly, but there is also a robust visitor pattern 
 available for more advanced analysis or transformation of the model.
 
+This project is licensed under the [Apache License 2.0](LICENSE).
+
 ## Usage
 For details on how to use the library, see the documentation included with the library on
 npmjs.com:
 
-  https://www.npmjs.com/package/oai-ts-core
+  [https://www.npmjs.com/package/oai-ts-core](https://www.npmjs.com/package/oai-ts-core)
 
 This documentation can also be found in this repository here:
 
-```
-oai-ts-core/module/README.md
-```
+  [./module/README.md](https://github.com/EricWittmann/oai-ts-core/blob/master/module/README.md)
 
 ## Project Goals
 
@@ -33,7 +33,12 @@ The library should be usable as broadly as possible, both as a dependency of oth
 Javascript projects, as well as usable directly within a browser (via a simple import).
 
 ### Usage Scenarios
-TBD
+Some example usage scenarios for this library include:
+ 
+* An editor which can be used to create new OpenAPI documents (or modify existing ones).
+* Auto-generate documentation from an OpenAPI document.
+* Transform OpenAPI documents into other versions/formats.
+* Auto-generate API clients based on OpenAPI documents.
 
 ### Dependencies
 An important design decision is that this project does not have any runtime dependencies.  This
@@ -179,3 +184,63 @@ code with the version that was just released.  For example, if you have just pub
 git tag -a -m 'Release 3.7.8' 3.7.8
 git push 3.7.8
 ```
+
+## Contribute Fixes and Features
+This project is open source, and we welcome anybody who wants to participate and contribute!
+
+### Get the code
+The easiest way to get started with the code is to [create your own fork](http://help.github.com/forking/)
+of this repository, and then clone your fork:
+
+	$ git clone git@github.com:<you>/oai-ts-core.git
+	$ cd oai-ts-core
+	$ git remote add upstream git://github.com/EricWittmann/oai-ts-core.git
+
+At any time, you can pull changes from the upstream and merge them onto your master:
+
+	$ git checkout master       # switches to the 'master' branch
+	$ git pull upstream master  # fetches all 'upstream' changes and merges 'upstream/master' onto your 'master' branch
+	$ git push origin           # pushes all the updates to your fork, which should be in-sync with 'upstream'
+
+The general idea is to keep your 'master' branch in-sync with the 'upstream/master'.
+
+### Track Your Change
+If you want to fix a bug or make any changes, please log an issue in the github 
+[Issue Tracker](https://github.com/EricWittmann/oai-ts-core/issues) describing the bug or new 
+feature. Then we highly recommend making the changes on a topic branch named with the issue 
+number. For example, this command creates a branch for issue #7:
+
+	$ git checkout -b oai-ts-core-7
+
+After you're happy with your changes and all unit tests run successfully, commit your changes 
+on your topic branch. Then it's time to check for and pull any recent changes that were made in
+the official repository since you created your branch:
+
+	$ git checkout master         # switches to the 'master' branch
+	$ git pull upstream master    # fetches all 'upstream' changes and merges 'upstream/master' onto your 'master' branch
+	$ git checkout oai-ts-core-7  # switches to your topic branch
+	$ git rebase master           # reapplies your changes on top of the latest in master
+	                               (i.e., the latest from master will be the new base for your changes)
+
+If the pull grabbed a lot of changes, you should rerun the tests to make sure your changes are 
+still good.  You can then either [create patches](http://progit.org/book/ch5-2.html) (one file 
+per commit, saved in `~/oai-ts-core-7`) with:
+
+	$ git format-patch -M -o ~/oai-ts-core-7 orgin/master
+
+and upload them to the issue, or you can push your topic branch and its changes into your public 
+fork repository with:
+
+	$ git push origin oai-ts-core-7         # pushes your topic branch into your public fork
+
+and [generate a pull-request](http://help.github.com/pull-requests/) for your changes.  The latter
+is definitely the preferred mechanism for submitting changes.
+
+The reason we prefer pull-requests is that we can review the proposed changes, comment on them,
+discuss them with you, and likely merge the changes right into the official repository.  No muss,
+no fuss!
+
+Please try to create one commit per feature or fix, generally the easiest way to do this is 
+via [git squash](https://git-scm.com/book/en/v2/Git-Tools-Rewriting-History#Squashing-Commits).
+This makes reverting changes easier, and avoids needlessly polluting the repository history with 
+checkpoint commits.
