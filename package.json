@@ -2,14 +2,13 @@
   "name": "oai-ts-core",
   "version": "0.1.2",
   "description": "A library to read and write OpenAPI documents.",
-  "main": "bundles/OAI.umd.min.js",
-  "module": "index.js",
-  "typings": "index.d.ts",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/EricWittmann/oai-ts-core"
   },
+  "main": "bundles/OAI.umd.min.js",
+  "module": "index.js",
   "typings": "index.d.ts",
   "typescript": {
     "definition": "index.d.ts"
