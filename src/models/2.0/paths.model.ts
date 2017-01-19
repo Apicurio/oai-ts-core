@@ -95,7 +95,7 @@ export class Oas20Paths extends OasExtensibleNode implements IOasIndexedNode<Oas
      * @param path
      */
     public removePathItem(path: string): Oas20PathItem {
-        let rval: Oas20PathItem = this.getItem(name);
+        let rval: Oas20PathItem = this._pathItems[path];
         if (rval) {
             delete this._pathItems[path];
         }

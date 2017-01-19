@@ -75,8 +75,12 @@ export class Oas20ResponsesDefinitions extends OasNode {
      * Removes a response by name.
      * @param name
      */
-    public removeResponse(name: string): void {
-        delete this._responses[name];
+    public removeResponse(name: string): Oas20ResponseDefinition {
+        let rval: Oas20ResponseDefinition = this._responses[name];
+        if (rval) {
+            delete this._responses[name];
+        }
+        return rval;
     }
 
     /**

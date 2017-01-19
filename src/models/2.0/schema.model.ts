@@ -183,10 +183,15 @@ export class Oas20Schema extends OasExtensibleNode {
      * Removes a property by name.
      * @param propertyName
      */
-    public removeProperty(propertyName: string) {
-        if (this.properties && this.properties[propertyName]) {
-            delete this.properties[propertyName];
+    public removeProperty(propertyName: string): Oas20PropertySchema {
+        let rval: Oas20PropertySchema = undefined;
+        if (this.properties) {
+            rval = this.properties[propertyName];
+            if (rval) {
+                delete this.properties[propertyName];
+            }
         }
+        return rval;
     }
 
     /**

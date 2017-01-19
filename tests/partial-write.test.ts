@@ -16,7 +16,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import {Oas20Document} from "../src/models/2.0/document.model";
 import {OasLibraryUtils} from "../src/library.utils";
 
@@ -54,5 +53,19 @@ describe("Partial Write (2.0)", () => {
         let actualObj: any = library.writeNode(document.paths.pathItem("/pet/{petId}").get.responses.response("200"));
         expect(actualObj).toEqual(expectedObj);
     });
+
+    it("Deleted Path", () => {
+        let json: any = readJSON('tests/fixtures/partial-write/2.0/pet-store.json');
+        let expected: any = readJSON('tests/fixtures/partial-write/2.0/deleted-path.json');
+        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+
+        document.paths.removePathItem("/pet/findByTags");
+
+        let expectedObj: any = expected;
+        let actualObj: any = library.writeNode(document.paths);
+        expect(actualObj).toEqual(expectedObj);
+    });
+
+
 
 });

@@ -85,10 +85,15 @@ export class Oas20Example extends OasNode {
      * Removes a single example.
      * @param contentType
      */
-    public removeExample(contentType: any): void {
+    public removeExample(contentType: any): any {
+        let rval: any = undefined;
         if (this._examples) {
-            delete this._examples[contentType];
+            rval = this._examples[contentType];
+            if (rval) {
+                delete this._examples[contentType];
+            }
         }
+        return rval;
     }
 }
 

@@ -79,8 +79,12 @@ export class Oas20ParametersDefinitions extends OasNode {
      * Removes a parameter by name.
      * @param name
      */
-    public removeParameter(name: string): void {
-        delete this._parameters[name];
+    public removeParameter(name: string): Oas20ParameterDefinition {
+        let rval: Oas20ParameterDefinition = this._parameters[name];
+        if (rval) {
+            delete this._parameters[name];
+        }
+        return rval;
     }
 
     /**

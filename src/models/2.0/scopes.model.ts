@@ -73,10 +73,12 @@ export class Oas20Scopes extends OasExtensibleNode {
      * Removes a scope.
      * @param scope
      */
-    public removeScope(scope: string): void {
-        if (this._items[scope]) {
+    public removeScope(scope: string): string {
+        let rval: string = this._items[scope];
+        if (rval) {
             delete this._items[scope];
         }
+        return rval;
     }
 
 }
