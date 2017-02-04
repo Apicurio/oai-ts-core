@@ -59,7 +59,11 @@ export class Oas20Responses extends OasExtensibleNode implements IOasIndexedNode
      * @return {Oas20Response}
      */
     public response(statusCode: string): Oas20Response {
-        return this._responses[statusCode];
+        if (this._responses) {
+            return this._responses[statusCode];
+        } else {
+            return null;
+        }
     }
 
     /**
