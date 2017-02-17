@@ -192,15 +192,19 @@ This project is open source, and we welcome anybody who wants to participate and
 The easiest way to get started with the code is to [create your own fork](http://help.github.com/forking/)
 of this repository, and then clone your fork:
 
-	$ git clone git@github.com:<you>/oai-ts-core.git
-	$ cd oai-ts-core
-	$ git remote add upstream git://github.com/EricWittmann/oai-ts-core.git
+```bash
+$ git clone git@github.com:<you>/oai-ts-core.git
+$ cd oai-ts-core
+$ git remote add upstream git://github.com/EricWittmann/oai-ts-core.git
+```
 
 At any time, you can pull changes from the upstream and merge them onto your master:
 
-	$ git checkout master       # switches to the 'master' branch
-	$ git pull upstream master  # fetches all 'upstream' changes and merges 'upstream/master' onto your 'master' branch
-	$ git push origin           # pushes all the updates to your fork, which should be in-sync with 'upstream'
+```bash
+$ git checkout master       # switches to the 'master' branch
+$ git pull upstream master  # fetches all 'upstream' changes and merges 'upstream/master' onto your 'master' branch
+$ git push origin           # pushes all the updates to your fork, which should be in-sync with 'upstream'
+```
 
 The general idea is to keep your 'master' branch in-sync with the 'upstream/master'.
 
@@ -210,28 +214,36 @@ If you want to fix a bug or make any changes, please log an issue in the github
 feature. Then we highly recommend making the changes on a topic branch named with the issue 
 number. For example, this command creates a branch for issue #7:
 
-	$ git checkout -b oai-ts-core-7
+```bash
+$ git checkout -b oai-ts-core-7
+```
 
 After you're happy with your changes and all unit tests run successfully, commit your changes 
 on your topic branch. Then it's time to check for and pull any recent changes that were made in
 the official repository since you created your branch:
 
-	$ git checkout master         # switches to the 'master' branch
-	$ git pull upstream master    # fetches all 'upstream' changes and merges 'upstream/master' onto your 'master' branch
-	$ git checkout oai-ts-core-7  # switches to your topic branch
-	$ git rebase master           # reapplies your changes on top of the latest in master
-	                               (i.e., the latest from master will be the new base for your changes)
+```bash
+$ git checkout master         # switches to the 'master' branch
+$ git pull upstream master    # fetches all 'upstream' changes and merges 'upstream/master' onto your 'master' branch
+$ git checkout oai-ts-core-7  # switches to your topic branch
+$ git rebase master           # reapplies your changes on top of the latest in master
+                              # (i.e., the latest from master will be the new base for your changes)
+```
 
 If the pull grabbed a lot of changes, you should rerun the tests to make sure your changes are 
 still good.  You can then either [create patches](http://progit.org/book/ch5-2.html) (one file 
 per commit, saved in `~/oai-ts-core-7`) with:
 
-	$ git format-patch -M -o ~/oai-ts-core-7 orgin/master
+```bash
+$ git format-patch -M -o ~/oai-ts-core-7 orgin/master
+```
 
 and upload them to the issue, or you can push your topic branch and its changes into your public 
 fork repository with:
 
-	$ git push origin oai-ts-core-7         # pushes your topic branch into your public fork
+```bash
+$ git push origin oai-ts-core-7         # pushes your topic branch into your public fork
+```
 
 and [generate a pull-request](http://help.github.com/pull-requests/) for your changes.  The latter
 is definitely the preferred mechanism for submitting changes.
