@@ -181,8 +181,8 @@ code with the version that was just released.  For example, if you have just pub
 3.7.8 of the library, you would tag it in the repository with these commands:
 
 ```
-git tag -a -m 'Release 3.7.8' 3.7.8
-git push 3.7.8
+git tag -a -m 'Release 0.1.5' 0.1.5
+git push origin 0.1.5
 ```
 
 ## Contribute Fixes and Features
