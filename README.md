@@ -69,28 +69,30 @@ This section explains how to build, package, test, and publish the library.  If 
 looking to make changes, this is a great place to start.
 
 ### Pre-Requisites
-In order to do any work with the library you will need to install node.  As of the time of this
-writing, the versions of node and npm used were:
+In order to do any work with the library you will need to install node.js.  As of the time of this
+writing, the versions of node, npm. and yarn used were:
 
 ```
 $ node -v
 v5.6.0
 $ npm -v
 3.6.0
+$ yarn --version
+0.20.3
 ```
 
-Make sure you download and install node/npm of at least the above versions.
+Make sure you download and install node/npm/yarn of at least the above versions.
 
 ### Clone and Configure
 The first thing to do (obviously) is clone the repository.  Once you've cloned the git repository,
-you must use npm to install all of the library's dependencies.  It is worth noting that the library
+you must use yarn (or npm) to install all of the library's dependencies.  It is worth noting that the library
 does not have any runtime dependencies, but it has several *build* dependencies (including typescript,
 karma, jasmine, etc).  The following commands should help clone and configure:
 
 ```
 git clone https://github.com/EricWittmann/oai-ts-core.git
 cd oai-ts-core
-npm i
+yarn install
 ```
 
 The result of this should be a number of dependencies downloaded and stored in a new `node_modules`
@@ -101,7 +103,7 @@ directory.
 This library uses jasmine+karma for unit testing.  Give it a try by doing this:
 
 ```
-npm test
+yarn test
 ```
 
 You should see a number of unit tests get executed (you may need Google Chrome installed for
@@ -155,11 +157,11 @@ then modify the patch version.  If it's a more significant release, then modifyi
 or minor number may be appropriate.
 
 #### Create the Package
-Next, create the package (intended for release) by using npm.  The command to create the 
+Next, create the package (intended for release) by using yarn.  The command to create the 
 package is below:
 
 ```
-npm run package
+yarn run package
 ```
 
 This command will result in a new `dist` directory being created.  Within this directory
@@ -167,11 +169,11 @@ you will find a number of files, all of which must be uploaded to npmjs.com as t
 release of the library.
 
 #### Publish to npmjs.com
-Once everything has been packaged, you can simply use npm to publish the result into
+Once everything has been packaged, you can simply use yarn/npm to publish the result into
 npmjs.com:
 
 ```
-npm publish ./dist
+yarn publish ./dist
 ```
 
 #### Tag the Release in Git

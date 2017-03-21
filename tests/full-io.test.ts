@@ -116,21 +116,6 @@ describe("Full I/O (2.0) - Basics", () => {
         expect(jsObj).toEqual(json);
     });
 
-    it("Complete Pet Store", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/complete/pet-store.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-
-        // let actual: any = sortObj(jsObj);
-        // let expected: any = sortObj(json);
-        //
-        // console.info("--- ACTUAL ---")
-        // console.info(JSON.stringify(actual));
-        // console.info("--- EXPECTED ---")
-        // console.info(JSON.stringify(expected));
-
-        expect(jsObj).toEqual(json);
-    });
 });
 
 
@@ -406,4 +391,69 @@ describe("Responses I/O (2.0)", () => {
         expect(jsObj).toEqual(json);
     });
 
+});
+
+
+describe("Complete Spec I/O (2.0)", () => {
+
+    let library: OasLibraryUtils;
+
+    beforeEach(() => {
+        library = new OasLibraryUtils();
+    });
+
+    it("Complete Pet Store", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/complete/pet-store.json');
+        let document: Oas20Document = <Oas20Document>library.createDocument(json);
+        let jsObj: any = library.writeNode(document);
+
+        expect(jsObj).toEqual(json);
+    });
+
+    it("Complete api.meerkat", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/complete/api.meerkat.com.br.json');
+        let document: Oas20Document = <Oas20Document>library.createDocument(json);
+        let jsObj: any = library.writeNode(document);
+
+        expect(jsObj).toEqual(json);
+    });
+
+    it("Complete austin2015.apistrat", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/complete/austin2015.apistrat.com.json');
+        let document: Oas20Document = <Oas20Document>library.createDocument(json);
+        let jsObj: any = library.writeNode(document);
+
+        expect(jsObj).toEqual(json);
+    });
+
+    it("Complete developer.trade.gov", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/complete/developer.trade.gov.json');
+        let document: Oas20Document = <Oas20Document>library.createDocument(json);
+        let jsObj: any = library.writeNode(document);
+
+        // let actual: any = sortObj(jsObj);
+        // let expected: any = sortObj(json);
+        // console.info("--- ACTUAL ---");
+        // console.info(JSON.stringify(actual));
+        // console.info("--- EXPECTED ---");
+        // console.info(JSON.stringify(expected));
+
+        expect(jsObj).toEqual(json);
+    });
+
+    it("Complete api.hairmare", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/complete/subnet.api.hairmare.ch.json');
+        let document: Oas20Document = <Oas20Document>library.createDocument(json);
+        let jsObj: any = library.writeNode(document);
+
+        expect(jsObj).toEqual(json);
+    });
+
+    it("Complete weatherbit.io", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/complete/www.weatherbit.io.json');
+        let document: Oas20Document = <Oas20Document>library.createDocument(json);
+        let jsObj: any = library.writeNode(document);
+
+        expect(jsObj).toEqual(json);
+    });
 });
