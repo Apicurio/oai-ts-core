@@ -67,6 +67,18 @@ export class Oas20Responses extends OasExtensibleNode implements IOasIndexedNode
     }
 
     /**
+     * Returns an array of all the responses.
+     */
+    public responses(): Oas20Response[] {
+        let names: string[] = this.responseStatusCodes();
+        let rval: Oas20Response[] = [];
+        for (let name of names) {
+            rval.push(this.response(name));
+        }
+        return rval;
+    }
+
+    /**
      * Adds a response.
      * @param name
      * @param response
@@ -116,6 +128,10 @@ export class Oas20Responses extends OasExtensibleNode implements IOasIndexedNode
 
     getItem(name: string): Oas20Response {
         return this.response(name);
+    }
+
+    getItems(): Oas20Response[] {
+        return this.responses();
     }
 
     getItemNames(): string[] {

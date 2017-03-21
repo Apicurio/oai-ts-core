@@ -61,6 +61,18 @@ export class Oas20Headers extends OasNode implements IOasIndexedNode<Oas20Header
     }
 
     /**
+     * Returns an array of all the headers.
+     */
+    public headers(): Oas20Header[] {
+        let names: string[] = this.headerNames();
+        let rval: Oas20Header[] = [];
+        for (let name of names) {
+            rval.push(this.header(name));
+        }
+        return rval;
+    }
+
+    /**
      * Returns all the header names.
      * @return {string[]}
      */
@@ -111,6 +123,10 @@ export class Oas20Headers extends OasNode implements IOasIndexedNode<Oas20Header
 
     getItem(name: string): Oas20Header {
         return this.header(name);
+    }
+
+    getItems(): Oas20Header[] {
+        return this.headers();
     }
 
     getItemNames(): string[] {

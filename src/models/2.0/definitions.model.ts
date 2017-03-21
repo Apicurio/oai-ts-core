@@ -74,6 +74,18 @@ export class Oas20Definitions extends OasNode implements IOasIndexedNode<Oas20De
     }
 
     /**
+     * Returns an array of all the definitions.
+     */
+    public definitions(): Oas20DefinitionSchema[] {
+        let names: string[] = this.definitionNames();
+        let rval: Oas20DefinitionSchema[] = [];
+        for (let name of names) {
+            rval.push(this.definition(name));
+        }
+        return rval;
+    }
+
+    /**
      * Adds a definition.
      * @param name
      * @param schema
@@ -120,6 +132,10 @@ export class Oas20Definitions extends OasNode implements IOasIndexedNode<Oas20De
 
     getItem(name: string): Oas20DefinitionSchema {
         return this.definition(name);
+    }
+
+    getItems(): Oas20DefinitionSchema[] {
+        return this.definitions();
     }
 
     getItemNames(): string[] {

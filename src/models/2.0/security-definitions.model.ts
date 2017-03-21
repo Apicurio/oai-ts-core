@@ -74,6 +74,18 @@ export class Oas20SecurityDefinitions extends OasNode implements IOasIndexedNode
     }
 
     /**
+     * Returns an array of all the security schemes.
+     */
+    public securitySchemes(): Oas20SecurityScheme[] {
+        let names: string[] = this.securitySchemeNames();
+        let rval: Oas20SecurityScheme[] = [];
+        for (let name of names) {
+            rval.push(this.securityScheme(name));
+        }
+        return rval;
+    }
+
+    /**
      * Adds a security scheme child node.
      * @param name
      * @param scheme
@@ -108,6 +120,10 @@ export class Oas20SecurityDefinitions extends OasNode implements IOasIndexedNode
 
     getItem(name: string): Oas20SecurityScheme {
         return this.securityScheme(name);
+    }
+
+    getItems(): Oas20SecurityScheme[] {
+        return this.securitySchemes();
     }
 
     getItemNames(): string[] {

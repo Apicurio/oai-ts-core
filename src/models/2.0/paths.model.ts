@@ -70,6 +70,18 @@ export class Oas20Paths extends OasExtensibleNode implements IOasIndexedNode<Oas
     }
 
     /**
+     * Returns an array of all the path items.
+     */
+    public pathItems(): Oas20PathItem[] {
+        let names: string[] = this.pathItemNames();
+        let rval: Oas20PathItem[] = [];
+        for (let name of names) {
+            rval.push(this.pathItem(name));
+        }
+        return rval;
+    }
+
+    /**
      * Adds a path item.
      * @param name
      * @param pathItem
@@ -116,6 +128,10 @@ export class Oas20Paths extends OasExtensibleNode implements IOasIndexedNode<Oas
 
     getItem(name: string): Oas20PathItem {
         return this.pathItem(name);
+    }
+
+    getItems(): Oas20PathItem[] {
+        return this.pathItems();
     }
 
     getItemNames(): string[] {

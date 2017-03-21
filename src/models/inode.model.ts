@@ -33,6 +33,11 @@ export interface IOasIndexedNode<T extends OasNode> {
     getItem(name: string): T;
 
     /**
+     * Returns an array of all the child items.
+     */
+    getItems(): T[];
+
+    /**
      * Gets a list of the names of all indexed children.
      */
     getItemNames(): string[];
