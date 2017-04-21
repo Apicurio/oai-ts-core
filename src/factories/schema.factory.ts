@@ -17,7 +17,6 @@
 
 import {Oas20DefinitionSchema, Oas20PropertySchema, Oas20Schema} from "../models/2.0/schema.model";
 import {Oas20Document} from "../models/2.0/document.model";
-import {JsonSchemaType} from "../models/json-schema";
 import {Oas20Definitions} from "../models/2.0/definitions.model";
 
 export class Oas20SchemaFactory {
@@ -45,24 +44,24 @@ export class Oas20SchemaFactory {
         let resolveType = function(thing: any, schema: Oas20Schema): void {
             if (typeof thing === "number") {
                 if (Math.round(thing) === thing) {
-                    schema.type = JsonSchemaType.integer;
+                    schema.type = "integer";
                     if (thing >= -2147483647 && thing <= 2147483647) {
                         schema.format = "int32";
                     } else if (thing >= -9223372036854775807 && thing <= 9223372036854775807) {
                         schema.format = "int64";
                     }
                 } else {
-                    schema.type = JsonSchemaType.number;
+                    schema.type = "number";
                     schema.format = "double";
                 }
             } else if (typeof thing === "boolean") {
-                schema.type = JsonSchemaType.boolean;
+                schema.type = "boolean";
             } else if (Array.isArray(thing)) {
-                schema.type = JsonSchemaType.array;
+                schema.type = "array";
             } else if (typeof thing === "object") {
-                schema.type = JsonSchemaType.object;
+                schema.type = "object";
             } else {
-                schema.type = JsonSchemaType.string;
+                schema.type = "string";
                 if ((<string>thing).match(/^(\d{4})\D?(0[1-9]|1[0-2])\D?([12]\d|0[1-9]|3[01])$/)) {
                     schema.format = "date";
                 } else if ((<string>thing).match(/^(\d{4})\D?(0[1-9]|1[0-2])\D?([12]\d|0[1-9]|3[01])(\D?([01]\d|2[0-3])\D?([0-5]\d)\D?([0-5]\d)?\D?(\d{3})?([zZ]|([\+-])([01]\d|2[0-3])\D?([0-5]\d)?)?)?$/)) {
@@ -72,13 +71,13 @@ export class Oas20SchemaFactory {
         };
         let resolveAll = function(object: any, schema: Oas20Schema): void {
             resolveType(object, schema);
-            if (schema.type === JsonSchemaType.array) {
+            if (schema.type === "array") {
                 schema.items = schema.createItemsSchema();
                 if (example.length > 0) {
                     resolveAll(example[0], schema.items);
                 }
-            } else if (schema.type === JsonSchemaType.object) {
-                schema.type = JsonSchemaType.object;
+            } else if (schema.type === "object") {
+                schema.type = "object";
                 for (let propName in object) {
                     let pschema: Oas20PropertySchema = schema.createPropertySchema(propName);
                     schema.addProperty(propName, pschema);

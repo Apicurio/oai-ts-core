@@ -17,7 +17,7 @@
 
 import {Oas20NodeVisitorAdapter} from "../../visitors/visitor.base";
 import {OasNode} from "../../models/node.model";
-import {OasValidationErrorSeverity, IOasValidationErrorReporter, OasValidationError} from "../validation";
+import {IOasValidationErrorReporter} from "../validation";
 
 /**
  * Base class for all 2.0 validation rules.
@@ -32,13 +32,41 @@ export abstract class Oas20ValidationRule extends Oas20NodeVisitorAdapter {
     }
 
     /**
+     * Check if a property was defined.
+     * @param propertyValue
+     * @return {boolean}
+     */
+    protected isDefined(propertyValue: any): boolean {
+        if (propertyValue === undefined) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Check if the property value exists (is not undefined and is not null).
+     * @param propertyValue
+     * @return {boolean}
+     */
+    protected hasValue(propertyValue: any): boolean {
+        if (propertyValue === undefined) {
+            return false;
+        }
+        if (propertyValue === null) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Called by validation rules to report an error.
+     * @param code
      * @param node
      * @param message
-     * @param severity
      */
-    public report(node: OasNode, message: string, severity: OasValidationErrorSeverity = OasValidationErrorSeverity.error): void {
-        this._reporter.report(node, message, severity);
+    public report(code: string, node: OasNode, message: string): void {
+        this._reporter.report(code, node, message);
     }
 
 }

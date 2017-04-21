@@ -19,7 +19,6 @@ import {IOasNodeVisitor, IOas20NodeVisitor} from "../../visitors/visitor.iface";
 import {Oas20ExternalDocumentation} from "./external-documentation.model";
 import {Oas20XML} from "./xml.model";
 import {OasExtensibleNode} from "../enode.model";
-import {JsonSchemaType} from "../json-schema";
 
 
 /**
@@ -66,7 +65,7 @@ export class Oas20Schema extends OasExtensibleNode {
     public minProperties: number;
     public required: boolean;
     public enum: any[];
-    public type: JsonSchemaType;
+    public type: string;
 
     public items: (Oas20ItemsSchema | Oas20ItemsSchema[]);
     public allOf: Oas20AllOfSchema[];

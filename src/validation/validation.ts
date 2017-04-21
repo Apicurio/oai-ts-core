@@ -23,30 +23,22 @@ import {OasNode} from "../models/node.model";
  */
 export interface IOasValidationErrorReporter {
 
-    report(node: OasNode, message: string, severity: OasValidationErrorSeverity): void;
+    report(code: string, node: OasNode, message: string): void;
 
 }
-
-/**
- * Severity of a validation error.
- */
-export enum OasValidationErrorSeverity {
-    warning, error
-}
-
 
 /**
  * Represents a single validation error.
  */
 export class OasValidationError {
 
+    public errorCode: string;
     public nodePath: OasNodePath;
-    public severity: OasValidationErrorSeverity;
     public message: string;
 
-    constructor(nodePath: OasNodePath, severity: OasValidationErrorSeverity, message: string) {
+    constructor(errorCode: string, nodePath: OasNodePath, message: string) {
+        this.errorCode = errorCode;
         this.nodePath = nodePath;
-        this.severity = severity;
         this.message = message;
     }
 

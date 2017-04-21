@@ -17,7 +17,7 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#responses/Common200"
+            "$ref": "#/responses/Common200"
           }
         }
       }

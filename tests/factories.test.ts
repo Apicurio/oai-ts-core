@@ -205,7 +205,7 @@ describe("Schema Factory (2.0)", () => {
             }
         });
 
-        console.info(JSON.stringify(library.writeNode(schema), null, 3));
+        //console.info(JSON.stringify(library.writeNode(schema), null, 3));
 
         expect(library.writeNode(schema)).toEqual({
             "title": "Root Type",

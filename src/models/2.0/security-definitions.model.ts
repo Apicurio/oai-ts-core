@@ -42,6 +42,8 @@ import {IOasIndexedNode} from "../inode.model";
  */
 export class Oas20SecurityDefinitions extends OasNode implements IOasIndexedNode<Oas20SecurityScheme> {
 
+    __instanceof_IOasIndexedNode: boolean = true;
+
     private _items: Oas20SecuritySchemeItems = new Oas20SecuritySchemeItems();
 
     /**

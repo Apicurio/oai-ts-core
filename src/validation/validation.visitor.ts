@@ -16,7 +16,7 @@
  */
 
 import {Oas20CompositeVisitor} from "../visitors/visitor.base";
-import {OasValidationError, IOasValidationErrorReporter, OasValidationErrorSeverity} from "./validation";
+import {OasValidationError, IOasValidationErrorReporter} from "./validation";
 import {OasNode} from "../models/node.model";
 import {Oas20RequiredPropertyValidationRule} from "./2.0/required-property.rule";
 import {Oas20NodePathVisitor} from "../visitors/path.visitor";
@@ -51,6 +51,12 @@ import {Oas20Definitions} from "../models/2.0/definitions.model";
 import {Oas20ParametersDefinitions} from "../models/2.0/parameters-definitions.model";
 import {Oas20ResponsesDefinitions} from "../models/2.0/responses-definitions.model";
 import {OasExtension} from "../models/extension.model";
+import {Oas20InvalidPropertyFormatValidationRule} from "./2.0/invalid-property-format.rule";
+import {Oas20InvalidPropertyNameValidationRule} from "./2.0/invalid-property-name.rule";
+import {Oas20InvalidPropertyValueValidationRule} from "./2.0/invalid-property-value.rule";
+import {Oas20UniquenessValidationRule} from "./2.0/uniqueness.rule";
+import {Oas20MutuallyExclusiveValidationRule} from "./2.0/mutually-exclusive.rule";
+import {Oas20InvalidReferenceValidationRule} from "./2.0/invalid-reference.rule";
 
 /**
  * Visitor used to validate a OpenAPI document (or a subsection of the document).  The result
@@ -66,7 +72,13 @@ export class Oas20ValidationVisitor extends Oas20CompositeVisitor implements IOa
 
         // Add a bunch of validation rules to the array of visitors.
         this.addVisitors([
-            new Oas20RequiredPropertyValidationRule(this)
+            new Oas20RequiredPropertyValidationRule(this),
+            new Oas20InvalidPropertyFormatValidationRule(this),
+            new Oas20InvalidPropertyNameValidationRule(this),
+            new Oas20InvalidPropertyValueValidationRule(this),
+            new Oas20UniquenessValidationRule(this),
+            new Oas20MutuallyExclusiveValidationRule(this),
+            new Oas20InvalidReferenceValidationRule(this)
         ]);
     }
 
@@ -80,15 +92,15 @@ export class Oas20ValidationVisitor extends Oas20CompositeVisitor implements IOa
 
     /**
      * Called by validation rules when an error is detected.
+     * @param code
      * @param node
      * @param message
-     * @param severity
      */
-    public report(node: OasNode, message: string, severity: OasValidationErrorSeverity): void {
+    public report(code: string, node: OasNode, message: string): void {
         let viz: Oas20NodePathVisitor = new Oas20NodePathVisitor();
         OasVisitorUtil.visitTree(node, viz, OasTraverserDirection.up);
         let path: OasNodePath = viz.path();
-        let error: OasValidationError = new OasValidationError(path, severity, message);
+        let error: OasValidationError = new OasValidationError(code, path, message);
 
         // Include the error in the list of errors found by this visitor.
         this.errors.push(error);

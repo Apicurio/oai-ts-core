@@ -18,6 +18,7 @@
 import {IOasNodeVisitor, IOas20NodeVisitor} from "../../visitors/visitor.iface";
 import {OasNode} from "../node.model";
 import {Oas20ResponseDefinition} from "./response.model";
+import {IOasIndexedNode} from "../inode.model";
 
 /**
  * Models an OAS 2.0 Responses Definitions object.  The Responses Definitions object can have any
@@ -39,7 +40,9 @@ import {Oas20ResponseDefinition} from "./response.model";
  *   }
  * }
  */
-export class Oas20ResponsesDefinitions extends OasNode {
+export class Oas20ResponsesDefinitions extends OasNode implements IOasIndexedNode<Oas20ResponseDefinition> {
+
+    __instanceof_IOasIndexedNode: boolean = true;
 
     private _responses: Oas20ResponsesDefinitionsItems = new Oas20ResponsesDefinitionsItems();
 
@@ -59,6 +62,18 @@ export class Oas20ResponsesDefinitions extends OasNode {
      */
     public response(name: string): Oas20ResponseDefinition {
         return this._responses[name];
+    }
+
+    /**
+     * Returns an array of all the responses.
+     */
+    public responses(): Oas20ResponseDefinition[] {
+        let names: string[] = this.responseNames();
+        let rval: Oas20ResponseDefinition[] = [];
+        for (let name of names) {
+            rval.push(this.response(name));
+        }
+        return rval;
     }
 
     /**
@@ -104,6 +119,26 @@ export class Oas20ResponsesDefinitions extends OasNode {
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;
+    }
+
+    getItem(name: string): Oas20ResponseDefinition {
+        return this.response(name);
+    }
+
+    getItems(): Oas20ResponseDefinition[] {
+        return this.responses();
+    }
+
+    getItemNames(): string[] {
+        return this.responseNames();
+    }
+
+    addItem(name: string, item: Oas20ResponseDefinition): void {
+        this.addResponse(name, item);
+    }
+
+    deleteItem(name: string): Oas20ResponseDefinition {
+        return this.removeResponse(name);
     }
 
 }

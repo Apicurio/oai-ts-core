@@ -41,6 +41,8 @@ import {IOasIndexedNode} from "../inode.model";
  */
 export class Oas20Responses extends OasExtensibleNode implements IOasIndexedNode<Oas20Response> {
 
+    __instanceof_IOasIndexedNode: boolean = true;
+
     public default: Oas20Response;
     private _responses: Oas20ResponseItems;
 

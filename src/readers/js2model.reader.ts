@@ -34,7 +34,7 @@ import {
     Oas20Schema, Oas20AdditionalPropertiesSchema, Oas20PropertySchema,
     Oas20DefinitionSchema, Oas20ItemsSchema, Oas20AllOfSchema
 } from "../models/2.0/schema.model";
-import {Oas20Items, Oas20ItemsCollectionFormat} from "../models/2.0/items.model";
+import {Oas20Items} from "../models/2.0/items.model";
 import {Oas20Responses} from "../models/2.0/responses.model";
 import {Oas20Response, Oas20ResponseDefinition, Oas20ResponseBase} from "../models/2.0/response.model";
 import {Oas20Headers} from "../models/2.0/headers.model";
@@ -44,7 +44,6 @@ import {Oas20XML} from "../models/2.0/xml.model";
 import {Oas20Definitions} from "../models/2.0/definitions.model";
 import {Oas20ParametersDefinitions} from "../models/2.0/parameters-definitions.model";
 import {Oas20ResponsesDefinitions} from "../models/2.0/responses-definitions.model";
-import {JsonSchemaType} from "../models/json-schema";
 import {IOas20NodeVisitor} from "../visitors/visitor.iface";
 import {OasExtension} from "../models/extension.model";
 
@@ -65,30 +64,6 @@ export class Oas20JS2ModelReader {
         } else {
             return true;
         }
-    }
-
-    /**
-     * Converts from String to an JsonSchemaType.
-     * @param type
-     * @return {JsonSchemaType}
-     */
-    private toJsonSchemaType(type: string): JsonSchemaType {
-        if (type == null) {
-            return null;
-        }
-        return JsonSchemaType[type];
-    }
-
-    /**
-     * Converts from String to an JsonSchemaType.
-     * @param format
-     * @return {Oas20ItemsCollectionFormat}
-     */
-    private toOas20ItemsCollectionFormat(format: string): Oas20ItemsCollectionFormat {
-        if (format == null) {
-            return null;
-        }
-        return Oas20ItemsCollectionFormat[format];
     }
 
     /**
@@ -611,7 +586,7 @@ export class Oas20JS2ModelReader {
         if (this.isDefined(minProperties)) { schemaModel.minProperties = minProperties; }
         if (this.isDefined(required)) { schemaModel.required = required; }
         if (this.isDefined(enum_)) { schemaModel.enum = enum_; }
-        if (this.isDefined(type)) { schemaModel.type = this.toJsonSchemaType(type); }
+        if (this.isDefined(type)) { schemaModel.type = type; }
 
         if (this.isDefined(items)) {
             if (Array.isArray(items)) {
@@ -690,14 +665,14 @@ export class Oas20JS2ModelReader {
         let enum_: any[] = items["enum"];
         let multipleOf: number = items["multipleOf"];
 
-        if (this.isDefined(type)) { itemsModel.type = this.toJsonSchemaType(type); }
+        if (this.isDefined(type)) { itemsModel.type = type; }
         if (this.isDefined(format)) { itemsModel.format = format; }
         if (this.isDefined(itemsChild)) {
             let itemsChildModel: Oas20Items = itemsModel.createItems();
             this.readItems(itemsChild, itemsChildModel);
             itemsModel.items = itemsChildModel;
         }
-        if (this.isDefined(collectionFormat)) { itemsModel.collectionFormat = this.toOas20ItemsCollectionFormat(collectionFormat); }
+        if (this.isDefined(collectionFormat)) { itemsModel.collectionFormat = collectionFormat; }
         if (this.isDefined(default_)) { itemsModel.default = default_; }
         if (this.isDefined(maximum)) { itemsModel.maximum = maximum; }
         if (this.isDefined(exclusiveMaximum)) { itemsModel.exclusiveMaximum = exclusiveMaximum; }

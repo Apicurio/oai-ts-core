@@ -53,6 +53,8 @@ import {IOasIndexedNode} from "../inode.model";
  */
 export class Oas20Definitions extends OasNode implements IOasIndexedNode<Oas20DefinitionSchema> {
 
+    __instanceof_IOasIndexedNode: boolean = true;
+
     private _definitions: Oas20DefinitionItems = new Oas20DefinitionItems();
 
     /**

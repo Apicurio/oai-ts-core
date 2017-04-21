@@ -36,7 +36,7 @@ import {
 import {Oas20Headers} from "../models/2.0/headers.model";
 import {Oas20Header} from "../models/2.0/header.model";
 import {Oas20Example} from "../models/2.0/example.model";
-import {Oas20Items, Oas20ItemsCollectionFormat} from "../models/2.0/items.model";
+import {Oas20Items} from "../models/2.0/items.model";
 import {Oas20Tag} from "../models/2.0/tag.model";
 import {OasNode} from "../models/node.model";
 import {Oas20SecurityDefinitions} from "../models/2.0/security-definitions.model";
@@ -46,7 +46,6 @@ import {Oas20XML} from "../models/2.0/xml.model";
 import {Oas20Definitions} from "../models/2.0/definitions.model";
 import {Oas20ParametersDefinitions} from "../models/2.0/parameters-definitions.model";
 import {Oas20ResponsesDefinitions} from "../models/2.0/responses-definitions.model";
-import {JsonSchemaType} from "../models/json-schema";
 
 /**
  * Visitor used to convert from a Model into a JavaScript object that conforms
@@ -680,10 +679,10 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
      */
     private createItemsObject(node: Oas20Items) {
         return {
-            type: this.fromJsonSchemaType(node.type),
+            type: node.type,
             format: node.format,
             items: <any>null,
-            collectionFormat: this.fromOas20ItemsCollectionFormat(node.collectionFormat),
+            collectionFormat: node.collectionFormat,
             default: node.default,
             maximum: node.maximum,
             exclusiveMaximum: node.exclusiveMaximum,
@@ -698,30 +697,6 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
             enum: node.enum,
             multipleOf: node.multipleOf
         };
-    }
-
-    /**
-     * Converts from an JsonSchemaType to a string.
-     * @param type
-     * @return {string}
-     */
-    private fromJsonSchemaType(type: JsonSchemaType): string {
-        if (type == null) {
-            return null;
-        }
-        return JsonSchemaType[type];
-    }
-
-    /**
-     * Converts from an Oas20ItemsCollectionFormat to a string.
-     * @param format
-     * @return {string}
-     */
-    private fromOas20ItemsCollectionFormat(format: Oas20ItemsCollectionFormat): string {
-        if (format == null) {
-            return null;
-        }
-        return Oas20ItemsCollectionFormat[format];
     }
 
     /**
@@ -752,7 +727,7 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
             minProperties: node.minProperties,
             required: node.required,
             enum: node.enum,
-            type: this.fromJsonSchemaType(node.type),
+            type: node.type,
 
             items: null,
             allOf: null,

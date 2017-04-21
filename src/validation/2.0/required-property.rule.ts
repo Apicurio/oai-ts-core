@@ -28,7 +28,6 @@ import {Oas20Response} from "../../models/2.0/response.model";
 import {Oas20Header} from "../../models/2.0/header.model";
 import {Oas20Tag} from "../../models/2.0/tag.model";
 import {Oas20SecurityScheme} from "../../models/2.0/security-scheme.model";
-import {JsonSchemaType} from "../../models/json-schema";
 
 /**
  * Implements the required property validation rule.  Various model properties are either
@@ -39,27 +38,15 @@ import {JsonSchemaType} from "../../models/json-schema";
 export class Oas20RequiredPropertyValidationRule extends Oas20ValidationRule {
 
     /**
-     * Check if a property was defined.
-     * @param propertyValue
-     * @return {boolean}
-     */
-    private isDefined(propertyValue: any): boolean {
-        if (propertyValue === undefined) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    /**
      * Called when a required property is missing.
+     * @param code
      * @param node
      * @param propertyName
      */
-    private requireProperty(node: OasNode, propertyName: string): void {
+    private requireProperty(code: string, node: OasNode, propertyName: string): void {
         let propertyValue: any = node[propertyName];
         if (!this.isDefined(propertyValue)) {
-            this.report(node, "Property \"" + propertyName + "\" is required.");
+            this.report(code, node, "Property \"" + propertyName + "\" is required.");
         }
     }
 
@@ -70,94 +57,101 @@ export class Oas20RequiredPropertyValidationRule extends Oas20ValidationRule {
      * @param dependentProperty
      * @param dependentValue
      */
-    private requirePropertyWhen(node: OasNode, propertyName: string, dependentProperty: string, dependentValue: string): void {
+    private requirePropertyWhen(code: string, node: OasNode, propertyName: string, dependentProperty: string, dependentValue: string): void {
         let propertyValue: any = node[propertyName];
         if (!this.isDefined(propertyValue)) {
-            this.report(node, "Property \"" + propertyName + "\" is required when \"" + dependentProperty + "\" property is '" + dependentValue + "'.");
+            this.report(code, node, "Property \"" + propertyName + "\" is required when \"" + dependentProperty + "\" property is '" + dependentValue + "'.");
         }
     }
 
     public visitDocument(node: Oas20Document): void {
-        this.requireProperty(node, "swagger");
-        this.requireProperty(node, "info");
-        this.requireProperty(node, "paths");
+        this.requireProperty("R-001", node, "swagger");
+        this.requireProperty("R-002", node, "info");
+        this.requireProperty("R-003", node, "paths");
     }
 
     public visitInfo(node: Oas20Info): void {
-        this.requireProperty(node, "title");
-        this.requireProperty(node, "version");
+        this.requireProperty("INF-001", node, "title");
+        this.requireProperty("INF-002", node, "version");
     }
 
     public visitLicense(node: Oas20License): void {
-        this.requireProperty(node, "name");
+        this.requireProperty("LIC-001", node, "name");
     }
 
     public visitOperation(node: Oas20Operation): void {
-        this.requireProperty(node, "responses");
+        this.requireProperty("OP-001", node, "responses");
     }
 
     public visitExternalDocumentation(node: Oas20ExternalDocumentation): void {
-        this.requireProperty(node, "url");
+        this.requireProperty("ED-001", node, "url");
     }
 
     public visitParameter(node: Oas20Parameter): void {
-        this.requireProperty(node, "name");
-        this.requireProperty(node, "in");
+        if (this.hasValue(node.$ref)) {
+            return;
+        }
+
+        this.requireProperty("PAR-001", node, "name");
+        this.requireProperty("PAR-002", node, "in");
 
         if (node.in === "path" && node.required !== true) {
-            this.report(node, "Property \"required\" is required when \"in\" property is 'path' (and value must be 'true').");
+            this.report("PAR-003", node, "Property \"required\" is required when \"in\" property is 'path' (and value must be 'true').");
         }
 
         if (node.in === "body") {
-            this.requirePropertyWhen(node, "schema", "in", "body");
+            this.requirePropertyWhen("PAR-004", node, "schema", "in", "body");
         }
 
         if (node.in !== "body" && !this.isDefined(node.type)) {
-            this.report(node, "Property \"type\" is required when \"in\" property is NOT 'body'.");
+            this.report("PAR-005", node, "Property \"type\" is required when \"in\" property is NOT 'body'.");
         }
 
-        if (node.in !== "body" && node.type === JsonSchemaType.array && !this.isDefined(node.items)) {
-            this.report(node, "Property \"items\" is required when \"in\" property is NOT 'body' AND \"type\" property is 'array'.");
+        if (node.in !== "body" && node.type === "array" && !this.isDefined(node.items)) {
+            this.report("PAR-006", node, "Property \"items\" is required when \"in\" property is NOT 'body' AND \"type\" property is 'array'.");
         }
     }
 
     public visitItems(node: Oas20Items): void {
-        this.requireProperty(node, "type");
-        if (node.type === JsonSchemaType.array) {
-            this.requirePropertyWhen(node, "items", "type", "array");
+        this.requireProperty("IT-001", node, "type");
+        if (node.type === "array") {
+            this.requirePropertyWhen("IT-002", node, "items", "type", "array");
         }
     }
 
     public visitResponse(node: Oas20Response): void {
-        this.requireProperty(node, "description");
+        if (this.hasValue(node.$ref)) {
+            return;
+        }
+        this.requireProperty("RES-001", node, "description");
     }
 
     public visitHeader(node: Oas20Header): void {
-        this.requireProperty(node, "type");
-        if (node.type === JsonSchemaType.array) {
-            this.requirePropertyWhen(node, "items", "type", "array");
+        this.requireProperty("HEAD-001", node, "type");
+        if (node.type === "array") {
+            this.requirePropertyWhen("HEAD-001", node, "items", "type", "array");
         }
     }
 
     public visitTag(node: Oas20Tag): void {
-        this.requireProperty(node, "name");
+        this.requireProperty("TAG-001", node, "name");
     }
 
     public visitSecurityScheme(node: Oas20SecurityScheme): void {
-        this.requireProperty(node, "type");
+        this.requireProperty("SS-001", node, "type");
         if (node.type === "apiKey") {
-            this.requirePropertyWhen(node, "name", "type", "apiKey");
-            this.requirePropertyWhen(node, "in", "type", "apiKey");
+            this.requirePropertyWhen("SS-002", node, "name", "type", "apiKey");
+            this.requirePropertyWhen("SS-003", node, "in", "type", "apiKey");
         }
         if (node.type === "oauth2") {
-            this.requirePropertyWhen(node, "flow", "type", "oauth2");
+            this.requirePropertyWhen("SS-004", node, "flow", "type", "oauth2");
             if ((node.flow === "implicit" || node.flow === "accessCode") && !this.isDefined(node.authorizationUrl)) {
-                this.report(node, "Property \"authorizationUrl\" is is required when \"type\" property is 'oauth2' AND \"flow\" property is 'implicit|accessCode'.");
+                this.report("SS-005", node, "Property \"authorizationUrl\" is is required when \"type\" property is 'oauth2' AND \"flow\" property is 'implicit|accessCode'.");
             }
             if ((node.flow === "password" || node.flow === "application" || node.flow === "accessCode") && !this.isDefined(node.tokenUrl)) {
-                this.report(node, "Property \"tokenUrl\" is is required when \"type\" property is 'oauth2' AND \"flow\" property is 'password|application|accessCode'.");
+                this.report("SS-006", node, "Property \"tokenUrl\" is is required when \"type\" property is 'oauth2' AND \"flow\" property is 'password|application|accessCode'.");
             }
-            this.requirePropertyWhen(node, "scopes", "type", "oauth2");
+            this.requirePropertyWhen("SS-007", node, "scopes", "type", "oauth2");
         }
     }
 

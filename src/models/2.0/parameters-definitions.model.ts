@@ -18,6 +18,7 @@
 import {IOasNodeVisitor, IOas20NodeVisitor} from "../../visitors/visitor.iface";
 import {OasNode} from "../node.model";
 import {Oas20ParameterDefinition} from "./parameter.model";
+import {IOasIndexedNode} from "../inode.model";
 
 /**
  * Models an OAS 2.0 Parameters Definitions object.  The Parameters Definitions object can have any
@@ -43,7 +44,9 @@ import {Oas20ParameterDefinition} from "./parameter.model";
  *   }
  * }
  */
-export class Oas20ParametersDefinitions extends OasNode {
+export class Oas20ParametersDefinitions extends OasNode implements IOasIndexedNode<Oas20ParameterDefinition> {
+
+    __instanceof_IOasIndexedNode: boolean = true;
 
     private _parameters: Oas20ParametersDefinitionsItems = new Oas20ParametersDefinitionsItems();
 
@@ -63,6 +66,18 @@ export class Oas20ParametersDefinitions extends OasNode {
      */
     public parameter(name: string): Oas20ParameterDefinition {
         return this._parameters[name];
+    }
+
+    /**
+     * Returns an array of all the parameters.
+     */
+    public parameters(): Oas20ParameterDefinition[] {
+        let names: string[] = this.parameterNames();
+        let rval: Oas20ParameterDefinition[] = [];
+        for (let name of names) {
+            rval.push(this.parameter(name));
+        }
+        return rval;
     }
 
     /**
@@ -108,6 +123,26 @@ export class Oas20ParametersDefinitions extends OasNode {
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;
+    }
+
+    getItem(name: string): Oas20ParameterDefinition {
+        return this.parameter(name);
+    }
+
+    getItems(): Oas20ParameterDefinition[] {
+        return this.parameters();
+    }
+
+    getItemNames(): string[] {
+        return this.parameterNames();
+    }
+
+    addItem(name: string, item: Oas20ParameterDefinition): void {
+        this.addParameter(name, item);
+    }
+
+    deleteItem(name: string): Oas20ParameterDefinition {
+        return this.removeParameter(name);
     }
 
 }

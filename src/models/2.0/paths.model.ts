@@ -49,6 +49,8 @@ import {IOasIndexedNode} from "../inode.model";
  */
 export class Oas20Paths extends OasExtensibleNode implements IOasIndexedNode<Oas20PathItem> {
 
+    __instanceof_IOasIndexedNode: boolean = true;
+
     private _pathItems: Oas20PathItems = new Oas20PathItems();
 
     /**

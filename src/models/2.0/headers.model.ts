@@ -40,6 +40,8 @@ import {IOasIndexedNode} from "../inode.model";
  */
 export class Oas20Headers extends OasNode implements IOasIndexedNode<Oas20Header> {
 
+    __instanceof_IOasIndexedNode: boolean = true;
+
     private _headers: Oas20HeaderItems;
 
     /**

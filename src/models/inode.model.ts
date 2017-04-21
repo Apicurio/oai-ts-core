@@ -26,6 +26,8 @@ import {OasNode} from "./node.model";
  */
 export interface IOasIndexedNode<T extends OasNode> {
 
+    __instanceof_IOasIndexedNode: boolean;
+
     /**
      * Gets a single item (indexed child) by name.  Returns undefined if not found.
      * @param name

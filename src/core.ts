@@ -18,7 +18,6 @@
 export * from "./models/document.model";
 export * from "./models/enode.model";
 export * from "./models/extension.model";
-export * from "./models/json-schema";
 export * from "./models/node.model";
 export * from "./models/node-path";
 export * from "./models/reference.model";
