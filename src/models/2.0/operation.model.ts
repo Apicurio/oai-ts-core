@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2016 JBoss Inc
+ * Copyright 2017 Red Hat
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import {Oas20Responses} from "./responses.model";
  * Models that serve as parent to a list of Oas20Parameter objects must implement this
  * interface.
  */
-export interface IParameterParent {
+export interface IOas20ParameterParent {
 
     addParameter(parameter: Oas20Parameter): Oas20Parameter;
     createParameter(): Oas20Parameter;
@@ -93,7 +93,7 @@ export interface IParameterParent {
  *   ]
  * }
  */
-export class Oas20Operation extends OasExtensibleNode implements IParameterParent {
+export class Oas20Operation extends OasExtensibleNode implements IOas20ParameterParent {
 
     private _method: string;
     public tags: string[];

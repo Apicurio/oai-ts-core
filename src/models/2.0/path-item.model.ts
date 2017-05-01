@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2016 JBoss Inc
+ * Copyright 2017 Red Hat
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
  */
 
 import {IOasNodeVisitor, IOas20NodeVisitor} from "../../visitors/visitor.iface";
-import {IParameterParent, Oas20Operation} from "./operation.model";
+import {IOas20ParameterParent, Oas20Operation} from "./operation.model";
 import {Oas20Parameter} from "./parameter.model";
 import {OasExtensibleNode} from "../enode.model";
 
@@ -66,7 +66,7 @@ import {OasExtensibleNode} from "../enode.model";
  * }
  *
  */
-export class Oas20PathItem extends OasExtensibleNode implements IParameterParent {
+export class Oas20PathItem extends OasExtensibleNode implements IOas20ParameterParent {
 
     private _path: string;
     public $ref: string;
