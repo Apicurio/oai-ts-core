@@ -23,6 +23,19 @@ import {Oas20SecurityRequirement} from "./security-requirement.model";
 import {Oas20Responses} from "./responses.model";
 
 /**
+ * Models that serve as parent to a list of Oas20Parameter objects must implement this
+ * interface.
+ */
+export interface IParameterParent {
+
+    addParameter(parameter: Oas20Parameter): Oas20Parameter;
+    createParameter(): Oas20Parameter;
+    getParameters(_in: string): Oas20Parameter[];
+
+}
+
+
+/**
  * Models an OAS 2.0 Operation object.  Example:
  *
  * {
@@ -80,7 +93,7 @@ import {Oas20Responses} from "./responses.model";
  *   ]
  * }
  */
-export class Oas20Operation extends OasExtensibleNode {
+export class Oas20Operation extends OasExtensibleNode implements IParameterParent {
 
     private _method: string;
     public tags: string[];
@@ -142,6 +155,21 @@ export class Oas20Operation extends OasExtensibleNode {
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;
+    }
+
+    /**
+     * Returns a list of parameters with a particular value of "in" (e.g. path, formData, body, etc...).
+     * @param _in
+     * @return {any}
+     */
+    public getParameters(_in: string): Oas20Parameter[] {
+        if (_in === undefined ||_in === null) {
+            return [];
+        } else {
+            return this.parameters.filter( param => {
+                return param.in === _in;
+            })
+        }
     }
 
     /**

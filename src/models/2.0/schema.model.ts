@@ -166,6 +166,19 @@ export class Oas20Schema extends OasExtensibleNode {
     }
 
     /**
+     * Gets a list of all the properties.
+     * @return {Oas20PropertySchema[]}
+     */
+    public getProperties(): Oas20PropertySchema[] {
+        let names: string[] = this.propertyNames();
+        let rval: Oas20PropertySchema[] = [];
+        for (let name of names) {
+            rval.push(this.property(name));
+        }
+        return rval;
+    }
+
+    /**
      * Add a property.
      * @param propertyName
      * @param schema
@@ -198,7 +211,7 @@ export class Oas20Schema extends OasExtensibleNode {
      * @param propertyName
      * @return {null}
      */
-    public property(propertyName: string): Oas20Schema {
+    public property(propertyName: string): Oas20PropertySchema {
         if (this.properties && this.properties[propertyName]) {
             return this.properties[propertyName];
         } else {

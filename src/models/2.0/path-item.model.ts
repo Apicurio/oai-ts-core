@@ -16,7 +16,7 @@
  */
 
 import {IOasNodeVisitor, IOas20NodeVisitor} from "../../visitors/visitor.iface";
-import {Oas20Operation} from "./operation.model";
+import {IParameterParent, Oas20Operation} from "./operation.model";
 import {Oas20Parameter} from "./parameter.model";
 import {OasExtensibleNode} from "../enode.model";
 
@@ -66,7 +66,7 @@ import {OasExtensibleNode} from "../enode.model";
  * }
  *
  */
-export class Oas20PathItem extends OasExtensibleNode {
+export class Oas20PathItem extends OasExtensibleNode implements IParameterParent {
 
     private _path: string;
     public $ref: string;
@@ -138,6 +138,21 @@ export class Oas20PathItem extends OasExtensibleNode {
         }
         this.parameters.push(param);
         return param;
+    }
+
+    /**
+     * Returns a list of parameters with a particular value of "in" (e.g. path, formData, body, etc...).
+     * @param _in
+     * @return {any}
+     */
+    public getParameters(_in: string): Oas20Parameter[] {
+        if (_in === undefined ||_in === null) {
+            return [];
+        } else {
+            return this.parameters.filter( param => {
+                return param.in === _in;
+            })
+        }
     }
 
 }
