@@ -28,6 +28,8 @@ import {Oas20Responses} from "./responses.model";
  */
 export interface IOas20ParameterParent {
 
+    parameters: Oas20Parameter[];
+
     addParameter(parameter: Oas20Parameter): Oas20Parameter;
     createParameter(): Oas20Parameter;
     getParameters(_in: string): Oas20Parameter[];
