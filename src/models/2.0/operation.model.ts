@@ -166,7 +166,7 @@ export class Oas20Operation extends OasExtensibleNode implements IOas20Parameter
      * @return {any}
      */
     public getParameters(_in: string): Oas20Parameter[] {
-        if (_in === undefined ||_in === null) {
+        if (_in === undefined ||_in === null || this.parameters === undefined || this.parameters === null) {
             return [];
         } else {
             return this.parameters.filter( param => {
