@@ -155,4 +155,21 @@ export class Oas20PathItem extends OasExtensibleNode implements IOas20ParameterP
         }
     }
 
+    /**
+     * Returns a single, unique parameter identified by "in" and "name" (which are the two
+     * properties that uniquely identify a parameter).  Returns null if no parameter is found.
+     * @param _in
+     * @param name
+     * @return {Oas20Parameter}
+     */
+    public parameter(_in: string, name: string): Oas20Parameter {
+        let rval: Oas20Parameter = null;
+        this.getParameters(_in).forEach( param => {
+            if (param.name === name) {
+                rval = param;
+            }
+        })
+        return rval;
+    }
+
 }

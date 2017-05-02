@@ -33,6 +33,7 @@ export interface IOas20ParameterParent {
     addParameter(parameter: Oas20Parameter): Oas20Parameter;
     createParameter(): Oas20Parameter;
     getParameters(_in: string): Oas20Parameter[];
+    parameter(_in: string, name: string): Oas20Parameter;
 
 }
 
@@ -172,6 +173,23 @@ export class Oas20Operation extends OasExtensibleNode implements IOas20Parameter
                 return param.in === _in;
             })
         }
+    }
+
+    /**
+     * Returns a single, unique parameter identified by "in" and "name" (which are the two
+     * properties that uniquely identify a parameter).  Returns null if no parameter is found.
+     * @param _in
+     * @param name
+     * @return {Oas20Parameter}
+     */
+    public parameter(_in: string, name: string): Oas20Parameter {
+        let rval: Oas20Parameter = null;
+        this.getParameters(_in).forEach( param => {
+            if (param.name === name) {
+                rval = param;
+            }
+        })
+        return rval;
     }
 
     /**
