@@ -165,8 +165,14 @@ export class Oas20InvalidPropertyValueValidationRule extends Oas20ValidationRule
     }
 
     public visitParameter(node: Oas20Parameter): void {
+        // Note: parent may be an operation *or* a path-item.
         if (node.in === "path") {
-            let pathItem: Oas20PathItem = <Oas20PathItem>(node.parent().parent());
+            let pathItem: Oas20PathItem;
+            if (node.parent()["_path"]) {
+                pathItem = <Oas20PathItem>(node.parent());
+            } else {
+                pathItem = <Oas20PathItem>(node.parent().parent());
+            }
             let path: string = pathItem.path();
             let pathVars: string[] = this.parsePathTemplate(path);
             this.reportIfInvalid("PAR-007", this.isValidEnumItem(node.name, pathVars), node,
@@ -175,9 +181,11 @@ export class Oas20InvalidPropertyValueValidationRule extends Oas20ValidationRule
 
         if (node.in === "formData") {
             let consumes: string[] = (<Oas20Document>(node.ownerDocument())).consumes;
-            let operation: Oas20Operation = <Oas20Operation>(node.parent());
-            if (this.hasValue(operation.consumes)) {
-                consumes = operation.consumes;
+            if (!node.parent()["_path"]) {
+                let operation: Oas20Operation = <Oas20Operation>(node.parent());
+                if (this.hasValue(operation.consumes)) {
+                    consumes = operation.consumes;
+                }
             }
             if (!this.hasValue(consumes)) {
                 consumes = [];
