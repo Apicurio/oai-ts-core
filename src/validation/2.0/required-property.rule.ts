@@ -80,7 +80,7 @@ export class Oas20RequiredPropertyValidationRule extends Oas20ValidationRule {
     }
 
     public visitOperation(node: Oas20Operation): void {
-        this.requireProperty("OP-001", node, "responses");
+        this.requireProperty("OP-007", node, "responses");
     }
 
     public visitExternalDocumentation(node: Oas20ExternalDocumentation): void {

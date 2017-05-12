@@ -35,11 +35,35 @@ export class OasValidationError {
     public errorCode: string;
     public nodePath: OasNodePath;
     public message: string;
+    protected _attributes: OasValidationErrorAttributes = new OasValidationErrorAttributes();
 
     constructor(errorCode: string, nodePath: OasNodePath, message: string) {
         this.errorCode = errorCode;
         this.nodePath = nodePath;
         this.message = message;
     }
+
+    /**
+     * Gets or sets a problem attribute.  When setting the attribute, the previous value
+     * will be returned. Otherwise the current value is returned.
+     * @param name
+     * @param value
+     * @return {any}
+     */
+    public attribute(name: string, value?: any): any {
+        if (value === undefined) {
+            return this._attributes[name];
+        } else {
+            let pvalue: any = this._attributes[name];
+            this._attributes[name] = value;
+            return pvalue;
+        }
+    }
+}
+
+
+export class OasValidationErrorAttributes {
+
+    [key: string]: any;
 
 }
