@@ -19,7 +19,7 @@ import {OasDocument} from "./models/document.model";
 import {OasDocumentFactory} from "./factories/document.factory";
 import {OasNode} from "./models/node.model";
 import {Oas20JS2ModelReader, Oas20JS2ModelReaderVisitor} from "./readers/js2model.reader";
-import {Oas20ModelToJSVisitor} from "./visitors/model2js.visitor";
+import {Oas20ModelToJSVisitor, Oas30ModelToJSVisitor} from "./visitors/model2js.visitor";
 import {OasVisitorUtil, OasTraverserDirection} from "./visitors/visitor.utils";
 import {Oas20ValidationVisitor} from "./validation/validation.visitor";
 import {OasValidationError} from "./validation/validation";
@@ -91,6 +91,10 @@ export class OasLibraryUtils {
     public writeNode(node: OasNode): any {
         if (node._ownerDocument.getSpecVersion() === "2.0") {
             let visitor: Oas20ModelToJSVisitor = new Oas20ModelToJSVisitor();
+            OasVisitorUtil.visitTree(node, visitor);
+            return visitor.getResult();
+        } else if (node._ownerDocument.getSpecVersion() === "3.0.0") {
+            let visitor: Oas30ModelToJSVisitor = new Oas30ModelToJSVisitor();
             OasVisitorUtil.visitTree(node, visitor);
             return visitor.getResult();
         } else {

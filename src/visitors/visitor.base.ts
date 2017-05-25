@@ -36,7 +36,7 @@ import {Oas20Headers} from "../models/2.0/headers.model";
 import {Oas20Header} from "../models/2.0/header.model";
 import {Oas20Example} from "../models/2.0/example.model";
 import {Oas20Items} from "../models/2.0/items.model";
-import {IOasNodeVisitor, IOas20NodeVisitor} from "./visitor.iface";
+import {IOasNodeVisitor, IOas20NodeVisitor, IOas30NodeVisitor} from "./visitor.iface";
 import {Oas20Tag} from "../models/2.0/tag.model";
 import {Oas20SecurityDefinitions} from "../models/2.0/security-definitions.model";
 import {Oas20SecurityScheme} from "../models/2.0/security-scheme.model";
@@ -47,6 +47,9 @@ import {Oas20ParametersDefinitions} from "../models/2.0/parameters-definitions.m
 import {Oas20ResponsesDefinitions} from "../models/2.0/responses-definitions.model";
 import {Oas20Document} from "../models/2.0/document.model";
 import {OasNode} from "../models/node.model";
+import {OasInfo} from "../models/common/info.model";
+import {OasContact} from "../models/common/contact.model";
+import {OasLicense} from "../models/common/license.model";
 
 /**
  * Base class for node visitors that are only interested in a subset of the node types
@@ -56,9 +59,13 @@ import {OasNode} from "../models/node.model";
 export abstract class OasNodeVisitorAdapter implements IOasNodeVisitor {
 
     public visitDocument(node: OasDocument) {}
+    public visitInfo(node: OasInfo): void {}
+    public visitContact(node: OasContact): void {}
+    public visitLicense(node: OasLicense): void {}
     public visitExtension(node: OasExtension) {}
 
 }
+
 
 /**
  * Base class for OAS 2.0 node visitors that are only interested in a subset of the node types
@@ -66,9 +73,6 @@ export abstract class OasNodeVisitorAdapter implements IOasNodeVisitor {
  * the subset of methods desired.
  */
 export class Oas20NodeVisitorAdapter extends OasNodeVisitorAdapter implements IOas20NodeVisitor {
-    public visitInfo(node: Oas20Info): void {}
-    public visitContact(node: Oas20Contact): void {}
-    public visitLicense(node: Oas20License): void {}
     public visitPaths(node: Oas20Paths): void {}
     public visitPathItem(node: Oas20PathItem): void {}
     public visitOperation(node: Oas20Operation): void {}
@@ -99,19 +103,29 @@ export class Oas20NodeVisitorAdapter extends OasNodeVisitorAdapter implements IO
     public visitResponsesDefinitions(node: Oas20ResponsesDefinitions): void {}
 }
 
+
+/**
+ * Base class for OAS 3.0 node visitors that are only interested in a subset of the node types
+ * that might be visited.  Extending this class means that subclasses can only override
+ * the subset of methods desired.
+ */
+export class Oas30NodeVisitorAdapter extends OasNodeVisitorAdapter implements IOas30NodeVisitor {
+}
+
+
 /**
  * A composite visitor - this class makes it easy to apply multiple visitors to
  * a node at the same time.  It's basically just an array of visitors.
  */
-export class Oas20CompositeVisitor implements IOas20NodeVisitor {
+export abstract class OasCompositeVisitor implements IOasNodeVisitor {
 
-    private _visitors: IOas20NodeVisitor[];
+    private _visitors: IOasNodeVisitor[];
 
     /**
      * Constructor.
      * @param visitors
      */
-    constructor(...visitors: IOas20NodeVisitor[]) {
+    constructor(visitors: IOasNodeVisitor[]) {
         this._visitors = visitors;
     }
 
@@ -119,7 +133,7 @@ export class Oas20CompositeVisitor implements IOas20NodeVisitor {
      * Adds a single visitor to the list.
      * @param visitor
      */
-    public addVisitor(visitor: IOas20NodeVisitor): void {
+    public addVisitor(visitor: IOasNodeVisitor): void {
         this._visitors.push(visitor);
     }
 
@@ -127,7 +141,7 @@ export class Oas20CompositeVisitor implements IOas20NodeVisitor {
      * Adds multiple visitors to the list.
      * @param visitors
      */
-    public addVisitors(visitors: IOas20NodeVisitor[]): void {
+    public addVisitors(visitors: IOasNodeVisitor[]): void {
         for (let visitor of visitors) {
             this._visitors.push(visitor);
         }
@@ -139,17 +153,35 @@ export class Oas20CompositeVisitor implements IOas20NodeVisitor {
      * @param node
      * @private
      */
-    _acceptAll(node: OasNode): void {
+    protected _acceptAll(node: OasNode): void {
         this._visitors.every((visitor) => {
             node.accept(visitor);
             return true;
         });
     }
 
-    visitDocument(node: Oas20Document): void { this._acceptAll(node); }
-    visitInfo(node: Oas20Info): void { this._acceptAll(node); }
-    visitContact(node: Oas20Contact): void { this._acceptAll(node); }
-    visitLicense(node: Oas20License): void { this._acceptAll(node); }
+    visitDocument(node: OasDocument): void { this._acceptAll(node); }
+    visitInfo(node: OasInfo): void { this._acceptAll(node); }
+    visitContact(node: OasContact): void { this._acceptAll(node); }
+    visitLicense(node: OasLicense): void { this._acceptAll(node); }
+    visitExtension(node: OasExtension): void { this._acceptAll(node); }
+
+}
+
+/**
+ * A composite visitor - this class makes it easy to apply multiple visitors to
+ * a node at the same time.  It's basically just an array of visitors.
+ */
+export class Oas20CompositeVisitor extends OasCompositeVisitor implements IOas20NodeVisitor {
+
+    /**
+     * Constructor.
+     * @param visitors
+     */
+    constructor(...visitors: IOas20NodeVisitor[]) {
+        super(visitors);
+    }
+
     visitPaths(node: Oas20Paths): void { this._acceptAll(node); }
     visitPathItem(node: Oas20PathItem): void { this._acceptAll(node); }
     visitOperation(node: Oas20Operation): void { this._acceptAll(node); }
@@ -178,5 +210,22 @@ export class Oas20CompositeVisitor implements IOas20NodeVisitor {
     visitDefinitions(node: Oas20Definitions): void { this._acceptAll(node); }
     visitParametersDefinitions(node: Oas20ParametersDefinitions): void { this._acceptAll(node); }
     visitResponsesDefinitions(node: Oas20ResponsesDefinitions): void { this._acceptAll(node); }
-    visitExtension(node: OasExtension): void { this._acceptAll(node); }
+
+}
+
+
+/**
+ * A composite visitor - this class makes it easy to apply multiple visitors to
+ * a node at the same time.  It's basically just an array of visitors.
+ */
+export class Oas30CompositeVisitor extends OasCompositeVisitor implements IOas30NodeVisitor {
+
+    /**
+     * Constructor.
+     * @param visitors
+     */
+    constructor(...visitors: IOas30NodeVisitor[]) {
+        super(visitors);
+    }
+
 }

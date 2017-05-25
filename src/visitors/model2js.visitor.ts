@@ -15,23 +15,24 @@
  * limitations under the License.
  */
 
-import {IOas20NodeVisitor} from "./visitor.iface";
+import {IOas20NodeVisitor, IOas30NodeVisitor, IOasNodeVisitor} from "./visitor.iface";
 import {Oas20Document} from "../models/2.0/document.model";
-import {Oas20Info} from "../models/2.0/info.model";
-import {Oas20Contact} from "../models/2.0/contact.model";
-import {Oas20License} from "../models/2.0/license.model";
 import {OasExtension} from "../models/extension.model";
 import {Oas20Paths} from "../models/2.0/paths.model";
 import {Oas20PathItem} from "../models/2.0/path-item.model";
 import {Oas20Operation} from "../models/2.0/operation.model";
-import {Oas20Parameter, Oas20ParameterDefinition, Oas20ParameterBase} from "../models/2.0/parameter.model";
+import {Oas20Parameter, Oas20ParameterBase, Oas20ParameterDefinition} from "../models/2.0/parameter.model";
 import {Oas20ExternalDocumentation} from "../models/2.0/external-documentation.model";
 import {Oas20SecurityRequirement} from "../models/2.0/security-requirement.model";
 import {Oas20Responses} from "../models/2.0/responses.model";
-import {Oas20Response, Oas20ResponseDefinition, Oas20ResponseBase} from "../models/2.0/response.model";
+import {Oas20Response, Oas20ResponseBase, Oas20ResponseDefinition} from "../models/2.0/response.model";
 import {
-    Oas20Schema, Oas20PropertySchema, Oas20AdditionalPropertiesSchema,
-    Oas20AllOfSchema, Oas20DefinitionSchema, Oas20ItemsSchema
+    Oas20AdditionalPropertiesSchema,
+    Oas20AllOfSchema,
+    Oas20DefinitionSchema,
+    Oas20ItemsSchema,
+    Oas20PropertySchema,
+    Oas20Schema
 } from "../models/2.0/schema.model";
 import {Oas20Headers} from "../models/2.0/headers.model";
 import {Oas20Header} from "../models/2.0/header.model";
@@ -46,13 +47,17 @@ import {Oas20XML} from "../models/2.0/xml.model";
 import {Oas20Definitions} from "../models/2.0/definitions.model";
 import {Oas20ParametersDefinitions} from "../models/2.0/parameters-definitions.model";
 import {Oas20ResponsesDefinitions} from "../models/2.0/responses-definitions.model";
+import {OasDocument} from "../models/document.model";
+import {OasInfo} from "../models/common/info.model";
+import {OasContact} from "../models/common/contact.model";
+import {OasLicense} from "../models/common/license.model";
+import {Oas30Document} from "../models/3.0/document.model";
+
 
 /**
- * Visitor used to convert from a Model into a JavaScript object that conforms
- * to the OAS 2.0 specification.  The resulting JS object can be stringified and
- * should be a valid OAS 2.0 document.
+ * Visitor used to convert from a Model into a JavaScript object.
  */
-export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
+export abstract class OasModelToJSVisitor implements IOasNodeVisitor {
 
     private _result: any;
     private _modelIdToJS: any;
@@ -102,6 +107,152 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
     }
 
     /**
+     * Indexes the javascript object by the ModelId of the model it was created from.  This allows
+     * quick lookup (mapping) from the model to the JS object.
+     * @param node
+     * @param jsObject
+     */
+    protected updateIndex(node: OasNode, jsObject: any) {
+        this._modelIdToJS[node.modelId()] = jsObject;
+        // Note: the first JS object created by the visitor is the result (we always traverse top-down).
+        if (this._result == null) {
+            this._result = jsObject;
+        }
+    }
+
+    /**
+     * Lookup a JS object from the ID of the model it came from.
+     * @param modelId
+     * @return {any}
+     */
+    protected lookup(modelId: number): any {
+        let rval: any = this._modelIdToJS[modelId];
+
+        // If not found, return a throwaway object (this would happen when doing a partial
+        // read of a subsection of a OAS document).
+        if (!this.isDefined(rval)) {
+            return {};
+        }
+        return rval;
+    }
+
+    /**
+     * Lookup a JS object using the model ID of the node's parent.
+     * @param node
+     * @return {any}
+     */
+    protected lookupParentJS(node: OasNode): any {
+        return this.lookup(node.parent().modelId());
+    }
+
+    /**
+     * Returns true if the given thing is defined.
+     * @param thing
+     * @return {boolean}
+     */
+    protected isDefined(thing: any): boolean {
+        if (typeof thing === "undefined" || thing === null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Merges multiple objects into a single object.  This is done by iterating through
+     * all properties of all objects and assigning them as properties of a new object.  The
+     * result is a new object with all the properties of all objects passed to the method.
+     * @param objects
+     */
+    protected merge(...objects: any[]): any {
+        let rval: any = <any>new Object();
+
+        for (let object of objects) {
+            for (let key in object) {
+                let val: any = object[key];
+                rval[key] = val;
+            }
+        }
+
+        return rval;
+    }
+
+    abstract visitDocument(node: OasDocument): void;
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitInfo(node: OasInfo): void {
+        let parentJS: any = this.lookupParentJS(node);
+        let info: any = {
+            title: node.title,
+            description: node.description,
+            termsOfService: node.termsOfService,
+            contact: null,
+            license: null,
+            version: node.version
+        };
+        parentJS.info = info;
+        this.updateIndex(node, info);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitContact(node: OasContact): void {
+        let parentJS: any = this.lookupParentJS(node);
+        let contact: any = {
+            name: node.name,
+            url: node.url,
+            email: node.email
+        };
+        parentJS.contact = contact;
+        this.updateIndex(node, contact);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitLicense(node: OasLicense): void {
+        let parentJS: any = this.lookupParentJS(node);
+        let license: any = {
+            name: node.name,
+            url: node.url,
+        };
+        parentJS.license = license;
+        this.updateIndex(node, license);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitExtension(node: OasExtension): void {
+        let jsObject: any = this.lookupParentJS(node);
+        jsObject[node.name] = node.value;
+    }
+
+}
+
+
+/**
+ * Visitor used to convert from a Model into a JavaScript object that conforms
+ * to the OAS 2.0 specification.  The resulting JS object can be stringified and
+ * should be a valid OAS 2.0 document.
+ */
+export class Oas20ModelToJSVisitor extends OasModelToJSVisitor implements IOas20NodeVisitor {
+
+    /**
+     * Constructor.
+     */
+    constructor() {
+        super();
+    }
+
+    /**
      * Visits a node.
      * @param node
      */
@@ -120,62 +271,6 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
             externalDocs: null
         };
         this.updateIndex(node, root);
-    }
-
-    /**
-     * Visits a node.
-     * @param node
-     */
-    public visitInfo(node: Oas20Info): void {
-        let parentJS: any = this.lookupParentJS(node);
-        let info: any = {
-            title: node.title,
-            description: node.description,
-            termsOfService: node.termsOfService,
-            contact: null,
-            license: null,
-            version: node.version
-        };
-        parentJS.info = info;
-        this.updateIndex(node, info);
-    }
-
-    /**
-     * Visits a node.
-     * @param node
-     */
-    public visitContact(node: Oas20Contact): void {
-        let parentJS: any = this.lookupParentJS(node);
-        let contact: any = {
-            name: node.name,
-            url: node.url,
-            email: node.email
-        };
-        parentJS.contact = contact;
-        this.updateIndex(node, contact);
-    }
-
-    /**
-     * Visits a node.
-     * @param node
-     */
-    public visitLicense(node: Oas20License): void {
-        let parentJS: any = this.lookupParentJS(node);
-        let license: any = {
-            name: node.name,
-            url: node.url,
-        };
-        parentJS.license = license;
-        this.updateIndex(node, license);
-    }
-
-    /**
-     * Visits a node.
-     * @param node
-     */
-    public visitExtension(node: OasExtension): void {
-        let jsObject: any = this.lookupParentJS(node);
-        jsObject[node.name] = node.value;
     }
 
     /**
@@ -635,45 +730,6 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
     }
 
     /**
-     * Indexes the javascript object by the ModelId of the model it was created from.  This allows
-     * quick lookup (mapping) from the model to the JS object.
-     * @param node
-     * @param jsObject
-     */
-    private updateIndex(node: OasNode, jsObject: any) {
-        this._modelIdToJS[node.modelId()] = jsObject;
-        // Note: the first JS object created by the visitor is the result (we always traverse top-down).
-        if (this._result == null) {
-            this._result = jsObject;
-        }
-    }
-
-    /**
-     * Lookup a JS object from the ID of the model it came from.
-     * @param modelId
-     * @return {any}
-     */
-    private lookup(modelId: number): any {
-        let rval: any = this._modelIdToJS[modelId];
-
-        // If not found, return a throwaway object (this would happen when doing a partial
-        // read of a subsection of a OAS document).
-        if (!this.isDefined(rval)) {
-            return {};
-        }
-        return rval;
-    }
-
-    /**
-     * Lookup a JS object using the model ID of the node's parent.
-     * @param node
-     * @return {any}
-     */
-    private lookupParentJS(node: OasNode): any {
-        return this.lookup(node.parent().modelId());
-    }
-
-    /**
      * Creates an OAS 2.0 Items javascript object.
      * @param node
      */
@@ -746,36 +802,26 @@ export class Oas20ModelToJSVisitor implements IOas20NodeVisitor {
         return schema;
     }
 
-    /**
-     * Returns true if the given thing is defined.
-     * @param thing
-     * @return {boolean}
-     */
-    private isDefined(thing: any): boolean {
-        if (typeof thing === "undefined" || thing === null) {
-            return false;
-        } else {
-            return true;
-        }
-    }
+}
+
+
+/**
+ * Visitor used to convert from a Model into a JavaScript object that conforms
+ * to the OAS 3.0 specification.  The resulting JS object can be stringified and
+ * should be a valid OAS 3.0 document.
+ */
+export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30NodeVisitor {
 
     /**
-     * Merges multiple objects into a single object.  This is done by iterating through
-     * all properties of all objects and assigning them as properties of a new object.  The
-     * result is a new object with all the properties of all objects passed to the method.
-     * @param objects
+     * Visits a node.
+     * @param node
      */
-    private merge(...objects: any[]): any {
-        let rval: any = <any>new Object();
-
-        for (let object of objects) {
-            for (let key in object) {
-                let val: any = object[key];
-                rval[key] = val;
-            }
-        }
-
-        return rval;
+    public visitDocument(node: Oas30Document): void {
+        // TODO missing some elements from the root!!!
+        let root: any = {
+            openapi: node.openapi,
+            info: null
+        };
+        this.updateIndex(node, root);
     }
-
 }

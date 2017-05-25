@@ -18,13 +18,13 @@
 import {OasLicense} from "../common/license.model";
 
 /**
- * Models an OAS 2.0 License object.  Example:
+ * Models an OAS 3.0 License object.  Example:
  *
  * {
  *   "name": "Apache 2.0",
  *   "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
  * }
  */
-export class Oas20License extends OasLicense {
+export class Oas30License extends OasLicense {
 
 }

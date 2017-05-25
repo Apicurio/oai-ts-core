@@ -16,8 +16,8 @@
  */
 
 import {OasNode} from "../models/node.model";
-import {IOasNodeVisitor, IOas20NodeVisitor} from "./visitor.iface";
-import {Oas20Traverser, Oas20ReverseTraverser, IOasTraverser} from "./traverser";
+import {IOasNodeVisitor, IOas20NodeVisitor, IOas30NodeVisitor} from "./visitor.iface";
+import {Oas20Traverser, Oas20ReverseTraverser, IOasTraverser, Oas30ReverseTraverser, Oas30Traverser} from "./traverser";
 import {Oas20ModelToJSVisitor} from "./model2js.visitor";
 
 export enum OasTraverserDirection {
@@ -48,9 +48,17 @@ export class OasVisitorUtil {
         if (node.ownerDocument().getSpecVersion() === "2.0") {
             let traverser: IOasTraverser;
             if (direction === OasTraverserDirection.up) {
-                traverser = new Oas20ReverseTraverser(<IOas20NodeVisitor> visitor);
+                traverser = new Oas20ReverseTraverser(visitor as IOas20NodeVisitor);
             } else {
-                traverser = new Oas20Traverser(<IOas20NodeVisitor> visitor);
+                traverser = new Oas20Traverser(visitor as IOas20NodeVisitor);
+            }
+            traverser.traverse(node);
+        } else if (node.ownerDocument().getSpecVersion() === "3.0.0") {
+            let traverser: IOasTraverser;
+            if (direction === OasTraverserDirection.up) {
+                traverser = new Oas30ReverseTraverser(visitor as IOas30NodeVisitor);
+            } else {
+                traverser = new Oas30Traverser(visitor as IOas30NodeVisitor);
             }
             traverser.traverse(node);
         } else {

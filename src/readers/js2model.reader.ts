@@ -46,25 +46,117 @@ import {Oas20ParametersDefinitions} from "../models/2.0/parameters-definitions.m
 import {Oas20ResponsesDefinitions} from "../models/2.0/responses-definitions.model";
 import {IOas20NodeVisitor} from "../visitors/visitor.iface";
 import {OasExtension} from "../models/extension.model";
+import {OasInfo} from "../models/common/info.model";
+import {OasContact} from "../models/common/contact.model";
+import {OasLicense} from "../models/common/license.model";
+import {Oas30Info} from "../models/3.0/info.model";
+import {Oas30Document} from "../models/3.0/document.model";
+
 
 /**
- * This class reads a javascript object and turns it into a OAS 2.0 model.  It is obviously
- * assumed that the javascript data actually does represent an OAS 2.0 document.
+ * This class reads a javascript object and turns it into a OAS model.
  */
-export class Oas20JS2ModelReader {
+export abstract class OasJS2ModelReader {
 
     /**
      * Returns true if the given thing is defined.
      * @param thing
      * @return {boolean}
      */
-    private isDefined(thing: any): boolean {
+    protected isDefined(thing: any): boolean {
         if (typeof thing === "undefined" || thing === null) {
             return false;
         } else {
             return true;
         }
     }
+
+    /**
+     * Reads all of the extension nodes.  An extension node is characterized by a property
+     * that begins with "x-".
+     * @param jsData
+     * @param model
+     */
+    protected readExtensions(jsData:any, model: OasExtensibleNode): void {
+        for (let key in jsData) {
+            if (key.indexOf("x-") === 0) {
+                let val: any = jsData[key];
+                model.addExtension(key, val);
+            }
+        }
+    }
+
+    /**
+     * Reads a OAS Info object from the given javascript data.
+     * @param info
+     * @param infoModel
+     */
+    public readInfo(info: any, infoModel: OasInfo): void {
+        let title: string = info["title"];
+        let description: string = info["description"];
+        let termsOfService: string = info["termsOfService"];
+        let contact: OasContact = info["contact"];
+        let license: OasLicense = info["license"];
+        let version: string = info["version"];
+
+        if (this.isDefined(title)) { infoModel.title = title; }
+        if (this.isDefined(description)) { infoModel.description = description; }
+        if (this.isDefined(termsOfService)) { infoModel.termsOfService = termsOfService; }
+        if (this.isDefined(contact)) {
+            let contactModel: OasContact = infoModel.createContact();
+            this.readContact(contact, contactModel);
+            infoModel.contact = contactModel;
+        }
+        if (this.isDefined(license)) {
+            let licenseModel: OasLicense = infoModel.createLicense();
+            this.readLicense(license, licenseModel);
+            infoModel.license = licenseModel;
+        }
+        if (this.isDefined(version)) { infoModel.version = version; }
+
+        this.readExtensions(info, infoModel);
+    }
+
+    /**
+     * Reads a OAS Contact object from the given javascript data.
+     * @param info
+     * @param infoModel
+     */
+    public readContact(contact: any, contactModel: OasContact): void {
+        let name: string = contact["name"];
+        let url: string = contact["url"];
+        let email: string = contact["email"];
+
+        if (this.isDefined(name)) { contactModel.name = name; }
+        if (this.isDefined(url)) { contactModel.url = url; }
+        if (this.isDefined(email)) { contactModel.email = email; }
+
+        this.readExtensions(contact, contactModel);
+    }
+
+    /**
+     * Reads a OAS License object from the given javascript data.
+     * @param info
+     * @param infoModel
+     */
+    public readLicense(license: any, licenseModel: OasLicense): void {
+        let name: string = license["name"];
+        let url: string = license["url"];
+
+        if (this.isDefined(name)) { licenseModel.name = name; }
+        if (this.isDefined(url)) { licenseModel.url = url; }
+
+        this.readExtensions(license, licenseModel);
+    }
+
+}
+
+
+/**
+ * This class reads a javascript object and turns it into a OAS 2.0 model.  It is obviously
+ * assumed that the javascript data actually does represent an OAS 2.0 document.
+ */
+export class Oas20JS2ModelReader extends OasJS2ModelReader {
 
     /**
      * Reads the given javascript data and returns an OAS 2.0 document.  Throws an error if
@@ -121,8 +213,6 @@ export class Oas20JS2ModelReader {
             docModel.responses = responsesDefinitionsModel;
         }
 
-
-
         if (this.isDefined(paths)) {
             let pathsModel: Oas20Paths = docModel.createPaths();
             this.readPaths(paths, pathsModel);
@@ -160,84 +250,6 @@ export class Oas20JS2ModelReader {
         this.readExtensions(jsData, docModel);
 
         return docModel;
-    }
-
-    /**
-     * Reads all of the extension nodes.  An extension node is characterized by a property
-     * that begins with "x-".
-     * @param jsData
-     * @param model
-     */
-    private readExtensions(jsData:any, model: OasExtensibleNode): void {
-        for (let key in jsData) {
-            if (key.indexOf("x-") === 0) {
-                let val: any = jsData[key];
-                model.addExtension(key, val);
-            }
-        }
-    }
-
-    /**
-     * Reads a OAS 2.0 Info object from the given javascript data.
-     * @param info
-     * @param infoModel
-     */
-    public readInfo(info: any, infoModel: Oas20Info): void {
-        let title: string = info["title"];
-        let description: string = info["description"];
-        let termsOfService: string = info["termsOfService"];
-        let contact: Oas20Contact = info["contact"];
-        let license: Oas20License = info["license"];
-        let version: string = info["version"];
-
-        if (this.isDefined(title)) { infoModel.title = title; }
-        if (this.isDefined(description)) { infoModel.description = description; }
-        if (this.isDefined(termsOfService)) { infoModel.termsOfService = termsOfService; }
-        if (this.isDefined(contact)) {
-            let contactModel: Oas20Contact = infoModel.createContact();
-            this.readContact(contact, contactModel);
-            infoModel.contact = contactModel;
-        }
-        if (this.isDefined(license)) {
-            let licenseModel: Oas20License = infoModel.createLicense();
-            this.readLicense(license, licenseModel);
-            infoModel.license = licenseModel;
-        }
-        if (this.isDefined(version)) { infoModel.version = version; }
-
-        this.readExtensions(info, infoModel);
-    }
-
-    /**
-     * Reads a OAS 2.0 Contact object from the given javascript data.
-     * @param info
-     * @param infoModel
-     */
-    public readContact(contact: any, contactModel: Oas20Contact): void {
-        let name: string = contact["name"];
-        let url: string = contact["url"];
-        let email: string = contact["email"];
-
-        if (this.isDefined(name)) { contactModel.name = name; }
-        if (this.isDefined(url)) { contactModel.url = url; }
-        if (this.isDefined(email)) { contactModel.email = email; }
-
-        this.readExtensions(contact, contactModel);
-    }
-
-    /**
-     * Reads a OAS 2.0 License object from the given javascript data.
-     * @param info
-     * @param infoModel
-     */
-    public readLicense(license: any, licenseModel: Oas20License): void {
-        let name: string = license["name"];
-        let url: string = license["url"];
-
-        if (this.isDefined(name)) { licenseModel.name = name; }
-        if (this.isDefined(url)) { licenseModel.url = url; }
-
-        this.readExtensions(license, licenseModel);
     }
 
     /**
@@ -1013,6 +1025,42 @@ export class Oas20JS2ModelReaderVisitor implements IOas20NodeVisitor {
 
     public visitExtension(node: OasExtension): void {
         // Not supported:  cannot read a single extension
+    }
+
+}
+
+
+/**
+ * This class reads a javascript object and turns it into a OAS 3.0 model.  It is obviously
+ * assumed that the javascript data actually does represent an OAS 3.0 document.
+ */
+export class Oas30JS2ModelReader extends OasJS2ModelReader {
+
+    /**
+     * Reads the given javascript data and returns an OAS 3.0 document.  Throws an error if
+     * the root 'openapi' property is not found or if its value is not "3.0.0".
+     * @param jsData
+     */
+    public read(jsData: any): Oas30Document {
+        let docModel: Oas30Document = new Oas30Document();
+
+        let openapi: string = jsData["openapi"];
+        if (openapi != "3.0.0") {
+            throw Error("Unsupported specification version: " + openapi);
+        }
+        let info: any = jsData["info"];
+
+        docModel.openapi = openapi;
+
+        if (this.isDefined(info)) {
+            let infoModel: Oas30Info = docModel.createInfo();
+            this.readInfo(info, infoModel);
+            docModel.info = infoModel;
+        }
+
+        this.readExtensions(jsData, docModel);
+
+        return docModel;
     }
 
 }

@@ -30,8 +30,12 @@ import {Oas20SecurityRequirement} from "../models/2.0/security-requirement.model
 import {Oas20Responses} from "../models/2.0/responses.model";
 import {Oas20Response, Oas20ResponseDefinition} from "../models/2.0/response.model";
 import {
-    Oas20Schema, Oas20PropertySchema, Oas20AdditionalPropertiesSchema,
-    Oas20AllOfSchema, Oas20DefinitionSchema, Oas20ItemsSchema
+    Oas20AdditionalPropertiesSchema,
+    Oas20AllOfSchema,
+    Oas20DefinitionSchema,
+    Oas20ItemsSchema,
+    Oas20PropertySchema,
+    Oas20Schema
 } from "../models/2.0/schema.model";
 import {Oas20Headers} from "../models/2.0/headers.model";
 import {Oas20Header} from "../models/2.0/header.model";
@@ -45,6 +49,13 @@ import {Oas20XML} from "../models/2.0/xml.model";
 import {Oas20Definitions} from "../models/2.0/definitions.model";
 import {Oas20ParametersDefinitions} from "../models/2.0/parameters-definitions.model";
 import {Oas20ResponsesDefinitions} from "../models/2.0/responses-definitions.model";
+import {OasInfo} from "../models/common/info.model";
+import {OasContact} from "../models/common/contact.model";
+import {OasLicense} from "../models/common/license.model";
+import {Oas30Document} from "../models/3.0/document.model";
+import {Oas30Info} from "../models/3.0/info.model";
+import {Oas30Contact} from "../models/3.0/contact.model";
+import {Oas30License} from "../models/3.0/license.model";
 
 /**
  * Classes that wish to visit a OAS node or tree must implement this interface.  The
@@ -53,6 +64,12 @@ import {Oas20ResponsesDefinitions} from "../models/2.0/responses-definitions.mod
 export interface IOasNodeVisitor {
 
     visitDocument(node: OasDocument): void;
+
+    visitInfo(node: OasInfo): void;
+
+    visitContact(node: OasContact): void;
+
+    visitLicense(node: OasLicense): void;
 
     visitExtension(node: OasExtension): void;
 
@@ -126,5 +143,18 @@ export interface IOas20NodeVisitor extends IOasNodeVisitor {
     visitParametersDefinitions(node: Oas20ParametersDefinitions): void;
 
     visitResponsesDefinitions(node: Oas20ResponsesDefinitions): void;
+
+}
+
+
+export interface IOas30NodeVisitor extends IOasNodeVisitor {
+
+    visitDocument(node: Oas30Document): void;
+
+    visitInfo(node: Oas30Info): void;
+
+    visitContact(node: Oas30Contact): void;
+
+    visitLicense(node: Oas30License): void;
 
 }

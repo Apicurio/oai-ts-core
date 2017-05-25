@@ -15,37 +15,37 @@
  * limitations under the License.
  */
 
-import {Oas20Contact} from "./contact.model";
-import {Oas20License} from "./license.model";
+import {Oas30Contact} from "./contact.model";
+import {Oas30License} from "./license.model";
 import {OasInfo} from "../common/info.model";
 
 /**
- * Models an OAS 2.0 Info object.  Example:
+ * Models an OAS 3.0 Info object.  Example:
  *
- * {
- *   "title": "Swagger Sample App",
- *   "description": "This is a sample server Petstore server.",
- *   "termsOfService": "http://swagger.io/terms/",
- *   "contact": {
- *     "name": "API Support",
- *     "url": "http://www.swagger.io/support",
- *     "email": "support@swagger.io"
- *   },
- *   "license": {
- *     "name": "Apache 2.0",
- *     "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
- *   },
- *   "version": "1.0.1"
- * }
+ *  {
+ *    "title": "Sample Pet Store App",
+ *    "description": "This is a sample server for a pet store.",
+ *    "termsOfService": "http://example.com/terms/",
+ *    "contact": {
+ *      "name": "API Support",
+ *      "url": "http://www.example.com/support",
+ *      "email": "support@example.com"
+ *    },
+ *    "license": {
+ *      "name": "Apache 2.0",
+ *      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+ *    },
+ *    "version": "1.0.1"
+ *  }
  */
-export class Oas20Info extends OasInfo {
+export class Oas30Info extends OasInfo {
 
     /**
      * Creates an OAS 2.0 contact object.
-     * @return {Oas20Contact}
+     * @return {Oas30Contact}
      */
-    public createContact(): Oas20Contact {
-        let rval: Oas20Contact = new Oas20Contact();
+    public createContact(): Oas30Contact {
+        let rval: Oas30Contact = new Oas30Contact();
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;
@@ -53,10 +53,10 @@ export class Oas20Info extends OasInfo {
 
     /**
      * Creates an OAS 2.0 license object.
-     * @return {Oas20License}
+     * @return {Oas30License}
      */
-    public createLicense(): Oas20License {
-        let rval: Oas20License = new Oas20License();
+    public createLicense(): Oas30License {
+        let rval: Oas30License = new Oas30License();
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;

@@ -15,16 +15,24 @@
  * limitations under the License.
  */
 
-import {OasLicense} from "../common/license.model";
+import {IOasNodeVisitor} from "../../visitors/visitor.iface";
+import {OasExtensibleNode} from "../enode.model";
 
 /**
- * Models an OAS 2.0 License object.  Example:
- *
- * {
- *   "name": "Apache 2.0",
- *   "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
- * }
+ * Models an OAS Contact object.
  */
-export class Oas20License extends OasLicense {
+export class OasContact extends OasExtensibleNode {
+
+    public name: string;
+    public url: string;
+    public email: string;
+
+    /**
+     * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.
+     * @param visitor
+     */
+    public accept(visitor: IOasNodeVisitor): void {
+        visitor.visitContact(this);
+    }
 
 }

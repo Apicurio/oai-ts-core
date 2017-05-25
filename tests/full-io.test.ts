@@ -20,6 +20,7 @@
 
 import {Oas20Document} from "../src/models/2.0/document.model";
 import {OasLibraryUtils} from "../src/library.utils";
+import {Oas30Document} from "../src/models/3.0/document.model";
 
 
 /**
@@ -40,7 +41,61 @@ function sortObj(original: any): any {
     return sorted;
 }
 
-describe("Full I/O (2.0) - Basics", () => {
+/**
+ * Full I/O Tests for Version 2.0 of the OpenAPI Specification.
+ */
+describe("Full I/O (2.0)", () => {
+
+    let TESTS: any = [
+        { name: "Simple (Easy 2.0 spec)",               test: "tests/fixtures/full-io/2.0/simple/simplest.json" },
+        { name: "Simple (Info)",                        test: "tests/fixtures/full-io/2.0/simple/simple-info.json" },
+        { name: "Simple (Info + extensions)",           test: "tests/fixtures/full-io/2.0/simple/simple-info-extensions.json" },
+        { name: "Simple (Tags)",                        test: "tests/fixtures/full-io/2.0/simple/simple-tags.json" },
+        { name: "Simple (External Docs)",               test: "tests/fixtures/full-io/2.0/simple/simple-externalDocs.json" },
+        { name: "Simple (Security Definitions)",        test: "tests/fixtures/full-io/2.0/simple/simple-securityDefinitions.json" },
+        { name: "Simple (Security Requirements)",       test: "tests/fixtures/full-io/2.0/simple/simple-security.json" },
+        { name: "Paths (GET)",                          test: "tests/fixtures/full-io/2.0/paths/paths-get.json" },
+        { name: "Paths (GET + Params)",                 test: "tests/fixtures/full-io/2.0/paths/paths-get-with-params.json" },
+        { name: "Paths (GET + Tags)",                   test: "tests/fixtures/full-io/2.0/paths/paths-get-with-tags.json" },
+        { name: "Paths (Path + Params)",                test: "tests/fixtures/full-io/2.0/paths/paths-path-with-params.json" },
+        { name: "Paths (All Ops)",                      test: "tests/fixtures/full-io/2.0/paths/paths-all-operations.json" },
+        { name: "Paths (Ref)",                          test: "tests/fixtures/full-io/2.0/paths/paths-ref.json" },
+        { name: "Paths (External Docs)",                test: "tests/fixtures/full-io/2.0/paths/paths-externalDocs.json" },
+        { name: "Paths (Security)",                     test: "tests/fixtures/full-io/2.0/paths/paths-security.json" },
+        { name: "Paths (Default Response)",             test: "tests/fixtures/full-io/2.0/paths/paths-default-response.json" },
+        { name: "Paths (Responses)",                    test: "tests/fixtures/full-io/2.0/paths/paths-responses.json" },
+        { name: "Paths (Response w/ Headers)",          test: "tests/fixtures/full-io/2.0/paths/paths-response-with-headers.json" },
+        { name: "Paths (Response w/ Examples)",         test: "tests/fixtures/full-io/2.0/paths/paths-response-with-examples.json" },
+        { name: "Paths (Response w/ Schema)",           test: "tests/fixtures/full-io/2.0/paths/paths-response-with-schema.json" },
+        { name: "Paths (With Extensions)",              test: "tests/fixtures/full-io/2.0/paths/paths-with-extensions.json" },
+        { name: "Paths (Responses w/ Extensions)",      test: "tests/fixtures/full-io/2.0/paths/paths-responses-with-extensions.json" },
+        { name: "Paths (Response w/ $ref)",             test: "tests/fixtures/full-io/2.0/paths/paths-response-with-ref.json" },
+        { name: "Definitions (Primitives Sample)",      test: "tests/fixtures/full-io/2.0/definitions/primitive.json" },
+        { name: "Definitions (Spec Example)",           test: "tests/fixtures/full-io/2.0/definitions/spec-example-1.json" },
+        { name: "Definitions (Schema+XML)",             test: "tests/fixtures/full-io/2.0/definitions/schema-with-xml.json" },
+        { name: "Definitions (Schema+Meta Data)",       test: "tests/fixtures/full-io/2.0/definitions/schema-with-metaData.json" },
+        { name: "Definitions (Schema+'allOf')",         test: "tests/fixtures/full-io/2.0/definitions/schema-with-allOf.json" },
+        { name: "Definitions (Schema+External Docs)",   test: "tests/fixtures/full-io/2.0/definitions/schema-with-externalDocs.json" },
+        { name: "Definitions (Schema+Props)",           test: "tests/fixtures/full-io/2.0/definitions/schema-with-additionalProperties.json" },
+        { name: "Definitions (Schema+Example)",         test: "tests/fixtures/full-io/2.0/definitions/schema-with-example.json" },
+        { name: "Definitions (Schema+Composition)",     test: "tests/fixtures/full-io/2.0/definitions/schema-with-composition.json" },
+        { name: "Definitions (Schema+Polymorphism)",    test: "tests/fixtures/full-io/2.0/definitions/schema-with-polymorphism.json" },
+        { name: "Definitions (JSON Schema Basic)",      test: "tests/fixtures/full-io/2.0/definitions/json-schema-basic.json" },
+        { name: "Definitions (JSON Schema Products)",   test: "tests/fixtures/full-io/2.0/definitions/json-schema-products.json" },
+        { name: "Definitions (JSON Schema fstab)",      test: "tests/fixtures/full-io/2.0/definitions/json-schema-fstab.json" },
+        { name: "Parameters (Spec Example)",            test: "tests/fixtures/full-io/2.0/parameters/spec-example-1.json" },
+        { name: "Parameters (Array Params (items))",    test: "tests/fixtures/full-io/2.0/parameters/array-param.json" },
+        { name: "Responses (Spec Example)",             test: "tests/fixtures/full-io/2.0/responses/spec-example-1.json" },
+        { name: "Responses (Multiple Spec Examples)",   test: "tests/fixtures/full-io/2.0/responses/response-spec-examples.json" },
+        { name: "Complete (Security Definitions)",      test: "tests/fixtures/full-io/2.0/complete/complete-securityDefinitions.json" },
+        { name: "Complete (Tags)",                      test: "tests/fixtures/full-io/2.0/complete/complete-tags.json" },
+        { name: "Complete (Pet Store)",                 test: "tests/fixtures/full-io/2.0/complete/pet-store.json" },
+        { name: "Complete (api.meerkat)",               test: "tests/fixtures/full-io/2.0/complete/api.meerkat.com.br.json" },
+        { name: "Complete (austin2015.apistrat)",       test: "tests/fixtures/full-io/2.0/complete/austin2015.apistrat.com.json" },
+        { name: "Complete (developer.trade.gov)",       test: "tests/fixtures/full-io/2.0/complete/developer.trade.gov.json" },
+        { name: "Complete (api.hairmare)",              test: "tests/fixtures/full-io/2.0/complete/subnet.api.hairmare.ch.json" },
+        { name: "Complete (weatherbit.io)",             test: "tests/fixtures/full-io/2.0/complete/www.weatherbit.io.json" }
+    ];
 
     let library: OasLibraryUtils;
 
@@ -53,73 +108,29 @@ describe("Full I/O (2.0) - Basics", () => {
         expect(() => { library.createDocument(json); }).toThrowError("Unsupported OAS version: 1.1");
     });
 
-    it("Simplest possible 2.0 spec", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/simple/simplest.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Simple Info object", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/simple/simple-info.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Info object with extensions", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/simple/simple-info-extensions.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Simple Tags list", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/simple/simple-tags.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Simple External Documentation", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/simple/simple-externalDocs.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Simple Security Definitions", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/simple/simple-securityDefinitions.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Simple Security Requirements", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/simple/simple-security.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Complete Security Definitions", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/complete/complete-securityDefinitions.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Complete Tags", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/complete/complete-tags.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
+    // All tests in the list above.
+    TESTS.forEach( spec => {
+        it(spec.name, () => {
+            let json: any = readJSON(spec.test);
+            let document: Oas20Document = <Oas20Document>library.createDocument(json);
+            let jsObj: any = library.writeNode(document);
+            expect(jsObj).toEqual(json);
+        });
     });
 
 });
 
 
-describe("Paths I/O (2.0)", () => {
+/**
+ * Full I/O Tests for Version 3.0 of the OpenAPI Specification.
+ */
+describe("Full I/O (3.0)", () => {
+
+    let TESTS: any = [
+        { name: "Simple (Easy 3.0 spec)",               test: "tests/fixtures/full-io/3.0/simple/simplest.json" },
+        { name: "Simple (Info)",                        test: "tests/fixtures/full-io/3.0/simple/simple-info.json" },
+        { name: "Simple (Info + extensions)",           test: "tests/fixtures/full-io/3.0/simple/simple-info-extensions.json" },
+    ];
 
     let library: OasLibraryUtils;
 
@@ -127,333 +138,15 @@ describe("Paths I/O (2.0)", () => {
         library = new OasLibraryUtils();
     });
 
-    it("Paths (GET)", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-get.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Paths (GET + Params)", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-get-with-params.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Paths (GET + Tags)", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-get-with-tags.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Paths (Path + Params)", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-path-with-params.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Paths (All Ops)", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-all-operations.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Paths (Ref)", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-ref.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Paths (External Docs)", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-externalDocs.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Paths (Security)", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-security.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Paths (Default Response)", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-default-response.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Paths (Responses)", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-responses.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Paths (Response w/ Headers)", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-response-with-headers.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Paths (Response w/ Examples)", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-response-with-examples.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Paths (Response w/ Schema)", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-response-with-schema.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Paths (With Extensions)", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-with-extensions.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Paths (Responses w/ Extensions)", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-responses-with-extensions.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Paths (Response w/ $ref)", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/paths/paths-response-with-ref.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
+    // All tests in the list above.
+    TESTS.forEach( spec => {
+        it(spec.name, () => {
+            let json: any = readJSON(spec.test);
+            let document: Oas30Document = <Oas30Document>library.createDocument(json);
+            let jsObj: any = library.writeNode(document);
+            expect(jsObj).toEqual(json);
+        });
     });
 
 });
 
-
-describe("Definitions I/O (2.0)", () => {
-
-    let library: OasLibraryUtils;
-
-    beforeEach(() => {
-        library = new OasLibraryUtils();
-    });
-
-    it("Primitive Sample", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/definitions/primitive.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Spec Example 1", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/definitions/spec-example-1.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Schema With XML", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/definitions/schema-with-xml.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Schema With Meta Data", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/definitions/schema-with-metaData.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Schema With 'allOf'", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/definitions/schema-with-allOf.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Schema With External Docs", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/definitions/schema-with-externalDocs.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Schema With Additional Properties", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/definitions/schema-with-additionalProperties.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Schema With Example", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/definitions/schema-with-example.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Schema With Composition", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/definitions/schema-with-composition.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Schema With Polymorphism", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/definitions/schema-with-polymorphism.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("JSON Schema :: Basic", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/definitions/json-schema-basic.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("JSON Schema :: Products", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/definitions/json-schema-products.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("JSON Schema :: fstab", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/definitions/json-schema-fstab.json' );
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-});
-
-
-describe("Parameters I/O (2.0)", () => {
-
-    let library: OasLibraryUtils;
-
-    beforeEach(() => {
-        library = new OasLibraryUtils();
-    });
-
-    it("Spec Example 1", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/parameters/spec-example-1.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Array Parameters (items)", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/parameters/array-param.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-});
-
-
-describe("Responses I/O (2.0)", () => {
-
-    let library: OasLibraryUtils;
-
-    beforeEach(() => {
-        library = new OasLibraryUtils();
-    });
-
-    it("Spec Example 1", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/responses/spec-example-1.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Multiple Spec Examples", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/responses/response-spec-examples.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-        expect(jsObj).toEqual(json);
-    });
-
-});
-
-
-describe("Complete Spec I/O (2.0)", () => {
-
-    let library: OasLibraryUtils;
-
-    beforeEach(() => {
-        library = new OasLibraryUtils();
-    });
-
-    it("Complete Pet Store", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/complete/pet-store.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Complete api.meerkat", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/complete/api.meerkat.com.br.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Complete austin2015.apistrat", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/complete/austin2015.apistrat.com.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Complete developer.trade.gov", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/complete/developer.trade.gov.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-
-        // let actual: any = sortObj(jsObj);
-        // let expected: any = sortObj(json);
-        // console.info("--- ACTUAL ---");
-        // console.info(JSON.stringify(actual));
-        // console.info("--- EXPECTED ---");
-        // console.info(JSON.stringify(expected));
-
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Complete api.hairmare", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/complete/subnet.api.hairmare.ch.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-
-        expect(jsObj).toEqual(json);
-    });
-
-    it("Complete weatherbit.io", () => {
-        let json: any = readJSON('tests/fixtures/full-io/2.0/complete/www.weatherbit.io.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
-        let jsObj: any = library.writeNode(document);
-
-        expect(jsObj).toEqual(json);
-    });
-});

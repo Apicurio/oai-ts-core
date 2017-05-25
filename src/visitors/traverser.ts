@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {IOas20NodeVisitor} from "./visitor.iface";
+import {IOas20NodeVisitor, IOas30NodeVisitor, IOasNodeVisitor} from "./visitor.iface";
 import {Oas20Document} from "../models/2.0/document.model";
 import {Oas20Info} from "../models/2.0/info.model";
 import {Oas20Contact} from "../models/2.0/contact.model";
@@ -47,6 +47,11 @@ import {Oas20XML} from "../models/2.0/xml.model";
 import {Oas20Definitions} from "../models/2.0/definitions.model";
 import {Oas20ParametersDefinitions} from "../models/2.0/parameters-definitions.model";
 import {Oas20ResponsesDefinitions} from "../models/2.0/responses-definitions.model";
+import {OasDocument} from "../models/document.model";
+import {OasInfo} from "../models/common/info.model";
+import {OasContact} from "../models/common/contact.model";
+import {OasLicense} from "../models/common/license.model";
+import {Oas30Document} from "../models/3.0/document.model";
 
 /**
  * Interface implemented by all traversers.
@@ -57,17 +62,16 @@ export interface IOasTraverser {
 
 }
 
-
 /**
- * Used to traverse an OAS 2.0 tree and call an included visitor for each node.
+ * Used to traverse an OAS tree and call an included visitor for each node.
  */
-export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
+export abstract class OasTraverser implements IOasNodeVisitor, IOasTraverser {
 
     /**
      * Constructor.
      * @param visitor
      */
-    constructor(private visitor: IOas20NodeVisitor) {}
+    constructor(protected visitor: IOasNodeVisitor) {}
 
     /**
      * Called to traverse an OAS 2.0 tree starting at the given node and traversing
@@ -82,7 +86,7 @@ export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
      * Traverse into the given node, unless it's null.
      * @param node
      */
-    private traverseIfNotNull(node: OasNode): void {
+    protected traverseIfNotNull(node: OasNode): void {
         if (node) {
             node.accept(this);
         }
@@ -92,7 +96,7 @@ export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
      * Traverse the items of the given array.
      * @param items
      */
-    private traverseArray(items: OasNode[]): void {
+    protected traverseArray(items: OasNode[]): void {
         if (items) {
             for (let item of items) {
                 this.traverseIfNotNull(item);
@@ -104,7 +108,7 @@ export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
      * Traverse the extension nodes, if any are found.
      * @param node
      */
-    private traverseExtensions(node: OasExtensibleNode): void {
+    protected traverseExtensions(node: OasExtensibleNode): void {
         this.traverseArray(node.extensions());
     }
 
@@ -112,7 +116,65 @@ export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
      * Visit the document.
      * @param node
      */
-    visitDocument(node: Oas20Document): void {
+    public abstract visitDocument(node: OasDocument): void;
+
+    /**
+     * Visit the info object.
+     * @param node
+     */
+    public visitInfo(node: OasInfo): void {
+        node.accept(this.visitor);
+        this.traverseIfNotNull(node.contact);
+        this.traverseIfNotNull(node.license);
+        this.traverseExtensions(node);
+    }
+
+    /**
+     * Visit the contact object.
+     * @param node
+     */
+    public visitContact(node: OasContact): void {
+        node.accept(this.visitor);
+        this.traverseExtensions(node);
+    }
+
+    /**
+     * Visit the license object.
+     * @param node
+     */
+    public visitLicense(node: OasLicense): void {
+        node.accept(this.visitor);
+        this.traverseExtensions(node);
+    }
+
+    /**
+     * Visit the extension.
+     * @param node
+     */
+    public visitExtension(node: OasExtension): void {
+        node.accept(this.visitor);
+    }
+
+}
+
+/**
+ * Used to traverse an OAS 2.0 tree and call an included visitor for each node.
+ */
+export class Oas20Traverser extends OasTraverser implements IOas20NodeVisitor {
+
+    /**
+     * Constructor.
+     * @param visitor
+     */
+    constructor(visitor: IOas20NodeVisitor) {
+        super(visitor);
+    }
+
+    /**
+     * Visit the document.
+     * @param node
+     */
+    public visitDocument(node: Oas20Document): void {
         node.accept(this.visitor);
         this.traverseIfNotNull(node.info);
         this.traverseIfNotNull(node.paths);
@@ -127,47 +189,10 @@ export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
     }
 
     /**
-     * Visit the info object.
-     * @param node
-     */
-    visitInfo(node: Oas20Info): void {
-        node.accept(this.visitor);
-        this.traverseIfNotNull(node.contact);
-        this.traverseIfNotNull(node.license);
-        this.traverseExtensions(node);
-    }
-
-    /**
-     * Visit the contact object.
-     * @param node
-     */
-    visitContact(node: Oas20Contact): void {
-        node.accept(this.visitor);
-        this.traverseExtensions(node);
-    }
-
-    /**
-     * Visit the license object.
-     * @param node
-     */
-    visitLicense(node: Oas20License): void {
-        node.accept(this.visitor);
-        this.traverseExtensions(node);
-    }
-
-    /**
-     * Visit the extension.
-     * @param node
-     */
-    visitExtension(node: OasExtension): void {
-        node.accept(this.visitor);
-    }
-
-    /**
      * Visit the paths.
      * @param node
      */
-    visitPaths(node: Oas20Paths): void {
+    public visitPaths(node: Oas20Paths): void {
         node.accept(this.visitor);
         for (let pathName of node.pathItemNames()) {
             let pathItem: Oas20PathItem = node.pathItem(pathName);
@@ -180,7 +205,7 @@ export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
      * Visit the path item.
      * @param node
      */
-    visitPathItem(node: Oas20PathItem): void {
+    public visitPathItem(node: Oas20PathItem): void {
         node.accept(this.visitor);
         this.traverseIfNotNull(node.get);
         this.traverseIfNotNull(node.put);
@@ -197,7 +222,7 @@ export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
      * Visit the operation.
      * @param node
      */
-    visitOperation(node: Oas20Operation): void {
+    public visitOperation(node: Oas20Operation): void {
         node.accept(this.visitor);
         this.traverseIfNotNull(node.externalDocs);
         this.traverseArray(node.parameters);
@@ -217,7 +242,7 @@ export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
      * Visit the parameter.
      * @param node
      */
-    visitParameter(node: Oas20Parameter): void {
+    public visitParameter(node: Oas20Parameter): void {
         this.visitParameterBase(node);
     }
 
@@ -225,7 +250,7 @@ export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
      * Visit the parameter definition.
      * @param node
      */
-    visitParameterDefinition(node: Oas20ParameterDefinition): void {
+    public visitParameterDefinition(node: Oas20ParameterDefinition): void {
         this.visitParameterBase(node);
     }
 
@@ -233,7 +258,7 @@ export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
      * Visit the external doc.
      * @param node
      */
-    visitExternalDocumentation(node: Oas20ExternalDocumentation): void {
+    public visitExternalDocumentation(node: Oas20ExternalDocumentation): void {
         node.accept(this.visitor);
         this.traverseExtensions(node);
     }
@@ -242,7 +267,7 @@ export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
      * Visit the security requirement.
      * @param node
      */
-    visitSecurityRequirement(node: Oas20SecurityRequirement): void {
+    public visitSecurityRequirement(node: Oas20SecurityRequirement): void {
         node.accept(this.visitor);
     }
 
@@ -250,7 +275,7 @@ export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
      * Visit the responses.
      * @param node
      */
-    visitResponses(node: Oas20Responses): void {
+    public visitResponses(node: Oas20Responses): void {
         node.accept(this.visitor);
         for (let name of node.responseStatusCodes()) {
             let response: Oas20Response = node.response(name);
@@ -272,7 +297,7 @@ export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
      * Visit the response.
      * @param node
      */
-    visitResponse(node: Oas20Response): void {
+    public visitResponse(node: Oas20Response): void {
         this.visitResponseBase(node);
     }
 
@@ -280,7 +305,7 @@ export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
      * Visit the response definition.
      * @param node
      */
-    visitResponseDefinition(node: Oas20ResponseDefinition): void {
+    public visitResponseDefinition(node: Oas20ResponseDefinition): void {
         this.visitResponseBase(node);
     }
 
@@ -288,7 +313,7 @@ export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
      * Visit the schema.
      * @param node
      */
-    visitSchema(node: Oas20Schema): void {
+    public visitSchema(node: Oas20Schema): void {
         node.accept(this.visitor);
         if (node.items !== null && Array.isArray(node.items)) {
             this.traverseArray(<Oas20ItemsSchema[]>node.items);
@@ -314,7 +339,7 @@ export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
      * Visit the schema.
      * @param node
      */
-    visitPropertySchema(node: Oas20PropertySchema): void {
+    public visitPropertySchema(node: Oas20PropertySchema): void {
         this.visitSchema(node);
     }
 
@@ -322,7 +347,7 @@ export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
      * Visit the schema.
      * @param node
      */
-    visitDefinitionSchema(node: Oas20DefinitionSchema): void {
+    public visitDefinitionSchema(node: Oas20DefinitionSchema): void {
         this.visitSchema(node);
     }
 
@@ -330,7 +355,7 @@ export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
      * Visit the schema.
      * @param node
      */
-    visitAdditionalPropertiesSchema(node: Oas20AdditionalPropertiesSchema): void {
+    public visitAdditionalPropertiesSchema(node: Oas20AdditionalPropertiesSchema): void {
         this.visitSchema(node);
     }
 
@@ -338,7 +363,7 @@ export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
      * Visit the schema.
      * @param node
      */
-    visitAllOfSchema(node: Oas20AllOfSchema): void {
+    public visitAllOfSchema(node: Oas20AllOfSchema): void {
         this.visitSchema(node);
     }
 
@@ -346,7 +371,7 @@ export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
      * Visit the schema.
      * @param node
      */
-    visitItemsSchema(node: Oas20ItemsSchema): void {
+    public visitItemsSchema(node: Oas20ItemsSchema): void {
         this.visitSchema(node);
     }
 
@@ -354,7 +379,7 @@ export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
      * Visit the headers.
      * @param node
      */
-    visitHeaders(node: Oas20Headers): void {
+    public visitHeaders(node: Oas20Headers): void {
         node.accept(this.visitor);
         for (let hname of node.headerNames()) {
             let header: Oas20Header = node.header(hname);
@@ -366,7 +391,7 @@ export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
      * Visit the header.
      * @param node
      */
-    visitHeader(node: Oas20Header): void {
+    public visitHeader(node: Oas20Header): void {
         node.accept(this.visitor);
         this.traverseIfNotNull(node.items);
         this.traverseExtensions(node);
@@ -376,7 +401,7 @@ export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
      * Visit the example.
      * @param node
      */
-    visitExample(node: Oas20Example): void {
+    public visitExample(node: Oas20Example): void {
         node.accept(this.visitor);
     }
 
@@ -384,7 +409,7 @@ export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
      * Visit the items.
      * @param node
      */
-    visitItems(node: Oas20Items): void {
+    public visitItems(node: Oas20Items): void {
         node.accept(this.visitor);
         this.traverseIfNotNull(node.items);
         this.traverseExtensions(node);
@@ -394,7 +419,7 @@ export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
      * Visit the tag.
      * @param node
      */
-    visitTag(node: Oas20Tag): void {
+    public visitTag(node: Oas20Tag): void {
         node.accept(this.visitor);
         this.traverseIfNotNull(node.externalDocs);
         this.traverseExtensions(node);
@@ -404,7 +429,7 @@ export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
      * Visit the security definitions.
      * @param node
      */
-    visitSecurityDefinitions(node: Oas20SecurityDefinitions): void {
+    public visitSecurityDefinitions(node: Oas20SecurityDefinitions): void {
         node.accept(this.visitor);
         for (let schemeName of node.securitySchemeNames()) {
             this.traverse(node.securityScheme(schemeName));
@@ -415,7 +440,7 @@ export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
      * Visit the security scheme.
      * @param node
      */
-    visitSecurityScheme(node: Oas20SecurityScheme): void {
+    public visitSecurityScheme(node: Oas20SecurityScheme): void {
         node.accept(this.visitor);
         this.traverseIfNotNull(node.scopes);
         this.traverseExtensions(node);
@@ -425,7 +450,7 @@ export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
      * Visit the scopes.
      * @param node
      */
-    visitScopes(node: Oas20Scopes): void {
+    public visitScopes(node: Oas20Scopes): void {
         node.accept(this.visitor);
     }
 
@@ -433,7 +458,7 @@ export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
      * Visit the scopes.
      * @param node
      */
-    visitXML(node: Oas20XML): void {
+    public visitXML(node: Oas20XML): void {
         node.accept(this.visitor);
         this.traverseExtensions(node);
     }
@@ -442,7 +467,7 @@ export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
      * Visit the definitions.
      * @param node
      */
-    visitDefinitions(node: Oas20Definitions): void {
+    public visitDefinitions(node: Oas20Definitions): void {
         node.accept(this.visitor);
         for (let name of node.definitionNames()) {
             let definition: Oas20DefinitionSchema = node.definition(name);
@@ -454,7 +479,7 @@ export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
      * Visit the definitions.
      * @param node
      */
-    visitParametersDefinitions(node: Oas20ParametersDefinitions): void {
+    public visitParametersDefinitions(node: Oas20ParametersDefinitions): void {
         node.accept(this.visitor);
         for (let name of node.parameterNames()) {
             let parameter: Oas20ParameterDefinition = node.parameter(name);
@@ -466,7 +491,7 @@ export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
      * Visit the responses.
      * @param node
      */
-    visitResponsesDefinitions(node: Oas20ResponsesDefinitions): void {
+    public visitResponsesDefinitions(node: Oas20ResponsesDefinitions): void {
         node.accept(this.visitor);
         for (let name of node.responseNames()) {
             let response: Oas20ResponseDefinition = node.response(name);
@@ -477,17 +502,44 @@ export class Oas20Traverser implements IOas20NodeVisitor, IOasTraverser {
 }
 
 
+
 /**
- * Used to traverse up an OAS 2.0 tree and call an included visitor for each node.
+ * Used to traverse an OAS 3.0 tree and call an included visitor for each node.
  */
-export class Oas20ReverseTraverser implements IOas20NodeVisitor, IOasTraverser {
+export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
 
     /**
      * Constructor.
      * @param visitor
      */
-    constructor(private visitor: IOas20NodeVisitor) {
+    constructor(visitor: IOas30NodeVisitor) {
+        super(visitor);
     }
+
+    /**
+     * Visit the document.
+     * @param node
+     */
+    public visitDocument(node: Oas30Document): void {
+        node.accept(this.visitor);
+        this.traverseIfNotNull(node.info);
+        this.traverseExtensions(node);
+    }
+
+}
+
+
+
+/**
+ * Used to traverse up an OAS tree and call an included visitor for each node.
+ */
+export abstract class OasReverseTraverser implements IOasNodeVisitor, IOasTraverser {
+
+    /**
+     * Constructor.
+     * @param visitor
+     */
+    constructor(protected visitor: IOasNodeVisitor) {}
 
     /**
      * Traverse the given node.
@@ -497,168 +549,200 @@ export class Oas20ReverseTraverser implements IOas20NodeVisitor, IOasTraverser {
         node.accept(this);
     }
 
-    visitDocument(node: Oas20Document): void {
+    public visitDocument(node: OasDocument): void {
         node.accept(this.visitor);
     }
 
-    visitInfo(node: Oas20Info): void {
+    public visitInfo(node: OasInfo): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
 
-    visitContact(node: Oas20Contact): void {
+    public visitContact(node: OasContact): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
 
-    visitLicense(node: Oas20License): void {
+    public visitLicense(node: OasLicense): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
 
-    visitPaths(node: Oas20Paths): void {
+    public visitExtension(node: OasExtension): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
 
-    visitPathItem(node: Oas20PathItem): void {
+}
+
+
+/**
+ * Used to traverse up an OAS 2.0 tree and call an included visitor for each node.
+ */
+export class Oas20ReverseTraverser extends OasReverseTraverser implements IOas20NodeVisitor, IOasTraverser {
+
+    /**
+     * Constructor.
+     * @param visitor
+     */
+    constructor(visitor: IOas20NodeVisitor) {
+        super(visitor);
+    }
+
+    public visitPaths(node: Oas20Paths): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
 
-    visitOperation(node: Oas20Operation): void {
+    public visitPathItem(node: Oas20PathItem): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
 
-    visitParameter(node: Oas20Parameter): void {
+    public visitOperation(node: Oas20Operation): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
 
-    visitParameterDefinition(node: Oas20ParameterDefinition): void {
+    public visitParameter(node: Oas20Parameter): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
 
-    visitExternalDocumentation(node: Oas20ExternalDocumentation): void {
+    public visitParameterDefinition(node: Oas20ParameterDefinition): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
 
-    visitSecurityRequirement(node: Oas20SecurityRequirement): void {
+    public visitExternalDocumentation(node: Oas20ExternalDocumentation): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
 
-    visitResponses(node: Oas20Responses): void {
+    public visitSecurityRequirement(node: Oas20SecurityRequirement): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
 
-    visitResponse(node: Oas20Response): void {
+    public visitResponses(node: Oas20Responses): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
 
-    visitResponseDefinition(node: Oas20ResponseDefinition): void {
+    public visitResponse(node: Oas20Response): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
 
-    visitSchema(node: Oas20Schema): void {
+    public visitResponseDefinition(node: Oas20ResponseDefinition): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
 
-    visitHeaders(node: Oas20Headers): void {
+    public visitSchema(node: Oas20Schema): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
 
-    visitHeader(node: Oas20Header): void {
+    public visitHeaders(node: Oas20Headers): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
 
-    visitExample(node: Oas20Example): void {
+    public visitHeader(node: Oas20Header): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
 
-    visitItems(node: Oas20Items): void {
+    public visitExample(node: Oas20Example): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
 
-    visitTag(node: Oas20Tag): void {
+    public visitItems(node: Oas20Items): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
 
-    visitSecurityDefinitions(node: Oas20SecurityDefinitions): void {
+    public visitTag(node: Oas20Tag): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
 
-    visitSecurityScheme(node: Oas20SecurityScheme): void {
+    public visitSecurityDefinitions(node: Oas20SecurityDefinitions): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
 
-    visitScopes(node: Oas20Scopes): void {
+    public visitSecurityScheme(node: Oas20SecurityScheme): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
 
-    visitXML(node: Oas20XML): void {
+    public visitScopes(node: Oas20Scopes): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
 
-    visitDefinitionSchema(node: Oas20DefinitionSchema): void {
+    public visitXML(node: Oas20XML): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
 
-    visitPropertySchema(node: Oas20PropertySchema): void {
+    public visitDefinitionSchema(node: Oas20DefinitionSchema): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
 
-    visitAdditionalPropertiesSchema(node: Oas20AdditionalPropertiesSchema): void {
+    public visitPropertySchema(node: Oas20PropertySchema): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
 
-    visitAllOfSchema(node: Oas20AllOfSchema): void {
+    public visitAdditionalPropertiesSchema(node: Oas20AdditionalPropertiesSchema): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
 
-    visitItemsSchema(node: Oas20ItemsSchema): void {
+    public visitAllOfSchema(node: Oas20AllOfSchema): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
 
-    visitDefinitions(node: Oas20Definitions): void {
+    public visitItemsSchema(node: Oas20ItemsSchema): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
 
-    visitParametersDefinitions(node: Oas20ParametersDefinitions): void {
+    public visitDefinitions(node: Oas20Definitions): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
 
-    visitResponsesDefinitions(node: Oas20ResponsesDefinitions): void {
+    public visitParametersDefinitions(node: Oas20ParametersDefinitions): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
 
-    visitExtension(node: OasExtension): void {
+    public visitResponsesDefinitions(node: Oas20ResponsesDefinitions): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
+    }
+
+}
+
+
+/**
+ * Used to traverse up an OAS 3.0 tree and call an included visitor for each node.
+ */
+export class Oas30ReverseTraverser extends OasReverseTraverser implements IOas30NodeVisitor, IOasTraverser {
+
+    /**
+     * Constructor.
+     * @param visitor
+     */
+    constructor(visitor: IOas30NodeVisitor) {
+        super(visitor);
     }
 
 }

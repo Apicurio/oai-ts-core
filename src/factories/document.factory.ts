@@ -17,7 +17,7 @@
 
 import {OasDocument} from "../models/document.model";
 import {Oas20Document} from "../models/2.0/document.model";
-import {Oas20JS2ModelReader} from "../readers/js2model.reader";
+import {Oas20JS2ModelReader, Oas30JS2ModelReader} from "../readers/js2model.reader";
 
 /**
  * The main factory for creating new OAS Documents.  This can be used to create a new, empty
@@ -47,8 +47,15 @@ export class OasDocumentFactory {
         if (oasObject.swagger && oasObject.swagger === "2.0") {
             let reader: Oas20JS2ModelReader = new Oas20JS2ModelReader();
             return reader.read(oasObject);
+        } else if (oasObject.openapi && oasObject.openapi === "3.0.0") {
+            let reader: Oas30JS2ModelReader = new Oas30JS2ModelReader();
+            return reader.read(oasObject);
         } else {
-            throw new Error("Unsupported OAS version: " + oasObject.swagger);
+            let ver: string = oasObject.swagger;
+            if (!ver) {
+                ver = oasObject.openapi;
+            }
+            throw new Error("Unsupported OAS version: " + ver);
         }
     }
 
