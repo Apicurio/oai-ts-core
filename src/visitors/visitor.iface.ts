@@ -25,8 +25,6 @@ import {Oas20Paths} from "../models/2.0/paths.model";
 import {Oas20PathItem} from "../models/2.0/path-item.model";
 import {Oas20Operation} from "../models/2.0/operation.model";
 import {Oas20Parameter, Oas20ParameterDefinition} from "../models/2.0/parameter.model";
-import {Oas20ExternalDocumentation} from "../models/2.0/external-documentation.model";
-import {Oas20SecurityRequirement} from "../models/2.0/security-requirement.model";
 import {Oas20Responses} from "../models/2.0/responses.model";
 import {Oas20Response, Oas20ResponseDefinition} from "../models/2.0/response.model";
 import {
@@ -60,6 +58,13 @@ import {Oas30ServerVariable} from "../models/3.0/server-variable.model";
 import {Oas30ServerVariables} from "../models/3.0/server-variables.model";
 import {Oas30Server} from "../models/3.0/server.model";
 import {OasSecurityRequirement} from "../models/common/security-requirement.model";
+import {OasExternalDocumentation} from "../models/common/external-documentation.model";
+import {OasTag} from "../models/common/tag.model";
+import {Oas20ExternalDocumentation} from "../models/2.0/external-documentation.model";
+import {Oas20SecurityRequirement} from "../models/2.0/security-requirement.model";
+import {Oas30ExternalDocumentation} from "../models/3.0/external-documentation.model";
+import {Oas30SecurityRequirement} from "../models/3.0/security-requirement.model";
+import {Oas30Tag} from "../models/3.0/tag.model";
 
 /**
  * Classes that wish to visit a OAS node or tree must implement this interface.  The
@@ -76,6 +81,10 @@ export interface IOasNodeVisitor {
     visitLicense(node: OasLicense): void;
 
     visitSecurityRequirement(node: OasSecurityRequirement): void;
+
+    visitTag(node: OasTag): void;
+
+    visitExternalDocumentation(node: OasExternalDocumentation): void;
 
     visitExtension(node: OasExtension): void;
 
@@ -105,6 +114,8 @@ export interface IOas20NodeVisitor extends IOasNodeVisitor {
     visitParameterDefinition(node: Oas20ParameterDefinition): void;
 
     visitExternalDocumentation(node: Oas20ExternalDocumentation): void;
+
+    visitSecurityRequirement(node: Oas20SecurityRequirement): void;
 
     visitResponses(node: Oas20Responses): void;
 
@@ -166,5 +177,11 @@ export interface IOas30NodeVisitor extends IOasNodeVisitor {
     visitServerVariables(node: Oas30ServerVariables): void;
 
     visitServerVariable(node: Oas30ServerVariable): void;
+
+    visitSecurityRequirement(node: Oas30SecurityRequirement): void;
+
+    visitTag(node: Oas30Tag): void;
+
+    visitExternalDocumentation(node: Oas30ExternalDocumentation): void;
 
 }

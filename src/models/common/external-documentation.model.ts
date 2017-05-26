@@ -15,16 +15,23 @@
  * limitations under the License.
  */
 
-import {OasExternalDocumentation} from "../common/external-documentation.model";
+import {IOasNodeVisitor} from "../../visitors/visitor.iface";
+import {OasExtensibleNode} from "../enode.model";
 
 /**
- * Models an OAS 2.0 External Documentation object.  Example:
- *
- * {
- *   "description": "Find more info here",
- *   "url": "https://swagger.io"
- * }
+ * Models an OAS External Documentation object.
  */
-export class Oas20ExternalDocumentation extends OasExternalDocumentation {
+export class OasExternalDocumentation extends OasExtensibleNode {
+
+    public description: string;
+    public url: string;
+
+    /**
+     * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.
+     * @param visitor
+     */
+    public accept(visitor: IOasNodeVisitor): void {
+        visitor.visitExternalDocumentation(this);
+    }
 
 }

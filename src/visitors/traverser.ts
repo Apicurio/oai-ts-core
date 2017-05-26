@@ -22,8 +22,6 @@ import {Oas20Paths} from "../models/2.0/paths.model";
 import {Oas20PathItem} from "../models/2.0/path-item.model";
 import {Oas20Operation} from "../models/2.0/operation.model";
 import {Oas20Parameter, Oas20ParameterBase, Oas20ParameterDefinition} from "../models/2.0/parameter.model";
-import {Oas20ExternalDocumentation} from "../models/2.0/external-documentation.model";
-import {Oas20SecurityRequirement} from "../models/2.0/security-requirement.model";
 import {Oas20Responses} from "../models/2.0/responses.model";
 import {Oas20Response, Oas20ResponseBase, Oas20ResponseDefinition} from "../models/2.0/response.model";
 import {
@@ -40,7 +38,6 @@ import {Oas20Example} from "../models/2.0/example.model";
 import {Oas20Items} from "../models/2.0/items.model";
 import {OasNode} from "../models/node.model";
 import {OasExtensibleNode} from "../models/enode.model";
-import {Oas20Tag} from "../models/2.0/tag.model";
 import {Oas20Scopes} from "../models/2.0/scopes.model";
 import {Oas20SecurityDefinitions} from "../models/2.0/security-definitions.model";
 import {Oas20SecurityScheme} from "../models/2.0/security-scheme.model";
@@ -57,6 +54,8 @@ import {Oas30ServerVariable} from "../models/3.0/server-variable.model";
 import {Oas30ServerVariables} from "../models/3.0/server-variables.model";
 import {Oas30Server} from "../models/3.0/server.model";
 import {OasSecurityRequirement} from "../models/common/security-requirement.model";
+import {OasExternalDocumentation} from "../models/common/external-documentation.model";
+import {OasTag} from "../models/common/tag.model";
 
 /**
  * Interface implemented by all traversers.
@@ -158,6 +157,25 @@ export abstract class OasTraverser implements IOasNodeVisitor, IOasTraverser {
      */
     public visitSecurityRequirement(node: OasSecurityRequirement): void {
         node.accept(this.visitor);
+    }
+
+    /**
+     * Visit the tag.
+     * @param node
+     */
+    public visitTag(node: OasTag): void {
+        node.accept(this.visitor);
+        this.traverseIfNotNull(node.externalDocs);
+        this.traverseExtensions(node);
+    }
+
+    /**
+     * Visit the external doc.
+     * @param node
+     */
+    public visitExternalDocumentation(node: OasExternalDocumentation): void {
+        node.accept(this.visitor);
+        this.traverseExtensions(node);
     }
 
     /**
@@ -265,15 +283,6 @@ export class Oas20Traverser extends OasTraverser implements IOas20NodeVisitor {
      */
     public visitParameterDefinition(node: Oas20ParameterDefinition): void {
         this.visitParameterBase(node);
-    }
-
-    /**
-     * Visit the external doc.
-     * @param node
-     */
-    public visitExternalDocumentation(node: Oas20ExternalDocumentation): void {
-        node.accept(this.visitor);
-        this.traverseExtensions(node);
     }
 
     /**
@@ -421,16 +430,6 @@ export class Oas20Traverser extends OasTraverser implements IOas20NodeVisitor {
     }
 
     /**
-     * Visit the tag.
-     * @param node
-     */
-    public visitTag(node: Oas20Tag): void {
-        node.accept(this.visitor);
-        this.traverseIfNotNull(node.externalDocs);
-        this.traverseExtensions(node);
-    }
-
-    /**
      * Visit the security definitions.
      * @param node
      */
@@ -530,6 +529,8 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
         this.traverseIfNotNull(node.info);
         this.traverseArray(node.servers);
         this.traverseArray(node.security);
+        this.traverseArray(node.tags);
+        this.traverseIfNotNull(node.externalDocs);
         this.traverseExtensions(node);
     }
 
@@ -607,7 +608,17 @@ export abstract class OasReverseTraverser implements IOasNodeVisitor, IOasTraver
         this.traverse(node.parent());
     }
 
-    public visitSecurityRequirement(node: Oas20SecurityRequirement): void {
+    public visitSecurityRequirement(node: OasSecurityRequirement): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    public visitTag(node: OasTag): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    public visitExternalDocumentation(node: OasExternalDocumentation): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
@@ -658,11 +669,6 @@ export class Oas20ReverseTraverser extends OasReverseTraverser implements IOas20
         this.traverse(node.parent());
     }
 
-    public visitExternalDocumentation(node: Oas20ExternalDocumentation): void {
-        node.accept(this.visitor);
-        this.traverse(node.parent());
-    }
-
     public visitResponses(node: Oas20Responses): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
@@ -699,11 +705,6 @@ export class Oas20ReverseTraverser extends OasReverseTraverser implements IOas20
     }
 
     public visitItems(node: Oas20Items): void {
-        node.accept(this.visitor);
-        this.traverse(node.parent());
-    }
-
-    public visitTag(node: Oas20Tag): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }

@@ -18,13 +18,12 @@
 import {OasExternalDocumentation} from "../common/external-documentation.model";
 
 /**
- * Models an OAS 2.0 External Documentation object.  Example:
+ * Models an OAS 3.0 External Documentation object.  Example:
  *
  * {
  *   "description": "Find more info here",
- *   "url": "https://swagger.io"
+ *   "url": "https://example.com"
  * }
  */
-export class Oas20ExternalDocumentation extends OasExternalDocumentation {
-
+export class Oas30ExternalDocumentation extends OasExternalDocumentation {
 }

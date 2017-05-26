@@ -53,6 +53,9 @@ import {OasLicense} from "../models/common/license.model";
 import {Oas30ServerVariable} from "../models/3.0/server-variable.model";
 import {Oas30ServerVariables} from "../models/3.0/server-variables.model";
 import {Oas30Server} from "../models/3.0/server.model";
+import {OasTag} from "../models/common/tag.model";
+import {OasSecurityRequirement} from "../models/common/security-requirement.model";
+import {OasExternalDocumentation} from "../models/common/external-documentation.model";
 
 /**
  * Base class for node visitors that are only interested in a subset of the node types
@@ -64,7 +67,9 @@ export abstract class OasNodeVisitorAdapter implements IOasNodeVisitor {
     public visitInfo(node: OasInfo): void {}
     public visitContact(node: OasContact): void {}
     public visitLicense(node: OasLicense): void {}
-    public visitSecurityRequirement(node: Oas20SecurityRequirement): void {}
+    public visitSecurityRequirement(node: OasSecurityRequirement): void {}
+    public visitTag(node: OasTag): void {}
+    public visitExternalDocumentation(node: OasExternalDocumentation): void {}
     public visitExtension(node: OasExtension) {}
 }
 
@@ -80,7 +85,6 @@ export class Oas20NodeVisitorAdapter extends OasNodeVisitorAdapter implements IO
     public visitOperation(node: Oas20Operation): void {}
     public visitParameter(node: Oas20Parameter): void {}
     public visitParameterDefinition(node: Oas20ParameterDefinition): void {}
-    public visitExternalDocumentation(node: Oas20ExternalDocumentation): void {}
     public visitResponses(node: Oas20Responses): void {}
     public visitResponse(node: Oas20Response): void {}
     public visitResponseDefinition(node: Oas20ResponseDefinition): void {}
@@ -89,7 +93,6 @@ export class Oas20NodeVisitorAdapter extends OasNodeVisitorAdapter implements IO
     public visitHeader(node: Oas20Header): void {}
     public visitExample(node: Oas20Example): void {}
     public visitItems(node: Oas20Items): void {}
-    public visitTag(node: Oas20Tag): void {}
     public visitSecurityDefinitions(node: Oas20SecurityDefinitions): void {}
     public visitSecurityScheme(node: Oas20SecurityScheme): void {}
     public visitScopes(node: Oas20Scopes): void {}
@@ -168,7 +171,9 @@ export abstract class OasCompositeVisitor implements IOasNodeVisitor {
     visitInfo(node: OasInfo): void { this._acceptAll(node); }
     visitContact(node: OasContact): void { this._acceptAll(node); }
     visitLicense(node: OasLicense): void { this._acceptAll(node); }
-    visitSecurityRequirement(node: Oas20SecurityRequirement): void { this._acceptAll(node); }
+    visitSecurityRequirement(node: OasSecurityRequirement): void { this._acceptAll(node); }
+    visitTag(node: OasTag): void { this._acceptAll(node); }
+    visitExternalDocumentation(node: OasExternalDocumentation): void { this._acceptAll(node); }
     visitExtension(node: OasExtension): void { this._acceptAll(node); }
 
 }
@@ -192,7 +197,6 @@ export class Oas20CompositeVisitor extends OasCompositeVisitor implements IOas20
     visitOperation(node: Oas20Operation): void { this._acceptAll(node); }
     visitParameter(node: Oas20Parameter): void { this._acceptAll(node); }
     visitParameterDefinition(node: Oas20ParameterDefinition): void { this._acceptAll(node); }
-    visitExternalDocumentation(node: Oas20ExternalDocumentation): void { this._acceptAll(node); }
     visitResponses(node: Oas20Responses): void { this._acceptAll(node); }
     visitResponse(node: Oas20Response): void { this._acceptAll(node); }
     visitResponseDefinition(node: Oas20ResponseDefinition): void { this._acceptAll(node); }
@@ -201,7 +205,6 @@ export class Oas20CompositeVisitor extends OasCompositeVisitor implements IOas20
     visitHeader(node: Oas20Header): void { this._acceptAll(node); }
     visitExample(node: Oas20Example): void { this._acceptAll(node); }
     visitItems(node: Oas20Items): void { this._acceptAll(node); }
-    visitTag(node: Oas20Tag): void { this._acceptAll(node); }
     visitSecurityDefinitions(node: Oas20SecurityDefinitions): void { this._acceptAll(node); }
     visitSecurityScheme(node: Oas20SecurityScheme): void { this._acceptAll(node); }
     visitScopes(node: Oas20Scopes): void { this._acceptAll(node); }

@@ -41,7 +41,7 @@ import {OasInfo} from "../common/info.model";
 export class Oas30Info extends OasInfo {
 
     /**
-     * Creates an OAS 2.0 contact object.
+     * Creates an OAS 3.0 Contact object.
      * @return {Oas30Contact}
      */
     public createContact(): Oas30Contact {
@@ -52,7 +52,7 @@ export class Oas30Info extends OasInfo {
     }
 
     /**
-     * Creates an OAS 2.0 license object.
+     * Creates an OAS 3.0 License object.
      * @return {Oas30License}
      */
     public createLicense(): Oas30License {

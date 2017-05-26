@@ -19,6 +19,8 @@ import {OasDocument} from "../document.model";
 import {Oas30Info} from "./info.model";
 import {Oas30Server} from "./server.model";
 import {Oas30SecurityRequirement} from "./security-requirement.model";
+import {Oas30ExternalDocumentation} from "./external-documentation.model";
+import {Oas30Tag} from "./tag.model";
 
 /**
  * Models an OAS 3.0.x document.
@@ -31,8 +33,8 @@ export class Oas30Document extends OasDocument {
     // public paths: Oas30Paths;
     // public components: Oas30Components;
     public security: Oas30SecurityRequirement[];
-    // public tags: Oas30Server[];
-    // public externalDocs: Oas30ExternalDocumentation;
+    public tags: Oas30Tag[];
+    public externalDocs: Oas30ExternalDocumentation;
 
     constructor() {
         super();
@@ -94,6 +96,58 @@ export class Oas30Document extends OasDocument {
         rval._ownerDocument = this.ownerDocument();
         rval._parent = this;
         return rval;
+    }
+
+    /**
+     * Creates an OAS 3.0 Tag object.
+     * @return {Oas30Info}
+     */
+    public createTag(): Oas30Tag {
+        let rval: Oas30Tag = new Oas30Tag();
+        rval._ownerDocument = this;
+        rval._parent = this;
+        return rval;
+    }
+
+    /**
+     * Adds a tag.
+     * @param name
+     * @param description
+     * @return {Oas30Tag}
+     */
+    public addTag(name: string, description: string): Oas30Tag {
+        let tag: Oas30Tag = this.createTag();
+        tag.name = name;
+        tag.description = description;
+        if (!this.tags) {
+            this.tags = [];
+        }
+        this.tags.push(tag);
+        return tag;
+    }
+
+    /**
+     * Creates an OAS 3.0 External Documentation object.
+     * @return {Oas30ExternalDocumentation}
+     */
+    public createExternalDocumentation(): Oas30ExternalDocumentation {
+        let rval: Oas30ExternalDocumentation = new Oas30ExternalDocumentation();
+        rval._ownerDocument = this.ownerDocument();
+        rval._parent = this;
+        return rval;
+    }
+
+    /**
+     * Sets the external documentation information.
+     * @param description
+     * @param url
+     */
+    public setExternalDocumentation(description: string, url: string): Oas30ExternalDocumentation {
+        let edoc: Oas30ExternalDocumentation = this.createExternalDocumentation();
+        edoc.description = description;
+        edoc.url = url;
+        this.externalDocs = edoc;
+        return edoc;
     }
 
 }

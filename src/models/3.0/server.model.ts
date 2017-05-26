@@ -60,7 +60,7 @@ export class Oas30Server extends OasExtensibleNode {
 
     /**
      * Creates an OAS 3.0 Server Variables object.
-     * @return {Oas20Info}
+     * @return {Oas30ServerVariables}
      */
     public createServerVariables(): Oas30ServerVariables {
         let rval: Oas30ServerVariables = new Oas30ServerVariables();

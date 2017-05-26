@@ -15,27 +15,25 @@
  * limitations under the License.
  */
 
-import {IOasNodeVisitor, IOas20NodeVisitor} from "../../visitors/visitor.iface";
-import {OasExtensibleNode} from "../enode.model";
-import {Oas20ExternalDocumentation} from "./external-documentation.model";
+import {Oas30ExternalDocumentation} from "./external-documentation.model";
 import {OasTag} from "../common/tag.model";
 
 /**
- * Models an OAS 2.0 Tag object.  Example:
+ * Models an OAS 3.0 Tag object.  Example:
  *
  * {
  *     "name": "pet",
  *     "description": "Pets operations"
  * }
  */
-export class Oas20Tag extends OasTag {
+export class Oas30Tag extends OasTag {
 
     /**
-     * Creates an OAS 2.0 External Documentation object.
-     * @return {Oas20ExternalDocumentation}
+     * Creates an OAS 3.0 External Documentation object.
+     * @return {Oas30ExternalDocumentation}
      */
-    public createExternalDocumentation(): Oas20ExternalDocumentation {
-        let rval: Oas20ExternalDocumentation = new Oas20ExternalDocumentation();
+    public createExternalDocumentation(): Oas30ExternalDocumentation {
+        let rval: Oas30ExternalDocumentation = new Oas30ExternalDocumentation();
         rval._ownerDocument = this.ownerDocument();
         rval._parent = this;
         return rval;
@@ -46,8 +44,8 @@ export class Oas20Tag extends OasTag {
      * @param description
      * @param url
      */
-    public setExternalDocumentation(description: string, url: string): Oas20ExternalDocumentation {
-        let edoc: Oas20ExternalDocumentation = this.createExternalDocumentation();
+    public setExternalDocumentation(description: string, url: string): Oas30ExternalDocumentation {
+        let edoc: Oas30ExternalDocumentation = this.createExternalDocumentation();
         edoc.description = description;
         edoc.url = url;
         this.externalDocs = edoc;

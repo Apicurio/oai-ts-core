@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {IOasNodeVisitor, IOas20NodeVisitor} from "../../visitors/visitor.iface";
+import {IOasNodeVisitor} from "../../visitors/visitor.iface";
 import {OasNode} from "../node.model";
 
 /**

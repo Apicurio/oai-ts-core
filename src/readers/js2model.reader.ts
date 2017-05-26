@@ -29,14 +29,18 @@ import {Oas20Scopes} from "../models/2.0/scopes.model";
 import {Oas20PathItem} from "../models/2.0/path-item.model";
 import {Oas20Paths} from "../models/2.0/paths.model";
 import {Oas20Operation} from "../models/2.0/operation.model";
-import {Oas20Parameter, Oas20ParameterDefinition, Oas20ParameterBase} from "../models/2.0/parameter.model";
+import {Oas20Parameter, Oas20ParameterBase, Oas20ParameterDefinition} from "../models/2.0/parameter.model";
 import {
-    Oas20Schema, Oas20AdditionalPropertiesSchema, Oas20PropertySchema,
-    Oas20DefinitionSchema, Oas20ItemsSchema, Oas20AllOfSchema
+    Oas20AdditionalPropertiesSchema,
+    Oas20AllOfSchema,
+    Oas20DefinitionSchema,
+    Oas20ItemsSchema,
+    Oas20PropertySchema,
+    Oas20Schema
 } from "../models/2.0/schema.model";
 import {Oas20Items} from "../models/2.0/items.model";
 import {Oas20Responses} from "../models/2.0/responses.model";
-import {Oas20Response, Oas20ResponseDefinition, Oas20ResponseBase} from "../models/2.0/response.model";
+import {Oas20Response, Oas20ResponseBase, Oas20ResponseDefinition} from "../models/2.0/response.model";
 import {Oas20Headers} from "../models/2.0/headers.model";
 import {Oas20Example} from "../models/2.0/example.model";
 import {Oas20Header} from "../models/2.0/header.model";
@@ -54,6 +58,11 @@ import {Oas30Document} from "../models/3.0/document.model";
 import {Oas30Server} from "../models/3.0/server.model";
 import {Oas30ServerVariables} from "../models/3.0/server-variables.model";
 import {Oas30ServerVariable} from "../models/3.0/server-variable.model";
+import {OasExternalDocumentation} from "../models/common/external-documentation.model";
+import {Oas30SecurityRequirement} from "../models/3.0/security-requirement.model";
+import {Oas30ExternalDocumentation} from "../models/3.0/external-documentation.model";
+import {OasTag} from "../models/common/tag.model";
+import {Oas30Tag} from "../models/3.0/tag.model";
 
 
 /**
@@ -138,7 +147,7 @@ export abstract class OasJS2ModelReader {
     }
 
     /**
-     * Reads an OAS 2.0 Security Requirement object from the given javascript data.
+     * Reads an OAS Security Requirement object from the given javascript data.
      * @param sec
      * @param secModel
      */
@@ -146,6 +155,42 @@ export abstract class OasJS2ModelReader {
         for (let name in sec) {
             secModel.addSecurityRequirementItem(name, sec[name]);
         }
+    }
+
+    /**
+     * Reads a OAS Tag object from the given javascript data.
+     * @param tag
+     * @param tagModel
+     */
+    public readTag(tag: any, tagModel: OasTag): void {
+        let name: string = tag["name"];
+        let description: string = tag["description"];
+        let externalDocs: any = tag["externalDocs"];
+
+        if (this.isDefined(name)) { tagModel.name = name; }
+        if (this.isDefined(description)) { tagModel.description = description; }
+        if (this.isDefined(externalDocs)) {
+            let externalDocsModel: OasExternalDocumentation = tagModel.createExternalDocumentation();
+            this.readExternalDocumentation(externalDocs, externalDocsModel);
+            tagModel.externalDocs = externalDocsModel;
+        }
+
+        this.readExtensions(tag, tagModel);
+    }
+
+    /**
+     * Reads an OAS External Documentation object from the given javascript data.
+     * @param externalDocs
+     * @param externalDocsModel
+     */
+    public readExternalDocumentation(externalDocs: any, externalDocsModel: OasExternalDocumentation): void {
+        let description: string = externalDocs["description"];
+        let url: any = externalDocs["url"];
+
+        if (this.isDefined(description)) { externalDocsModel.description = description; }
+        if (this.isDefined(url)) { externalDocsModel.url = url; }
+
+        this.readExtensions(externalDocs, externalDocsModel);
     }
 
     /**
@@ -263,42 +308,6 @@ export class Oas20JS2ModelReader extends OasJS2ModelReader {
         this.readExtensions(jsData, docModel);
 
         return docModel;
-    }
-
-    /**
-     * Reads a OAS 2.0 Tag object from the given javascript data.
-     * @param tag
-     * @param tagModel
-     */
-    public readTag(tag: any, tagModel: Oas20Tag): void {
-        let name: string = tag["name"];
-        let description: string = tag["description"];
-        let externalDocs: any = tag["externalDocs"];
-
-        if (this.isDefined(name)) { tagModel.name = name; }
-        if (this.isDefined(description)) { tagModel.description = description; }
-        if (this.isDefined(externalDocs)) {
-            let externalDocsModel: Oas20ExternalDocumentation = tagModel.createExternalDocumentation();
-            this.readExternalDocumentation(externalDocs, externalDocsModel);
-            tagModel.externalDocs = externalDocsModel;
-        }
-
-        this.readExtensions(tag, tagModel);
-    }
-
-    /**
-     * Reads an OAS 2.0 External Documentation object from the given javascript data.
-     * @param externalDocs
-     * @param externalDocsModel
-     */
-    public readExternalDocumentation(externalDocs: any, externalDocsModel: Oas20ExternalDocumentation): void {
-        let description: string = externalDocs["description"];
-        let url: any = externalDocs["url"];
-
-        if (this.isDefined(description)) { externalDocsModel.description = description; }
-        if (this.isDefined(url)) { externalDocsModel.url = url; }
-
-        this.readExtensions(externalDocs, externalDocsModel);
     }
 
     /**
@@ -1053,6 +1062,8 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         let info: any = jsData["info"];
         let servers: any = jsData["servers"];
         let security: any[] = jsData["security"];
+        let tags: any = jsData["tags"];
+        let externalDocs: any[] = jsData["externalDocs"];
 
         docModel.openapi = openapi;
         if (this.isDefined(info)) {
@@ -1069,13 +1080,27 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
             })
         }
         if (this.isDefined(security)) {
-            let securityModels: Oas20SecurityRequirement[] = [];
+            let securityModels: Oas30SecurityRequirement[] = [];
             for (let sec of security) {
-                let secModel: Oas20SecurityRequirement = docModel.createSecurityRequirement();
+                let secModel: Oas30SecurityRequirement = docModel.createSecurityRequirement();
                 this.readSecurityRequirement(sec, secModel);
                 securityModels.push(secModel);
             }
             docModel.security = securityModels;
+        }
+        if (this.isDefined(tags)) {
+            let tagModels: Oas30Tag[] = [];
+            for (let tag of tags) {
+                let tagModel: Oas30Tag = docModel.createTag();
+                this.readTag(tag, tagModel);
+                tagModels.push(tagModel);
+            }
+            docModel.tags = tagModels;
+        }
+        if (this.isDefined(externalDocs)) {
+            let externalDocsModel: Oas30ExternalDocumentation = docModel.createExternalDocumentation();
+            this.readExternalDocumentation(externalDocs, externalDocsModel);
+            docModel.externalDocs = externalDocsModel;
         }
         this.readExtensions(jsData, docModel);
 

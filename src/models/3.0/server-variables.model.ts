@@ -117,7 +117,7 @@ export class Oas30ServerVariables extends OasExtensibleNode implements IOasIndex
     }
 
     /**
-     * Creates an OAS 2.0 ServerVariable object.
+     * Creates an OAS 3.0 ServerVariable object.
      * @param name
      * @return {Oas30ServerVariable}
      */
