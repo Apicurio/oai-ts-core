@@ -75,21 +75,6 @@ export abstract class OasJS2ModelReader {
     }
 
     /**
-     * Reads all of the extension nodes.  An extension node is characterized by a property
-     * that begins with "x-".
-     * @param jsData
-     * @param model
-     */
-    protected readExtensions(jsData:any, model: OasExtensibleNode): void {
-        for (let key in jsData) {
-            if (key.indexOf("x-") === 0) {
-                let val: any = jsData[key];
-                model.addExtension(key, val);
-            }
-        }
-    }
-
-    /**
      * Reads a OAS Info object from the given javascript data.
      * @param info
      * @param infoModel
@@ -150,6 +135,32 @@ export abstract class OasJS2ModelReader {
         if (this.isDefined(url)) { licenseModel.url = url; }
 
         this.readExtensions(license, licenseModel);
+    }
+
+    /**
+     * Reads an OAS 2.0 Security Requirement object from the given javascript data.
+     * @param sec
+     * @param secModel
+     */
+    public readSecurityRequirement(sec: any, secModel: Oas20SecurityRequirement): void {
+        for (let name in sec) {
+            secModel.addSecurityRequirementItem(name, sec[name]);
+        }
+    }
+
+    /**
+     * Reads all of the extension nodes.  An extension node is characterized by a property
+     * that begins with "x-".
+     * @param jsData
+     * @param model
+     */
+    public readExtensions(jsData:any, model: OasExtensibleNode): void {
+        for (let key in jsData) {
+            if (key.indexOf("x-") === 0) {
+                let val: any = jsData[key];
+                model.addExtension(key, val);
+            }
+        }
     }
 
 }
@@ -288,17 +299,6 @@ export class Oas20JS2ModelReader extends OasJS2ModelReader {
         if (this.isDefined(url)) { externalDocsModel.url = url; }
 
         this.readExtensions(externalDocs, externalDocsModel);
-    }
-
-    /**
-     * Reads an OAS 2.0 Security Requirement object from the given javascript data.
-     * @param sec
-     * @param secModel
-     */
-    public readSecurityRequirement(sec: any, secModel: Oas20SecurityRequirement): void {
-        for (let name in sec) {
-            secModel.addSecurityRequirementItem(name, sec[name]);
-        }
     }
 
     /**
@@ -1052,6 +1052,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         }
         let info: any = jsData["info"];
         let servers: any = jsData["servers"];
+        let security: any[] = jsData["security"];
 
         docModel.openapi = openapi;
         if (this.isDefined(info)) {
@@ -1066,6 +1067,15 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
                 this.readServer(server, serverModel);
                 docModel.servers.push(serverModel);
             })
+        }
+        if (this.isDefined(security)) {
+            let securityModels: Oas20SecurityRequirement[] = [];
+            for (let sec of security) {
+                let secModel: Oas20SecurityRequirement = docModel.createSecurityRequirement();
+                this.readSecurityRequirement(sec, secModel);
+                securityModels.push(secModel);
+            }
+            docModel.security = securityModels;
         }
         this.readExtensions(jsData, docModel);
 

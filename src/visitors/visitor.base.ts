@@ -64,6 +64,7 @@ export abstract class OasNodeVisitorAdapter implements IOasNodeVisitor {
     public visitInfo(node: OasInfo): void {}
     public visitContact(node: OasContact): void {}
     public visitLicense(node: OasLicense): void {}
+    public visitSecurityRequirement(node: Oas20SecurityRequirement): void {}
     public visitExtension(node: OasExtension) {}
 }
 
@@ -80,7 +81,6 @@ export class Oas20NodeVisitorAdapter extends OasNodeVisitorAdapter implements IO
     public visitParameter(node: Oas20Parameter): void {}
     public visitParameterDefinition(node: Oas20ParameterDefinition): void {}
     public visitExternalDocumentation(node: Oas20ExternalDocumentation): void {}
-    public visitSecurityRequirement(node: Oas20SecurityRequirement): void {}
     public visitResponses(node: Oas20Responses): void {}
     public visitResponse(node: Oas20Response): void {}
     public visitResponseDefinition(node: Oas20ResponseDefinition): void {}
@@ -168,6 +168,7 @@ export abstract class OasCompositeVisitor implements IOasNodeVisitor {
     visitInfo(node: OasInfo): void { this._acceptAll(node); }
     visitContact(node: OasContact): void { this._acceptAll(node); }
     visitLicense(node: OasLicense): void { this._acceptAll(node); }
+    visitSecurityRequirement(node: Oas20SecurityRequirement): void { this._acceptAll(node); }
     visitExtension(node: OasExtension): void { this._acceptAll(node); }
 
 }
@@ -192,7 +193,6 @@ export class Oas20CompositeVisitor extends OasCompositeVisitor implements IOas20
     visitParameter(node: Oas20Parameter): void { this._acceptAll(node); }
     visitParameterDefinition(node: Oas20ParameterDefinition): void { this._acceptAll(node); }
     visitExternalDocumentation(node: Oas20ExternalDocumentation): void { this._acceptAll(node); }
-    visitSecurityRequirement(node: Oas20SecurityRequirement): void { this._acceptAll(node); }
     visitResponses(node: Oas20Responses): void { this._acceptAll(node); }
     visitResponse(node: Oas20Response): void { this._acceptAll(node); }
     visitResponseDefinition(node: Oas20ResponseDefinition): void { this._acceptAll(node); }

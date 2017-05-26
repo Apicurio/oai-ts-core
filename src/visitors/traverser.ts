@@ -17,21 +17,22 @@
 
 import {IOas20NodeVisitor, IOas30NodeVisitor, IOasNodeVisitor} from "./visitor.iface";
 import {Oas20Document} from "../models/2.0/document.model";
-import {Oas20Info} from "../models/2.0/info.model";
-import {Oas20Contact} from "../models/2.0/contact.model";
-import {Oas20License} from "../models/2.0/license.model";
 import {OasExtension} from "../models/extension.model";
 import {Oas20Paths} from "../models/2.0/paths.model";
 import {Oas20PathItem} from "../models/2.0/path-item.model";
 import {Oas20Operation} from "../models/2.0/operation.model";
-import {Oas20Parameter, Oas20ParameterDefinition, Oas20ParameterBase} from "../models/2.0/parameter.model";
+import {Oas20Parameter, Oas20ParameterBase, Oas20ParameterDefinition} from "../models/2.0/parameter.model";
 import {Oas20ExternalDocumentation} from "../models/2.0/external-documentation.model";
 import {Oas20SecurityRequirement} from "../models/2.0/security-requirement.model";
 import {Oas20Responses} from "../models/2.0/responses.model";
-import {Oas20Response, Oas20ResponseDefinition, Oas20ResponseBase} from "../models/2.0/response.model";
+import {Oas20Response, Oas20ResponseBase, Oas20ResponseDefinition} from "../models/2.0/response.model";
 import {
-    Oas20Schema, Oas20PropertySchema, Oas20AdditionalPropertiesSchema,
-    Oas20AllOfSchema, Oas20DefinitionSchema, Oas20ItemsSchema
+    Oas20AdditionalPropertiesSchema,
+    Oas20AllOfSchema,
+    Oas20DefinitionSchema,
+    Oas20ItemsSchema,
+    Oas20PropertySchema,
+    Oas20Schema
 } from "../models/2.0/schema.model";
 import {Oas20Headers} from "../models/2.0/headers.model";
 import {Oas20Header} from "../models/2.0/header.model";
@@ -55,6 +56,7 @@ import {Oas30Document} from "../models/3.0/document.model";
 import {Oas30ServerVariable} from "../models/3.0/server-variable.model";
 import {Oas30ServerVariables} from "../models/3.0/server-variables.model";
 import {Oas30Server} from "../models/3.0/server.model";
+import {OasSecurityRequirement} from "../models/common/security-requirement.model";
 
 /**
  * Interface implemented by all traversers.
@@ -148,6 +150,14 @@ export abstract class OasTraverser implements IOasNodeVisitor, IOasTraverser {
     public visitLicense(node: OasLicense): void {
         node.accept(this.visitor);
         this.traverseExtensions(node);
+    }
+
+    /**
+     * Visit the security requirement.
+     * @param node
+     */
+    public visitSecurityRequirement(node: OasSecurityRequirement): void {
+        node.accept(this.visitor);
     }
 
     /**
@@ -264,14 +274,6 @@ export class Oas20Traverser extends OasTraverser implements IOas20NodeVisitor {
     public visitExternalDocumentation(node: Oas20ExternalDocumentation): void {
         node.accept(this.visitor);
         this.traverseExtensions(node);
-    }
-
-    /**
-     * Visit the security requirement.
-     * @param node
-     */
-    public visitSecurityRequirement(node: Oas20SecurityRequirement): void {
-        node.accept(this.visitor);
     }
 
     /**
@@ -527,6 +529,7 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
         node.accept(this.visitor);
         this.traverseIfNotNull(node.info);
         this.traverseArray(node.servers);
+        this.traverseArray(node.security);
         this.traverseExtensions(node);
     }
 
@@ -604,6 +607,11 @@ export abstract class OasReverseTraverser implements IOasNodeVisitor, IOasTraver
         this.traverse(node.parent());
     }
 
+    public visitSecurityRequirement(node: Oas20SecurityRequirement): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
     public visitExtension(node: OasExtension): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
@@ -651,11 +659,6 @@ export class Oas20ReverseTraverser extends OasReverseTraverser implements IOas20
     }
 
     public visitExternalDocumentation(node: Oas20ExternalDocumentation): void {
-        node.accept(this.visitor);
-        this.traverse(node.parent());
-    }
-
-    public visitSecurityRequirement(node: Oas20SecurityRequirement): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }

@@ -131,6 +131,7 @@ describe("Full I/O (3.0)", () => {
         { name: "Simple (Info)",                        test: "tests/fixtures/full-io/3.0/simple/simple-info.json" },
         { name: "Simple (Info + extensions)",           test: "tests/fixtures/full-io/3.0/simple/simple-info-extensions.json" },
         { name: "Simple (Servers)",                     test: "tests/fixtures/full-io/3.0/simple/simple-servers.json" },
+        { name: "Simple (Security Requirements)",       test: "tests/fixtures/full-io/3.0/simple/simple-security.json" },
     ];
 
     let library: OasLibraryUtils;

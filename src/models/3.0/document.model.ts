@@ -18,6 +18,7 @@
 import {OasDocument} from "../document.model";
 import {Oas30Info} from "./info.model";
 import {Oas30Server} from "./server.model";
+import {Oas30SecurityRequirement} from "./security-requirement.model";
 
 /**
  * Models an OAS 3.0.x document.
@@ -29,7 +30,7 @@ export class Oas30Document extends OasDocument {
     public servers: Oas30Server[];
     // public paths: Oas30Paths;
     // public components: Oas30Components;
-    // public security: Oas30SecurityRequirement[];
+    public security: Oas30SecurityRequirement[];
     // public tags: Oas30Server[];
     // public externalDocs: Oas30ExternalDocumentation;
 
@@ -82,6 +83,17 @@ export class Oas30Document extends OasDocument {
         }
         this.servers.push(server);
         return server;
+    }
+
+    /**
+     * Creates an OAS 3.0 Security Requirement object.
+     * @return {Oas30SecurityRequirement}
+     */
+    public createSecurityRequirement(): Oas30SecurityRequirement {
+        let rval: Oas30SecurityRequirement = new Oas30SecurityRequirement();
+        rval._ownerDocument = this.ownerDocument();
+        rval._parent = this;
+        return rval;
     }
 
 }

@@ -55,6 +55,7 @@ import {Oas30Document} from "../models/3.0/document.model";
 import {Oas30Server} from "../models/3.0/server.model";
 import {Oas30ServerVariables} from "../models/3.0/server-variables.model";
 import {Oas30ServerVariable} from "../models/3.0/server-variable.model";
+import {OasSecurityRequirement} from "../models/common/security-requirement.model";
 
 
 /**
@@ -233,6 +234,25 @@ export abstract class OasModelToJSVisitor implements IOasNodeVisitor {
      * Visits a node.
      * @param node
      */
+    public visitSecurityRequirement(node: OasSecurityRequirement): void {
+        let parentJS: any = this.lookupParentJS(node);
+        let securityRequirements: any[] = parentJS["security"];
+        if (!this.isDefined(securityRequirements)) {
+            securityRequirements = [];
+            parentJS.security = securityRequirements;
+        }
+        let securityReq: any = <any>{};
+        for (let name of node.securityRequirementNames()) {
+            securityReq[name] = node.scopes(name);
+        }
+        securityRequirements.push(securityReq);
+        this.updateIndex(node, securityReq);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
     public visitExtension(node: OasExtension): void {
         let jsObject: any = this.lookupParentJS(node);
         jsObject[node.name] = node.value;
@@ -395,25 +415,6 @@ export class Oas20ModelToJSVisitor extends OasModelToJSVisitor implements IOas20
             url: node.url
         }
         this.updateIndex(node, parentJS.externalDocs);
-    }
-
-    /**
-     * Visits a node.
-     * @param node
-     */
-    public visitSecurityRequirement(node: Oas20SecurityRequirement): void {
-        let parentJS: any = this.lookupParentJS(node);
-        let securityRequirements: any[] = parentJS["security"];
-        if (!this.isDefined(securityRequirements)) {
-            securityRequirements = [];
-            parentJS.security = securityRequirements;
-        }
-        let securityReq: any = <any>{};
-        for (let name of node.securityRequirementNames()) {
-            securityReq[name] = node.scopes(name);
-        }
-        securityRequirements.push(securityReq);
-        this.updateIndex(node, securityReq);
     }
 
     /**

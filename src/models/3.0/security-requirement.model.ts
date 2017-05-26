@@ -18,7 +18,7 @@
 import {OasSecurityRequirement} from "../common/security-requirement.model";
 
 /**
- * Models an OAS 2.0 Security Requirement object.  Example:
+ * Models an OAS 3.0 Security Requirement object.  Example:
  *
  * {
  *   "petstore_auth": [
@@ -27,5 +27,5 @@ import {OasSecurityRequirement} from "../common/security-requirement.model";
  *   ]
  * }
  */
-export class Oas20SecurityRequirement extends OasSecurityRequirement {
+export class Oas30SecurityRequirement extends OasSecurityRequirement {
 }
