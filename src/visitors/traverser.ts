@@ -52,6 +52,9 @@ import {OasInfo} from "../models/common/info.model";
 import {OasContact} from "../models/common/contact.model";
 import {OasLicense} from "../models/common/license.model";
 import {Oas30Document} from "../models/3.0/document.model";
+import {Oas30ServerVariable} from "../models/3.0/server-variable.model";
+import {Oas30ServerVariables} from "../models/3.0/server-variables.model";
+import {Oas30Server} from "../models/3.0/server.model";
 
 /**
  * Interface implemented by all traversers.
@@ -97,7 +100,7 @@ export abstract class OasTraverser implements IOasNodeVisitor, IOasTraverser {
      * @param items
      */
     protected traverseArray(items: OasNode[]): void {
-        if (items) {
+        if (Array.isArray(items)) {
             for (let item of items) {
                 this.traverseIfNotNull(item);
             }
@@ -523,6 +526,39 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
     public visitDocument(node: Oas30Document): void {
         node.accept(this.visitor);
         this.traverseIfNotNull(node.info);
+        this.traverseArray(node.servers);
+        this.traverseExtensions(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitServer(node: Oas30Server): void {
+        node.accept(this.visitor);
+        this.traverseIfNotNull(node.variables);
+        this.traverseExtensions(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitServerVariables(node: Oas30ServerVariables): void {
+        node.accept(this.visitor);
+        for (let serverVariableName of node.serverVariableNames()) {
+            let serverVariable: Oas30ServerVariable = node.serverVariable(serverVariableName);
+            this.traverseIfNotNull(serverVariable);
+        }
+        this.traverseExtensions(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitServerVariable(node: Oas30ServerVariable): void {
+        node.accept(this.visitor);
         this.traverseExtensions(node);
     }
 
@@ -743,6 +779,33 @@ export class Oas30ReverseTraverser extends OasReverseTraverser implements IOas30
      */
     constructor(visitor: IOas30NodeVisitor) {
         super(visitor);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitServer(node: Oas30Server): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitServerVariables(node: Oas30ServerVariables): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitServerVariable(node: Oas30ServerVariable): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
     }
 
 }

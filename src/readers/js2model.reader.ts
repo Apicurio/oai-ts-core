@@ -51,6 +51,9 @@ import {OasContact} from "../models/common/contact.model";
 import {OasLicense} from "../models/common/license.model";
 import {Oas30Info} from "../models/3.0/info.model";
 import {Oas30Document} from "../models/3.0/document.model";
+import {Oas30Server} from "../models/3.0/server.model";
+import {Oas30ServerVariables} from "../models/3.0/server-variables.model";
+import {Oas30ServerVariable} from "../models/3.0/server-variable.model";
 
 
 /**
@@ -95,8 +98,8 @@ export abstract class OasJS2ModelReader {
         let title: string = info["title"];
         let description: string = info["description"];
         let termsOfService: string = info["termsOfService"];
-        let contact: OasContact = info["contact"];
-        let license: OasLicense = info["license"];
+        let contact: any = info["contact"];
+        let license: any = info["license"];
         let version: string = info["version"];
 
         if (this.isDefined(title)) { infoModel.title = title; }
@@ -246,7 +249,6 @@ export class Oas20JS2ModelReader extends OasJS2ModelReader {
             this.readExternalDocumentation(externalDocs, externalDocsModel);
             docModel.externalDocs = externalDocsModel;
         }
-
         this.readExtensions(jsData, docModel);
 
         return docModel;
@@ -1049,18 +1051,78 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
             throw Error("Unsupported specification version: " + openapi);
         }
         let info: any = jsData["info"];
+        let servers: any = jsData["servers"];
 
         docModel.openapi = openapi;
-
         if (this.isDefined(info)) {
             let infoModel: Oas30Info = docModel.createInfo();
             this.readInfo(info, infoModel);
             docModel.info = infoModel;
         }
-
+        if (Array.isArray(servers)) {
+            docModel.servers = [];
+            servers.forEach( server => {
+                let serverModel: Oas30Server = docModel.createServer();
+                this.readServer(server, serverModel);
+                docModel.servers.push(serverModel);
+            })
+        }
         this.readExtensions(jsData, docModel);
 
         return docModel;
     }
 
+    /**
+     * Reads a OAS 3.0 Server object from the given javascript data.
+     * @param server
+     * @param serverModel
+     */
+    public readServer(server: any, serverModel: Oas30Server): void {
+        let url: string = server["url"];
+        let description: string = server["description"];
+        let variables: any = server["variables"];
+
+        if (this.isDefined(url)) { serverModel.url = url; }
+        if (this.isDefined(description)) { serverModel.description = description; }
+        if (this.isDefined(variables)) {
+            let serverVariablesModel: Oas30ServerVariables = serverModel.createServerVariables();
+            this.readServerVariables(variables, serverVariablesModel);
+            serverModel.variables = serverVariablesModel;
+        }
+
+        this.readExtensions(server, serverModel);
+    }
+
+    /**
+     * Reads an OAS 3.0 Server Variables object from the given JS data.
+     * @param variables
+     * @param serverVariablesModel
+     */
+    public readServerVariables(serverVariables: any, serverVariablesModel: Oas30ServerVariables): void {
+        for (let serverVariableName in serverVariables) {
+            if (serverVariableName.indexOf("x-") === 0) { continue; }
+            let serverVariable: any = serverVariables[serverVariableName];
+            let serverVariableModel: Oas30ServerVariable = serverVariablesModel.createServerVariable(serverVariableName);
+            this.readServerVariable(serverVariable, serverVariableModel);
+            serverVariablesModel.addServerVariable(serverVariableName, serverVariableModel);
+        }
+        this.readExtensions(serverVariables, serverVariablesModel);
+    }
+
+    /**
+     * Reads an OAD 3.0 Server Variable object from the given JS data.
+     * @param serverVariable
+     * @param serverVariableModel
+     */
+    private readServerVariable(serverVariable: any, serverVariableModel: Oas30ServerVariable) {
+        let _enum: string[] = serverVariable["enum"];
+        let _default: string = serverVariable["default"];
+        let description: any = serverVariable["description"];
+
+        if (Array.isArray(_enum)) { serverVariableModel.enum = _enum; }
+        if (this.isDefined(_default)) { serverVariableModel.default = _default; }
+        if (this.isDefined(description)) { serverVariableModel.description = description; }
+
+        this.readExtensions(serverVariable, serverVariableModel);
+    }
 }

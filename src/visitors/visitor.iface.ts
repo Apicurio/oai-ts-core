@@ -56,6 +56,9 @@ import {Oas30Document} from "../models/3.0/document.model";
 import {Oas30Info} from "../models/3.0/info.model";
 import {Oas30Contact} from "../models/3.0/contact.model";
 import {Oas30License} from "../models/3.0/license.model";
+import {Oas30ServerVariable} from "../models/3.0/server-variable.model";
+import {Oas30ServerVariables} from "../models/3.0/server-variables.model";
+import {Oas30Server} from "../models/3.0/server.model";
 
 /**
  * Classes that wish to visit a OAS node or tree must implement this interface.  The
@@ -156,5 +159,11 @@ export interface IOas30NodeVisitor extends IOasNodeVisitor {
     visitContact(node: Oas30Contact): void;
 
     visitLicense(node: Oas30License): void;
+
+    visitServer(node: Oas30Server): void;
+
+    visitServerVariables(node: Oas30ServerVariables): void;
+
+    visitServerVariable(node: Oas30ServerVariable): void;
 
 }

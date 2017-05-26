@@ -52,6 +52,9 @@ import {OasInfo} from "../models/common/info.model";
 import {OasContact} from "../models/common/contact.model";
 import {OasLicense} from "../models/common/license.model";
 import {Oas30Document} from "../models/3.0/document.model";
+import {Oas30Server} from "../models/3.0/server.model";
+import {Oas30ServerVariables} from "../models/3.0/server-variables.model";
+import {Oas30ServerVariable} from "../models/3.0/server-variable.model";
 
 
 /**
@@ -820,8 +823,57 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
         // TODO missing some elements from the root!!!
         let root: any = {
             openapi: node.openapi,
-            info: null
+            info: null,
+            servers: null
         };
         this.updateIndex(node, root);
     }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    visitServer(node: Oas30Server): void {
+        let parentJS: any = this.lookupParentJS(node);
+        if (!this.isDefined(parentJS.servers)) {
+            parentJS.servers = [];
+        }
+        let server: any = {
+            url: node.url,
+            description: node.description,
+            variables: null
+        };
+        parentJS.servers.push(server);
+        this.updateIndex(node, server);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    visitServerVariables(node: Oas30ServerVariables): void {
+        let variableNames: string[] = node.serverVariableNames();
+        if (variableNames && variableNames.length > 0) {
+            let parent: any = this.lookupParentJS(node);
+            let serverVariables: any = {};
+            parent.variables = serverVariables;
+            this.updateIndex(node, serverVariables);
+        }
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    visitServerVariable(node: Oas30ServerVariable): void {
+        let parentJS: any = this.lookupParentJS(node);
+        let serverVariable: any = {
+            "enum" : node.enum,
+            "default" : node.default,
+            "description" : node.description
+        }
+        parentJS[node.name()] = serverVariable;
+        this.updateIndex(node, serverVariable);
+    }
+
 }

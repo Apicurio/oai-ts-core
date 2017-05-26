@@ -130,6 +130,7 @@ describe("Full I/O (3.0)", () => {
         { name: "Simple (Easy 3.0 spec)",               test: "tests/fixtures/full-io/3.0/simple/simplest.json" },
         { name: "Simple (Info)",                        test: "tests/fixtures/full-io/3.0/simple/simple-info.json" },
         { name: "Simple (Info + extensions)",           test: "tests/fixtures/full-io/3.0/simple/simple-info-extensions.json" },
+        { name: "Simple (Servers)",                     test: "tests/fixtures/full-io/3.0/simple/simple-servers.json" },
     ];
 
     let library: OasLibraryUtils;
@@ -144,6 +145,10 @@ describe("Full I/O (3.0)", () => {
             let json: any = readJSON(spec.test);
             let document: Oas30Document = <Oas30Document>library.createDocument(json);
             let jsObj: any = library.writeNode(document);
+            if (spec.debug) {
+                console.info("------- INPUT --------\n " + JSON.stringify(json, null, 2) + "\n-------------------")
+                console.info("------- ACTUAL --------\n " + JSON.stringify(jsObj, null, 2) + "\n-------------------")
+            }
             expect(jsObj).toEqual(json);
         });
     });

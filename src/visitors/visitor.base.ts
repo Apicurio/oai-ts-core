@@ -50,6 +50,9 @@ import {OasNode} from "../models/node.model";
 import {OasInfo} from "../models/common/info.model";
 import {OasContact} from "../models/common/contact.model";
 import {OasLicense} from "../models/common/license.model";
+import {Oas30ServerVariable} from "../models/3.0/server-variable.model";
+import {Oas30ServerVariables} from "../models/3.0/server-variables.model";
+import {Oas30Server} from "../models/3.0/server.model";
 
 /**
  * Base class for node visitors that are only interested in a subset of the node types
@@ -57,13 +60,11 @@ import {OasLicense} from "../models/common/license.model";
  * the subset of methods desired.
  */
 export abstract class OasNodeVisitorAdapter implements IOasNodeVisitor {
-
     public visitDocument(node: OasDocument) {}
     public visitInfo(node: OasInfo): void {}
     public visitContact(node: OasContact): void {}
     public visitLicense(node: OasLicense): void {}
     public visitExtension(node: OasExtension) {}
-
 }
 
 
@@ -110,6 +111,9 @@ export class Oas20NodeVisitorAdapter extends OasNodeVisitorAdapter implements IO
  * the subset of methods desired.
  */
 export class Oas30NodeVisitorAdapter extends OasNodeVisitorAdapter implements IOas30NodeVisitor {
+    public visitServer(node: Oas30Server): void {}
+    public visitServerVariables(node: Oas30ServerVariables): void {}
+    public visitServerVariable(node: Oas30ServerVariable): void {}
 }
 
 
@@ -227,5 +231,9 @@ export class Oas30CompositeVisitor extends OasCompositeVisitor implements IOas30
     constructor(...visitors: IOas30NodeVisitor[]) {
         super(visitors);
     }
+
+    visitServer(node: Oas30Server): void { this._acceptAll(node); }
+    visitServerVariables(node: Oas30ServerVariables): void { this._acceptAll(node); }
+    visitServerVariable(node: Oas30ServerVariable): void { this._acceptAll(node); }
 
 }
