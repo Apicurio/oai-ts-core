@@ -15,36 +15,32 @@
  * limitations under the License.
  */
 
-import {IOas20Items, Oas20Items} from "./items.model";
 import {OasHeader} from "../common/header.model";
+import {Oas30Schema} from "./schema.model";
 
 /**
- * Models an OAS 2.0 Header object.  Example:
+ * Models an OAS 3.0 Header object.  Example:
  *
  * {
  *   "description": "The number of allowed requests in the current period",
- *   "type": "integer"
+ *   "required": true,
+ *   "schema": {
+ *     "type": "string"
+ *   }
  * }
  */
-export class Oas20Header extends OasHeader implements IOas20Items {
+export class Oas30Header extends OasHeader {
 
-    public type: string; // required
-    public format: string;
-    public items: Oas20Items; // required if type is 'array'
-    public collectionFormat: string;
-    public default: any;
-    public maximum: number;
-    public exclusiveMaximum: boolean;
-    public minimum: number;
-    public exclusiveMinimum: boolean;
-    public maxLength: number; // Require: integer
-    public minLength: number; // Require: integer
-    public pattern: string;
-    public maxItems: number; // Require: integer
-    public minItems: number; // Require: integer
-    public uniqueItems: boolean;
-    public enum: any[];
-    public multipleOf: number;
+    public required: boolean;
+    public deprecated: boolean;
+    public allowEmptyValue: boolean;
+    public style: string;
+    public explode: boolean;
+    public allowReserved: boolean;
+    public schema: Oas30Schema;
+    public example: any;
+    // TODO implement the "examples" property more properly!!
+    public examples: any;
 
     /**
      * Constructor.
@@ -56,10 +52,10 @@ export class Oas20Header extends OasHeader implements IOas20Items {
 
     /**
      * Creates a child items model.
-     * @return {Oas20Items}
+     * @return {Oas30Schema}
      */
-    public createItems(): Oas20Items {
-        let rval: Oas20Items = new Oas20Items();
+    public createSchema(): Oas30Schema {
+        let rval: Oas30Schema = new Oas30Schema();
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;

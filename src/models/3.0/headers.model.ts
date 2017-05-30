@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-import {Oas20Header} from "./header.model";
+import {Oas30Header} from "./header.model";
 import {OasHeaders} from "../common/headers.model";
 
 /**
- * Models an OAS 2.0 Headers object.  Example:
+ * Models an OAS 3.0 Headers object.  Example:
  *
  * {
  *     "X-Rate-Limit-Limit": {
@@ -36,15 +36,15 @@ import {OasHeaders} from "../common/headers.model";
  *     }
  * }
  */
-export class Oas20Headers extends OasHeaders {
+export class Oas30Headers extends OasHeaders {
 
     /**
      * Creates a header model.
      * @param headerName
-     * @return {Oas20Header}
+     * @return {Oas30Header}
      */
-    public createHeader(headerName: string): Oas20Header {
-        let rval: Oas20Header = new Oas20Header(headerName);
+    public createHeader(headerName: string): Oas30Header {
+        let rval: Oas30Header = new Oas30Header(headerName);
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;

@@ -15,17 +15,14 @@
  * limitations under the License.
  */
 
-import {IOas20NodeVisitor, IOasNodeVisitor} from "../../visitors/visitor.iface";
-import {Oas20Operation} from "./operation.model";
-import {Oas20Schema} from "./schema.model";
-import {Oas20Headers} from "./headers.model";
-import {Oas20Example} from "./example.model";
+import {IOas30NodeVisitor, IOasNodeVisitor} from "../../visitors/visitor.iface";
 import {IOasReferenceNode} from "../reference.model";
 import {OasResponse} from "../common/response.model";
+import {Oas30Headers} from "./headers.model";
 
 
 /**
- * Models an OAS 2.0 Response object.  Example:
+ * Models an OAS 3.0 Response object.  Example:
  *
  * {
  *   "description": "A complex object array response",
@@ -37,39 +34,18 @@ import {OasResponse} from "../common/response.model";
  *   }
  * }
  */
-export abstract class Oas20ResponseBase extends OasResponse {
+export abstract class Oas30ResponseBase extends OasResponse {
 
-    public schema: Oas20Schema;
-    public examples: Oas20Example;
-
-    /**
-     * Creates an OAS 2.0 schema object.
-     * @return {Oas20Schema}
-     */
-    public createSchema(): Oas20Schema {
-        let rval: Oas20Schema = new Oas20Schema();
-        rval._ownerDocument = this._ownerDocument;
-        rval._parent = this;
-        return rval;
-    }
+    // TODO implement content and links!
+    // public content: Oas30Content;
+    // public links: Oas30Links;
 
     /**
-     * Creates an OAS 2.0 headers object.
-     * @return {Oas20Operation}
+     * Creates an OAS 3.0 Headers object.
+     * @return {Oas30Operation}
      */
-    public createHeaders(): Oas20Headers {
-        let rval: Oas20Headers = new Oas20Headers();
-        rval._ownerDocument = this._ownerDocument;
-        rval._parent = this;
-        return rval;
-    }
-
-    /**
-     * Creates an OAS 2.0 schema object.
-     * @return {Oas20Operation}
-     */
-    public createExample(): Oas20Example {
-        let rval: Oas20Example = new Oas20Example();
+    public createHeaders(): Oas30Headers {
+        let rval: Oas30Headers = new Oas30Headers();
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;
@@ -82,7 +58,7 @@ export abstract class Oas20ResponseBase extends OasResponse {
  * track the status code the response is mapped to.  This class is used when a
  * response appears as part of a path/operation.
  */
-export class Oas20Response extends Oas20ResponseBase implements IOasReferenceNode {
+export class Oas30Response extends Oas30ResponseBase implements IOasReferenceNode {
 
     private _statusCode: string; // null if 'default'
     public $ref: string;
@@ -113,7 +89,7 @@ export class Oas20Response extends Oas20ResponseBase implements IOasReferenceNod
      * @param visitor
      */
     public accept(visitor: IOasNodeVisitor): void {
-        let viz: IOas20NodeVisitor = <IOas20NodeVisitor> visitor;
+        let viz: IOas30NodeVisitor = <IOas30NodeVisitor> visitor;
         viz.visitResponse(this);
     }
 
@@ -124,7 +100,7 @@ export class Oas20Response extends Oas20ResponseBase implements IOasReferenceNod
  * Extends the base Response class in order to track the name of the response.  This class
  * is used when the response is a globally defined, named response.
  */
-export class Oas20ResponseDefinition extends Oas20ResponseBase {
+export class Oas30ResponseDefinition extends Oas30ResponseBase {
 
     private _name: string;
 
@@ -154,7 +130,7 @@ export class Oas20ResponseDefinition extends Oas20ResponseBase {
      * @param visitor
      */
     public accept(visitor: IOasNodeVisitor): void {
-        let viz: IOas20NodeVisitor = <IOas20NodeVisitor> visitor;
+        let viz: IOas30NodeVisitor = <IOas30NodeVisitor> visitor;
         viz.visitResponseDefinition(this);
     }
 

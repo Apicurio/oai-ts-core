@@ -15,10 +15,9 @@
  * limitations under the License.
  */
 
-import {IOasNodeVisitor, IOas20NodeVisitor} from "../../visitors/visitor.iface";
-import {IOas20ParameterParent, Oas20Operation} from "./operation.model";
+import {Oas20Operation} from "./operation.model";
 import {Oas20Parameter} from "./parameter.model";
-import {OasExtensibleNode} from "../enode.model";
+import {OasPathItem} from "../common/path-item.model";
 
 /**
  * Models an OAS 2.0 Path Item object.  Example:
@@ -66,43 +65,14 @@ import {OasExtensibleNode} from "../enode.model";
  * }
  *
  */
-export class Oas20PathItem extends OasExtensibleNode implements IOas20ParameterParent {
-
-    private _path: string;
-    public $ref: string;
-    public get: Oas20Operation;
-    public put: Oas20Operation;
-    public post: Oas20Operation;
-    public delete: Oas20Operation;
-    public options: Oas20Operation;
-    public head: Oas20Operation;
-    public patch: Oas20Operation;
-    public parameters: Oas20Parameter[];
+export class Oas20PathItem extends OasPathItem {
 
     /**
      * Constructor.
      * @param path
      */
     constructor(path: string) {
-        super();
-        this._path = path;
-    }
-
-    /**
-     * Returns the path this object is mapped to.
-     * @return {string}
-     */
-    public path(): string {
-        return this._path;
-    }
-
-    /**
-     * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.
-     * @param visitor
-     */
-    public accept(visitor: IOasNodeVisitor): void {
-        let viz: IOas20NodeVisitor = <IOas20NodeVisitor> visitor;
-        viz.visitPathItem(this);
+        super(path);
     }
 
     /**
@@ -125,50 +95,6 @@ export class Oas20PathItem extends OasExtensibleNode implements IOas20ParameterP
         let rval: Oas20Parameter = new Oas20Parameter();
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
-        return rval;
-    }
-
-    /**
-     * Adds a parameter.
-     * @param param
-     */
-    public addParameter(param: Oas20Parameter): Oas20Parameter {
-        if (!this.parameters) {
-            this.parameters = [];
-        }
-        this.parameters.push(param);
-        return param;
-    }
-
-    /**
-     * Returns a list of parameters with a particular value of "in" (e.g. path, formData, body, etc...).
-     * @param _in
-     * @return {any}
-     */
-    public getParameters(_in: string): Oas20Parameter[] {
-        if (_in === undefined ||_in === null || this.parameters === undefined || this.parameters === null) {
-            return [];
-        } else {
-            return this.parameters.filter( param => {
-                return param.in === _in;
-            })
-        }
-    }
-
-    /**
-     * Returns a single, unique parameter identified by "in" and "name" (which are the two
-     * properties that uniquely identify a parameter).  Returns null if no parameter is found.
-     * @param _in
-     * @param name
-     * @return {Oas20Parameter}
-     */
-    public parameter(_in: string, name: string): Oas20Parameter {
-        let rval: Oas20Parameter = null;
-        this.getParameters(_in).forEach( param => {
-            if (param.name === name) {
-                rval = param;
-            }
-        })
         return rval;
     }
 

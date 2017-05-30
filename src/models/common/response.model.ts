@@ -15,33 +15,22 @@
  * limitations under the License.
  */
 
-import {OasXML} from "../common/xml.model";
+import {OasExtensibleNode} from "../enode.model";
+import {OasHeaders} from "./headers.model";
+
 
 /**
- * Models an OAS 2.0 XML object.  Example:
- *
- * {
- *   "Person": {
- *     "type": "object",
- *     "properties": {
- *       "id": {
- *         "type": "integer",
- *         "format": "int32",
- *         "xml": {
- *           "attribute": true
- *         }
- *       },
- *       "name": {
- *         "type": "string",
- *         "xml": {
- *           "namespace": "http://swagger.io/schema/sample",
- *           "prefix": "sample"
- *         }
- *       }
- *     }
- *   }
- * }
+ * Models an OAS Response object.  Example:
  */
-export class Oas20XML extends OasXML {
+export abstract class OasResponse extends OasExtensibleNode {
+
+    public description: string;
+    public headers: OasHeaders;
+
+    /**
+     * Creates an OAS Headers object.
+     * @return {OasOperation}
+     */
+    public abstract createHeaders(): OasHeaders;
 
 }

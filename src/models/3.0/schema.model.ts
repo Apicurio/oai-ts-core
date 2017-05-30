@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-import {IOas20NodeVisitor, IOasNodeVisitor} from "../../visitors/visitor.iface";
-import {Oas20ExternalDocumentation} from "./external-documentation.model";
-import {Oas20XML} from "./xml.model";
+import {IOas30NodeVisitor, IOasNodeVisitor} from "../../visitors/visitor.iface";
+import {Oas30XML} from "./xml.model";
 import {OasSchema} from "../common/schema.model";
+import {Oas30ExternalDocumentation} from "./external-documentation.model";
 
 
 /**
- * Models an OAS 2.0 Schema object.  Example:
+ * Models an OAS 3.0 Schema object.  Example:
  *
  * {
  *   "type": "object",
@@ -43,14 +43,22 @@ import {OasSchema} from "../common/schema.model";
  *     }
  *   }
  */
-export class Oas20Schema extends OasSchema {
+export class Oas30Schema extends OasSchema {
+
+    public oneOf: OasSchema[];
+    public anyOf: OasSchema[];
+    public not: OasSchema;
+    public nullable: boolean;
+    public writeOnly: boolean;
+    public deprecated: boolean;
+
 
     /**
      * Creates a child external documentation model.
-     * @return {Oas20ExternalDocumentation}
+     * @return {Oas30ExternalDocumentation}
      */
-    public createExternalDocumentation(): Oas20ExternalDocumentation {
-        let rval: Oas20ExternalDocumentation = new Oas20ExternalDocumentation();
+    public createExternalDocumentation(): Oas30ExternalDocumentation {
+        let rval: Oas30ExternalDocumentation = new Oas30ExternalDocumentation();
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;
@@ -58,10 +66,10 @@ export class Oas20Schema extends OasSchema {
 
     /**
      * Creates a child XML model.
-     * @return {Oas20XML}
+     * @return {Oas30XML}
      */
-    public createXML(): Oas20XML {
-        let rval: Oas20XML = new Oas20XML();
+    public createXML(): Oas30XML {
+        let rval: Oas30XML = new Oas30XML();
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;
@@ -69,10 +77,10 @@ export class Oas20Schema extends OasSchema {
 
     /**
      * Creates a child schema model.
-     * @return {Oas20Schema}
+     * @return {Oas30Schema}
      */
-    public createAllOfSchema(): Oas20AllOfSchema {
-        let rval: Oas20AllOfSchema = new Oas20AllOfSchema();
+    public createAllOfSchema(): Oas30AllOfSchema {
+        let rval: Oas30AllOfSchema = new Oas30AllOfSchema();
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;
@@ -80,10 +88,10 @@ export class Oas20Schema extends OasSchema {
 
     /**
      * Creates a child schema model.
-     * @return {Oas20Schema}
+     * @return {Oas30Schema}
      */
-    public createItemsSchema(): Oas20AllOfSchema {
-        let rval: Oas20ItemsSchema = new Oas20ItemsSchema();
+    public createOneOfSchema(): Oas30OneOfSchema {
+        let rval: Oas30OneOfSchema = new Oas30OneOfSchema();
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;
@@ -91,10 +99,10 @@ export class Oas20Schema extends OasSchema {
 
     /**
      * Creates a child schema model.
-     * @return {Oas20Schema}
+     * @return {Oas30Schema}
      */
-    public createAdditionalPropertiesSchema(): Oas20AdditionalPropertiesSchema {
-        let rval: Oas20AdditionalPropertiesSchema = new Oas20AdditionalPropertiesSchema();
+    public createAnyOfSchema(): Oas30AnyOfSchema {
+        let rval: Oas30AnyOfSchema = new Oas30AnyOfSchema();
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;
@@ -102,10 +110,43 @@ export class Oas20Schema extends OasSchema {
 
     /**
      * Creates a child schema model.
-     * @return {Oas20Schema}
+     * @return {Oas30Schema}
      */
-    public createPropertySchema(propertyName: string): Oas20PropertySchema {
-        let rval: Oas20PropertySchema = new Oas20PropertySchema(propertyName);
+    public createNotSchema(): Oas30NotSchema {
+        let rval: Oas30NotSchema = new Oas30NotSchema();
+        rval._ownerDocument = this._ownerDocument;
+        rval._parent = this;
+        return rval;
+    }
+
+    /**
+     * Creates a child schema model.
+     * @return {Oas30Schema}
+     */
+    public createItemsSchema(): Oas30AllOfSchema {
+        let rval: Oas30ItemsSchema = new Oas30ItemsSchema();
+        rval._ownerDocument = this._ownerDocument;
+        rval._parent = this;
+        return rval;
+    }
+
+    /**
+     * Creates a child schema model.
+     * @return {Oas30Schema}
+     */
+    public createAdditionalPropertiesSchema(): Oas30AdditionalPropertiesSchema {
+        let rval: Oas30AdditionalPropertiesSchema = new Oas30AdditionalPropertiesSchema();
+        rval._ownerDocument = this._ownerDocument;
+        rval._parent = this;
+        return rval;
+    }
+
+    /**
+     * Creates a child schema model.
+     * @return {Oas30Schema}
+     */
+    public createPropertySchema(propertyName: string): Oas30PropertySchema {
+        let rval: Oas30PropertySchema = new Oas30PropertySchema(propertyName);
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;
@@ -119,7 +160,7 @@ export class Oas20Schema extends OasSchema {
  * http://json-schema.org/latest/json-schema-validation.html#rfc.section.5.16
  * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#schemaObject
  */
-export class Oas20PropertySchema extends Oas20Schema {
+export class Oas30PropertySchema extends Oas30Schema {
 
     private _propertyName: string;
 
@@ -137,7 +178,7 @@ export class Oas20PropertySchema extends Oas20Schema {
      * @param visitor
      */
     public accept(visitor: IOasNodeVisitor): void {
-        let viz: IOas20NodeVisitor = <IOas20NodeVisitor> visitor;
+        let viz: IOas30NodeVisitor = <IOas30NodeVisitor> visitor;
         viz.visitPropertySchema(this);
     }
 
@@ -168,18 +209,82 @@ export class Oas20PropertySchema extends Oas20Schema {
  *   ]
  * }
  */
-export class Oas20AllOfSchema extends Oas20Schema {
+export class Oas30AllOfSchema extends Oas30Schema {
 
     /**
      * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.
      * @param visitor
      */
     public accept(visitor: IOasNodeVisitor): void {
-        let viz: IOas20NodeVisitor = <IOas20NodeVisitor> visitor;
+        let viz: IOas30NodeVisitor = <IOas30NodeVisitor> visitor;
         viz.visitAllOfSchema(this);
     }
 
 }
+
+
+/**
+ * Subclass of Schema to indicate that this is actually an "Any Of" schema (a schema
+ * included in the array of "anyOf" schemas, which is a property of any valid schema).
+ *
+ * http://json-schema.org/latest/json-schema-validation.html#rfc.section.5.22
+ * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#schemaObject
+ */
+export class Oas30AnyOfSchema extends Oas30Schema {
+
+    /**
+     * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.
+     * @param visitor
+     */
+    public accept(visitor: IOasNodeVisitor): void {
+        let viz: IOas30NodeVisitor = <IOas30NodeVisitor> visitor;
+        viz.visitAnyOfSchema(this);
+    }
+
+}
+
+
+/**
+ * Subclass of Schema to indicate that this is actually an "One Of" schema (a schema
+ * included in the array of "oneOf" schemas, which is a property of any valid schema).
+ *
+ * http://json-schema.org/latest/json-schema-validation.html#rfc.section.5.22
+ * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#schemaObject
+ */
+export class Oas30OneOfSchema extends Oas30Schema {
+
+    /**
+     * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.
+     * @param visitor
+     */
+    public accept(visitor: IOasNodeVisitor): void {
+        let viz: IOas30NodeVisitor = <IOas30NodeVisitor> visitor;
+        viz.visitOneOfSchema(this);
+    }
+
+}
+
+
+/**
+ * Subclass of Schema to indicate that this is actually a "Not" schema (a schema
+ * set in the "not" property of a schema).
+ *
+ * http://json-schema.org/latest/json-schema-validation.html#rfc.section.5.22
+ * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#schemaObject
+ */
+export class Oas30NotSchema extends Oas30Schema {
+
+    /**
+     * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.
+     * @param visitor
+     */
+    public accept(visitor: IOasNodeVisitor): void {
+        let viz: IOas30NodeVisitor = <IOas30NodeVisitor> visitor;
+        viz.visitNotSchema(this);
+    }
+
+}
+
 
 
 /**
@@ -198,14 +303,14 @@ export class Oas20AllOfSchema extends Oas20Schema {
  *   ]
  * }
  */
-export class Oas20ItemsSchema extends Oas20Schema {
+export class Oas30ItemsSchema extends Oas30Schema {
 
     /**
      * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.
      * @param visitor
      */
     public accept(visitor: IOasNodeVisitor): void {
-        let viz: IOas20NodeVisitor = <IOas20NodeVisitor> visitor;
+        let viz: IOas30NodeVisitor = <IOas30NodeVisitor> visitor;
         viz.visitItemsSchema(this);
     }
 
@@ -219,18 +324,19 @@ export class Oas20ItemsSchema extends Oas20Schema {
  * http://json-schema.org/latest/json-schema-validation.html#rfc.section.5.18
  * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#schemaObject
  */
-export class Oas20AdditionalPropertiesSchema extends Oas20Schema {
+export class Oas30AdditionalPropertiesSchema extends Oas30Schema {
 
     /**
      * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.
      * @param visitor
      */
     public accept(visitor: IOasNodeVisitor): void {
-        let viz: IOas20NodeVisitor = <IOas20NodeVisitor> visitor;
+        let viz: IOas30NodeVisitor = <IOas30NodeVisitor> visitor;
         viz.visitAdditionalPropertiesSchema(this);
     }
 
 }
+
 
 /**
  * Subclass of Schema to indicate that this is actually a Definition schema (a schema defined in
@@ -238,7 +344,7 @@ export class Oas20AdditionalPropertiesSchema extends Oas20Schema {
  *
  * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#definitionsObject
  */
-export class Oas20DefinitionSchema extends Oas20Schema {
+export class Oas30DefinitionSchema extends Oas30Schema {
 
     private _definitionName: string;
 
@@ -256,7 +362,7 @@ export class Oas20DefinitionSchema extends Oas20Schema {
      * @param visitor
      */
     public accept(visitor: IOasNodeVisitor): void {
-        let viz: IOas20NodeVisitor = <IOas20NodeVisitor> visitor;
+        let viz: IOas30NodeVisitor = <IOas30NodeVisitor> visitor;
         viz.visitDefinitionSchema(this);
     }
 

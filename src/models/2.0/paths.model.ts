@@ -19,6 +19,8 @@ import {OasExtensibleNode} from "../enode.model";
 import {IOasNodeVisitor, IOas20NodeVisitor} from "../../visitors/visitor.iface";
 import {Oas20PathItem} from "./path-item.model";
 import {IOasIndexedNode} from "../inode.model";
+import {OasPaths} from "../common/paths.model";
+import {Oas20Parameter} from "./parameter.model";
 
 /**
  * Models an OAS 2.0 Paths object.  The Paths object can have any number of child
@@ -47,74 +49,7 @@ import {IOasIndexedNode} from "../inode.model";
  * }
  *
  */
-export class Oas20Paths extends OasExtensibleNode implements IOasIndexedNode<Oas20PathItem> {
-
-    __instanceof_IOasIndexedNode: boolean = true;
-
-    private _pathItems: Oas20PathItems = new Oas20PathItems();
-
-    /**
-     * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.
-     * @param visitor
-     */
-    public accept(visitor: IOasNodeVisitor): void {
-        let viz: IOas20NodeVisitor = <IOas20NodeVisitor> visitor;
-        viz.visitPaths(this);
-    }
-
-    /**
-     * Returns a single path item by name.
-     * @param name
-     * @return {Oas20PathItem}
-     */
-    public pathItem(name: string): Oas20PathItem {
-        return this._pathItems[name];
-    }
-
-    /**
-     * Returns an array of all the path items.
-     */
-    public pathItems(): Oas20PathItem[] {
-        let names: string[] = this.pathItemNames();
-        let rval: Oas20PathItem[] = [];
-        for (let name of names) {
-            rval.push(this.pathItem(name));
-        }
-        return rval;
-    }
-
-    /**
-     * Adds a path item.
-     * @param name
-     * @param pathItem
-     */
-    public addPathItem(name: string, pathItem: Oas20PathItem): Oas20PathItem {
-        this._pathItems[name] = pathItem;
-        return pathItem;
-    }
-
-    /**
-     * Gets a list of all the path names.
-     */
-    public pathItemNames(): string[] {
-        let rval: string[] = [];
-        for (let pname in this._pathItems) {
-            rval.push(pname);
-        }
-        return rval;
-    }
-
-    /**
-     * Removes a single path item child model by name.
-     * @param path
-     */
-    public removePathItem(path: string): Oas20PathItem {
-        let rval: Oas20PathItem = this._pathItems[path];
-        if (rval) {
-            delete this._pathItems[path];
-        }
-        return rval;
-    }
+export class Oas20Paths extends OasPaths {
 
     /**
      * Creates an OAS 2.0 path item object.
@@ -127,31 +62,5 @@ export class Oas20Paths extends OasExtensibleNode implements IOasIndexedNode<Oas
         rval._parent = this;
         return rval;
     }
-
-    getItem(name: string): Oas20PathItem {
-        return this.pathItem(name);
-    }
-
-    getItems(): Oas20PathItem[] {
-        return this.pathItems();
-    }
-
-    getItemNames(): string[] {
-        return this.pathItemNames();
-    }
-
-    addItem(name: string, item: Oas20PathItem): void {
-        this.addPathItem(name, item);
-    }
-
-    deleteItem(name: string): Oas20PathItem {
-        return this.removePathItem(name);
-    }
-
-}
-
-export class Oas20PathItems {
-
-    [key: string]: Oas20PathItem;
 
 }

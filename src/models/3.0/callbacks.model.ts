@@ -15,33 +15,21 @@
  * limitations under the License.
  */
 
-import {OasXML} from "../common/xml.model";
+import {OasExtensibleNode} from "../enode.model";
+import {IOas30NodeVisitor, IOasNodeVisitor} from "../../visitors/visitor.iface";
 
 /**
- * Models an OAS 2.0 XML object.  Example:
- *
- * {
- *   "Person": {
- *     "type": "object",
- *     "properties": {
- *       "id": {
- *         "type": "integer",
- *         "format": "int32",
- *         "xml": {
- *           "attribute": true
- *         }
- *       },
- *       "name": {
- *         "type": "string",
- *         "xml": {
- *           "namespace": "http://swagger.io/schema/sample",
- *           "prefix": "sample"
- *         }
- *       }
- *     }
- *   }
- * }
+ * Models an OAS 3.0 Callbacks object.
  */
-export class Oas20XML extends OasXML {
+export class Oas30Callbacks extends OasExtensibleNode {
+
+    /**
+     * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.
+     * @param visitor
+     */
+    public accept(visitor: IOasNodeVisitor): void {
+        let viz: IOas30NodeVisitor = <IOas30NodeVisitor> visitor;
+        viz.visitCallbacks(this);
+    }
 
 }

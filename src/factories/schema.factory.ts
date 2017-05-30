@@ -15,9 +15,13 @@
  * limitations under the License.
  */
 
-import {Oas20DefinitionSchema, Oas20PropertySchema, Oas20Schema} from "../models/2.0/schema.model";
+import {Oas20DefinitionSchema, Oas20ItemsSchema, Oas20PropertySchema, Oas20Schema} from "../models/2.0/schema.model";
 import {Oas20Document} from "../models/2.0/document.model";
 import {Oas20Definitions} from "../models/2.0/definitions.model";
+import {OasDocument} from "../models/document.model";
+import {OasSchema} from "../models/common/schema.model";
+import {Oas30Document} from "../models/3.0/document.model";
+import {Oas30DefinitionSchema} from "../models/3.0/schema.model";
 
 export class Oas20SchemaFactory {
 
@@ -31,17 +35,8 @@ export class Oas20SchemaFactory {
      * @param example
      * @return {Oas20DefinitionSchema}
      */
-    public createDefinitionSchemaFromExample(document: Oas20Document, name: string, example: any): Oas20DefinitionSchema {
-        let definitions: Oas20Definitions = document.definitions;
-        if (!definitions) {
-            definitions = document.createDefinitions();
-        }
-        // Parse to object if it's not already an object.
-        if (typeof example === "string") {
-            example = JSON.parse(example);
-        }
-
-        let resolveType = function(thing: any, schema: Oas20Schema): void {
+    public createDefinitionSchemaFromExample(document: OasDocument, name: string, example: any): Oas20DefinitionSchema|Oas30DefinitionSchema {
+        let resolveType = function (thing: any, schema: OasSchema): void {
             if (typeof thing === "number") {
                 if (Math.round(thing) === thing) {
                     schema.type = "integer";
@@ -69,7 +64,7 @@ export class Oas20SchemaFactory {
                 }
             }
         };
-        let resolveAll = function(object: any, schema: Oas20Schema): void {
+        let resolveAll = function (object: any, schema: OasSchema): void {
             resolveType(object, schema);
             if (schema.type === "array") {
                 schema.items = schema.createItemsSchema();
@@ -79,7 +74,7 @@ export class Oas20SchemaFactory {
             } else if (schema.type === "object") {
                 schema.type = "object";
                 for (let propName in object) {
-                    let pschema: Oas20PropertySchema = schema.createPropertySchema(propName);
+                    let pschema: OasSchema = schema.createPropertySchema(propName);
                     schema.addProperty(propName, pschema);
                     let propValue: any = object[propName];
                     resolveAll(propValue, pschema);
@@ -87,11 +82,41 @@ export class Oas20SchemaFactory {
             }
         };
 
-        let schema: Oas20DefinitionSchema = definitions.createDefinitionSchema(name);
-        schema.title = "Root Type";
-        schema.description = "The root of the " + name + " type's schema.";
-        resolveAll(example, schema);
-        return schema;
+
+        if (document.getSpecVersion() === "2.0") {
+            let doc: Oas20Document = document as Oas20Document;
+            let definitions: Oas20Definitions = doc.definitions;
+            if (!definitions) {
+                definitions = doc.createDefinitions();
+            }
+            // Parse to object if it's not already an object.
+            if (typeof example === "string") {
+                example = JSON.parse(example);
+            }
+
+            let schema: Oas20DefinitionSchema = definitions.createDefinitionSchema(name);
+            schema.title = "Root Type for " + name;
+            schema.description = "The root of the " + name + " type's schema.";
+            resolveAll(example, schema);
+            return schema;
+        } else if (document.getSpecVersion() === "3.0.0") {
+            // TODO implement this for 3.0.0 when the definition schema is modeled!
+            // let doc: Oas30Document = document as Oas30Document;
+            // let definitions: Oas30Definitions = doc.definitions;
+            // if (!definitions) {
+            //     definitions = doc.createDefinitions();
+            // }
+            // // Parse to object if it's not already an object.
+            // if (typeof example === "string") {
+            //     example = JSON.parse(example);
+            // }
+            //
+            // let schema: Oas30DefinitionSchema = definitions.createDefinitionSchema(name);
+            // schema.title = "Root Type for " + name;
+            // schema.description = "The root of the " + name + " type's schema.";
+            // resolveAll(example, schema);
+            // return schema;
+        }
     }
 
 }

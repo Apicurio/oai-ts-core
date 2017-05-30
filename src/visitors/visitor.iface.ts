@@ -65,6 +65,32 @@ import {Oas20SecurityRequirement} from "../models/2.0/security-requirement.model
 import {Oas30ExternalDocumentation} from "../models/3.0/external-documentation.model";
 import {Oas30SecurityRequirement} from "../models/3.0/security-requirement.model";
 import {Oas30Tag} from "../models/3.0/tag.model";
+import {OasPaths} from "../models/common/paths.model";
+import {OasPathItem} from "../models/common/path-item.model";
+import {Oas30Paths} from "../models/3.0/paths.model";
+import {Oas30PathItem} from "../models/3.0/path-item.model";
+import {Oas30RequestBody} from "../models/3.0/request-body.model";
+import {Oas30Callbacks} from "../models/3.0/callbacks.model";
+import {OasOperation} from "../models/common/operation.model";
+import {Oas30Operation} from "../models/3.0/operation.model";
+import {OasResponses} from "../models/common/responses.model";
+import {Oas30Responses} from "../models/3.0/responses.model";
+import {OasHeaders} from "../models/common/headers.model";
+import {
+    Oas30AdditionalPropertiesSchema, Oas30AllOfSchema, Oas30AnyOfSchema, Oas30DefinitionSchema, Oas30ItemsSchema,
+    Oas30NotSchema,
+    Oas30OneOfSchema,
+    Oas30PropertySchema, Oas30Schema
+} from "../models/3.0/schema.model";
+import {OasHeader} from "../models/common/header.model";
+import {Oas30Response, Oas30ResponseDefinition} from "../models/3.0/response.model";
+import {Oas30Headers} from "../models/3.0/headers.model";
+import {OasSchema} from "../models/common/schema.model";
+import {Oas30Parameter, Oas30ParameterDefinition} from "../models/3.0/parameter.model";
+import {Oas30Header} from "../models/3.0/header.model";
+import {OasXML} from "../models/common/xml.model";
+import {Oas30XML} from "../models/3.0/xml.model";
+
 
 /**
  * Classes that wish to visit a OAS node or tree must implement this interface.  The
@@ -73,19 +99,20 @@ import {Oas30Tag} from "../models/3.0/tag.model";
 export interface IOasNodeVisitor {
 
     visitDocument(node: OasDocument): void;
-
     visitInfo(node: OasInfo): void;
-
     visitContact(node: OasContact): void;
-
     visitLicense(node: OasLicense): void;
-
+    visitPaths(node: OasPaths): void;
+    visitPathItem(node: OasPathItem): void;
+    visitOperation(node: OasOperation): void;
+    visitResponses(node: OasResponses): void;
+    visitHeaders(node: OasHeaders): void;
+    visitHeader(node: OasHeader): void;
+    visitSchema(node: OasSchema): void;
+    visitXML(node: OasXML): void;
     visitSecurityRequirement(node: OasSecurityRequirement): void;
-
     visitTag(node: OasTag): void;
-
     visitExternalDocumentation(node: OasExternalDocumentation): void;
-
     visitExtension(node: OasExtension): void;
 
 }
@@ -96,67 +123,36 @@ export interface IOasNodeVisitor {
 export interface IOas20NodeVisitor extends IOasNodeVisitor {
 
     visitDocument(node: Oas20Document): void;
-
     visitInfo(node: Oas20Info): void;
-
     visitContact(node: Oas20Contact): void;
-
     visitLicense(node: Oas20License): void;
-
     visitPaths(node: Oas20Paths): void;
-
     visitPathItem(node: Oas20PathItem): void;
-
     visitOperation(node: Oas20Operation): void;
-
     visitParameter(node: Oas20Parameter): void;
-
     visitParameterDefinition(node: Oas20ParameterDefinition): void;
-
     visitExternalDocumentation(node: Oas20ExternalDocumentation): void;
-
     visitSecurityRequirement(node: Oas20SecurityRequirement): void;
-
     visitResponses(node: Oas20Responses): void;
-
     visitResponse(node: Oas20Response): void;
-
     visitResponseDefinition(node: Oas20ResponseDefinition): void;
-
     visitSchema(node: Oas20Schema): void;
-
     visitHeaders(node: Oas20Headers): void;
-
     visitHeader(node: Oas20Header): void;
-
     visitExample(node: Oas20Example): void;
-
     visitItems(node: Oas20Items): void;
-
     visitTag(node: Oas20Tag): void;
-
     visitSecurityDefinitions(node: Oas20SecurityDefinitions): void;
-
     visitSecurityScheme(node: Oas20SecurityScheme): void;
-
     visitScopes(node: Oas20Scopes): void;
-
     visitXML(node: Oas20XML): void;
-
     visitDefinitionSchema(node: Oas20DefinitionSchema): void;
-
     visitPropertySchema(node: Oas20PropertySchema): void;
-
     visitAdditionalPropertiesSchema(node: Oas20AdditionalPropertiesSchema): void;
-
     visitAllOfSchema(node: Oas20AllOfSchema): void;
-
     visitItemsSchema(node: Oas20ItemsSchema): void;
-
     visitDefinitions(node: Oas20Definitions): void;
-
     visitParametersDefinitions(node: Oas20ParametersDefinitions): void;
-
     visitResponsesDefinitions(node: Oas20ResponsesDefinitions): void;
 
 }
@@ -165,23 +161,36 @@ export interface IOas20NodeVisitor extends IOasNodeVisitor {
 export interface IOas30NodeVisitor extends IOasNodeVisitor {
 
     visitDocument(node: Oas30Document): void;
-
     visitInfo(node: Oas30Info): void;
-
     visitContact(node: Oas30Contact): void;
-
     visitLicense(node: Oas30License): void;
-
+    visitPaths(node: Oas30Paths): void;
+    visitPathItem(node: Oas30PathItem): void;
+    visitOperation(node: Oas30Operation): void;
+    visitParameter(node: Oas30Parameter): void;
+    visitParameterDefinition(node: Oas30ParameterDefinition): void;
+    visitResponses(node: Oas30Responses): void;
+    visitResponse(node: Oas30Response): void;
+    visitResponseDefinition(node: Oas30ResponseDefinition): void;
+    visitSchema(node: Oas30Schema): void;
+    visitXML(node: Oas30XML): void;
+    visitHeaders(node: Oas30Headers): void;
+    visitHeader(node: Oas30Header): void;
+    visitRequestBody(node: Oas30RequestBody): void;
+    visitCallbacks(node: Oas30Callbacks): void;
     visitServer(node: Oas30Server): void;
-
     visitServerVariables(node: Oas30ServerVariables): void;
-
     visitServerVariable(node: Oas30ServerVariable): void;
-
     visitSecurityRequirement(node: Oas30SecurityRequirement): void;
-
     visitTag(node: Oas30Tag): void;
-
     visitExternalDocumentation(node: Oas30ExternalDocumentation): void;
+    visitAllOfSchema(node: Oas30AllOfSchema): void;
+    visitAnyOfSchema(node: Oas30AnyOfSchema): void;
+    visitOneOfSchema(node: Oas30OneOfSchema): void;
+    visitNotSchema(node: Oas30NotSchema): void;
+    visitPropertySchema(node: Oas30PropertySchema): void;
+    visitItemsSchema(node: Oas30ItemsSchema): void;
+    visitAdditionalPropertiesSchema(node: Oas30AdditionalPropertiesSchema): void;
+    visitDefinitionSchema(node: Oas30DefinitionSchema): void;
 
 }

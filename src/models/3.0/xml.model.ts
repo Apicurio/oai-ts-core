@@ -18,7 +18,7 @@
 import {OasXML} from "../common/xml.model";
 
 /**
- * Models an OAS 2.0 XML object.  Example:
+ * Models an OAS 3.0 XML object.  Example:
  *
  * {
  *   "Person": {
@@ -34,7 +34,7 @@ import {OasXML} from "../common/xml.model";
  *       "name": {
  *         "type": "string",
  *         "xml": {
- *           "namespace": "http://swagger.io/schema/sample",
+ *           "namespace": "http://example.com/schema/sample",
  *           "prefix": "sample"
  *         }
  *       }
@@ -42,6 +42,6 @@ import {OasXML} from "../common/xml.model";
  *   }
  * }
  */
-export class Oas20XML extends OasXML {
+export class Oas30XML extends OasXML {
 
 }

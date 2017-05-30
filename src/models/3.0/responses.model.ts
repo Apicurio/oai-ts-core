@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-import {Oas20Response} from "./response.model";
 import {IOasIndexedNode} from "../inode.model";
 import {OasResponses} from "../common/responses.model";
+import {Oas30Response} from "./response.model";
 
 /**
  * Models an OAS 2.0 Responses object.  The Responses object can have any number of child
@@ -26,27 +26,35 @@ import {OasResponses} from "../common/responses.model";
  * {
  *   "200": {
  *     "description": "a pet to be returned",
- *     "schema": {
- *       "$ref": "#/definitions/Pet"
+ *     "content": {
+ *       "application/json": {
+ *         "schema": {
+ *           "$ref": "#/components/schemas/Pet"
+ *         }
+ *       }
  *     }
  *   },
  *   "default": {
  *     "description": "Unexpected error",
- *     "schema": {
- *       "$ref": "#/definitions/ErrorModel"
+ *     "content": {
+ *       "application/json": {
+ *         "schema": {
+ *           "$ref": "#/components/schemas/ErrorModel"
+ *         }
+ *       }
  *     }
  *   }
  * }
  */
-export class Oas20Responses extends OasResponses {
+export class Oas30Responses extends OasResponses {
 
     /**
-     * Creates an OAS 2.0 response object.
+     * Creates an OAS 3.0 Response object.
      * @param statusCode
-     * @return {Oas20Response}
+     * @return {Oas30Response}
      */
-    public createResponse(statusCode?: string): Oas20Response {
-        let rval: Oas20Response = new Oas20Response(statusCode);
+    public createResponse(statusCode?: string): Oas30Response {
+        let rval: Oas30Response = new Oas30Response(statusCode);
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;

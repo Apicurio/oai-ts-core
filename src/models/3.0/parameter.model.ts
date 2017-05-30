@@ -15,75 +15,62 @@
  * limitations under the License.
  */
 
-import {IOasNodeVisitor, IOas20NodeVisitor} from "../../visitors/visitor.iface";
-import {Oas20Schema} from "./schema.model";
-import {IOas20Items, Oas20Items} from "./items.model";
+import {IOas30NodeVisitor, IOasNodeVisitor} from "../../visitors/visitor.iface";
 import {IOasReferenceNode} from "../reference.model";
 import {OasParameterBase} from "../common/parameter.model";
+import {Oas30Schema} from "./schema.model";
 
 
 /**
- * Models an OAS 2.0 Parameter object.  Example:
+ * Models an OAS 3.0 Parameter object.  Example:
  *
  * {
- *   "name": "user",
- *   "in": "body",
- *   "description": "user to add to the system",
+ *   "name": "token",
+ *   "in": "header",
+ *   "description": "token to be passed as a header",
  *   "required": true,
  *   "schema": {
- *     "$ref": "#/definitions/User"
- *   }
+ *     "type": "array",
+ *     "items": {
+ *       "type": "integer",
+ *       "format": "int64"
+ *     }
+ *   },
+ *   "style": "commaDelimited"
  * }
  */
-export abstract class Oas20ParameterBase extends OasParameterBase implements IOas20Items {
+export abstract class Oas30ParameterBase extends OasParameterBase {
 
-    public type: string; // required
-    public format: string;
-    public items: Oas20Items; // required if type is 'array'
-    public collectionFormat: string;
-    public default: any;
-    public maximum: number;
-    public exclusiveMaximum: boolean;
-    public minimum: number;
-    public exclusiveMinimum: boolean;
-    public maxLength: number; // Require: integer
-    public minLength: number; // Require: integer
-    public pattern: string;
-    public maxItems: number; // Require: integer
-    public minItems: number; // Require: integer
-    public uniqueItems: boolean;
-    public enum: any[];
-    public multipleOf: number;
+    public deprecated: boolean;
+    public style: string; // matrix, label, form, simple, spaceDelimited, pipeDelimited, deepObject
+    public explode: boolean;
+    public allowReserved: boolean;
+    public example: any;
+    // TODO implement the "examples" property more properly!!
+    //public examples: any;
+    // TODO implement the 'content' property
+    //public content: Oas30Content;
+
 
     /**
      * Creates a child schema model.
-     * @return {Oas20Schema}
+     * @return {Oas30Schema}
      */
-    public createSchema(): Oas20Schema {
-        let rval: Oas20Schema = new Oas20Schema();
+    public createSchema(): Oas30Schema {
+        let rval: Oas30Schema = new Oas30Schema();
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;
     }
 
-    /**
-     * Creates a child items model.
-     * @return {Oas20Items}
-     */
-    public createItems(): Oas20Items {
-        let rval: Oas20Items = new Oas20Items();
-        rval._ownerDocument = this._ownerDocument;
-        rval._parent = this;
-        return rval;
-    }
 }
 
 
 /**
- * Extends the base parameter to model a parameter that is a child of the OAS 2.0 Parameters Definitions
+ * Extends the base parameter to model a parameter that is a child of the OAS 3.0 Parameters Definitions
  * object.
  */
-export class Oas20ParameterDefinition extends Oas20ParameterBase {
+export class Oas30ParameterDefinition extends Oas30ParameterBase {
 
     private _parameterName: string;
 
@@ -109,7 +96,7 @@ export class Oas20ParameterDefinition extends Oas20ParameterBase {
      * @param visitor
      */
     public accept(visitor: IOasNodeVisitor): void {
-        let viz: IOas20NodeVisitor = <IOas20NodeVisitor> visitor;
+        let viz: IOas30NodeVisitor = <IOas30NodeVisitor> visitor;
         viz.visitParameterDefinition(this);
     }
 
@@ -119,7 +106,7 @@ export class Oas20ParameterDefinition extends Oas20ParameterBase {
 /**
  * Extends the base parameter to add support for references.
  */
-export class Oas20Parameter extends Oas20ParameterBase implements IOasReferenceNode {
+export class Oas30Parameter extends Oas30ParameterBase implements IOasReferenceNode {
 
     public $ref: string;
 
@@ -128,7 +115,7 @@ export class Oas20Parameter extends Oas20ParameterBase implements IOasReferenceN
      * @param visitor
      */
     public accept(visitor: IOasNodeVisitor): void {
-        let viz: IOas20NodeVisitor = visitor as IOas20NodeVisitor;
+        let viz: IOas30NodeVisitor = visitor as IOas30NodeVisitor;
         viz.visitParameter(this);
     }
 

@@ -21,6 +21,7 @@ import {Oas30Server} from "./server.model";
 import {Oas30SecurityRequirement} from "./security-requirement.model";
 import {Oas30ExternalDocumentation} from "./external-documentation.model";
 import {Oas30Tag} from "./tag.model";
+import {Oas30Paths} from "./paths.model";
 
 /**
  * Models an OAS 3.0.x document.
@@ -30,7 +31,7 @@ export class Oas30Document extends OasDocument {
     public openapi: string = "3.0.0";
     public info: Oas30Info;
     public servers: Oas30Server[];
-    // public paths: Oas30Paths;
+    public paths: Oas30Paths;
     // public components: Oas30Components;
     public security: Oas30SecurityRequirement[];
     public tags: Oas30Tag[];
@@ -85,6 +86,17 @@ export class Oas30Document extends OasDocument {
         }
         this.servers.push(server);
         return server;
+    }
+
+    /**
+     * Creates an OAS 3.0 Paths object.
+     * @return {Oas30Paths}
+     */
+    public createPaths(): Oas30Paths {
+        let rval: Oas30Paths = new Oas30Paths();
+        rval._ownerDocument = this.ownerDocument();
+        rval._parent = this;
+        return rval;
     }
 
     /**

@@ -18,9 +18,10 @@
 import {Oas20ValidationRule} from "./common.rule";
 import {OasNode} from "../../models/node.model";
 import {Oas20Parameter} from "../../models/2.0/parameter.model";
-import {IOas20ParameterParent, Oas20Operation} from "../../models/2.0/operation.model";
+import {Oas20Operation} from "../../models/2.0/operation.model";
 import {Oas20Tag} from "../../models/2.0/tag.model";
 import {Oas20Document} from "../../models/2.0/document.model";
+import {IOasParameterParent, OasParameterBase} from "../../models/common/parameter.model";
 
 /**
  * Implements the Uniqueness validation rule.  This rule is responsible
@@ -67,7 +68,7 @@ export class Oas20UniquenessValidationRule extends Oas20ValidationRule {
     }
 
     public visitParameter(node: Oas20Parameter): void {
-        let params: Oas20Parameter[] = (<any>node.parent() as IOas20ParameterParent).parameters;
+        let params: OasParameterBase[] = (<any>node.parent() as IOasParameterParent).parameters;
         if (node.in !== "body") {
             this.reportIfInvalid("PAR-019", params.filter(param => {
                     return param.in === node.in && param.name === node.name;

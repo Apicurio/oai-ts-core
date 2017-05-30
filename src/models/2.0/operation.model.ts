@@ -15,27 +15,12 @@
  * limitations under the License.
  */
 
-import {IOasNodeVisitor, IOas20NodeVisitor} from "../../visitors/visitor.iface";
 import {Oas20Parameter} from "./parameter.model";
-import {OasExtensibleNode} from "../enode.model";
 import {Oas20ExternalDocumentation} from "./external-documentation.model";
 import {Oas20SecurityRequirement} from "./security-requirement.model";
 import {Oas20Responses} from "./responses.model";
-
-/**
- * Models that serve as parent to a list of Oas20Parameter objects must implement this
- * interface.
- */
-export interface IOas20ParameterParent {
-
-    parameters: Oas20Parameter[];
-
-    addParameter(parameter: Oas20Parameter): Oas20Parameter;
-    createParameter(): Oas20Parameter;
-    getParameters(_in: string): Oas20Parameter[];
-    parameter(_in: string, name: string): Oas20Parameter;
-
-}
+import {OasOperation} from "../common/operation.model";
+import {IOasParameterParent} from "../common/parameter.model";
 
 
 /**
@@ -96,46 +81,18 @@ export interface IOas20ParameterParent {
  *   ]
  * }
  */
-export class Oas20Operation extends OasExtensibleNode implements IOas20ParameterParent {
+export class Oas20Operation extends OasOperation implements IOasParameterParent {
 
-    private _method: string;
-    public tags: string[];
-    public summary: string;
-    public description: string;
-    public externalDocs: Oas20ExternalDocumentation;
-    public operationId: string;
     public consumes: string[];
     public produces: string[];
-    public parameters: Oas20Parameter[];
-    public responses: Oas20Responses;
     public schemes: string[];
-    public deprecated: boolean;
-    public security: Oas20SecurityRequirement[];
 
     /**
      * Constructor.
      * @param method
      */
     constructor(method: string) {
-        super();
-        this._method = method;
-    }
-
-    /**
-     * Gets the method for this operation (get, put, post, etc).
-     * @return {string}
-     */
-    public method(): string {
-        return this._method;
-    }
-
-    /**
-     * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.
-     * @param visitor
-     */
-    public accept(visitor: IOasNodeVisitor): void {
-        let viz: IOas20NodeVisitor = <IOas20NodeVisitor> visitor;
-        viz.visitOperation(this);
+        super(method);
     }
 
     /**
@@ -161,50 +118,6 @@ export class Oas20Operation extends OasExtensibleNode implements IOas20Parameter
     }
 
     /**
-     * Returns a list of parameters with a particular value of "in" (e.g. path, formData, body, etc...).
-     * @param _in
-     * @return {any}
-     */
-    public getParameters(_in: string): Oas20Parameter[] {
-        if (_in === undefined ||_in === null || this.parameters === undefined || this.parameters === null) {
-            return [];
-        } else {
-            return this.parameters.filter( param => {
-                return param.in === _in;
-            })
-        }
-    }
-
-    /**
-     * Returns a single, unique parameter identified by "in" and "name" (which are the two
-     * properties that uniquely identify a parameter).  Returns null if no parameter is found.
-     * @param _in
-     * @param name
-     * @return {Oas20Parameter}
-     */
-    public parameter(_in: string, name: string): Oas20Parameter {
-        let rval: Oas20Parameter = null;
-        this.getParameters(_in).forEach( param => {
-            if (param.name === name) {
-                rval = param;
-            }
-        })
-        return rval;
-    }
-
-    /**
-     * Adds a parameter.
-     * @param parameter
-     */
-    public addParameter(parameter: Oas20Parameter): Oas20Parameter {
-        if (this.parameters == null) {
-            this.parameters = [];
-        }
-        this.parameters.push(parameter);
-        return parameter;
-    }
-
-    /**
      * Creates a child responses model.
      * @return {Oas20Responses}
      */
@@ -224,17 +137,5 @@ export class Oas20Operation extends OasExtensibleNode implements IOas20Parameter
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;
-    }
-
-    /**
-     * Adds a security requirement child.
-     * @param securityRequirement
-     */
-    public addSecurityRequirement(securityRequirement: Oas20SecurityRequirement): Oas20SecurityRequirement {
-        if (this.security == null) {
-            this.security = [];
-        }
-        this.security.push(securityRequirement);
-        return securityRequirement;
     }
 }

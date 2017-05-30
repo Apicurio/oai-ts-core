@@ -18,11 +18,9 @@
 import {IOas20NodeVisitor, IOas30NodeVisitor, IOasNodeVisitor} from "./visitor.iface";
 import {Oas20Document} from "../models/2.0/document.model";
 import {OasExtension} from "../models/extension.model";
-import {Oas20Paths} from "../models/2.0/paths.model";
 import {Oas20PathItem} from "../models/2.0/path-item.model";
 import {Oas20Operation} from "../models/2.0/operation.model";
 import {Oas20Parameter, Oas20ParameterBase, Oas20ParameterDefinition} from "../models/2.0/parameter.model";
-import {Oas20Responses} from "../models/2.0/responses.model";
 import {Oas20Response, Oas20ResponseBase, Oas20ResponseDefinition} from "../models/2.0/response.model";
 import {
     Oas20AdditionalPropertiesSchema,
@@ -32,7 +30,6 @@ import {
     Oas20PropertySchema,
     Oas20Schema
 } from "../models/2.0/schema.model";
-import {Oas20Headers} from "../models/2.0/headers.model";
 import {Oas20Header} from "../models/2.0/header.model";
 import {Oas20Example} from "../models/2.0/example.model";
 import {Oas20Items} from "../models/2.0/items.model";
@@ -41,7 +38,6 @@ import {OasExtensibleNode} from "../models/enode.model";
 import {Oas20Scopes} from "../models/2.0/scopes.model";
 import {Oas20SecurityDefinitions} from "../models/2.0/security-definitions.model";
 import {Oas20SecurityScheme} from "../models/2.0/security-scheme.model";
-import {Oas20XML} from "../models/2.0/xml.model";
 import {Oas20Definitions} from "../models/2.0/definitions.model";
 import {Oas20ParametersDefinitions} from "../models/2.0/parameters-definitions.model";
 import {Oas20ResponsesDefinitions} from "../models/2.0/responses-definitions.model";
@@ -56,6 +52,32 @@ import {Oas30Server} from "../models/3.0/server.model";
 import {OasSecurityRequirement} from "../models/common/security-requirement.model";
 import {OasExternalDocumentation} from "../models/common/external-documentation.model";
 import {OasTag} from "../models/common/tag.model";
+import {OasPaths} from "../models/common/paths.model";
+import {OasPathItem} from "../models/common/path-item.model";
+import {OasResponses} from "../models/common/responses.model";
+import {OasResponse} from "../models/common/response.model";
+import {OasHeaders} from "../models/common/headers.model";
+import {OasHeader} from "../models/common/header.model";
+import {OasOperation} from "../models/common/operation.model";
+import {OasXML} from "../models/common/xml.model";
+import {OasSchema} from "../models/common/schema.model";
+import {Oas30Parameter, Oas30ParameterBase, Oas30ParameterDefinition} from "../models/3.0/parameter.model";
+import {Oas30Response, Oas30ResponseBase, Oas30ResponseDefinition} from "../models/3.0/response.model";
+import {Oas30RequestBody} from "../models/3.0/request-body.model";
+import {Oas30Callbacks} from "../models/3.0/callbacks.model";
+import {
+    Oas30AdditionalPropertiesSchema,
+    Oas30AllOfSchema,
+    Oas30AnyOfSchema,
+    Oas30DefinitionSchema,
+    Oas30ItemsSchema,
+    Oas30NotSchema,
+    Oas30OneOfSchema,
+    Oas30PropertySchema, Oas30Schema
+} from "../models/3.0/schema.model";
+import {Oas30PathItem} from "../models/3.0/path-item.model";
+import {Oas30Operation} from "../models/3.0/operation.model";
+import {Oas30Header} from "../models/3.0/header.model";
 
 /**
  * Interface implemented by all traversers.
@@ -152,6 +174,78 @@ export abstract class OasTraverser implements IOasNodeVisitor, IOasTraverser {
     }
 
     /**
+     * Visit the paths.
+     * @param node
+     */
+    public visitPaths(node: OasPaths): void {
+        node.accept(this.visitor);
+        for (let pathName of node.pathItemNames()) {
+            let pathItem: OasPathItem = node.pathItem(pathName);
+            this.traverseIfNotNull(pathItem);
+        }
+        this.traverseExtensions(node);
+    }
+
+    /**
+     * Visit the path item.
+     * @param node
+     */
+    public abstract visitPathItem(node: OasPathItem): void;
+
+    /**
+     * Visit the operation.
+     * @param node
+     */
+    public abstract visitOperation(node: OasOperation): void;
+
+    /**
+     * Visit the header.
+     * @param node
+     */
+    public abstract visitHeader(node: OasHeader): void;
+
+    /**
+     * Visit the header.
+     * @param node
+     */
+    public abstract visitSchema(node: OasSchema): void;
+
+        /**
+     * Visit the responses.
+     * @param node
+     */
+    public visitResponses(node: OasResponses): void {
+        node.accept(this.visitor);
+        for (let name of node.responseStatusCodes()) {
+            let response: OasResponse = node.response(name);
+            this.traverseIfNotNull(response);
+        }
+        this.traverseIfNotNull(node.default);
+        this.traverseExtensions(node);
+    }
+
+    /**
+     * Visit the headers.
+     * @param node
+     */
+    public visitHeaders(node: OasHeaders): void {
+        node.accept(this.visitor);
+        for (let hname of node.headerNames()) {
+            let header: OasHeader = node.header(hname);
+            this.traverseIfNotNull(header);
+        }
+    }
+
+    /**
+     * Visit the scopes.
+     * @param node
+     */
+    public visitXML(node: OasXML): void {
+        node.accept(this.visitor);
+        this.traverseExtensions(node);
+    }
+
+    /**
      * Visit the security requirement.
      * @param node
      */
@@ -188,6 +282,8 @@ export abstract class OasTraverser implements IOasNodeVisitor, IOasTraverser {
 
 }
 
+
+
 /**
  * Used to traverse an OAS 2.0 tree and call an included visitor for each node.
  */
@@ -216,19 +312,6 @@ export class Oas20Traverser extends OasTraverser implements IOas20NodeVisitor {
         this.traverseArray(node.security);
         this.traverseArray(node.tags);
         this.traverseIfNotNull(node.externalDocs);
-        this.traverseExtensions(node);
-    }
-
-    /**
-     * Visit the paths.
-     * @param node
-     */
-    public visitPaths(node: Oas20Paths): void {
-        node.accept(this.visitor);
-        for (let pathName of node.pathItemNames()) {
-            let pathItem: Oas20PathItem = node.pathItem(pathName);
-            this.traverseIfNotNull(pathItem);
-        }
         this.traverseExtensions(node);
     }
 
@@ -262,6 +345,10 @@ export class Oas20Traverser extends OasTraverser implements IOas20NodeVisitor {
         this.traverseExtensions(node);
     }
 
+    /**
+     * Visit a parameter.
+     * @param node
+     */
     private visitParameterBase(node: Oas20ParameterBase): void {
         node.accept(this.visitor);
         this.traverseIfNotNull(node.schema);
@@ -283,20 +370,6 @@ export class Oas20Traverser extends OasTraverser implements IOas20NodeVisitor {
      */
     public visitParameterDefinition(node: Oas20ParameterDefinition): void {
         this.visitParameterBase(node);
-    }
-
-    /**
-     * Visit the responses.
-     * @param node
-     */
-    public visitResponses(node: Oas20Responses): void {
-        node.accept(this.visitor);
-        for (let name of node.responseStatusCodes()) {
-            let response: Oas20Response = node.response(name);
-            this.traverseIfNotNull(response);
-        }
-        this.traverseIfNotNull(node.default);
-        this.traverseExtensions(node);
     }
 
     private visitResponseBase(node: Oas20ResponseBase): void {
@@ -338,7 +411,7 @@ export class Oas20Traverser extends OasTraverser implements IOas20NodeVisitor {
         let propNames: string[] = node.propertyNames();
         if (propNames && propNames.length > 0) {
             for (let propName of propNames) {
-                let prop: Oas20Schema = node.property(propName);
+                let prop: Oas20Schema = node.property(propName) as Oas20Schema;
                 this.traverseIfNotNull(prop);
             }
         }
@@ -387,18 +460,6 @@ export class Oas20Traverser extends OasTraverser implements IOas20NodeVisitor {
      */
     public visitItemsSchema(node: Oas20ItemsSchema): void {
         this.visitSchema(node);
-    }
-
-    /**
-     * Visit the headers.
-     * @param node
-     */
-    public visitHeaders(node: Oas20Headers): void {
-        node.accept(this.visitor);
-        for (let hname of node.headerNames()) {
-            let header: Oas20Header = node.header(hname);
-            this.traverseIfNotNull(header);
-        }
     }
 
     /**
@@ -456,15 +517,6 @@ export class Oas20Traverser extends OasTraverser implements IOas20NodeVisitor {
      */
     public visitScopes(node: Oas20Scopes): void {
         node.accept(this.visitor);
-    }
-
-    /**
-     * Visit the scopes.
-     * @param node
-     */
-    public visitXML(node: Oas20XML): void {
-        node.accept(this.visitor);
-        this.traverseExtensions(node);
     }
 
     /**
@@ -532,6 +584,221 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
         this.traverseArray(node.tags);
         this.traverseIfNotNull(node.externalDocs);
         this.traverseExtensions(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitPathItem(node: Oas30PathItem): void {
+        node.accept(this.visitor);
+        this.traverseIfNotNull(node.get);
+        this.traverseIfNotNull(node.put);
+        this.traverseIfNotNull(node.post);
+        this.traverseIfNotNull(node.delete);
+        this.traverseIfNotNull(node.options);
+        this.traverseIfNotNull(node.head);
+        this.traverseIfNotNull(node.patch);
+        this.traverseIfNotNull(node.trace);
+        this.traverseArray(node.parameters);
+        this.traverseArray(node.servers);
+        this.traverseExtensions(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitOperation(node: Oas30Operation): void {
+        node.accept(this.visitor);
+        this.traverseIfNotNull(node.externalDocs);
+        this.traverseArray(node.parameters);
+        this.traverseIfNotNull(node.responses);
+        this.traverseIfNotNull(node.requestBody);
+        this.traverseIfNotNull(node.callbacks);
+        this.traverseArray(node.security);
+        this.traverseArray(node.servers);
+        this.traverseExtensions(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitHeader(node: Oas30Header): void {
+        node.accept(this.visitor);
+        this.traverseIfNotNull(node.schema);
+        // TODO traverse the 'examples' object when it's implemented
+        this.traverseExtensions(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitSchema(node: Oas30Schema): void {
+        node.accept(this.visitor);
+        if (Array.isArray(node.items)) {
+            this.traverseArray(<Oas20ItemsSchema[]>node.items);
+        } else {
+            this.traverseIfNotNull(<Oas20ItemsSchema>node.items);
+        }
+        this.traverseArray(node.allOf);
+        let propNames: string[] = node.propertyNames();
+        if (propNames && propNames.length > 0) {
+            for (let propName of propNames) {
+                let prop: Oas20Schema = node.property(propName) as Oas20Schema;
+                this.traverseIfNotNull(prop);
+            }
+        }
+        if (typeof node.additionalProperties !== "boolean") {
+            this.traverseIfNotNull(<Oas20AdditionalPropertiesSchema>node.additionalProperties);
+        }
+        this.traverseArray(node.oneOf);
+        this.traverseArray(node.anyOf);
+        this.traverseIfNotNull(node.not);
+        this.traverseIfNotNull(node.xml);
+        this.traverseExtensions(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitParameter(node: Oas30Parameter): void {
+        this.visitParameterBase(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitParameterDefinition(node: Oas30ParameterDefinition): void {
+        this.visitParameterBase(node);
+    }
+
+    /**
+     * Visit a parameter.
+     * @param node
+     */
+    private visitParameterBase(node: Oas30ParameterBase): void {
+        node.accept(this.visitor);
+        this.traverseIfNotNull(node.schema);
+        // TODO traverse the Examples object
+        // TODO traverse the Content object
+        this.traverseExtensions(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitResponse(node: Oas30Response): void {
+        this.visitResponseBase(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitResponseDefinition(node: Oas30ResponseDefinition): void {
+        this.visitResponseBase(node);
+    }
+
+    /**
+     * Visit a response.
+     * @param node
+     */
+    private visitResponseBase(node: Oas30ResponseBase): void {
+        node.accept(this.visitor);
+        // TODO traverse the content
+        // TODO traverse the links
+        this.traverseIfNotNull(node.headers);
+        this.traverseExtensions(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitRequestBody(node: Oas30RequestBody): void {
+        node.accept(this.visitor);
+        // TODO traverse the content
+        this.traverseExtensions(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitCallbacks(node: Oas30Callbacks): void {
+        node.accept(this.visitor);
+        // TODO traverse the callbacks
+        this.traverseExtensions(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitAllOfSchema(node: Oas30AllOfSchema): void {
+        this.visitSchema(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitAnyOfSchema(node: Oas30AnyOfSchema): void {
+        this.visitSchema(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitOneOfSchema(node: Oas30OneOfSchema): void {
+        this.visitSchema(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitNotSchema(node: Oas30NotSchema): void {
+        this.visitSchema(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitPropertySchema(node: Oas30PropertySchema): void {
+        this.visitSchema(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitItemsSchema(node: Oas30ItemsSchema): void {
+        this.visitSchema(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitAdditionalPropertiesSchema(node: Oas30AdditionalPropertiesSchema): void {
+        this.visitSchema(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitDefinitionSchema(node: Oas30DefinitionSchema): void {
+        this.visitSchema(node);
     }
 
     /**
@@ -608,6 +875,46 @@ export abstract class OasReverseTraverser implements IOasNodeVisitor, IOasTraver
         this.traverse(node.parent());
     }
 
+    public visitPaths(node: OasPaths): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    public visitPathItem(node: OasPathItem): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    public visitOperation(node: OasOperation): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    public visitResponses(node: OasResponses): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    public visitSchema(node: OasSchema): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    public visitHeaders(node: OasHeaders): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    public visitHeader(node: OasHeader): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    public visitXML(node: OasXML): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
     public visitSecurityRequirement(node: OasSecurityRequirement): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
@@ -644,21 +951,6 @@ export class Oas20ReverseTraverser extends OasReverseTraverser implements IOas20
         super(visitor);
     }
 
-    public visitPaths(node: Oas20Paths): void {
-        node.accept(this.visitor);
-        this.traverse(node.parent());
-    }
-
-    public visitPathItem(node: Oas20PathItem): void {
-        node.accept(this.visitor);
-        this.traverse(node.parent());
-    }
-
-    public visitOperation(node: Oas20Operation): void {
-        node.accept(this.visitor);
-        this.traverse(node.parent());
-    }
-
     public visitParameter(node: Oas20Parameter): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
@@ -669,32 +961,12 @@ export class Oas20ReverseTraverser extends OasReverseTraverser implements IOas20
         this.traverse(node.parent());
     }
 
-    public visitResponses(node: Oas20Responses): void {
-        node.accept(this.visitor);
-        this.traverse(node.parent());
-    }
-
     public visitResponse(node: Oas20Response): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
 
     public visitResponseDefinition(node: Oas20ResponseDefinition): void {
-        node.accept(this.visitor);
-        this.traverse(node.parent());
-    }
-
-    public visitSchema(node: Oas20Schema): void {
-        node.accept(this.visitor);
-        this.traverse(node.parent());
-    }
-
-    public visitHeaders(node: Oas20Headers): void {
-        node.accept(this.visitor);
-        this.traverse(node.parent());
-    }
-
-    public visitHeader(node: Oas20Header): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
@@ -720,11 +992,6 @@ export class Oas20ReverseTraverser extends OasReverseTraverser implements IOas20
     }
 
     public visitScopes(node: Oas20Scopes): void {
-        node.accept(this.visitor);
-        this.traverse(node.parent());
-    }
-
-    public visitXML(node: Oas20XML): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
@@ -783,6 +1050,76 @@ export class Oas30ReverseTraverser extends OasReverseTraverser implements IOas30
      */
     constructor(visitor: IOas30NodeVisitor) {
         super(visitor);
+    }
+
+    visitParameter(node: Oas30Parameter): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitParameterDefinition(node: Oas30ParameterDefinition): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitResponse(node: Oas30Response): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitResponseDefinition(node: Oas30ResponseDefinition): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitRequestBody(node: Oas30RequestBody): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitCallbacks(node: Oas30Callbacks): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitAllOfSchema(node: Oas30AllOfSchema): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitAnyOfSchema(node: Oas30AnyOfSchema): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitOneOfSchema(node: Oas30OneOfSchema): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitNotSchema(node: Oas30NotSchema): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitPropertySchema(node: Oas30PropertySchema): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitItemsSchema(node: Oas30ItemsSchema): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitAdditionalPropertiesSchema(node: Oas30AdditionalPropertiesSchema): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitDefinitionSchema(node: Oas30DefinitionSchema): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
     }
 
     /**

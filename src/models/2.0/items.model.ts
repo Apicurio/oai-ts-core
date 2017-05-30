@@ -18,10 +18,36 @@
 import {IOasNodeVisitor, IOas20NodeVisitor} from "../../visitors/visitor.iface";
 import {OasExtensibleNode} from "../enode.model";
 
+
+export interface IOas20Items {
+
+    type: string; // required
+    format: string;
+    items: Oas20Items; // required if type is 'array'
+    collectionFormat: string;
+    default: any;
+    maximum: number;
+    exclusiveMaximum: boolean;
+    minimum: number;
+    exclusiveMinimum: boolean;
+    maxLength: number; // Require: integer
+    minLength: number; // Require: integer
+    pattern: string;
+    maxItems: number; // Require: integer
+    minItems: number; // Require: integer
+    uniqueItems: boolean;
+    enum: any[];
+    multipleOf: number;
+
+    createItems(): Oas20Items;
+
+}
+
+
 /**
  * Models an OAS 2.0 Items object.  Example:
  */
-export class Oas20Items extends OasExtensibleNode {
+export class Oas20Items extends OasExtensibleNode implements IOas20Items {
 
     public type: string; // required
     public format: string;

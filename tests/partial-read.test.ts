@@ -24,6 +24,8 @@ import {Oas20Operation} from "../src/models/2.0/operation.model";
 import {Oas20PathItem} from "../src/models/2.0/path-item.model";
 import {Oas20ResponseDefinition} from "../src/models/2.0/response.model";
 import {OasLibraryUtils} from "../src/library.utils";
+import {OasPathItem} from "../src/models/common/path-item.model";
+import {OasOperation} from "../src/models/common/operation.model";
 
 describe("Partial Read (2.0)", () => {
 
@@ -52,8 +54,8 @@ describe("Partial Read (2.0)", () => {
     it("Operation", () => {
         let json: any = readJSON('tests/fixtures/partial-read/2.0/path-get.json');
         document.paths = document.createPaths();
-        let pathItem: Oas20PathItem = document.paths.addPathItem("/testPath", document.paths.createPathItem("/testPath"));
-        let opModel: Oas20Operation = pathItem.createOperation("get");
+        let pathItem: OasPathItem = document.paths.addPathItem("/testPath", document.paths.createPathItem("/testPath"));
+        let opModel: OasOperation = pathItem.createOperation("get");
         library.readNode(json, opModel);
         pathItem.get = opModel;
 
