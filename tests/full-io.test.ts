@@ -54,6 +54,7 @@ describe("Full I/O (2.0)", () => {
         { name: "Simple (External Docs)",               test: "tests/fixtures/full-io/2.0/simple/simple-externalDocs.json" },
         { name: "Simple (Security Definitions)",        test: "tests/fixtures/full-io/2.0/simple/simple-securityDefinitions.json" },
         { name: "Simple (Security Requirements)",       test: "tests/fixtures/full-io/2.0/simple/simple-security.json" },
+        { name: "Paths (Empty)",                        test: "tests/fixtures/full-io/2.0/paths/paths-empty.json" },
         { name: "Paths (GET)",                          test: "tests/fixtures/full-io/2.0/paths/paths-get.json" },
         { name: "Paths (GET + Params)",                 test: "tests/fixtures/full-io/2.0/paths/paths-get-with-params.json" },
         { name: "Paths (GET + Tags)",                   test: "tests/fixtures/full-io/2.0/paths/paths-get-with-tags.json" },
@@ -111,9 +112,16 @@ describe("Full I/O (2.0)", () => {
     // All tests in the list above.
     TESTS.forEach( spec => {
         it(spec.name, () => {
+            if (spec.debug) {
+                console.info("*******  Running test: " + spec.name);
+            }
             let json: any = readJSON(spec.test);
             let document: Oas20Document = <Oas20Document>library.createDocument(json);
             let jsObj: any = library.writeNode(document);
+            if (spec.debug) {
+                console.info("------- INPUT --------\n " + JSON.stringify(json, null, 2) + "\n-------------------")
+                console.info("------- ACTUAL --------\n " + JSON.stringify(jsObj, null, 2) + "\n-------------------")
+            }
             expect(jsObj).toEqual(json);
         });
     });
@@ -135,6 +143,14 @@ describe("Full I/O (3.0)", () => {
         { name: "Simple (Tags)",                        test: "tests/fixtures/full-io/3.0/simple/simple-tags.json" },
         { name: "Simple (External Docs)",               test: "tests/fixtures/full-io/3.0/simple/simple-externalDocs.json" },
         { name: "Complete (Tags)",                      test: "tests/fixtures/full-io/3.0/complete/complete-tags.json" },
+        { name: "Paths (Empty)",                        test: "tests/fixtures/full-io/3.0/paths/paths-empty.json" },
+        { name: "Paths (GET)",                          test: "tests/fixtures/full-io/3.0/paths/paths-get.json" },
+        { name: "Paths ($ref)",                         test: "tests/fixtures/full-io/3.0/paths/paths-ref.json" },
+        { name: "Paths (Extensions)",                   test: "tests/fixtures/full-io/3.0/paths/paths-with-extensions.json" },
+        { name: "Paths (All Operations)",               test: "tests/fixtures/full-io/3.0/paths/paths-all-operations.json" },
+        { name: "Paths (Servers)",                      test: "tests/fixtures/full-io/3.0/paths/paths-servers.json" },
+        { name: "Paths (Parameters)",                   test: "tests/fixtures/full-io/3.0/paths/paths-parameters.json" },
+        { name: "Paths (GET+Servers)",                  test: "tests/fixtures/full-io/3.0/paths/paths-get-with-servers.json", debug: true },
     ];
 
     let library: OasLibraryUtils;
@@ -146,6 +162,9 @@ describe("Full I/O (3.0)", () => {
     // All tests in the list above.
     TESTS.forEach( spec => {
         it(spec.name, () => {
+            if (spec.debug) {
+                console.info("*******  Running test: " + spec.name);
+            }
             let json: any = readJSON(spec.test);
             let document: Oas30Document = <Oas30Document>library.createDocument(json);
             let jsObj: any = library.writeNode(document);

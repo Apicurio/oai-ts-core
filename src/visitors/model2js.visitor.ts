@@ -256,11 +256,11 @@ export abstract class OasModelToJSVisitor implements IOasNodeVisitor {
      * @param node
      */
     public visitPaths(node: OasPaths): void {
-        let paths: any = null;
-        if ((node.pathItemNames() && node.pathItemNames().length > 0) ||
-            (node.extensions() && node.extensions().length > 0)) {
-            paths = <any>{};
-        }
+        let paths: any = {};
+        // if ((node.pathItemNames() && node.pathItemNames().length > 0) ||
+        //     (node.extensions() && node.extensions().length > 0)) {
+        //     paths = <any>{};
+        // }
         let parentJS: any = this.lookupParentJS(node);
         parentJS.paths = paths;
         this.updateIndex(node, paths);
@@ -846,11 +846,15 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * @param node
      */
     visitDocument(node: Oas30Document): void {
-        // TODO missing some elements from the root!!!
         let root: any = {
             openapi: node.openapi,
             info: null,
-            servers: null
+            servers: null,
+            paths: null,
+            components: null,
+            security: null,
+            tags: null,
+            externalDocs: null
         };
         this.updateIndex(node, root);
     }
