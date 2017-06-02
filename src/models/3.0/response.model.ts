@@ -19,6 +19,7 @@ import {IOas30NodeVisitor, IOasNodeVisitor} from "../../visitors/visitor.iface";
 import {IOasReferenceNode} from "../reference.model";
 import {OasResponse} from "../common/response.model";
 import {Oas30Headers} from "./headers.model";
+import {Oas30Content} from "./content.model";
 
 
 /**
@@ -36,16 +37,26 @@ import {Oas30Headers} from "./headers.model";
  */
 export abstract class Oas30ResponseBase extends OasResponse {
 
-    // TODO implement content and links!
-    // public content: Oas30Content;
+    public content: Oas30Content;
     // public links: Oas30Links;
 
     /**
      * Creates an OAS 3.0 Headers object.
-     * @return {Oas30Operation}
+     * @return {Oas30Headers}
      */
     public createHeaders(): Oas30Headers {
         let rval: Oas30Headers = new Oas30Headers();
+        rval._ownerDocument = this._ownerDocument;
+        rval._parent = this;
+        return rval;
+    }
+
+    /**
+     * Creates an OAS 3.0 Content object.
+     * @return {Oas30Content}
+     */
+    public createContent(): Oas30Content {
+        let rval: Oas30Content = new Oas30Content();
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;

@@ -74,6 +74,7 @@ import {Oas30Content} from "../models/3.0/content.model";
 import {Oas30MediaType} from "../models/3.0/media-type.model";
 import {Oas30Encoding} from "../models/3.0/encoding.model";
 import {Oas30EncodingProperty} from "../models/3.0/encoding-property.model";
+import {Oas30Example} from "../models/3.0/example.model";
 
 
 /**
@@ -140,6 +141,7 @@ export class Oas30NodeVisitorAdapter extends OasNodeVisitorAdapter implements IO
     public visitRequestBody(node: Oas30RequestBody): void {}
     public visitContent(node: Oas30Content): void {}
     public visitMediaType(node: Oas30MediaType): void {}
+    public visitExample(node: Oas30Example): void {}
     public visitEncoding(node: Oas30Encoding): void {}
     public visitEncodingProperty(node: Oas30EncodingProperty): void {}
     public visitCallbacks(node: Oas30Callbacks): void {}
@@ -280,6 +282,7 @@ export class Oas30CompositeVisitor extends OasCompositeVisitor implements IOas30
     visitCallbacks(node: Oas30Callbacks): void { this._acceptAll(node); }
     visitContent(node: Oas30Content): void { this._acceptAll(node); }
     visitMediaType(node: Oas30MediaType): void { this._acceptAll(node); }
+    visitExample(node: Oas30Example): void { this._acceptAll(node); }
     visitEncoding(node: Oas30Encoding): void { this._acceptAll(node); }
     visitEncodingProperty(node: Oas30EncodingProperty): void { this._acceptAll(node); }
     visitAllOfSchema(node: Oas30AllOfSchema): void { this._acceptAll(node); }

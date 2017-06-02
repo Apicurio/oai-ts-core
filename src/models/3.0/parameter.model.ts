@@ -19,6 +19,8 @@ import {IOas30NodeVisitor, IOasNodeVisitor} from "../../visitors/visitor.iface";
 import {IOasReferenceNode} from "../reference.model";
 import {OasParameterBase} from "../common/parameter.model";
 import {Oas30Schema} from "./schema.model";
+import {Oas30Example, Oas30ExampleItems} from "./example.model";
+import {Oas30Content} from "./content.model";
 
 
 /**
@@ -46,11 +48,8 @@ export abstract class Oas30ParameterBase extends OasParameterBase {
     public explode: boolean;
     public allowReserved: boolean;
     public example: any;
-    // TODO implement the "examples" property more properly!!
-    //public examples: any;
-    // TODO implement the 'content' property
-    //public content: Oas30Content;
-
+    public examples: Oas30ExampleItems;
+    public content: Oas30Content;
 
     /**
      * Creates a child schema model.
@@ -58,6 +57,81 @@ export abstract class Oas30ParameterBase extends OasParameterBase {
      */
     public createSchema(): Oas30Schema {
         let rval: Oas30Schema = new Oas30Schema();
+        rval._ownerDocument = this._ownerDocument;
+        rval._parent = this;
+        return rval;
+    }
+
+    /**
+     * Creates a child Example model.
+     * @return {Oas30Example}
+     */
+    public createExample(name: string): Oas30Example {
+        let rval: Oas30Example = new Oas30Example(name);
+        rval._ownerDocument = this._ownerDocument;
+        rval._parent = this;
+        return rval;
+    }
+
+    /**
+     * Adds the Example to the map of examples.
+     * @param example
+     */
+    public addExample(example: Oas30Example): void {
+        if (!this.examples) {
+            this.examples = new Oas30ExampleItems();
+        }
+        this.examples[example.name()] = example;
+    }
+
+    /**
+     * Removes an Example and returns it.
+     * @param name
+     * @return {Oas30Example}
+     */
+    public removeExample(name: string): Oas30Example {
+        let rval: Oas30Example = null;
+        if (this.examples) {
+            rval = this.examples[name];
+            delete this.examples[name];
+        }
+        return rval;
+    }
+
+    /**
+     * Gets a single example by name.
+     * @param name
+     * @return {any}
+     */
+    public getExample(name: string): Oas30Example {
+        if (this.examples) {
+            return this.examples[name];
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Gets all examples.
+     * @return {Oas30Example[]}
+     */
+    public getExamples(): Oas30Example[] {
+        let examples: Oas30Example[] = [];
+        if (this.examples) {
+            for (let exampleName in this.examples) {
+                let example: Oas30Example = this.examples[exampleName];
+                examples.push(example);
+            }
+        }
+        return examples;
+    }
+
+    /**
+     * Creates a child content model.
+     * @return {Oas30Content}
+     */
+    public createContent(): Oas30Content {
+        let rval: Oas30Content = new Oas30Content();
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;
@@ -120,3 +194,4 @@ export class Oas30Parameter extends Oas30ParameterBase implements IOasReferenceN
     }
 
 }
+

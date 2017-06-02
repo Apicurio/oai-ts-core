@@ -17,6 +17,7 @@
 
 import {OasHeader} from "../common/header.model";
 import {Oas30Schema} from "./schema.model";
+import {Oas30Example, Oas30ExampleItems} from "./example.model";
 
 /**
  * Models an OAS 3.0 Header object.  Example:
@@ -39,8 +40,7 @@ export class Oas30Header extends OasHeader {
     public allowReserved: boolean;
     public schema: Oas30Schema;
     public example: any;
-    // TODO implement the "examples" property more properly!!
-    public examples: any;
+    public examples: Oas30ExampleItems;
 
     /**
      * Constructor.
@@ -60,4 +60,69 @@ export class Oas30Header extends OasHeader {
         rval._parent = this;
         return rval;
     }
+
+    /**
+     * Creates a child Example model.
+     * @return {Oas30Example}
+     */
+    public createExample(name: string): Oas30Example {
+        let rval: Oas30Example = new Oas30Example(name);
+        rval._ownerDocument = this._ownerDocument;
+        rval._parent = this;
+        return rval;
+    }
+
+    /**
+     * Adds the Example to the map of examples.
+     * @param example
+     */
+    public addExample(example: Oas30Example): void {
+        if (!this.examples) {
+            this.examples = new Oas30ExampleItems();
+        }
+        this.examples[example.name()] = example;
+    }
+
+    /**
+     * Removes an Example and returns it.
+     * @param name
+     * @return {Oas30Example}
+     */
+    public removeExample(name: string): Oas30Example {
+        let rval: Oas30Example = null;
+        if (this.examples) {
+            rval = this.examples[name];
+            delete this.examples[name];
+        }
+        return rval;
+    }
+
+    /**
+     * Gets a single example by name.
+     * @param name
+     * @return {any}
+     */
+    public getExample(name: string): Oas30Example {
+        if (this.examples) {
+            return this.examples[name];
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Gets all examples.
+     * @return {Oas30Example[]}
+     */
+    public getExamples(): Oas30Example[] {
+        let examples: Oas30Example[] = [];
+        if (this.examples) {
+            for (let exampleName in this.examples) {
+                let example: Oas30Example = this.examples[exampleName];
+                examples.push(example);
+            }
+        }
+        return examples;
+    }
+
 }

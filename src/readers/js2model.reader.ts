@@ -79,13 +79,15 @@ import {Oas30PathItem} from "../models/3.0/path-item.model";
 import {Oas30Operation} from "../models/3.0/operation.model";
 import {Oas30Parameter, Oas30ParameterBase} from "../models/3.0/parameter.model";
 import {Oas30Schema} from "../models/3.0/schema.model";
-import {Oas30Response} from "../models/3.0/response.model";
+import {Oas30Response, Oas30ResponseBase} from "../models/3.0/response.model";
 import {Oas30Header} from "../models/3.0/header.model";
 import {Oas30RequestBody} from "../models/3.0/request-body.model";
 import {Oas30Content} from "../models/3.0/content.model";
 import {Oas30MediaType} from "../models/3.0/media-type.model";
 import {Oas30Encoding} from "../models/3.0/encoding.model";
 import {Oas30EncodingProperty} from "../models/3.0/encoding-property.model";
+import {Oas30Example} from "../models/3.0/example.model";
+import {Oas30Headers} from "../models/3.0/headers.model";
 
 
 /**
@@ -384,8 +386,8 @@ export abstract class OasJS2ModelReader {
         let enum_: any[] = schema["enum"];
         let type: string = schema["type"];
 
-        let items: Oas20Schema[] = schema["items"];
-        let allOf: Oas20Schema[] = schema["allOf"];
+        let items: any[] = schema["items"];
+        let allOf: any[] = schema["allOf"];
         let properties: any = schema["properties"];
         let additionalProperties: boolean | Oas20Schema = schema["additionalProperties"];
 
@@ -1211,7 +1213,40 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      * @param headerModel
      */
     protected readHeader(header: any, headerModel: Oas30Header): void {
-        // TODO read a header
+        let description: string = header["description"];
+        let required: boolean = header["required"];
+        let schema: any = header["schema"];
+        let allowEmptyValue: boolean = header["allowEmptyValue"];
+        let deprecated: boolean = header["deprecated"];
+        let style: string = header["style"];
+        let explode: boolean = header["explode"];
+        let allowReserved: boolean = header["allowReserved"];
+        let example: any = header["example"];
+        let examples: any = header["examples"];
+
+        if (this.isDefined(description)) { headerModel.description = description; }
+        if (this.isDefined(required)) { headerModel.required = required; }
+        if (this.isDefined(schema)) {
+            let schemaModel: Oas30Schema = headerModel.createSchema();
+            this.readSchema(schema, schemaModel);
+            headerModel.schema = schemaModel;
+        }
+        if (this.isDefined(allowEmptyValue)) { headerModel.allowEmptyValue = allowEmptyValue; }
+        if (this.isDefined(deprecated)) { headerModel.deprecated = deprecated; }
+        if (this.isDefined(style)) { headerModel.style = style; }
+        if (this.isDefined(explode)) { headerModel.explode = explode; }
+        if (this.isDefined(allowReserved)) { headerModel.allowReserved = allowReserved; }
+        if (this.isDefined(example)) { headerModel.example = example; }
+        if (this.isDefined(examples)) {
+            for (let exampleName in examples) {
+                let exx: any = examples[exampleName];
+                let exampleModel: Oas30Example = headerModel.createExample(exampleName);
+                this.readExample(exx, exampleModel);
+                headerModel.addExample(exampleModel);
+            }
+        }
+
+        this.readExtensions(header, headerModel);
     }
 
     /**
@@ -1231,8 +1266,8 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         let explode: boolean = parameter["explode"];
         let allowReserved: boolean = parameter["allowReserved"];
         let example: any = parameter["example"];
-        let examples: any = parameter["examples"]; // TODO read the examples
-        let content: any = parameter["content"]; // TODO read the content
+        let examples: any = parameter["examples"];
+        let content: any = parameter["content"];
 
         if (this.isDefined(name)) { paramModel.name = name; }
         if (this.isDefined(in_)) { paramModel.in = in_; }
@@ -1249,6 +1284,19 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         if (this.isDefined(explode)) { paramModel.explode = explode; }
         if (this.isDefined(allowReserved)) { paramModel.allowReserved = allowReserved; }
         if (this.isDefined(example)) { paramModel.example = example; }
+        if (this.isDefined(examples)) {
+            for (let exampleName in examples) {
+                let exx: any = examples[exampleName];
+                let exampleModel: Oas30Example = paramModel.createExample(exampleName);
+                this.readExample(exx, exampleModel);
+                paramModel.addExample(exampleModel);
+            }
+        }
+        if (this.isDefined(content)) {
+            let contentModel: Oas30Content = paramModel.createContent();
+            this.readContent(content, contentModel);
+            paramModel.content = contentModel;
+        }
 
         this.readExtensions(parameter, paramModel);
     }
@@ -1339,7 +1387,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
     public readMediaType(mediaType: any, mediaTypeModel: Oas30MediaType): void {
         let schema: any = mediaType["schema"];
         let example: any = mediaType["example"];
-        let examples: any = mediaType["examples"]; // TODO read the examples
+        let examples: any = mediaType["examples"];
         let encoding: any = mediaType["encoding"];
 
         if (this.isDefined(schema)) {
@@ -1348,6 +1396,14 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
             mediaTypeModel.schema = schemaModel;
         }
         if (this.isDefined(example)) { mediaTypeModel.example = example; }
+        if (this.isDefined(examples)) {
+            for (let exampleName in examples) {
+                let exx: any = examples[exampleName];
+                let exampleModel: Oas30Example = mediaTypeModel.createExample(exampleName);
+                this.readExample(exx, exampleModel);
+                mediaTypeModel.addExample(exampleModel);
+            }
+        }
         if (this.isDefined(encoding)) {
             let encodingModel: Oas30Encoding = mediaTypeModel.createEncoding();
             this.readEncoding(encoding, encodingModel);
@@ -1355,6 +1411,27 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         }
 
         this.readExtensions(mediaType, mediaTypeModel);
+    }
+
+    /**
+     * Reads an OAS 3.0 Example from the given js data.
+     * @param example
+     * @param exampleModel
+     */
+    private readExample(example: any, exampleModel: Oas30Example) {
+        let $ref: string = example["$ref"];
+        let summary: string = example["summary"];
+        let description: string = example["description"];
+        let value: any = example["value"];
+        let externalValue: string = example["externalValue"];
+
+        if (this.isDefined($ref)) { exampleModel.$ref = $ref; }
+        if (this.isDefined(summary)) { exampleModel.summary = summary; }
+        if (this.isDefined(description)) { exampleModel.description = description; }
+        if (this.isDefined(value)) { exampleModel.value = value; }
+        if (this.isDefined(externalValue)) { exampleModel.externalValue = externalValue; }
+
+        this.readExtensions(example, exampleModel);
     }
 
     /**
@@ -1399,7 +1476,34 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      * @param responseModel
      */
     public readResponse(response: any, responseModel: Oas30Response): void {
-        // TODO read a response
+        let $ref: string = response["$ref"];
+        if (this.isDefined($ref)) { responseModel.$ref = $ref; }
+
+        this.readResponseBase(response, responseModel);
+    }
+    /**
+     * Reads an OAS 3.0 Response object from the given JS data.
+     * @param response
+     * @param responseModel
+     */
+    private readResponseBase(response: any, responseModel: Oas30ResponseBase): void {
+        let description: string = response["description"];
+        let headers: any = response["headers"];
+        let content: any = response["content"];
+        let links: any = response["links"]; // TODO read the links
+
+        if (this.isDefined(description)) { responseModel.description = description; }
+        if (this.isDefined(headers)) {
+            let headersModel: Oas30Headers = responseModel.createHeaders();
+            this.readHeaders(headers, headersModel);
+            responseModel.headers = headersModel;
+        }
+        if (this.isDefined(content)) {
+            let contentModel: Oas30Content = responseModel.createContent();
+            this.readContent(content, contentModel);
+            responseModel.content = contentModel;
+        }
+        this.readExtensions(response, responseModel);
     }
 
     /**
@@ -1407,9 +1511,36 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      * @param schema
      * @param schemaModel
      */
-    public readSchema(schema: any, schemaModel: OasSchema) {
+    public readSchema(schema: any, schemaModel: Oas30Schema) {
         super.readSchema(schema, schemaModel);
-        // TODO read a 3.0 schema
+
+        let oneOf: any[] = schema["oneOf"];
+        let anyOf: any[] = schema["anyOf"];
+        let not: any = schema["not"];
+
+        let nullable: boolean = schema["nullable"];
+        let writeOnly: boolean = schema["writeOnly"];
+        let deprecated: boolean = schema["deprecated"];
+
+        if (this.isDefined(oneOf)) {
+            let schemaModels: OasSchema[] = [];
+            for (let oneOfSchema of oneOf) {
+                let oneOfSchemaModel: OasSchema = schemaModel.createOneOfSchema();
+                this.readSchema(oneOfSchema, oneOfSchemaModel as Oas30Schema);
+                schemaModels.push(oneOfSchemaModel);
+            }
+            schemaModel.oneOf = schemaModels;
+        }
+        if (this.isDefined(anyOf)) {
+            let schemaModels: OasSchema[] = [];
+            for (let anyOfSchema of anyOf) {
+                let anyOfSchemaModel: OasSchema = schemaModel.createAnyOfSchema();
+                this.readSchema(anyOfSchema, anyOfSchemaModel as Oas30Schema);
+                schemaModels.push(anyOfSchemaModel);
+            }
+            schemaModel.anyOf = schemaModels;
+        }
+
     }
 
     /**
@@ -1465,4 +1596,5 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
 
         this.readExtensions(serverVariable, serverVariableModel);
     }
+
 }

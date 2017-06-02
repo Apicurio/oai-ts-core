@@ -81,6 +81,7 @@ import {Oas30Encoding} from "../models/3.0/encoding.model";
 import {Oas30EncodingProperty} from "../models/3.0/encoding-property.model";
 import {Oas30Content} from "../models/3.0/content.model";
 import {Oas30MediaType} from "../models/3.0/media-type.model";
+import {Oas30Example} from "../models/3.0/example.model";
 
 
 /**
@@ -1214,6 +1215,27 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
         parentJS[node.name()] = encodingProperty;
         this.updateIndex(node, encodingProperty);
     }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    visitExample(node: Oas30Example): void {
+        let parentJS: any = this.lookupParentJS(node);
+        let example: any = {
+            "$ref" : node.$ref,
+            "summary" : node.summary,
+            "description" : node.description,
+            "value" : node.value,
+            "externalValue" : node.externalValue
+        };
+        if (!parentJS.examples) {
+            parentJS.examples = {};
+        }
+        parentJS.examples[node.name()] = example;
+        this.updateIndex(node, example);
+    }
+
 
     /**
      * Visits a node.

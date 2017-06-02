@@ -119,8 +119,8 @@ describe("Full I/O (2.0)", () => {
             let document: Oas20Document = <Oas20Document>library.createDocument(json);
             let jsObj: any = library.writeNode(document);
             if (spec.debug) {
-                console.info("------- INPUT --------\n " + JSON.stringify(json, null, 2) + "\n-------------------")
-                console.info("------- ACTUAL --------\n " + JSON.stringify(jsObj, null, 2) + "\n-------------------")
+                console.info("------- INPUT --------\n " + JSON.stringify(json, null, 2) + "\n-------------------");
+                console.info("------- ACTUAL --------\n " + JSON.stringify(jsObj, null, 2) + "\n-------------------");
             }
             expect(jsObj).toEqual(json);
         });
@@ -153,7 +153,11 @@ describe("Full I/O (3.0)", () => {
         { name: "Paths (GET+Servers)",                  test: "tests/fixtures/full-io/3.0/paths/paths-get-servers.json" },
         { name: "Paths (GET+Security)",                 test: "tests/fixtures/full-io/3.0/paths/paths-get-security.json" },
         { name: "Paths (GET+Parameters)",               test: "tests/fixtures/full-io/3.0/paths/paths-get-parameters.json" },
-        { name: "Paths (GET+RequestBody)",              test: "tests/fixtures/full-io/3.0/paths/paths-get-requestBody.json", debug: true },
+        { name: "Paths (GET+RequestBody)",              test: "tests/fixtures/full-io/3.0/paths/paths-get-requestBody.json" },
+        { name: "Paths (GET+RequestBody+Examples)",     test: "tests/fixtures/full-io/3.0/paths/paths-get-requestBody.json" },
+        { name: "Paths (GET+Responses)",                test: "tests/fixtures/full-io/3.0/paths/paths-get-responses.json" },
+        { name: "Paths (GET+Response+Header)",          test: "tests/fixtures/full-io/3.0/paths/paths-get-response-headers.json" },
+        { name: "Paths (GET+Response+Content)",         test: "tests/fixtures/full-io/3.0/paths/paths-get-response-content.json", debug: true },
     ];
 
     let library: OasLibraryUtils;
@@ -172,8 +176,8 @@ describe("Full I/O (3.0)", () => {
             let document: Oas30Document = <Oas30Document>library.createDocument(json);
             let jsObj: any = library.writeNode(document);
             if (spec.debug) {
-                console.info("------- INPUT --------\n " + JSON.stringify(json, null, 2) + "\n-------------------")
-                console.info("------- ACTUAL --------\n " + JSON.stringify(jsObj, null, 2) + "\n-------------------")
+                console.info("------- INPUT --------\n " + JSON.stringify(json, null, 2) + "\n-------------------");
+                console.info("------- ACTUAL --------\n " + JSON.stringify(jsObj, null, 2) + "\n-------------------");
             }
             expect(jsObj).toEqual(json);
         });
