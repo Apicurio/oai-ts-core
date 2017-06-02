@@ -81,6 +81,11 @@ import {Oas30Parameter, Oas30ParameterBase} from "../models/3.0/parameter.model"
 import {Oas30Schema} from "../models/3.0/schema.model";
 import {Oas30Response} from "../models/3.0/response.model";
 import {Oas30Header} from "../models/3.0/header.model";
+import {Oas30RequestBody} from "../models/3.0/request-body.model";
+import {Oas30Content} from "../models/3.0/content.model";
+import {Oas30MediaType} from "../models/3.0/media-type.model";
+import {Oas30Encoding} from "../models/3.0/encoding.model";
+import {Oas30EncodingProperty} from "../models/3.0/encoding-property.model";
 
 
 /**
@@ -1268,9 +1273,15 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
     public readOperation(operation: any, operationModel: Oas30Operation): void {
         super.readOperation(operation, operationModel);
 
-        let requestBody: any = operation["requestBody"]; // TODO read request body
+        let requestBody: any = operation["requestBody"];
         let callbacks: any = operation["callbacks"]; // TODO read callbacks
         let servers: Oas30Server[] = operation["servers"];
+
+        if (this.isDefined(requestBody)) {
+            let requestBodyModel: Oas30RequestBody = operationModel.createRequestBody();
+            this.readRequestBody(requestBody, requestBodyModel);
+            operationModel.requestBody = requestBodyModel;
+        }
 
         if (Array.isArray(servers)) {
             operationModel.servers = [];
@@ -1280,6 +1291,106 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
                 operationModel.servers.push(serverModel);
             })
         }
+    }
+
+    /**
+     * Reads an OAS 3.0 Request Body object from the given JS data.
+     * @param requestBody
+     * @param requestBodyModel
+     */
+    public readRequestBody(requestBody: any, requestBodyModel: Oas30RequestBody): void {
+        let $ref: string = requestBody["$ref"];
+        let description: string = requestBody["description"];
+        let content: any = requestBody["content"];
+        let required: boolean = requestBody["required"];
+
+        if (this.isDefined($ref)) { requestBodyModel.$ref = $ref; }
+        if (this.isDefined(description)) { requestBodyModel.description = description; }
+        if (this.isDefined(content)) {
+            let contentModel: Oas30Content = requestBodyModel.createContent();
+            this.readContent(content, contentModel);
+            requestBodyModel.content = contentModel;
+        }
+        if (this.isDefined(required)) { requestBodyModel.required = required; }
+
+        this.readExtensions(requestBody, requestBodyModel);
+    }
+
+    /**
+     * Reads an OAS 3.0 Content from the given js data.
+     * @param content
+     * @param contentModel
+     */
+    public readContent(content: any, contentModel: Oas30Content): void {
+        for (let name in content) {
+            if (name.indexOf("x-") === 0) { continue; } // skip extension properties
+            let mediaType: any = content[name];
+            let mediaTypeModel: Oas30MediaType = contentModel.createMediaType(name);
+            this.readMediaType(mediaType, mediaTypeModel);
+            contentModel.addMediaType(name, mediaTypeModel);
+        }
+    }
+
+    /**
+     * Reads an OAS 3.0 Media Type from the given js data.
+     * @param mediaType
+     * @param mediaTypeModel
+     */
+    public readMediaType(mediaType: any, mediaTypeModel: Oas30MediaType): void {
+        let schema: any = mediaType["schema"];
+        let example: any = mediaType["example"];
+        let examples: any = mediaType["examples"]; // TODO read the examples
+        let encoding: any = mediaType["encoding"];
+
+        if (this.isDefined(schema)) {
+            let schemaModel: Oas30Schema = mediaTypeModel.createSchema();
+            this.readSchema(schema, schemaModel);
+            mediaTypeModel.schema = schemaModel;
+        }
+        if (this.isDefined(example)) { mediaTypeModel.example = example; }
+        if (this.isDefined(encoding)) {
+            let encodingModel: Oas30Encoding = mediaTypeModel.createEncoding();
+            this.readEncoding(encoding, encodingModel);
+            mediaTypeModel.encoding = encodingModel;
+        }
+
+        this.readExtensions(mediaType, mediaTypeModel);
+    }
+
+    /**
+     * Reads an OAS 3.0 Encoding from the given js data.
+     * @param encoding
+     * @param encodingModel
+     */
+    public readEncoding(encoding: any, encodingModel: Oas30Encoding): void {
+        for (let name in encoding) {
+            if (name.indexOf("x-") === 0) { continue; } // skip extension properties
+            let encodingProperty: any = encoding[name];
+            let encodingPropertyModel: Oas30EncodingProperty = encodingModel.createEncodingProperty(name);
+            this.readEncodingProperty(encodingProperty, encodingPropertyModel);
+            encodingModel.addEncodingProperty(name, encodingPropertyModel);
+        }
+    }
+
+    /**
+     * Reads an OAS 3.0 Encoding Property from the given js data.
+     * @param encodingProperty
+     * @param encodingPropertyModel
+     */
+    public readEncodingProperty(encodingProperty: any, encodingPropertyModel: Oas30EncodingProperty): void {
+        let contentType: string = encodingProperty["contentType"];
+        let headers: any = encodingProperty["headers"];
+        let style: string = encodingProperty["style"];
+        let explode: boolean = encodingProperty["explode"];
+        let allowReserved: boolean = encodingProperty["allowReserved"];
+
+        if (this.isDefined(contentType)) { encodingPropertyModel.contentType = contentType; }
+        if (this.isDefined(headers)) { encodingPropertyModel.headers = headers; }
+        if (this.isDefined(style)) { encodingPropertyModel.style = style; }
+        if (this.isDefined(explode)) { encodingPropertyModel.explode = explode; }
+        if (this.isDefined(allowReserved)) { encodingPropertyModel.allowReserved = allowReserved; }
+
+        this.readExtensions(encodingProperty, encodingPropertyModel);
     }
 
     /**

@@ -90,6 +90,10 @@ import {Oas30Parameter, Oas30ParameterDefinition} from "../models/3.0/parameter.
 import {Oas30Header} from "../models/3.0/header.model";
 import {OasXML} from "../models/common/xml.model";
 import {Oas30XML} from "../models/3.0/xml.model";
+import {Oas30Content} from "../models/3.0/content.model";
+import {Oas30EncodingProperty} from "../models/3.0/encoding-property.model";
+import {Oas30Encoding} from "../models/3.0/encoding.model";
+import {Oas30MediaType} from "../models/3.0/media-type.model";
 
 
 /**
@@ -171,6 +175,10 @@ export interface IOas30NodeVisitor extends IOasNodeVisitor {
     visitParameterDefinition(node: Oas30ParameterDefinition): void;
     visitResponses(node: Oas30Responses): void;
     visitResponse(node: Oas30Response): void;
+    visitContent(node: Oas30Content): void;
+    visitMediaType(node: Oas30MediaType): void;
+    visitEncoding(node: Oas30Encoding): void;
+    visitEncodingProperty(node: Oas30EncodingProperty): void;
     visitResponseDefinition(node: Oas30ResponseDefinition): void;
     visitSchema(node: Oas30Schema): void;
     visitXML(node: Oas30XML): void;

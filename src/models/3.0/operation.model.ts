@@ -160,6 +160,17 @@ export class Oas30Operation extends OasOperation implements IOasParameterParent 
     }
 
     /**
+     * Creates a child RequestBody model.
+     * @return {Oas30Callbacks}
+     */
+    public createRequestBody(): Oas30RequestBody {
+        let rval: Oas30RequestBody = new Oas30RequestBody();
+        rval._ownerDocument = this._ownerDocument;
+        rval._parent = this;
+        return rval;
+    }
+
+    /**
      * Creates an OAS 3.0 Server object.
      * @return {Oas30Info}
      */

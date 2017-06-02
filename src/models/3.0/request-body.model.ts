@@ -19,6 +19,7 @@ import {OasExtensibleNode} from "../enode.model";
 import {Oas30ServerVariables} from "./server-variables.model";
 import {IOas30NodeVisitor, IOasNodeVisitor} from "../../visitors/visitor.iface";
 import {IOasReferenceNode} from "../reference.model";
+import {Oas30Content} from "./content.model";
 
 /**
  * Models an OAS 3.0 RequestBody object.  Example:
@@ -72,7 +73,7 @@ export class Oas30RequestBody extends OasExtensibleNode implements IOasReference
 
     public $ref: string;
     public description: string;
-    //public content: Oas30Content;
+    public content: Oas30Content;
     public required: boolean;
 
     /**
@@ -82,6 +83,17 @@ export class Oas30RequestBody extends OasExtensibleNode implements IOasReference
     public accept(visitor: IOasNodeVisitor): void {
         let viz: IOas30NodeVisitor = <IOas30NodeVisitor> visitor;
         viz.visitRequestBody(this);
+    }
+
+    /**
+     * Creates a 3.0 Content object.
+     * @return {Oas30Content}
+     */
+    public createContent(): Oas30Content {
+        let rval: Oas30Content = new Oas30Content();
+        rval._ownerDocument = this._ownerDocument;
+        rval._parent = this;
+        return rval;
     }
 
 }

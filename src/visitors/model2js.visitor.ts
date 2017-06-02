@@ -77,6 +77,10 @@ import {OasPathItem} from "../models/common/path-item.model";
 import {OasOperation} from "../models/common/operation.model";
 import {OasHeader} from "../models/common/header.model";
 import {OasSchema} from "../models/common/schema.model";
+import {Oas30Encoding} from "../models/3.0/encoding.model";
+import {Oas30EncodingProperty} from "../models/3.0/encoding-property.model";
+import {Oas30Content} from "../models/3.0/content.model";
+import {Oas30MediaType} from "../models/3.0/media-type.model";
 
 
 /**
@@ -257,10 +261,6 @@ export abstract class OasModelToJSVisitor implements IOasNodeVisitor {
      */
     public visitPaths(node: OasPaths): void {
         let paths: any = {};
-        // if ((node.pathItemNames() && node.pathItemNames().length > 0) ||
-        //     (node.extensions() && node.extensions().length > 0)) {
-        //     paths = <any>{};
-        // }
         let parentJS: any = this.lookupParentJS(node);
         parentJS.paths = paths;
         this.updateIndex(node, paths);
@@ -1149,7 +1149,70 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * @param node
      */
     visitRequestBody(node: Oas30RequestBody): void {
-        // TODO implement visitRequestBody()
+        let parentJS: any = this.lookupParentJS(node);
+        let requestBody: any = {
+            "$ref": node.$ref,
+            "description": node.description,
+            "content": null,
+            "required": node.required
+        };
+        parentJS.requestBody = requestBody;
+        this.updateIndex(node, requestBody);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    visitContent(node: Oas30Content): void {
+        let content: any = {};
+        let parentJS: any = this.lookupParentJS(node);
+        parentJS.content = content;
+        this.updateIndex(node, content);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    visitMediaType(node: Oas30MediaType): void {
+        let parentJS: any = this.lookupParentJS(node);
+        let mediaType: any = {
+            "schema": null,
+            "example": node.example,
+            "examples": null,
+            "encoding": null
+        }
+        parentJS[node.name()] = mediaType;
+        this.updateIndex(node, mediaType);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    visitEncoding(node: Oas30Encoding): void {
+        let encoding: any = {};
+        let parentJS: any = this.lookupParentJS(node);
+        parentJS.content = encoding;
+        this.updateIndex(node, encoding);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    visitEncodingProperty(node: Oas30EncodingProperty): void {
+        let parentJS: any = this.lookupParentJS(node);
+        let encodingProperty: any = {
+            "contentType": node.contentType,
+            "headers": node.headers,
+            "style": node.style,
+            "explode": node.explode,
+            "allowReserved": node.allowReserved
+        };
+        parentJS[node.name()] = encodingProperty;
+        this.updateIndex(node, encodingProperty);
     }
 
     /**

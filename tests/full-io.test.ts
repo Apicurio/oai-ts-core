@@ -150,7 +150,10 @@ describe("Full I/O (3.0)", () => {
         { name: "Paths (All Operations)",               test: "tests/fixtures/full-io/3.0/paths/paths-all-operations.json" },
         { name: "Paths (Servers)",                      test: "tests/fixtures/full-io/3.0/paths/paths-servers.json" },
         { name: "Paths (Parameters)",                   test: "tests/fixtures/full-io/3.0/paths/paths-parameters.json" },
-        { name: "Paths (GET+Servers)",                  test: "tests/fixtures/full-io/3.0/paths/paths-get-with-servers.json", debug: true },
+        { name: "Paths (GET+Servers)",                  test: "tests/fixtures/full-io/3.0/paths/paths-get-servers.json" },
+        { name: "Paths (GET+Security)",                 test: "tests/fixtures/full-io/3.0/paths/paths-get-security.json" },
+        { name: "Paths (GET+Parameters)",               test: "tests/fixtures/full-io/3.0/paths/paths-get-parameters.json" },
+        { name: "Paths (GET+RequestBody)",              test: "tests/fixtures/full-io/3.0/paths/paths-get-requestBody.json", debug: true },
     ];
 
     let library: OasLibraryUtils;
