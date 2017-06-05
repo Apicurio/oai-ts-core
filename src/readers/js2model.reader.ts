@@ -92,6 +92,8 @@ import {Oas30Links} from "../models/3.0/links.model";
 import {Oas30Link} from "../models/3.0/link.model";
 import {Oas30LinkParameters} from "../models/3.0/link-parameters.model";
 import {Oas30LinkParameterExpression} from "../models/3.0/link-parameter-expression.model";
+import {Oas30Callbacks} from "../models/3.0/callbacks.model";
+import {Oas30Callback} from "../models/3.0/callback.model";
 
 
 /**
@@ -1326,7 +1328,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         super.readOperation(operation, operationModel);
 
         let requestBody: any = operation["requestBody"];
-        let callbacks: any = operation["callbacks"]; // TODO read callbacks
+        let callbacks: any = operation["callbacks"];
         let servers: Oas30Server[] = operation["servers"];
 
         if (this.isDefined(requestBody)) {
@@ -1334,7 +1336,11 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
             this.readRequestBody(requestBody, requestBodyModel);
             operationModel.requestBody = requestBodyModel;
         }
-
+        if (this.isDefined(callbacks)) {
+            let callbacksModel: Oas30Callbacks = operationModel.createCallbacks();
+            this.readCallbacks(callbacks, callbacksModel);
+            operationModel.callbacks = callbacksModel;
+        }
         if (Array.isArray(servers)) {
             operationModel.servers = [];
             servers.forEach( server => {
@@ -1343,6 +1349,42 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
                 operationModel.servers.push(serverModel);
             })
         }
+    }
+
+    /**
+     * Reads an OAS 3.0 Callbacks object from the given JS data.
+     * @param callbacks
+     * @param callbacksModel
+     */
+    public readCallbacks(callbacks: any, callbacksModel: Oas30Callbacks): void {
+        for (let name in callbacks) {
+            if (name.indexOf("x-") === 0) { continue; }
+            let callback: any = callbacks[name];
+            let callbackModel: Oas30Callback = callbacksModel.createCallback(name);
+            this.readCallback(callback, callbackModel);
+            callbacksModel.addCallback(name, callbackModel);
+        }
+        this.readExtensions(callbacks, callbacksModel);
+    }
+
+    /**
+     * Reads an OAS 3.0 Callback object from the given JS data.
+     * @param callback
+     * @param callbackModel
+     */
+    public readCallback(callback: any, callbackModel: Oas30Callback): void {
+        for (let name in callback) {
+            if (name.indexOf("x-") === 0) { continue; }
+            if (name === "$ref") {
+                callbackModel.$ref = callback[name];
+                continue;
+            }
+            let pathItem: any = callback[name];
+            let pathItemModel: Oas30PathItem = callbackModel.createPathItem(name);
+            this.readPathItem(pathItem, pathItemModel);
+            callbackModel.addPathItem(name, pathItemModel);
+        }
+        this.readExtensions(callback, callbackModel);
     }
 
     /**

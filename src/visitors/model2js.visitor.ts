@@ -53,7 +53,7 @@ import {OasTag} from "../models/common/tag.model";
 import {OasExternalDocumentation} from "../models/common/external-documentation.model";
 import {OasHeaders} from "../models/common/headers.model";
 import {OasPaths} from "../models/common/paths.model";
-import {Oas30PathItem} from "../models/3.0/path-item.model";
+import {Oas30CallbackPathItem, Oas30PathItem} from "../models/3.0/path-item.model";
 import {Oas30Operation} from "../models/3.0/operation.model";
 import {Oas30Parameter, Oas30ParameterBase, Oas30ParameterDefinition} from "../models/3.0/parameter.model";
 import {OasResponses} from "../models/common/responses.model";
@@ -86,6 +86,7 @@ import {Oas30Links} from "../models/3.0/links.model";
 import {Oas30Link} from "../models/3.0/link.model";
 import {Oas30LinkParameters} from "../models/3.0/link-parameters.model";
 import {Oas30LinkParameterExpression} from "../models/3.0/link-parameter-expression.model";
+import {Oas30Callback} from "../models/3.0/callback.model";
 
 
 /**
@@ -1313,8 +1314,34 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * @param node
      */
     public visitCallbacks(node: Oas30Callbacks): void {
-        // TODO implement visitCallbacks()
+        let callbacks: any = {};
+        let parentJS: any = this.lookupParentJS(node);
+        parentJS.callbacks = callbacks;
+        this.updateIndex(node, callbacks);
     }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitCallback(node: Oas30Callback): void {
+        let callback: any = {};
+        let parentJS: any = this.lookupParentJS(node);
+        if (this.isDefined(node.$ref)) {
+            callback.$ref = node.$ref;
+        }
+        parentJS[node.name()] = callback;
+        this.updateIndex(node, callback);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitCallbackPathItem(node: Oas30CallbackPathItem): void {
+        this.visitPathItem(node);
+    }
+
 
     /**
      * Visits a node.

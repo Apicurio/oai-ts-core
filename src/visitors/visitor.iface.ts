@@ -68,7 +68,7 @@ import {Oas30Tag} from "../models/3.0/tag.model";
 import {OasPaths} from "../models/common/paths.model";
 import {OasPathItem} from "../models/common/path-item.model";
 import {Oas30Paths} from "../models/3.0/paths.model";
-import {Oas30PathItem} from "../models/3.0/path-item.model";
+import {Oas30CallbackPathItem, Oas30PathItem} from "../models/3.0/path-item.model";
 import {Oas30RequestBody} from "../models/3.0/request-body.model";
 import {Oas30Callbacks} from "../models/3.0/callbacks.model";
 import {OasOperation} from "../models/common/operation.model";
@@ -99,6 +99,7 @@ import {Oas30Link} from "../models/3.0/link.model";
 import {Oas30Links} from "../models/3.0/links.model";
 import {Oas30LinkParameterExpression} from "../models/3.0/link-parameter-expression.model";
 import {Oas30LinkParameters} from "../models/3.0/link-parameters.model";
+import {Oas30Callback} from "../models/3.0/callback.model";
 
 
 /**
@@ -197,6 +198,8 @@ export interface IOas30NodeVisitor extends IOasNodeVisitor {
     visitHeader(node: Oas30Header): void;
     visitRequestBody(node: Oas30RequestBody): void;
     visitCallbacks(node: Oas30Callbacks): void;
+    visitCallback(node: Oas30Callback): void;
+    visitCallbackPathItem(node: Oas30CallbackPathItem): void;
     visitServer(node: Oas30Server): void;
     visitServerVariables(node: Oas30ServerVariables): void;
     visitServerVariable(node: Oas30ServerVariable): void;

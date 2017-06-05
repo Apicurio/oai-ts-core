@@ -79,6 +79,8 @@ import {Oas30Links} from "../models/3.0/links.model";
 import {Oas30Link} from "../models/3.0/link.model";
 import {Oas30LinkParameters} from "../models/3.0/link-parameters.model";
 import {Oas30LinkParameterExpression} from "../models/3.0/link-parameter-expression.model";
+import {Oas30Callback} from "../models/3.0/callback.model";
+import {Oas30CallbackPathItem} from "../models/3.0/path-item.model";
 
 
 /**
@@ -154,6 +156,8 @@ export class Oas30NodeVisitorAdapter extends OasNodeVisitorAdapter implements IO
     public visitEncoding(node: Oas30Encoding): void {}
     public visitEncodingProperty(node: Oas30EncodingProperty): void {}
     public visitCallbacks(node: Oas30Callbacks): void {}
+    public visitCallback(node: Oas30Callback): void {}
+    public visitCallbackPathItem(node: Oas30CallbackPathItem): void {}
     public visitAllOfSchema(node: Oas30AllOfSchema): void {}
     public visitAnyOfSchema(node: Oas30AnyOfSchema): void {}
     public visitOneOfSchema(node: Oas30OneOfSchema): void {}
@@ -294,6 +298,8 @@ export class Oas30CompositeVisitor extends OasCompositeVisitor implements IOas30
     visitResponseDefinition(node: Oas30ResponseDefinition): void { this._acceptAll(node); }
     visitRequestBody(node: Oas30RequestBody): void { this._acceptAll(node); }
     visitCallbacks(node: Oas30Callbacks): void { this._acceptAll(node); }
+    visitCallback(node: Oas30Callback): void { this._acceptAll(node); }
+    visitCallbackPathItem(node: Oas30CallbackPathItem): void { this._acceptAll(node); }
     visitContent(node: Oas30Content): void { this._acceptAll(node); }
     visitMediaType(node: Oas30MediaType): void { this._acceptAll(node); }
     visitExample(node: Oas30Example): void { this._acceptAll(node); }

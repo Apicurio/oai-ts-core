@@ -19,6 +19,7 @@ import {Oas30Operation} from "./operation.model";
 import {Oas30Parameter} from "./parameter.model";
 import {OasPathItem} from "../common/path-item.model";
 import {Oas30Server} from "./server.model";
+import {IOas30NodeVisitor, IOasNodeVisitor} from "../../visitors/visitor.iface";
 
 /**
  * Models an OAS 3.0 Path Item object.  Example:
@@ -116,6 +117,22 @@ export class Oas30PathItem extends OasPathItem {
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;
+    }
+
+}
+
+/**
+ * A path item defined within a callback.
+ */
+export class Oas30CallbackPathItem extends Oas30PathItem {
+
+    /**
+     * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.
+     * @param visitor
+     */
+    public accept(visitor: IOasNodeVisitor): void {
+        let viz: IOas30NodeVisitor = visitor as IOas30NodeVisitor;
+        viz.visitCallbackPathItem(this);
     }
 
 }

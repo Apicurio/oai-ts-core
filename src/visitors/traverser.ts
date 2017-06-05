@@ -75,7 +75,7 @@ import {
     Oas30PropertySchema,
     Oas30Schema
 } from "../models/3.0/schema.model";
-import {Oas30PathItem} from "../models/3.0/path-item.model";
+import {Oas30CallbackPathItem, Oas30PathItem} from "../models/3.0/path-item.model";
 import {Oas30Operation} from "../models/3.0/operation.model";
 import {Oas30Header} from "../models/3.0/header.model";
 import {Oas30Content} from "../models/3.0/content.model";
@@ -88,6 +88,7 @@ import {Oas30Links} from "../models/3.0/links.model";
 import {Oas30Link} from "../models/3.0/link.model";
 import {Oas30LinkParameters} from "../models/3.0/link-parameters.model";
 import {Oas30LinkParameterExpression} from "../models/3.0/link-parameter-expression.model";
+import {Oas30Callback} from "../models/3.0/callback.model";
 
 /**
  * Interface implemented by all traversers.
@@ -832,8 +833,26 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
      */
     public visitCallbacks(node: Oas30Callbacks): void {
         node.accept(this.visitor);
-        // TODO traverse the callbacks
+        this.traverseIndexedNode(node);
         this.traverseExtensions(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitCallback(node: Oas30Callback): void {
+        node.accept(this.visitor);
+        this.traverseIndexedNode(node);
+        this.traverseExtensions(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitCallbackPathItem(node: Oas30CallbackPathItem): void {
+        this.visitPathItem(node);
     }
 
     /**
@@ -1224,6 +1243,16 @@ export class Oas30ReverseTraverser extends OasReverseTraverser implements IOas30
     }
 
     visitCallbacks(node: Oas30Callbacks): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitCallback(node: Oas30Callback): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitCallbackPathItem(node: Oas30CallbackPathItem): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
