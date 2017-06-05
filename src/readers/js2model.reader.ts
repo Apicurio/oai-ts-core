@@ -88,6 +88,10 @@ import {Oas30Encoding} from "../models/3.0/encoding.model";
 import {Oas30EncodingProperty} from "../models/3.0/encoding-property.model";
 import {Oas30Example} from "../models/3.0/example.model";
 import {Oas30Headers} from "../models/3.0/headers.model";
+import {Oas30Links} from "../models/3.0/links.model";
+import {Oas30Link} from "../models/3.0/link.model";
+import {Oas30LinkParameters} from "../models/3.0/link-parameters.model";
+import {Oas30LinkParameterExpression} from "../models/3.0/link-parameter-expression.model";
 
 
 /**
@@ -363,7 +367,7 @@ export abstract class OasJS2ModelReader {
      * @param schema
      * @param schemaModel
      */
-    public readSchema(schema: any, schemaModel: OasSchema) {
+    public readSchema(schema: any, schemaModel: OasSchema): void {
         let $ref: string = schema["$ref"];
         let format: string = schema["format"];
         let title: string = schema["title"];
@@ -787,7 +791,7 @@ export class Oas20JS2ModelReader extends OasJS2ModelReader {
      * @param items
      * @param itemsModel
      */
-    public readItems(items: any, itemsModel: Oas20Items) {
+    public readItems(items: any, itemsModel: Oas20Items): void {
         let type: string = items["type"];
         let format: string = items["format"];
         let itemsChild: any = items["items"];
@@ -911,7 +915,7 @@ export class Oas20JS2ModelReader extends OasJS2ModelReader {
      * @param definitions
      * @param definitionsModel
      */
-    public readDefinitions(definitions: any, definitionsModel: Oas20Definitions) {
+    public readDefinitions(definitions: any, definitionsModel: Oas20Definitions): void {
         for (let definitionName in definitions) {
             let definition: any = definitions[definitionName];
             let definitionSchemaModel: Oas20DefinitionSchema = definitionsModel.createDefinitionSchema(definitionName);
@@ -925,7 +929,7 @@ export class Oas20JS2ModelReader extends OasJS2ModelReader {
      * @param parameters
      * @param parametersDefinitionsModel
      */
-    public readParametersDefinitions(parameters: any, parametersDefinitionsModel: Oas20ParametersDefinitions) {
+    public readParametersDefinitions(parameters: any, parametersDefinitionsModel: Oas20ParametersDefinitions): void {
         for (let parameterName in parameters) {
             let parameter: any = parameters[parameterName];
             let parameterDefModel: Oas20ParameterDefinition = parametersDefinitionsModel.createParameter(parameterName);
@@ -939,7 +943,7 @@ export class Oas20JS2ModelReader extends OasJS2ModelReader {
      * @param responses
      * @param responsesDefinitionsModel
      */
-    public readResponsesDefinitions(responses: any, responsesDefinitionsModel: Oas20ResponsesDefinitions) {
+    public readResponsesDefinitions(responses: any, responsesDefinitionsModel: Oas20ResponsesDefinitions): void {
         for (let responseName in responses) {
             let response: any = responses[responseName];
             let responseModel: Oas20ResponseDefinition = responsesDefinitionsModel.createResponse(responseName);
@@ -1371,7 +1375,6 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      */
     public readContent(content: any, contentModel: Oas30Content): void {
         for (let name in content) {
-            if (name.indexOf("x-") === 0) { continue; } // skip extension properties
             let mediaType: any = content[name];
             let mediaTypeModel: Oas30MediaType = contentModel.createMediaType(name);
             this.readMediaType(mediaType, mediaTypeModel);
@@ -1441,7 +1444,6 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      */
     public readEncoding(encoding: any, encodingModel: Oas30Encoding): void {
         for (let name in encoding) {
-            if (name.indexOf("x-") === 0) { continue; } // skip extension properties
             let encodingProperty: any = encoding[name];
             let encodingPropertyModel: Oas30EncodingProperty = encodingModel.createEncodingProperty(name);
             this.readEncodingProperty(encodingProperty, encodingPropertyModel);
@@ -1490,7 +1492,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         let description: string = response["description"];
         let headers: any = response["headers"];
         let content: any = response["content"];
-        let links: any = response["links"]; // TODO read the links
+        let links: any = response["links"];
 
         if (this.isDefined(description)) { responseModel.description = description; }
         if (this.isDefined(headers)) {
@@ -1503,7 +1505,76 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
             this.readContent(content, contentModel);
             responseModel.content = contentModel;
         }
+        if (this.isDefined(links)) {
+            let linksModel: Oas30Links = responseModel.createLinks();
+            this.readLinks(links, linksModel);
+            responseModel.links = linksModel;
+        }
         this.readExtensions(response, responseModel);
+    }
+
+    /**
+     * Reads an OAS 3.0 Links object from the given js data.
+     * @param links
+     * @param linksModel
+     */
+    public readLinks(links: any, linksModel: Oas30Links): void {
+        for (let name in links) {
+            let link: any = links[name];
+            let linkModel: Oas30Link = linksModel.createLink(name);
+            this.readLink(link, linkModel);
+            linksModel.addLink(name, linkModel);
+        }
+    }
+
+    /**
+     * Reads an OAS 3.0 Link object from the given js data.
+     * @param link
+     * @param linkModel
+     */
+    public readLink(link: any, linkModel: Oas30Link): void {
+        let $ref: string = link["$ref"];
+        let operationRef: string = link["operationRef"];
+        let operationId: string = link["operationId"];
+        let parameters: any = link["parameters"];
+        let headers: any = link["headers"];
+        let description: string = link["description"];
+        let server: any = link["server"];
+
+        if (this.isDefined($ref)) { linkModel.$ref = $ref; }
+        if (this.isDefined(operationRef)) { linkModel.operationRef = operationRef; }
+        if (this.isDefined(operationId)) { linkModel.operationId = operationId; }
+        if (this.isDefined(parameters)) {
+            let linkParametersModel: Oas30LinkParameters = linkModel.createLinkParameters();
+            this.readLinkParameters(parameters, linkParametersModel);
+            linkModel.parameters = linkParametersModel;
+        }
+        if (this.isDefined(headers)) {
+            let headersModel: Oas30Headers = linkModel.createHeaders();
+            this.readHeaders(headers, headersModel);
+            linkModel.headers = headersModel;
+        }
+        if (this.isDefined(description)) { linkModel.description = description; }
+        if (this.isDefined(server)) {
+            let serverModel: Oas30Server = linkModel.createServer();
+            this.readServer(server, serverModel);
+            linkModel.server = serverModel;
+        }
+
+        this.readExtensions(link, linkModel);
+    }
+
+    /**
+     * Reads the link parameters.
+     * @param linkParameters
+     * @param linkParametersModel
+     */
+    public readLinkParameters(linkParameters: any, linkParametersModel: Oas30LinkParameters): void {
+        for (let name in linkParameters) {
+            let value: any = linkParameters[name];
+            let expression: Oas30LinkParameterExpression = linkParametersModel.createExpression(name, value);
+            linkParametersModel.addExpression(name, expression);
+        }
     }
 
     /**
@@ -1511,7 +1582,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      * @param schema
      * @param schemaModel
      */
-    public readSchema(schema: any, schemaModel: Oas30Schema) {
+    public readSchema(schema: any, schemaModel: Oas30Schema): void {
         super.readSchema(schema, schemaModel);
 
         let oneOf: any[] = schema["oneOf"];

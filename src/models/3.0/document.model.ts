@@ -62,7 +62,7 @@ export class Oas30Document extends OasDocument {
 
     /**
      * Creates an OAS 3.0 Server object.
-     * @return {Oas30Info}
+     * @return {Oas30Server}
      */
     public createServer(): Oas30Server {
         let rval: Oas30Server = new Oas30Server();
@@ -112,7 +112,7 @@ export class Oas30Document extends OasDocument {
 
     /**
      * Creates an OAS 3.0 Tag object.
-     * @return {Oas30Info}
+     * @return {Oas30Tag}
      */
     public createTag(): Oas30Tag {
         let rval: Oas30Tag = new Oas30Tag();

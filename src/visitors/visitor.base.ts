@@ -44,7 +44,7 @@ import {OasContact} from "../models/common/contact.model";
 import {OasLicense} from "../models/common/license.model";
 import {Oas30ServerVariable} from "../models/3.0/server-variable.model";
 import {Oas30ServerVariables} from "../models/3.0/server-variables.model";
-import {Oas30Server} from "../models/3.0/server.model";
+import {Oas30LinkServer, Oas30Server} from "../models/3.0/server.model";
 import {OasTag} from "../models/common/tag.model";
 import {OasSecurityRequirement} from "../models/common/security-requirement.model";
 import {OasExternalDocumentation} from "../models/common/external-documentation.model";
@@ -75,6 +75,10 @@ import {Oas30MediaType} from "../models/3.0/media-type.model";
 import {Oas30Encoding} from "../models/3.0/encoding.model";
 import {Oas30EncodingProperty} from "../models/3.0/encoding-property.model";
 import {Oas30Example} from "../models/3.0/example.model";
+import {Oas30Links} from "../models/3.0/links.model";
+import {Oas30Link} from "../models/3.0/link.model";
+import {Oas30LinkParameters} from "../models/3.0/link-parameters.model";
+import {Oas30LinkParameterExpression} from "../models/3.0/link-parameter-expression.model";
 
 
 /**
@@ -137,6 +141,11 @@ export class Oas30NodeVisitorAdapter extends OasNodeVisitorAdapter implements IO
     public visitParameter(node: Oas30Parameter): void {}
     public visitParameterDefinition(node: Oas30ParameterDefinition): void {}
     public visitResponse(node: Oas30Response): void {}
+    public visitLinks(node: Oas30Links): void {}
+    public visitLink(node: Oas30Link): void {}
+    public visitLinkParameters(node: Oas30LinkParameters): void {}
+    public visitLinkParameterExpression(node: Oas30LinkParameterExpression): void {}
+    public visitLinkServer(node: Oas30LinkServer): void {}
     public visitResponseDefinition(node: Oas30ResponseDefinition): void {}
     public visitRequestBody(node: Oas30RequestBody): void {}
     public visitContent(node: Oas30Content): void {}
@@ -277,6 +286,11 @@ export class Oas30CompositeVisitor extends OasCompositeVisitor implements IOas30
     visitParameter(node: Oas30Parameter): void { this._acceptAll(node); }
     visitParameterDefinition(node: Oas30ParameterDefinition): void { this._acceptAll(node); }
     visitResponse(node: Oas30Response): void { this._acceptAll(node); }
+    visitLinks(node: Oas30Links): void { this._acceptAll(node); }
+    visitLink(node: Oas30Link): void { this._acceptAll(node); }
+    visitLinkParameters(node: Oas30LinkParameters): void { this._acceptAll(node); }
+    visitLinkParameterExpression(node: Oas30LinkParameterExpression): void { this._acceptAll(node); }
+    visitLinkServer(node: Oas30LinkServer): void { this._acceptAll(node); }
     visitResponseDefinition(node: Oas30ResponseDefinition): void { this._acceptAll(node); }
     visitRequestBody(node: Oas30RequestBody): void { this._acceptAll(node); }
     visitCallbacks(node: Oas30Callbacks): void { this._acceptAll(node); }

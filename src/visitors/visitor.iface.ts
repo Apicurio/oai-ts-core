@@ -56,7 +56,7 @@ import {Oas30Contact} from "../models/3.0/contact.model";
 import {Oas30License} from "../models/3.0/license.model";
 import {Oas30ServerVariable} from "../models/3.0/server-variable.model";
 import {Oas30ServerVariables} from "../models/3.0/server-variables.model";
-import {Oas30Server} from "../models/3.0/server.model";
+import {Oas30LinkServer, Oas30Server} from "../models/3.0/server.model";
 import {OasSecurityRequirement} from "../models/common/security-requirement.model";
 import {OasExternalDocumentation} from "../models/common/external-documentation.model";
 import {OasTag} from "../models/common/tag.model";
@@ -95,6 +95,10 @@ import {Oas30EncodingProperty} from "../models/3.0/encoding-property.model";
 import {Oas30Encoding} from "../models/3.0/encoding.model";
 import {Oas30MediaType} from "../models/3.0/media-type.model";
 import {Oas30Example} from "../models/3.0/example.model";
+import {Oas30Link} from "../models/3.0/link.model";
+import {Oas30Links} from "../models/3.0/links.model";
+import {Oas30LinkParameterExpression} from "../models/3.0/link-parameter-expression.model";
+import {Oas30LinkParameters} from "../models/3.0/link-parameters.model";
 
 
 /**
@@ -181,6 +185,11 @@ export interface IOas30NodeVisitor extends IOasNodeVisitor {
     visitEncoding(node: Oas30Encoding): void;
     visitEncodingProperty(node: Oas30EncodingProperty): void;
     visitExample(node: Oas30Example): void;
+    visitLinks(node: Oas30Links): void;
+    visitLink(node: Oas30Link): void;
+    visitLinkParameters(node: Oas30LinkParameters): void;
+    visitLinkParameterExpression(node: Oas30LinkParameterExpression): void;
+    visitLinkServer(node: Oas30LinkServer): void;
     visitResponseDefinition(node: Oas30ResponseDefinition): void;
     visitSchema(node: Oas30Schema): void;
     visitXML(node: Oas30XML): void;

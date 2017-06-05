@@ -45,7 +45,7 @@ import {OasInfo} from "../models/common/info.model";
 import {OasContact} from "../models/common/contact.model";
 import {OasLicense} from "../models/common/license.model";
 import {Oas30Document} from "../models/3.0/document.model";
-import {Oas30Server} from "../models/3.0/server.model";
+import {Oas30LinkServer, Oas30Server} from "../models/3.0/server.model";
 import {Oas30ServerVariables} from "../models/3.0/server-variables.model";
 import {Oas30ServerVariable} from "../models/3.0/server-variable.model";
 import {OasSecurityRequirement} from "../models/common/security-requirement.model";
@@ -82,6 +82,10 @@ import {Oas30EncodingProperty} from "../models/3.0/encoding-property.model";
 import {Oas30Content} from "../models/3.0/content.model";
 import {Oas30MediaType} from "../models/3.0/media-type.model";
 import {Oas30Example} from "../models/3.0/example.model";
+import {Oas30Links} from "../models/3.0/links.model";
+import {Oas30Link} from "../models/3.0/link.model";
+import {Oas30LinkParameters} from "../models/3.0/link-parameters.model";
+import {Oas30LinkParameterExpression} from "../models/3.0/link-parameter-expression.model";
 
 
 /**
@@ -1019,7 +1023,74 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * Visits a node.
      * @param node
      */
-    visitResponseDefinition(node: Oas30ResponseDefinition): void {
+    public visitLinks(node: Oas30Links): void {
+        let links: any = {};
+        let parentJS: any = this.lookupParentJS(node);
+        parentJS.links = links;
+        this.updateIndex(node, links);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitLink(node: Oas30Link): void {
+        let parentJS: any = this.lookupParentJS(node);
+        let link: any = {
+            "$ref": node.$ref,
+            "operationRef": node.operationRef,
+            "operationId": node.operationId,
+            "parameters": null,
+            "headers": null,
+            "description": node.description,
+            "server": null
+        };
+        parentJS[node.name()] = link;
+        this.updateIndex(node, link);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitLinkParameters(node: Oas30LinkParameters): void {
+        let parameters: any = {};
+        let parentJS: any = this.lookupParentJS(node);
+        parentJS.parameters = parameters;
+        this.updateIndex(node, parameters);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitLinkServer(node: Oas30LinkServer): void {
+        let parentJS: any = this.lookupParentJS(node);
+        let server: any = {
+            url: node.url,
+            description: node.description,
+            variables: null
+        };
+        parentJS.server = server;
+        this.updateIndex(node, server);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitLinkParameterExpression(node: Oas30LinkParameterExpression): void {
+        let parentJS: any = this.lookupParentJS(node);
+        let expression: any = node.value();
+        parentJS[node.name()] = expression;
+        this.updateIndex(node, expression);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitResponseDefinition(node: Oas30ResponseDefinition): void {
         let parentJS: any = this.lookupParentJS(node);
         let response: any = this.createResponseObject(node);
         parentJS[node.name()] = response;
@@ -1055,7 +1126,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * Visits a node.
      * @param node
      */
-    visitDefinitionSchema(node: Oas30DefinitionSchema): void {
+    public visitDefinitionSchema(node: Oas30DefinitionSchema): void {
         let parentJS: any = this.lookupParentJS(node);
         let schema: any = this.createSchemaObject(node);
         parentJS[node.definitionName()] = schema;
@@ -1066,7 +1137,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * Visits a node.
      * @param node
      */
-    visitAdditionalPropertiesSchema(node: Oas30AdditionalPropertiesSchema): void {
+    public visitAdditionalPropertiesSchema(node: Oas30AdditionalPropertiesSchema): void {
         let parentJS: any = this.lookupParentJS(node);
         let schema: any = this.createSchemaObject(node);
         parentJS.additionalProperties = schema;
@@ -1077,7 +1148,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * Visits a node.
      * @param node
      */
-    visitAllOfSchema(node: Oas30AllOfSchema): void {
+    public visitAllOfSchema(node: Oas30AllOfSchema): void {
         let parentJS: any = this.lookupParentJS(node);
         let schema: any = this.createSchemaObject(node);
         if (!this.isDefined(parentJS.allOf)) {
@@ -1091,7 +1162,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * Visits a node.
      * @param node
      */
-    visitAnyOfSchema(node: Oas30AnyOfSchema): void {
+    public visitAnyOfSchema(node: Oas30AnyOfSchema): void {
         let parentJS: any = this.lookupParentJS(node);
         let schema: any = this.createSchemaObject(node);
         if (!this.isDefined(parentJS.anyOf)) {
@@ -1105,7 +1176,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * Visits a node.
      * @param node
      */
-    visitOneOfSchema(node: Oas30OneOfSchema): void {
+    public visitOneOfSchema(node: Oas30OneOfSchema): void {
         let parentJS: any = this.lookupParentJS(node);
         let schema: any = this.createSchemaObject(node);
         if (!this.isDefined(parentJS.oneOf)) {
@@ -1119,7 +1190,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * Visits a node.
      * @param node
      */
-    visitNotSchema(node: Oas30NotSchema): void {
+    public visitNotSchema(node: Oas30NotSchema): void {
         let parentJS: any = this.lookupParentJS(node);
         let schema: any = this.createSchemaObject(node);
         parentJS.not = schema;
@@ -1130,7 +1201,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * Visits a node.
      * @param node
      */
-    visitItemsSchema(node: Oas30ItemsSchema): void {
+    public visitItemsSchema(node: Oas30ItemsSchema): void {
         let parentJS: any = this.lookupParentJS(node);
         let schema: any = this.createSchemaObject(node);
         if (!this.isDefined(parentJS.items)) {
@@ -1149,7 +1220,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * Visits a node.
      * @param node
      */
-    visitRequestBody(node: Oas30RequestBody): void {
+    public visitRequestBody(node: Oas30RequestBody): void {
         let parentJS: any = this.lookupParentJS(node);
         let requestBody: any = {
             "$ref": node.$ref,
@@ -1165,7 +1236,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * Visits a node.
      * @param node
      */
-    visitContent(node: Oas30Content): void {
+    public visitContent(node: Oas30Content): void {
         let content: any = {};
         let parentJS: any = this.lookupParentJS(node);
         parentJS.content = content;
@@ -1176,7 +1247,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * Visits a node.
      * @param node
      */
-    visitMediaType(node: Oas30MediaType): void {
+    public visitMediaType(node: Oas30MediaType): void {
         let parentJS: any = this.lookupParentJS(node);
         let mediaType: any = {
             "schema": null,
@@ -1192,7 +1263,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * Visits a node.
      * @param node
      */
-    visitEncoding(node: Oas30Encoding): void {
+    public visitEncoding(node: Oas30Encoding): void {
         let encoding: any = {};
         let parentJS: any = this.lookupParentJS(node);
         parentJS.content = encoding;
@@ -1203,7 +1274,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * Visits a node.
      * @param node
      */
-    visitEncodingProperty(node: Oas30EncodingProperty): void {
+    public visitEncodingProperty(node: Oas30EncodingProperty): void {
         let parentJS: any = this.lookupParentJS(node);
         let encodingProperty: any = {
             "contentType": node.contentType,
@@ -1220,7 +1291,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * Visits a node.
      * @param node
      */
-    visitExample(node: Oas30Example): void {
+    public visitExample(node: Oas30Example): void {
         let parentJS: any = this.lookupParentJS(node);
         let example: any = {
             "$ref" : node.$ref,
@@ -1241,7 +1312,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * Visits a node.
      * @param node
      */
-    visitCallbacks(node: Oas30Callbacks): void {
+    public visitCallbacks(node: Oas30Callbacks): void {
         // TODO implement visitCallbacks()
     }
 
@@ -1249,7 +1320,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * Visits a node.
      * @param node
      */
-    visitServer(node: Oas30Server): void {
+    public visitServer(node: Oas30Server): void {
         let parentJS: any = this.lookupParentJS(node);
         if (!this.isDefined(parentJS.servers)) {
             parentJS.servers = [];
@@ -1267,7 +1338,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * Visits a node.
      * @param node
      */
-    visitServerVariables(node: Oas30ServerVariables): void {
+    public visitServerVariables(node: Oas30ServerVariables): void {
         let variableNames: string[] = node.serverVariableNames();
         if (variableNames && variableNames.length > 0) {
             let parent: any = this.lookupParentJS(node);
@@ -1281,7 +1352,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * Visits a node.
      * @param node
      */
-    visitServerVariable(node: Oas30ServerVariable): void {
+    public visitServerVariable(node: Oas30ServerVariable): void {
         let parentJS: any = this.lookupParentJS(node);
         let serverVariable: any = {
             "enum" : node.enum,

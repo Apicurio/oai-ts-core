@@ -20,6 +20,7 @@ import {IOasReferenceNode} from "../reference.model";
 import {OasResponse} from "../common/response.model";
 import {Oas30Headers} from "./headers.model";
 import {Oas30Content} from "./content.model";
+import {Oas30Links} from "./links.model";
 
 
 /**
@@ -38,7 +39,7 @@ import {Oas30Content} from "./content.model";
 export abstract class Oas30ResponseBase extends OasResponse {
 
     public content: Oas30Content;
-    // public links: Oas30Links;
+    public links: Oas30Links;
 
     /**
      * Creates an OAS 3.0 Headers object.
@@ -57,6 +58,17 @@ export abstract class Oas30ResponseBase extends OasResponse {
      */
     public createContent(): Oas30Content {
         let rval: Oas30Content = new Oas30Content();
+        rval._ownerDocument = this._ownerDocument;
+        rval._parent = this;
+        return rval;
+    }
+
+    /**
+     * Creates an OAS 3.0 Links object.
+     * @return {Oas30Links}
+     */
+    public createLinks(): Oas30Links {
+        let rval: Oas30Links = new Oas30Links();
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;

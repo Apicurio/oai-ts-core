@@ -69,3 +69,19 @@ export class Oas30Server extends OasExtensibleNode {
         return rval;
     }
 }
+
+
+/**
+ * A single server specified in a Link object.
+ */
+export class Oas30LinkServer extends Oas30Server {
+    /**
+     * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.
+     * @param visitor
+     */
+    public accept(visitor: IOasNodeVisitor): void {
+        let viz: IOas30NodeVisitor = <IOas30NodeVisitor> visitor;
+        viz.visitLinkServer(this);
+    }
+
+}
