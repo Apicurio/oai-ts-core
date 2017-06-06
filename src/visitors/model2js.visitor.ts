@@ -70,8 +70,8 @@ import {
     Oas30Schema
 } from "../models/3.0/schema.model";
 import {OasXML} from "../models/common/xml.model";
-import {Oas30Header} from "../models/3.0/header.model";
-import {Oas30RequestBody} from "../models/3.0/request-body.model";
+import {Oas30Header, Oas30HeaderDefinition} from "../models/3.0/header.model";
+import {Oas30RequestBody, Oas30RequestBodyDefinition} from "../models/3.0/request-body.model";
 import {Oas30Callbacks} from "../models/3.0/callbacks.model";
 import {OasPathItem} from "../models/common/path-item.model";
 import {OasOperation} from "../models/common/operation.model";
@@ -81,13 +81,22 @@ import {Oas30Encoding} from "../models/3.0/encoding.model";
 import {Oas30EncodingProperty} from "../models/3.0/encoding-property.model";
 import {Oas30Content} from "../models/3.0/content.model";
 import {Oas30MediaType} from "../models/3.0/media-type.model";
-import {Oas30Example} from "../models/3.0/example.model";
+import {Oas30Example, Oas30ExampleDefinition} from "../models/3.0/example.model";
 import {Oas30Links} from "../models/3.0/links.model";
-import {Oas30Link} from "../models/3.0/link.model";
+import {Oas30Link, Oas30LinkDefinition} from "../models/3.0/link.model";
 import {Oas30LinkParameters} from "../models/3.0/link-parameters.model";
 import {Oas30LinkParameterExpression} from "../models/3.0/link-parameter-expression.model";
-import {Oas30Callback} from "../models/3.0/callback.model";
+import {Oas30Callback, Oas30CallbackDefinition} from "../models/3.0/callback.model";
 import {Oas30Components} from "../models/3.0/components.model";
+import {Oas30SecurityScheme} from "../models/3.0/security-scheme.model";
+import {Oas30OAuthFlows} from "../models/3.0/oauth-flows.model";
+import {
+    Oas30AuthorizationCodeOAuthFlow,
+    Oas30ClientCredentialsOAuthFlow, Oas30ImplicitOAuthFlow, Oas30OAuthFlow,
+    Oas30PasswordOAuthFlow
+} from "../models/3.0/oauth-flow.model";
+import {Oas30Scopes} from "../models/3.0/scopes.model";
+import {OasSecurityScheme} from "../models/common/security-scheme.model";
 
 
 /**
@@ -320,6 +329,12 @@ export abstract class OasModelToJSVisitor implements IOasNodeVisitor {
      * Visits a node.
      * @param node
      */
+    public abstract visitSecurityScheme(node: OasSecurityScheme): void;
+
+        /**
+     * Visits a node.
+     * @param node
+     */
     public visitSecurityRequirement(node: OasSecurityRequirement): void {
         let parentJS: any = this.lookupParentJS(node);
         let securityRequirements: any[] = parentJS["security"];
@@ -425,15 +440,15 @@ export class Oas20ModelToJSVisitor extends OasModelToJSVisitor implements IOas20
     public visitPathItem(node: Oas20PathItem): void {
         let parentJS: any = this.lookupParentJS(node);
         let pathItem: any = {
-            "$ref" : node.$ref,
-            "get" : null,
-            "put" : null,
-            "post" : null,
-            "delete" : null,
-            "options" : null,
-            "head" : null,
-            "patch" : null,
-            "parameters" : null
+            $ref : node.$ref,
+            get : null,
+            put : null,
+            post : null,
+            delete : null,
+            options : null,
+            head : null,
+            patch : null,
+            parameters : null
         }
         parentJS[node.path()] = pathItem;
         this.updateIndex(node, pathItem);
@@ -446,18 +461,18 @@ export class Oas20ModelToJSVisitor extends OasModelToJSVisitor implements IOas20
     public visitOperation(node: Oas20Operation): void {
         let parentJS: any = this.lookupParentJS(node);
         let operation: any = {
-            "tags" : node.tags,
-            "summary" : node.summary,
-            "description" : node.description,
-            "externalDocs" : null,
-            "operationId" : node.operationId,
-            "consumes" : node.consumes,
-            "produces" : node.produces,
-            "parameters" : null,
-            "responses" : null,
-            "schemes" : node.schemes,
-            "deprecated" : node.deprecated,
-            "security" : null
+            tags : node.tags,
+            summary : node.summary,
+            description : node.description,
+            externalDocs : null,
+            operationId : node.operationId,
+            consumes : node.consumes,
+            produces : node.produces,
+            parameters : null,
+            responses : null,
+            schemes : node.schemes,
+            deprecated : node.deprecated,
+            security : null
         }
         parentJS[node.method()] = operation;
         this.updateIndex(node, operation);
@@ -470,12 +485,12 @@ export class Oas20ModelToJSVisitor extends OasModelToJSVisitor implements IOas20
     private createParameterObject(node: Oas20ParameterBase): any {
         let items: any = this.createItemsObject(node);
         let parameter: any = {
-            "name" : node.name,
-            "in" : node.in,
-            "description" : node.description,
-            "required" : node.required,
-            "schema" : null,
-            "allowEmptyValue" : node.allowEmptyValue
+            name : node.name,
+            in : node.in,
+            description : node.description,
+            required : node.required,
+            schema : null,
+            allowEmptyValue : node.allowEmptyValue
         };
         parameter = this.merge(parameter, items);
         return parameter;
@@ -492,7 +507,7 @@ export class Oas20ModelToJSVisitor extends OasModelToJSVisitor implements IOas20
         }
         let parameter: any = this.createParameterObject(node);
         let paramRef: any = {
-            "$ref" : node.$ref
+            $ref : node.$ref
         };
         parameter = this.merge(paramRef, parameter);
         parentJS.parameters.push(parameter);
@@ -546,7 +561,7 @@ export class Oas20ModelToJSVisitor extends OasModelToJSVisitor implements IOas20
      * Visits a node.
      * @param node
      */
-    visitResponseDefinition(node: Oas20ResponseDefinition): void {
+    public visitResponseDefinition(node: Oas20ResponseDefinition): void {
         let parentJS: any = this.lookupParentJS(node);
         let response: any = this.createResponseObject(node);
         parentJS[node.name()] = response;
@@ -568,7 +583,7 @@ export class Oas20ModelToJSVisitor extends OasModelToJSVisitor implements IOas20
      * Visits a node.
      * @param node
      */
-    visitPropertySchema(node: Oas20PropertySchema): void {
+    public visitPropertySchema(node: Oas20PropertySchema): void {
         let parentJS: any = this.lookupParentJS(node);
         let schema: any = this.createSchemaObject(node);
         if (!this.isDefined(parentJS.properties)) {
@@ -582,7 +597,7 @@ export class Oas20ModelToJSVisitor extends OasModelToJSVisitor implements IOas20
      * Visits a node.
      * @param node
      */
-    visitSchemaDefinition(node: Oas20SchemaDefinition): void {
+    public visitSchemaDefinition(node: Oas20SchemaDefinition): void {
         let parentJS: any = this.lookupParentJS(node);
         let schema: any = this.createSchemaObject(node);
         parentJS[node.definitionName()] = schema;
@@ -593,7 +608,7 @@ export class Oas20ModelToJSVisitor extends OasModelToJSVisitor implements IOas20
      * Visits a node.
      * @param node
      */
-    visitAdditionalPropertiesSchema(node: Oas20AdditionalPropertiesSchema): void {
+    public visitAdditionalPropertiesSchema(node: Oas20AdditionalPropertiesSchema): void {
         let parentJS: any = this.lookupParentJS(node);
         let schema: any = this.createSchemaObject(node);
         parentJS.additionalProperties = schema;
@@ -604,7 +619,7 @@ export class Oas20ModelToJSVisitor extends OasModelToJSVisitor implements IOas20
      * Visits a node.
      * @param node
      */
-    visitAllOfSchema(node: Oas20AllOfSchema): void {
+    public visitAllOfSchema(node: Oas20AllOfSchema): void {
         let parentJS: any = this.lookupParentJS(node);
         let schema: any = this.createSchemaObject(node);
         if (!this.isDefined(parentJS.allOf)) {
@@ -618,7 +633,7 @@ export class Oas20ModelToJSVisitor extends OasModelToJSVisitor implements IOas20
      * Visits a node.
      * @param node
      */
-    visitItemsSchema(node: Oas20ItemsSchema): void {
+    public visitItemsSchema(node: Oas20ItemsSchema): void {
         let parentJS: any = this.lookupParentJS(node);
         let schema: any = this.createSchemaObject(node);
         if (!this.isDefined(parentJS.items)) {
@@ -678,7 +693,7 @@ export class Oas20ModelToJSVisitor extends OasModelToJSVisitor implements IOas20
      * Visits a node.
      * @param node
      */
-    visitSecurityDefinitions(node: Oas20SecurityDefinitions): void {
+    public visitSecurityDefinitions(node: Oas20SecurityDefinitions): void {
         let parent: any = this.lookupParentJS(node);
         let secDefs: any = <any>{};
         for (let name in node.securitySchemeNames()) {
@@ -692,7 +707,7 @@ export class Oas20ModelToJSVisitor extends OasModelToJSVisitor implements IOas20
      * Visits a node.
      * @param node
      */
-    visitSecurityScheme(node: Oas20SecurityScheme): void {
+    public visitSecurityScheme(node: Oas20SecurityScheme): void {
         let parent: any = this.lookupParentJS(node);
         let scheme: any = {
             type: node.type,
@@ -712,7 +727,7 @@ export class Oas20ModelToJSVisitor extends OasModelToJSVisitor implements IOas20
      * Visits a node.
      * @param node
      */
-    visitScopes(node: Oas20Scopes): void {
+    public visitScopes(node: Oas20Scopes): void {
         let parent: any = this.lookupParentJS(node);
         let scopes: any = <any>{};
         for (let scope of node.scopes()) {
@@ -727,7 +742,7 @@ export class Oas20ModelToJSVisitor extends OasModelToJSVisitor implements IOas20
      * Visits a node.
      * @param node
      */
-    visitDefinitions(node: Oas20Definitions): void {
+    public visitDefinitions(node: Oas20Definitions): void {
         let defNames: string[] = node.definitionNames();
         if (defNames && defNames.length > 0) {
             let parent: any = this.lookupParentJS(node);
@@ -741,7 +756,7 @@ export class Oas20ModelToJSVisitor extends OasModelToJSVisitor implements IOas20
      * Visits a node.
      * @param node
      */
-    visitParametersDefinitions(node: Oas20ParametersDefinitions): void {
+    public visitParametersDefinitions(node: Oas20ParametersDefinitions): void {
         let paramNames: string[] = node.parameterNames();
         if (paramNames && paramNames.length > 0) {
             let parent: any = this.lookupParentJS(node);
@@ -755,7 +770,7 @@ export class Oas20ModelToJSVisitor extends OasModelToJSVisitor implements IOas20
      * Visits a node.
      * @param node
      */
-    visitResponsesDefinitions(node: Oas20ResponsesDefinitions): void {
+    public visitResponsesDefinitions(node: Oas20ResponsesDefinitions): void {
         let responseNames: string[] = node.responseNames();
         if (responseNames && responseNames.length > 0) {
             let parent: any = this.lookupParentJS(node);
@@ -852,7 +867,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * Visits a node.
      * @param node
      */
-    visitDocument(node: Oas30Document): void {
+    public visitDocument(node: Oas30Document): void {
         let root: any = {
             openapi: node.openapi,
             info: null,
@@ -873,19 +888,19 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
     public visitPathItem(node: Oas30PathItem): void {
         let parentJS: any = this.lookupParentJS(node);
         let pathItem: any = {
-            "$ref" : node.$ref,
-            "summary": node.summary,
-            "description": node.description,
-            "get" : null,
-            "put" : null,
-            "post" : null,
-            "delete" : null,
-            "options" : null,
-            "head" : null,
-            "patch" : null,
-            "trace": null,
-            "parameters" : null,
-            "servers": null
+            $ref : node.$ref,
+            summary: node.summary,
+            description: node.description,
+            get : null,
+            put : null,
+            post : null,
+            delete : null,
+            options : null,
+            head : null,
+            patch : null,
+            trace: null,
+            parameters : null,
+            servers: null
         }
         parentJS[node.path()] = pathItem;
         this.updateIndex(node, pathItem);
@@ -898,18 +913,18 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
     public visitOperation(node: Oas30Operation): void {
         let parentJS: any = this.lookupParentJS(node);
         let operation: any = {
-            "tags" : node.tags,
-            "summary" : node.summary,
-            "description" : node.description,
-            "externalDocs" : null,
-            "operationId" : node.operationId,
-            "parameters" : null,
-            "responses" : null,
-            "deprecated" : node.deprecated,
-            "security" : null,
-            "requestBody": null,
-            "callbacks": null,
-            "servers": null
+            tags : node.tags,
+            summary : node.summary,
+            description : node.description,
+            externalDocs : null,
+            operationId : node.operationId,
+            parameters : null,
+            responses : null,
+            deprecated : node.deprecated,
+            security : null,
+            requestBody: null,
+            callbacks: null,
+            servers: null
         }
         parentJS[node.method()] = operation;
         this.updateIndex(node, operation);
@@ -921,20 +936,29 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      */
     public visitHeader(node: Oas30Header): void {
         let parentJS: any = this.lookupParentJS(node);
-        let header: any = {
-            "description" : node.description,
-            "required" : node.required,
-            "schema" : null,
-            "allowEmptyValue" : node.allowEmptyValue,
-            "deprecated" : node.deprecated,
-            "style" : node.style,
-            "explode" : node.explode,
-            "allowReserved" : node.allowReserved,
-            "example" : node.example,
-            "examples" : null
-        };
+        let header: any = this.createHeaderObject(node);
         parentJS[node.headerName()] = header;
         this.updateIndex(node, header);
+    }
+
+    /**
+     * Creates a header object.
+     * @param node
+     */
+    private createHeaderObject(node: Oas30Header): any {
+        let header: any = {
+            description : node.description,
+            required : node.required,
+            schema : null,
+            allowEmptyValue : node.allowEmptyValue,
+            deprecated : node.deprecated,
+            style : node.style,
+            explode : node.explode,
+            allowReserved : node.allowReserved,
+            example : node.example,
+            examples : null
+        };
+        return header;
     }
 
     /**
@@ -943,19 +967,19 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      */
     private createParameterObject(node: Oas30ParameterBase): any {
         let parameter: any = {
-            "name" : node.name,
-            "in" : node.in,
-            "description" : node.description,
-            "required" : node.required,
-            "schema" : null,
-            "allowEmptyValue" : node.allowEmptyValue,
-            "deprecated" : node.deprecated,
-            "style" : node.style,
-            "explode" : node.explode,
-            "allowReserved" : node.allowReserved,
-            "example" : node.example,
-            "examples" : null,
-            "content" : null
+            name : node.name,
+            in : node.in,
+            description : node.description,
+            required : node.required,
+            schema : null,
+            allowEmptyValue : node.allowEmptyValue,
+            deprecated : node.deprecated,
+            style : node.style,
+            explode : node.explode,
+            allowReserved : node.allowReserved,
+            example : node.example,
+            examples : null,
+            content : null
         };
         return parameter;
     }
@@ -971,21 +995,10 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
         }
         let parameter: any = this.createParameterObject(node);
         let paramRef: any = {
-            "$ref" : node.$ref
+            $ref : node.$ref
         };
         parameter = this.merge(paramRef, parameter);
         parentJS.parameters.push(parameter);
-        this.updateIndex(node, parameter);
-    }
-
-    /**
-     * Visits a node.
-     * @param node
-     */
-    public visitParameterDefinition(node: Oas30ParameterDefinition): void {
-        let parentJS: any = this.lookupParentJS(node);
-        let parameter: any = this.createParameterObject(node);
-        parentJS[node.parameterName()] = parameter;
         this.updateIndex(node, parameter);
     }
 
@@ -1038,17 +1051,27 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      */
     public visitLink(node: Oas30Link): void {
         let parentJS: any = this.lookupParentJS(node);
-        let link: any = {
-            "$ref": node.$ref,
-            "operationRef": node.operationRef,
-            "operationId": node.operationId,
-            "parameters": null,
-            "headers": null,
-            "description": node.description,
-            "server": null
-        };
+        let link: any = this.createLinkObject(node);
         parentJS[node.name()] = link;
         this.updateIndex(node, link);
+    }
+
+    /**
+     * Creates a link object.
+     * @param node
+     * @return {any}
+     */
+    private createLinkObject(node: Oas30Link): any {
+        let link: any = {
+            $ref: node.$ref,
+            operationRef: node.operationRef,
+            operationId: node.operationId,
+            parameters: null,
+            headers: null,
+            description: node.description,
+            server: null
+        };
+        return link;
     }
 
     /**
@@ -1092,17 +1115,6 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * Visits a node.
      * @param node
      */
-    public visitResponseDefinition(node: Oas30ResponseDefinition): void {
-        let parentJS: any = this.lookupParentJS(node);
-        let response: any = this.createResponseObject(node);
-        parentJS[node.name()] = response;
-        this.updateIndex(node, response);
-    }
-
-    /**
-     * Visits a node.
-     * @param node
-     */
     public visitSchema(node: Oas30Schema): void {
         let parentJS: any = this.lookupParentJS(node);
         let schema: any = this.createSchemaObject(node);
@@ -1114,24 +1126,13 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * Visits a node.
      * @param node
      */
-    visitPropertySchema(node: Oas30PropertySchema): void {
+    public visitPropertySchema(node: Oas30PropertySchema): void {
         let parentJS: any = this.lookupParentJS(node);
         let schema: any = this.createSchemaObject(node);
         if (!this.isDefined(parentJS.properties)) {
             parentJS.properties = {};
         }
         parentJS.properties[node.propertyName()] = schema;
-        this.updateIndex(node, schema);
-    }
-
-    /**
-     * Visits a node.
-     * @param node
-     */
-    public visitSchemaDefinition(node: Oas30SchemaDefinition): void {
-        let parentJS: any = this.lookupParentJS(node);
-        let schema: any = this.createSchemaObject(node);
-        parentJS[node.name()] = schema;
         this.updateIndex(node, schema);
     }
 
@@ -1224,14 +1225,24 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      */
     public visitRequestBody(node: Oas30RequestBody): void {
         let parentJS: any = this.lookupParentJS(node);
-        let requestBody: any = {
-            "$ref": node.$ref,
-            "description": node.description,
-            "content": null,
-            "required": node.required
-        };
+        let requestBody: any = this.createRequestBodyObject(node);
         parentJS.requestBody = requestBody;
         this.updateIndex(node, requestBody);
+    }
+
+    /**
+     * Creates a request body object.
+     * @param node
+     * @return {any}
+     */
+    private createRequestBodyObject(node: Oas30RequestBody): any {
+        let requestBody: any = {
+            $ref: node.$ref,
+            description: node.description,
+            content: null,
+            required: node.required
+        };
+        return requestBody;
     }
 
     /**
@@ -1252,10 +1263,10 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
     public visitMediaType(node: Oas30MediaType): void {
         let parentJS: any = this.lookupParentJS(node);
         let mediaType: any = {
-            "schema": null,
-            "example": node.example,
-            "examples": null,
-            "encoding": null
+            schema: null,
+            example: node.example,
+            examples: null,
+            encoding: null
         }
         parentJS[node.name()] = mediaType;
         this.updateIndex(node, mediaType);
@@ -1279,11 +1290,11 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
     public visitEncodingProperty(node: Oas30EncodingProperty): void {
         let parentJS: any = this.lookupParentJS(node);
         let encodingProperty: any = {
-            "contentType": node.contentType,
-            "headers": node.headers,
-            "style": node.style,
-            "explode": node.explode,
-            "allowReserved": node.allowReserved
+            contentType: node.contentType,
+            headers: node.headers,
+            style: node.style,
+            explode: node.explode,
+            allowReserved: node.allowReserved
         };
         parentJS[node.name()] = encodingProperty;
         this.updateIndex(node, encodingProperty);
@@ -1295,13 +1306,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      */
     public visitExample(node: Oas30Example): void {
         let parentJS: any = this.lookupParentJS(node);
-        let example: any = {
-            "$ref" : node.$ref,
-            "summary" : node.summary,
-            "description" : node.description,
-            "value" : node.value,
-            "externalValue" : node.externalValue
-        };
+        let example: any = this.createExampleObject(node);
         if (!parentJS.examples) {
             parentJS.examples = {};
         }
@@ -1309,6 +1314,20 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
         this.updateIndex(node, example);
     }
 
+    /**
+     * Creates an example.
+     * @param node
+     */
+    private createExampleObject(node: Oas30Example) {
+        let example: any = {
+            $ref : node.$ref,
+            summary : node.summary,
+            description : node.description,
+            value : node.value,
+            externalValue : node.externalValue
+        };
+        return example;
+    }
 
     /**
      * Visits a node.
@@ -1348,7 +1367,234 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * @param node
      */
     public visitComponents(node: Oas30Components): void {
-        // TODO implement components
+        let components: any = {};
+        let parentJS: any = this.lookupParentJS(node);
+        parentJS.components = components;
+        this.updateIndex(node, components);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitSchemaDefinition(node: Oas30SchemaDefinition): void {
+        let parentJS: any = this.lookupParentJS(node);
+        let schema: any = this.createSchemaObject(node);
+        if (!this.isDefined(parentJS["schemas"])) {
+            parentJS["schemas"] = {};
+        }
+        parentJS["schemas"][node.name()] = schema;
+        this.updateIndex(node, schema);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitResponseDefinition(node: Oas30ResponseDefinition): void {
+        let parentJS: any = this.lookupParentJS(node);
+        let response: any = this.createResponseObject(node);
+        if (!this.isDefined(parentJS["responses"])) {
+            parentJS["responses"] = {};
+        }
+        parentJS["responses"][node.name()] = response;
+        this.updateIndex(node, response);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitParameterDefinition(node: Oas30ParameterDefinition): void {
+        let parentJS: any = this.lookupParentJS(node);
+        let parameter: any = this.createParameterObject(node);
+        if (!this.isDefined(parentJS["parameters"])) {
+            parentJS["parameters"] = {};
+        }
+        parentJS["parameters"][node.parameterName()] = parameter;
+        this.updateIndex(node, parameter);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitExampleDefinition(node: Oas30ExampleDefinition): void {
+        let parentJS: any = this.lookupParentJS(node);
+        let example: any = this.createExampleObject(node);
+        if (!this.isDefined(parentJS["examples"])) {
+            parentJS["examples"] = {};
+        }
+        parentJS["examples"][node.name()] = example;
+        this.updateIndex(node, example);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitRequestBodyDefinition(node: Oas30RequestBodyDefinition): void {
+        let parentJS: any = this.lookupParentJS(node);
+        let requestBody: any = this.createRequestBodyObject(node);
+        if (!this.isDefined(parentJS["requestBodies"])) {
+            parentJS["requestBodies"] = {};
+        }
+        parentJS["requestBodies"][node.name()] = requestBody;
+        this.updateIndex(node, requestBody);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitHeaderDefinition(node: Oas30HeaderDefinition): void {
+        let parentJS: any = this.lookupParentJS(node);
+        let header: any = this.createHeaderObject(node);
+        if (!this.isDefined(parentJS["headers"])) {
+            parentJS["headers"] = {};
+        }
+        parentJS["headers"][node.name()] = header;
+        this.updateIndex(node, header);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitOAuthFlows(node: Oas30OAuthFlows): void {
+        let parentJS: any = this.lookupParentJS(node);
+        let oauthFlows: any = {
+            implicit: null,
+            password: null,
+            clientCredentials: null,
+            authorizationCode: null
+        }
+        parentJS.flows = oauthFlows;
+        this.updateIndex(node, oauthFlows);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitImplicitOAuthFlow(node: Oas30ImplicitOAuthFlow): void {
+        let parentJS: any = this.lookupParentJS(node);
+        let flow: any = this.createOAuthFlowObject(node);
+        parentJS.implicit = flow;
+        this.updateIndex(node, flow);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitPasswordOAuthFlow(node: Oas30PasswordOAuthFlow): void {
+        let parentJS: any = this.lookupParentJS(node);
+        let flow: any = this.createOAuthFlowObject(node);
+        parentJS.password = flow;
+        this.updateIndex(node, flow);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitClientCredentialsOAuthFlow(node: Oas30ClientCredentialsOAuthFlow): void {
+        let parentJS: any = this.lookupParentJS(node);
+        let flow: any = this.createOAuthFlowObject(node);
+        parentJS.clientCredentials = flow;
+        this.updateIndex(node, flow);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitAuthorizationCodeOAuthFlow(node: Oas30AuthorizationCodeOAuthFlow): void {
+        let parentJS: any = this.lookupParentJS(node);
+        let flow: any = this.createOAuthFlowObject(node);
+        parentJS.authorizationCode = flow;
+        this.updateIndex(node, flow);
+    }
+
+    /**
+     * Creates an OAuth Flow js object.
+     * @param node
+     * @return {any}
+     */
+    private createOAuthFlowObject(node: Oas30OAuthFlow): any {
+        let flow: any = {
+            authorizationUrl: node.authorizationUrl,
+            tokenUrl: node.tokenUrl,
+            refreshUrl: node.refreshUrl,
+            scopes: null
+        };
+        return flow;
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitScopes(node: Oas30Scopes): void {
+        let parentJS: any = this.lookupParentJS(node);
+        let scopes: any = {};
+        for (let scopeName of node.scopeNames()) {
+            scopes[scopeName] = node.scopeDescription(scopeName);
+        }
+        parentJS.scopes = scopes;
+        this.updateIndex(node, scopes);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitSecurityScheme(node: Oas30SecurityScheme): void {
+        let parentJS: any = this.lookupParentJS(node);
+        let securityScheme: any = {
+            type: node.type,
+            description: node.description,
+            name: node.name,
+            in: node.in,
+            scheme: node.scheme,
+            bearerFormat: node.bearerFormat,
+            flows: null,
+            openIdConnectUrl: node.openIdConnectUrl
+        };
+        if (!this.isDefined(parentJS["securitySchemes"])) {
+            parentJS["securitySchemes"] = {};
+        }
+        parentJS["securitySchemes"][node.schemeName()] = securityScheme;
+        this.updateIndex(node, securityScheme);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitLinkDefinition(node: Oas30LinkDefinition): void {
+        let parentJS: any = this.lookupParentJS(node);
+        let link: any = this.createLinkObject(node);
+        if (!this.isDefined(parentJS["links"])) {
+            parentJS["links"] = {};
+        }
+        parentJS["links"][node.name()] = link;
+        this.updateIndex(node, link);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitCallbackDefinition(node: Oas30CallbackDefinition): void {
+        let parentJS: any = this.lookupParentJS(node);
+        let callback: any = {};
+        if (!this.isDefined(parentJS["callbacks"])) {
+            parentJS["callbacks"] = {};
+        }
+        parentJS["callbacks"][node.name()] = callback;
+        this.updateIndex(node, callback);
     }
 
     /**
@@ -1390,9 +1636,9 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
     public visitServerVariable(node: Oas30ServerVariable): void {
         let parentJS: any = this.lookupParentJS(node);
         let serverVariable: any = {
-            "enum" : node.enum,
-            "default" : node.default,
-            "description" : node.description
+            enum : node.enum,
+            default : node.default,
+            description : node.description
         }
         parentJS[node.name()] = serverVariable;
         this.updateIndex(node, serverVariable);

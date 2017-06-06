@@ -147,3 +147,29 @@ export class Oas30Callback extends OasExtensibleNode implements IOasIndexedNode<
     }
 
 }
+
+
+
+/**
+ * Models a callback definition found in the components section of an OAS document.
+ */
+export class Oas30CallbackDefinition extends Oas30Callback {
+
+    /**
+     * Constructor.
+     * @param name
+     */
+    constructor(name: string) {
+        super(name);
+    }
+
+    /**
+     * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.
+     * @param visitor
+     */
+    public accept(visitor: IOasNodeVisitor): void {
+        let viz: IOas30NodeVisitor = <IOas30NodeVisitor> visitor;
+        viz.visitCallbackDefinition(this);
+    }
+
+}

@@ -96,3 +96,28 @@ export class Oas30Link extends OasExtensibleNode {
     }
 
 }
+
+
+/**
+ * Models a link definition found in the components section of an OAS document.
+ */
+export class Oas30LinkDefinition extends Oas30Link {
+
+    /**
+     * Constructor.
+     * @param name
+     */
+    constructor(name: string) {
+        super(name);
+    }
+
+    /**
+     * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.
+     * @param visitor
+     */
+    public accept(visitor: IOasNodeVisitor): void {
+        let viz: IOas30NodeVisitor = <IOas30NodeVisitor> visitor;
+        viz.visitLinkDefinition(this);
+    }
+
+}

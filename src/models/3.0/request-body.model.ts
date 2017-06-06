@@ -16,7 +16,6 @@
  */
 
 import {OasExtensibleNode} from "../enode.model";
-import {Oas30ServerVariables} from "./server-variables.model";
 import {IOas30NodeVisitor, IOasNodeVisitor} from "../../visitors/visitor.iface";
 import {IOasReferenceNode} from "../reference.model";
 import {Oas30Content} from "./content.model";
@@ -94,6 +93,42 @@ export class Oas30RequestBody extends OasExtensibleNode implements IOasReference
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;
+    }
+
+}
+
+
+/**
+ * Models a request body definition found in the components section of an OAS document.
+ */
+export class Oas30RequestBodyDefinition extends Oas30RequestBody {
+
+    private _name: string;
+
+    /**
+     * Constructor.
+     * @param name
+     */
+    constructor(name: string) {
+        super();
+        this._name = name;
+    }
+
+    /**
+     * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.
+     * @param visitor
+     */
+    public accept(visitor: IOasNodeVisitor): void {
+        let viz: IOas30NodeVisitor = <IOas30NodeVisitor> visitor;
+        viz.visitRequestBodyDefinition(this);
+    }
+
+    /**
+     * Gets the schema's property name.
+     * @return {string}
+     */
+    public name(): string {
+        return this._name;
     }
 
 }

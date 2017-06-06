@@ -18,6 +18,14 @@
 import {IOas30NodeVisitor, IOasNodeVisitor} from "../../visitors/visitor.iface";
 import {OasExtensibleNode} from "../enode.model";
 import {Oas30SchemaDefinition} from "./schema.model";
+import {Oas30ResponseDefinition} from "./response.model";
+import {Oas30ParameterDefinition} from "./parameter.model";
+import {Oas30ExampleDefinition} from "./example.model";
+import {Oas30RequestBodyDefinition} from "./request-body.model";
+import {Oas30HeaderDefinition} from "./header.model";
+import {Oas30SecurityScheme} from "./security-scheme.model";
+import {Oas30LinkDefinition} from "./link.model";
+import {Oas30CallbackDefinition} from "./callback.model";
 
 /**
  * Models an OAS 3.0 Components object.  Example:
@@ -113,6 +121,16 @@ import {Oas30SchemaDefinition} from "./schema.model";
  */
 export class Oas30Components extends OasExtensibleNode {
 
+    public schemas: Oas30SchemaComponents = new Oas30SchemaComponents();
+    public responses: Oas30ResponseComponents = new Oas30ResponseComponents();
+    public parameters: Oas30ParameterComponents = new Oas30ParameterComponents();
+    public examples: Oas30ExampleComponents = new Oas30ExampleComponents();
+    public requestBodies: Oas30RequestBodyComponents = new Oas30RequestBodyComponents();
+    public headers: Oas30HeaderComponents = new Oas30HeaderComponents();
+    public securitySchemes: Oas30SecuritySchemeComponents = new Oas30SecuritySchemeComponents();
+    public links: Oas30LinkComponents = new Oas30LinkComponents();
+    public callbacks: Oas30CallbackComponents = new Oas30CallbackComponents();
+
     /**
      * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.
      * @param visitor
@@ -122,9 +140,536 @@ export class Oas30Components extends OasExtensibleNode {
         viz.visitComponents(this);
     }
 
+    /**
+     * Creates a schema definition.
+     * @param name
+     * @return {Oas30SchemaDefinition}
+     */
+    public createSchemaDefinition(name: string): Oas30SchemaDefinition {
+        let rval: Oas30SchemaDefinition = new Oas30SchemaDefinition(name);
+        rval._ownerDocument = this._ownerDocument;
+        rval._parent = this;
+        return rval;
+    }
+
+    /**
+     * Adds a schema definition.
+     * @param name
+     * @param schemaDefinition
+     */
+    public addSchemaDefinition(name: string, schemaDefinition: Oas30SchemaDefinition): void {
+        this.schemas[name] = schemaDefinition;
+    }
+
+    /**
+     * Gets a single schema definition by name.
+     * @param name
+     * @return {Oas30SchemaDefinition}
+     */
+    public getSchemaDefinition(name: string): Oas30SchemaDefinition {
+        return this.schemas[name];
+    }
+
+    /**
+     * Removes a single schema definition and returns it.  This may return null or undefined if none found.
+     * @param name
+     * @return {Oas30SchemaDefinition}
+     */
+    public removeSchemaDefinition(name: string): Oas30SchemaDefinition {
+        let rval: Oas30SchemaDefinition = this.schemas[name];
+        if (rval) {
+            delete this.schemas[name];
+        }
+        return rval;
+    }
+
+    /**
+     * Gets a list of all schema definitions.
+     * @return {Oas30SchemaDefinition[]}
+     */
+    public getSchemaDefinitions(): Oas30SchemaDefinition[] {
+        let rval: Oas30SchemaDefinition[] = [];
+        for (let name in this.schemas) {
+            rval.push(this.schemas[name]);
+        }
+        return rval;
+    }
+
+    /**
+     * Creates a response definition.
+     * @param name
+     * @return {Oas30ResponseDefinition}
+     */
+    public createResponseDefinition(name: string): Oas30ResponseDefinition {
+        let rval: Oas30ResponseDefinition = new Oas30ResponseDefinition(name);
+        rval._ownerDocument = this._ownerDocument;
+        rval._parent = this;
+        return rval;
+    }
+
+    /**
+     * Adds a response definition.
+     * @param name
+     * @param schemaDefinition
+     */
+    public addResponseDefinition(name: string, schemaDefinition: Oas30ResponseDefinition): void {
+        this.responses[name] = schemaDefinition;
+    }
+
+    /**
+     * Gets a single response definition by name.
+     * @param name
+     * @return {Oas30ResponseDefinition}
+     */
+    public getResponseDefinition(name: string): Oas30ResponseDefinition {
+        return this.responses[name];
+    }
+
+    /**
+     * Removes a single response definition and returns it.  This may return null or undefined if none found.
+     * @param name
+     * @return {Oas30ResponseDefinition}
+     */
+    public removeResponseDefinition(name: string): Oas30ResponseDefinition {
+        let rval: Oas30ResponseDefinition = this.responses[name];
+        if (rval) {
+            delete this.responses[name];
+        }
+        return rval;
+    }
+
+    /**
+     * Gets a list of all response definitions.
+     * @return {Oas30ResponseDefinition[]}
+     */
+    public getResponseDefinitions(): Oas30ResponseDefinition[] {
+        let rval: Oas30ResponseDefinition[] = [];
+        for (let name in this.responses) {
+            rval.push(this.responses[name]);
+        }
+        return rval;
+    }
+
+    /**
+     * Creates a parameter definition.
+     * @param name
+     * @return {Oas30ParameterDefinition}
+     */
+    public createParameterDefinition(name: string): Oas30ParameterDefinition {
+        let rval: Oas30ParameterDefinition = new Oas30ParameterDefinition(name);
+        rval._ownerDocument = this._ownerDocument;
+        rval._parent = this;
+        return rval;
+    }
+
+    /**
+     * Adds a parameter definition.
+     * @param name
+     * @param schemaDefinition
+     */
+    public addParameterDefinition(name: string, schemaDefinition: Oas30ParameterDefinition): void {
+        this.parameters[name] = schemaDefinition;
+    }
+
+    /**
+     * Gets a single parameter definition by name.
+     * @param name
+     * @return {Oas30ParameterDefinition}
+     */
+    public getParameterDefinition(name: string): Oas30ParameterDefinition {
+        return this.parameters[name];
+    }
+
+    /**
+     * Removes a single parameter definition and returns it.  This may return null or undefined if none found.
+     * @param name
+     * @return {Oas30ParameterDefinition}
+     */
+    public removeParameterDefinition(name: string): Oas30ParameterDefinition {
+        let rval: Oas30ParameterDefinition = this.parameters[name];
+        if (rval) {
+            delete this.parameters[name];
+        }
+        return rval;
+    }
+
+    /**
+     * Gets a list of all parameter definitions.
+     * @return {Oas30ParameterDefinition[]}
+     */
+    public getParameterDefinitions(): Oas30ParameterDefinition[] {
+        let rval: Oas30ParameterDefinition[] = [];
+        for (let name in this.parameters) {
+            rval.push(this.parameters[name]);
+        }
+        return rval;
+    }
+
+    /**
+     * Creates a example definition.
+     * @param name
+     * @return {Oas30ExampleDefinition}
+     */
+    public createExampleDefinition(name: string): Oas30ExampleDefinition {
+        let rval: Oas30ExampleDefinition = new Oas30ExampleDefinition(name);
+        rval._ownerDocument = this._ownerDocument;
+        rval._parent = this;
+        return rval;
+    }
+
+    /**
+     * Adds a example definition.
+     * @param name
+     * @param schemaDefinition
+     */
+    public addExampleDefinition(name: string, schemaDefinition: Oas30ExampleDefinition): void {
+        this.examples[name] = schemaDefinition;
+    }
+
+    /**
+     * Gets a single example definition by name.
+     * @param name
+     * @return {Oas30ExampleDefinition}
+     */
+    public getExampleDefinition(name: string): Oas30ExampleDefinition {
+        return this.examples[name];
+    }
+
+    /**
+     * Removes a single example definition and returns it.  This may return null or undefined if none found.
+     * @param name
+     * @return {Oas30ExampleDefinition}
+     */
+    public removeExampleDefinition(name: string): Oas30ExampleDefinition {
+        let rval: Oas30ExampleDefinition = this.examples[name];
+        if (rval) {
+            delete this.examples[name];
+        }
+        return rval;
+    }
+
+    /**
+     * Gets a list of all example definitions.
+     * @return {Oas30ExampleDefinition[]}
+     */
+    public getExampleDefinitions(): Oas30ExampleDefinition[] {
+        let rval: Oas30ExampleDefinition[] = [];
+        for (let name in this.examples) {
+            rval.push(this.examples[name]);
+        }
+        return rval;
+    }
+
+    /**
+     * Creates a request body definition.
+     * @param name
+     * @return {Oas30RequestBodyDefinition}
+     */
+    public createRequestBodyDefinition(name: string): Oas30RequestBodyDefinition {
+        let rval: Oas30RequestBodyDefinition = new Oas30RequestBodyDefinition(name);
+        rval._ownerDocument = this._ownerDocument;
+        rval._parent = this;
+        return rval;
+    }
+
+    /**
+     * Adds a request body definition.
+     * @param name
+     * @param schemaDefinition
+     */
+    public addRequestBodyDefinition(name: string, schemaDefinition: Oas30RequestBodyDefinition): void {
+        this.requestBodies[name] = schemaDefinition;
+    }
+
+    /**
+     * Gets a single request body definition by name.
+     * @param name
+     * @return {Oas30RequestBodyDefinition}
+     */
+    public getRequestBodyDefinition(name: string): Oas30RequestBodyDefinition {
+        return this.requestBodies[name];
+    }
+
+    /**
+     * Removes a single request body definition and returns it.  This may return null or undefined if none found.
+     * @param name
+     * @return {Oas30RequestBodyDefinition}
+     */
+    public removeRequestBodyDefinition(name: string): Oas30RequestBodyDefinition {
+        let rval: Oas30RequestBodyDefinition = this.requestBodies[name];
+        if (rval) {
+            delete this.requestBodies[name];
+        }
+        return rval;
+    }
+
+    /**
+     * Gets a list of all request body definitions.
+     * @return {Oas30RequestBodyDefinition[]}
+     */
+    public getRequestBodyDefinitions(): Oas30RequestBodyDefinition[] {
+        let rval: Oas30RequestBodyDefinition[] = [];
+        for (let name in this.requestBodies) {
+            rval.push(this.requestBodies[name]);
+        }
+        return rval;
+    }
+
+    /**
+     * Creates a header definition.
+     * @param name
+     * @return {Oas30HeaderDefinition}
+     */
+    public createHeaderDefinition(name: string): Oas30HeaderDefinition {
+        let rval: Oas30HeaderDefinition = new Oas30HeaderDefinition(name);
+        rval._ownerDocument = this._ownerDocument;
+        rval._parent = this;
+        return rval;
+    }
+
+    /**
+     * Adds a header definition.
+     * @param name
+     * @param schemaDefinition
+     */
+    public addHeaderDefinition(name: string, schemaDefinition: Oas30HeaderDefinition): void {
+        this.headers[name] = schemaDefinition;
+    }
+
+    /**
+     * Gets a single header definition by name.
+     * @param name
+     * @return {Oas30HeaderDefinition}
+     */
+    public getHeaderDefinition(name: string): Oas30HeaderDefinition {
+        return this.headers[name];
+    }
+
+    /**
+     * Removes a single header definition and returns it.  This may return null or undefined if none found.
+     * @param name
+     * @return {Oas30HeaderDefinition}
+     */
+    public removeHeaderDefinition(name: string): Oas30HeaderDefinition {
+        let rval: Oas30HeaderDefinition = this.headers[name];
+        if (rval) {
+            delete this.headers[name];
+        }
+        return rval;
+    }
+
+    /**
+     * Gets a list of all header definitions.
+     * @return {Oas30HeaderDefinition[]}
+     */
+    public getHeaderDefinitions(): Oas30HeaderDefinition[] {
+        let rval: Oas30HeaderDefinition[] = [];
+        for (let name in this.headers) {
+            rval.push(this.headers[name]);
+        }
+        return rval;
+    }
+
+    /**
+     * Creates a security scheme definition.
+     * @param name
+     * @return {Oas30SecurityScheme}
+     */
+    public createSecurityScheme(name: string): Oas30SecurityScheme {
+        let rval: Oas30SecurityScheme = new Oas30SecurityScheme(name);
+        rval._ownerDocument = this._ownerDocument;
+        rval._parent = this;
+        return rval;
+    }
+
+    /**
+     * Adds a security scheme definition.
+     * @param name
+     * @param schemaDefinition
+     */
+    public addSecurityScheme(name: string, schemaDefinition: Oas30SecurityScheme): void {
+        this.securitySchemes[name] = schemaDefinition;
+    }
+
+    /**
+     * Gets a single security scheme definition by name.
+     * @param name
+     * @return {Oas30SecurityScheme}
+     */
+    public getSecurityScheme(name: string): Oas30SecurityScheme {
+        return this.securitySchemes[name];
+    }
+
+    /**
+     * Removes a single security scheme definition and returns it.  This may return null or undefined if none found.
+     * @param name
+     * @return {Oas30SecurityScheme}
+     */
+    public removeSecurityScheme(name: string): Oas30SecurityScheme {
+        let rval: Oas30SecurityScheme = this.securitySchemes[name];
+        if (rval) {
+            delete this.securitySchemes[name];
+        }
+        return rval;
+    }
+
+    /**
+     * Gets a list of all security scheme definitions.
+     * @return {Oas30SecurityScheme[]}
+     */
+    public getSecuritySchemes(): Oas30SecurityScheme[] {
+        let rval: Oas30SecurityScheme[] = [];
+        for (let name in this.securitySchemes) {
+            rval.push(this.securitySchemes[name]);
+        }
+        return rval;
+    }
+
+    /**
+     * Creates a link definition.
+     * @param name
+     * @return {Oas30LinkDefinition}
+     */
+    public createLinkDefinition(name: string): Oas30LinkDefinition {
+        let rval: Oas30LinkDefinition = new Oas30LinkDefinition(name);
+        rval._ownerDocument = this._ownerDocument;
+        rval._parent = this;
+        return rval;
+    }
+
+    /**
+     * Adds a link definition.
+     * @param name
+     * @param schemaDefinition
+     */
+    public addLinkDefinition(name: string, schemaDefinition: Oas30LinkDefinition): void {
+        this.links[name] = schemaDefinition;
+    }
+
+    /**
+     * Gets a single link definition by name.
+     * @param name
+     * @return {Oas30LinkDefinition}
+     */
+    public getLinkDefinition(name: string): Oas30LinkDefinition {
+        return this.links[name];
+    }
+
+    /**
+     * Removes a single link definition and returns it.  This may return null or undefined if none found.
+     * @param name
+     * @return {Oas30LinkDefinition}
+     */
+    public removeLinkDefinition(name: string): Oas30LinkDefinition {
+        let rval: Oas30LinkDefinition = this.links[name];
+        if (rval) {
+            delete this.links[name];
+        }
+        return rval;
+    }
+
+    /**
+     * Gets a list of all link definitions.
+     * @return {Oas30LinkDefinition[]}
+     */
+    public getLinkDefinitions(): Oas30LinkDefinition[] {
+        let rval: Oas30LinkDefinition[] = [];
+        for (let name in this.links) {
+            rval.push(this.links[name]);
+        }
+        return rval;
+    }
+
+    /**
+     * Creates a callback definition.
+     * @param name
+     * @return {Oas30CallbackDefinition}
+     */
+    public createCallbackDefinition(name: string): Oas30CallbackDefinition {
+        let rval: Oas30CallbackDefinition = new Oas30CallbackDefinition(name);
+        rval._ownerDocument = this._ownerDocument;
+        rval._parent = this;
+        return rval;
+    }
+
+    /**
+     * Adds a callback definition.
+     * @param name
+     * @param schemaDefinition
+     */
+    public addCallbackDefinition(name: string, schemaDefinition: Oas30CallbackDefinition): void {
+        this.callbacks[name] = schemaDefinition;
+    }
+
+    /**
+     * Gets a single callback definition by name.
+     * @param name
+     * @return {Oas30CallbackDefinition}
+     */
+    public getCallbackDefinition(name: string): Oas30CallbackDefinition {
+        return this.callbacks[name];
+    }
+
+    /**
+     * Removes a single callback definition and returns it.  This may return null or undefined if none found.
+     * @param name
+     * @return {Oas30CallbackDefinition}
+     */
+    public removeCallbackDefinition(name: string): Oas30CallbackDefinition {
+        let rval: Oas30CallbackDefinition = this.callbacks[name];
+        if (rval) {
+            delete this.callbacks[name];
+        }
+        return rval;
+    }
+
+    /**
+     * Gets a list of all callback definitions.
+     * @return {Oas30CallbackDefinition[]}
+     */
+    public getCallbackDefinitions(): Oas30CallbackDefinition[] {
+        let rval: Oas30CallbackDefinition[] = [];
+        for (let name in this.callbacks) {
+            rval.push(this.callbacks[name]);
+        }
+        return rval;
+    }
+
 }
 
 
 export class Oas30SchemaComponents {
     [key: string]: Oas30SchemaDefinition;
+}
+
+export class Oas30ResponseComponents {
+    [key: string]: Oas30ResponseDefinition;
+}
+
+export class Oas30ParameterComponents {
+    [key: string]: Oas30ParameterDefinition;
+}
+
+export class Oas30ExampleComponents {
+    [key: string]: Oas30ExampleDefinition;
+}
+
+export class Oas30RequestBodyComponents {
+    [key: string]: Oas30RequestBodyDefinition;
+}
+
+export class Oas30HeaderComponents {
+    [key: string]: Oas30HeaderDefinition;
+}
+
+export class Oas30SecuritySchemeComponents {
+    [key: string]: Oas30SecurityScheme;
+}
+
+export class Oas30LinkComponents {
+    [key: string]: Oas30LinkDefinition;
+}
+
+export class Oas30CallbackComponents {
+    [key: string]: Oas30CallbackDefinition;
 }

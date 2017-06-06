@@ -160,6 +160,16 @@ describe("Full I/O (3.0)", () => {
         { name: "Paths (GET+Response+Content)",         test: "tests/fixtures/full-io/3.0/paths/paths-get-response-content.json" },
         { name: "Paths (GET+Response+Links)",           test: "tests/fixtures/full-io/3.0/paths/paths-get-response-links.json" },
         { name: "Paths (GET+Callbacks)",                test: "tests/fixtures/full-io/3.0/paths/paths-get-callbacks.json" },
+        { name: "Components (Empty)",                   test: "tests/fixtures/full-io/3.0/components/components-empty.json" },
+        { name: "Components (Schemas)",                 test: "tests/fixtures/full-io/3.0/components/components-schemas.json" },
+        { name: "Components (Responses)",               test: "tests/fixtures/full-io/3.0/components/components-responses.json" },
+        { name: "Components (Parameters)",              test: "tests/fixtures/full-io/3.0/components/components-parameters.json" },
+        { name: "Components (Examples)",                test: "tests/fixtures/full-io/3.0/components/components-examples.json" },
+        { name: "Components (Request Bodies)",          test: "tests/fixtures/full-io/3.0/components/components-requestBodies.json" },
+        { name: "Components (Headers)",                 test: "tests/fixtures/full-io/3.0/components/components-headers.json", debug: true },
+        { name: "Components (Security Schemes)",        test: "tests/fixtures/full-io/3.0/components/components-securitySchemes.json", debug: true },
+        { name: "Components (Links)",                   test: "tests/fixtures/full-io/3.0/components/components-links.json" },
+        { name: "Components (Callbacks)",               test: "tests/fixtures/full-io/3.0/components/components-callbacks.json" },
     ];
 
     let library: OasLibraryUtils;

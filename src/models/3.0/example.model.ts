@@ -64,3 +64,28 @@ export class Oas30Example extends OasExtensibleNode {
     }
 
 }
+
+
+/**
+ * Models an Example Definition (in the components section of the OpenAPI 3.0.0 document).
+ */
+export class Oas30ExampleDefinition extends Oas30Example {
+
+    /**
+     * Constructor.
+     * @param name
+     */
+    constructor(name: string) {
+        super(name);
+    }
+
+    /**
+     * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.
+     * @param visitor
+     */
+    public accept(visitor: IOasNodeVisitor): void {
+        let viz: IOas30NodeVisitor = <IOas30NodeVisitor> visitor;
+        viz.visitExampleDefinition(this);
+    }
+
+}

@@ -77,24 +77,30 @@ import {OasPathItem} from "../models/common/path-item.model";
 import {Oas30Paths} from "../models/3.0/paths.model";
 import {Oas30PathItem} from "../models/3.0/path-item.model";
 import {Oas30Operation} from "../models/3.0/operation.model";
-import {Oas30Parameter, Oas30ParameterBase} from "../models/3.0/parameter.model";
-import {Oas30Schema} from "../models/3.0/schema.model";
-import {Oas30Response, Oas30ResponseBase} from "../models/3.0/response.model";
-import {Oas30Header} from "../models/3.0/header.model";
-import {Oas30RequestBody} from "../models/3.0/request-body.model";
+import {Oas30Parameter, Oas30ParameterBase, Oas30ParameterDefinition} from "../models/3.0/parameter.model";
+import {Oas30Schema, Oas30SchemaDefinition} from "../models/3.0/schema.model";
+import {Oas30Response, Oas30ResponseBase, Oas30ResponseDefinition} from "../models/3.0/response.model";
+import {Oas30Header, Oas30HeaderDefinition} from "../models/3.0/header.model";
+import {Oas30RequestBody, Oas30RequestBodyDefinition} from "../models/3.0/request-body.model";
 import {Oas30Content} from "../models/3.0/content.model";
 import {Oas30MediaType} from "../models/3.0/media-type.model";
 import {Oas30Encoding} from "../models/3.0/encoding.model";
 import {Oas30EncodingProperty} from "../models/3.0/encoding-property.model";
-import {Oas30Example} from "../models/3.0/example.model";
+import {Oas30Example, Oas30ExampleDefinition} from "../models/3.0/example.model";
 import {Oas30Headers} from "../models/3.0/headers.model";
 import {Oas30Links} from "../models/3.0/links.model";
-import {Oas30Link} from "../models/3.0/link.model";
+import {Oas30Link, Oas30LinkDefinition} from "../models/3.0/link.model";
 import {Oas30LinkParameters} from "../models/3.0/link-parameters.model";
 import {Oas30LinkParameterExpression} from "../models/3.0/link-parameter-expression.model";
 import {Oas30Callbacks} from "../models/3.0/callbacks.model";
-import {Oas30Callback} from "../models/3.0/callback.model";
+import {Oas30Callback, Oas30CallbackDefinition} from "../models/3.0/callback.model";
 import {OasDocument} from "../models/document.model";
+import {Oas30Components} from "../models/3.0/components.model";
+import {Oas30SecurityScheme} from "../models/3.0/security-scheme.model";
+import {OasSecurityScheme} from "../models/common/security-scheme.model";
+import {Oas30OAuthFlows} from "../models/3.0/oauth-flows.model";
+import {Oas30ImplicitOAuthFlow, Oas30OAuthFlow} from "../models/3.0/oauth-flow.model";
+import {Oas30Scopes} from "../models/3.0/scopes.model";
 
 
 /**
@@ -550,6 +556,25 @@ export abstract class OasJS2ModelReader {
     }
 
     /**
+     * Reads an OAS 2.0 Security Schema object from the given javascript data.
+     * @param scheme
+     * @param schemeModel
+     */
+    public readSecurityScheme(scheme: any, schemeModel: OasSecurityScheme): void {
+        let type: string = scheme["type"];
+        let description: string = scheme["description"];
+        let name: string = scheme["name"];
+        let in_: string = scheme["in"];
+
+        if (this.isDefined(type)) { schemeModel.type = type; }
+        if (this.isDefined(description)) { schemeModel.description = description; }
+        if (this.isDefined(name)) { schemeModel.name = name; }
+        if (this.isDefined(in_)) { schemeModel.in = in_; }
+
+        this.readExtensions(scheme, schemeModel);
+    }
+
+    /**
      * Reads an OAS Security Requirement object from the given javascript data.
      * @param sec
      * @param secModel
@@ -702,19 +727,13 @@ export class Oas20JS2ModelReader extends OasJS2ModelReader {
      * @param schemeModel
      */
     public readSecurityScheme(scheme: any, schemeModel: Oas20SecurityScheme): void {
-        let type: string = scheme["type"];
-        let description: string = scheme["description"];
-        let name: string = scheme["name"];
-        let in_: string = scheme["in"];
+        super.readSecurityScheme(scheme, schemeModel);
+
         let flow: string = scheme["flow"];
         let authorizationUrl: string = scheme["authorizationUrl"];
         let tokenUrl: string = scheme["tokenUrl"];
         let scopes: any = scheme["scopes"];
 
-        if (this.isDefined(type)) { schemeModel.type = type; }
-        if (this.isDefined(description)) { schemeModel.description = description; }
-        if (this.isDefined(name)) { schemeModel.name = name; }
-        if (this.isDefined(in_)) { schemeModel.in = in_; }
         if (this.isDefined(flow)) { schemeModel.flow = flow; }
         if (this.isDefined(authorizationUrl)) { schemeModel.authorizationUrl = authorizationUrl; }
         if (this.isDefined(tokenUrl)) { schemeModel.tokenUrl = tokenUrl; }
@@ -723,8 +742,6 @@ export class Oas20JS2ModelReader extends OasJS2ModelReader {
             this.readScopes(scopes, scopesModel);
             schemeModel.scopes = scopesModel;
         }
-
-        this.readExtensions(scheme, schemeModel);
     }
 
     /**
@@ -734,6 +751,7 @@ export class Oas20JS2ModelReader extends OasJS2ModelReader {
      */
     public readScopes(scopes: any, scopesModel: Oas20Scopes): void {
         for (let scope in scopes) {
+            if (scope.indexOf("x-") === 0) { continue; }
             let description: string = scopes[scope];
             scopesModel.addScope(scope, description);
         }
@@ -1157,6 +1175,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         super.readDocument(document, documentModel);
 
         let servers: any = document["servers"];
+        let components: any = document["components"];
 
         documentModel.openapi = openapi;
         if (Array.isArray(servers)) {
@@ -1167,6 +1186,200 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
                 documentModel.servers.push(serverModel);
             })
         }
+        if (this.isDefined(components)) {
+            let componentsModel: Oas30Components = documentModel.createComponents();
+            this.readComponents(components, componentsModel);
+            documentModel.components = componentsModel;
+        }
+    }
+
+    /**
+     * Reads an OAS 3.0 Components object from the given JS data.
+     * @param components
+     * @param componentsModel
+     */
+    public readComponents(components: any, componentsModel: Oas30Components): void {
+        let schemas: any = components["schemas"];
+        let responses: any = components["responses"];
+        let parameters: any = components["parameters"];
+        let examples: any = components["examples"];
+        let requestBodies: any = components["requestBodies"];
+        let headers: any = components["headers"];
+        let securitySchemes: any = components["securitySchemes"];
+        let links: any = components["links"];
+        let callbacks: any = components["callbacks"];
+
+        if (this.isDefined(schemas)) {
+            for (let name in schemas) {
+                let schema: any = schemas[name];
+                let schemaModel: Oas30SchemaDefinition = componentsModel.createSchemaDefinition(name);
+                this.readSchema(schema, schemaModel);
+                componentsModel.addSchemaDefinition(name, schemaModel);
+            }
+        }
+        if (this.isDefined(responses)) {
+            for (let name in responses) {
+                let response: any = responses[name];
+                let responseModel: Oas30ResponseDefinition = componentsModel.createResponseDefinition(name);
+                this.readResponseBase(response, responseModel);
+                componentsModel.addResponseDefinition(name, responseModel);
+            }
+        }
+        if (this.isDefined(parameters)) {
+            for (let name in parameters) {
+                let parameter: any = parameters[name];
+                let parameterModel: Oas30ParameterDefinition = componentsModel.createParameterDefinition(name);
+                this.readParameterBase(parameter, parameterModel);
+                componentsModel.addParameterDefinition(name, parameterModel);
+            }
+        }
+        if (this.isDefined(examples)) {
+            for (let name in examples) {
+                let example: any = examples[name];
+                let exampleModel: Oas30ExampleDefinition = componentsModel.createExampleDefinition(name);
+                this.readExample(example, exampleModel);
+                componentsModel.addExampleDefinition(name, exampleModel);
+            }
+        }
+        if (this.isDefined(requestBodies)) {
+            for (let name in requestBodies) {
+                let requestBody: any = requestBodies[name];
+                let requestBodyModel: Oas30RequestBodyDefinition = componentsModel.createRequestBodyDefinition(name);
+                this.readRequestBody(requestBody, requestBodyModel);
+                componentsModel.addRequestBodyDefinition(name, requestBodyModel);
+            }
+        }
+        if (this.isDefined(headers)) {
+            for (let name in headers) {
+                let header: any = headers[name];
+                let headerModel: Oas30HeaderDefinition = componentsModel.createHeaderDefinition(name);
+                this.readHeader(header, headerModel);
+                componentsModel.addHeaderDefinition(name, headerModel);
+            }
+        }
+        if (this.isDefined(securitySchemes)) {
+            for (let name in securitySchemes) {
+                let securityScheme: any = securitySchemes[name];
+                let securitySchemeModel: Oas30SecurityScheme = componentsModel.createSecurityScheme(name);
+                this.readSecurityScheme(securityScheme, securitySchemeModel);
+                componentsModel.addSecurityScheme(name, securitySchemeModel);
+            }
+        }
+        if (this.isDefined(links)) {
+            for (let name in links) {
+                let link: any = links[name];
+                let linkModel: Oas30LinkDefinition = componentsModel.createLinkDefinition(name);
+                this.readLink(link, linkModel);
+                componentsModel.addLinkDefinition(name, linkModel);
+            }
+        }
+        if (this.isDefined(callbacks)) {
+            for (let name in callbacks) {
+                let callback: any = callbacks[name];
+                let callbackModel: Oas30CallbackDefinition = componentsModel.createCallbackDefinition(name);
+                this.readCallback(callback, callbackModel);
+                componentsModel.addCallbackDefinition(name, callbackModel);
+            }
+        }
+
+        this.readExtensions(components, componentsModel);
+    }
+
+    /**
+     * Reads an OAS 3.0 Security Scheme object from the given JS data.
+     * @param securityScheme
+     * @param securitySchemeModel
+     */
+    public readSecurityScheme(securityScheme: any, securitySchemeModel: Oas30SecurityScheme): void {
+        super.readSecurityScheme(securityScheme, securitySchemeModel);
+
+        let scheme: string = securityScheme["scheme"];
+        let bearerFormat: string = securityScheme["bearerFormat"];
+        let flows: any = securityScheme["flows"];
+        let openIdConnectUrl: string = securityScheme["openIdConnectUrl"];
+
+        if (this.isDefined(scheme)) { securitySchemeModel.scheme = scheme; }
+        if (this.isDefined(bearerFormat)) { securitySchemeModel.bearerFormat = bearerFormat; }
+        if (this.isDefined(flows)) {
+            let flowsModel: Oas30OAuthFlows = securitySchemeModel.createOAuthFlows();
+            this.readOAuthFlows(flows, flowsModel);
+            securitySchemeModel.flows = flowsModel;
+        }
+        if (this.isDefined(openIdConnectUrl)) { securitySchemeModel.openIdConnectUrl = openIdConnectUrl; }
+
+        this.readExtensions(securityScheme, securitySchemeModel);
+    }
+
+    /**
+     * Reads an OAS 3.0 OAuth Flows object from the given JS data.
+     * @param flows
+     * @param flowsModel
+     */
+    public readOAuthFlows(flows: any, flowsModel: Oas30OAuthFlows): void {
+        let implicit: any = flows["implicit"];
+        let password: any = flows["password"];
+        let clientCredentials: any = flows["clientCredentials"];
+        let authorizationCode: any = flows["authorizationCode"];
+
+        if (this.isDefined(implicit)) {
+            let implicitModel: Oas30ImplicitOAuthFlow = flowsModel.createImplicitOAuthFlow();
+            this.readOAuthFlow(implicit, implicitModel);
+            flowsModel.implicit = implicitModel;
+        }
+        if (this.isDefined(password)) {
+            let passwordModel: Oas30ImplicitOAuthFlow = flowsModel.createImplicitOAuthFlow();
+            this.readOAuthFlow(password, passwordModel);
+            flowsModel.password = passwordModel;
+        }
+        if (this.isDefined(clientCredentials)) {
+            let clientCredentialsModel: Oas30ImplicitOAuthFlow = flowsModel.createImplicitOAuthFlow();
+            this.readOAuthFlow(clientCredentials, clientCredentialsModel);
+            flowsModel.clientCredentials = clientCredentialsModel;
+        }
+        if (this.isDefined(authorizationCode)) {
+            let authorizationCodeModel: Oas30ImplicitOAuthFlow = flowsModel.createImplicitOAuthFlow();
+            this.readOAuthFlow(authorizationCode, authorizationCodeModel);
+            flowsModel.authorizationCode = authorizationCodeModel;
+        }
+
+        this.readExtensions(flows, flowsModel);
+    }
+
+    /**
+     * Reads an OAS 3.0 OAuth Flow object from the given JS data.
+     * @param flow
+     * @param flowModel
+     */
+    public readOAuthFlow(flow: any, flowModel: Oas30OAuthFlow): void {
+        let authorizationUrl: string = flow["authorizationUrl"];
+        let tokenUrl: string = flow["tokenUrl"];
+        let refreshUrl: string = flow["refreshUrl"];
+        let scopes: string = flow["scopes"];
+
+        if (this.isDefined(authorizationUrl)) { flowModel.authorizationUrl = authorizationUrl; }
+        if (this.isDefined(tokenUrl)) { flowModel.tokenUrl = tokenUrl; }
+        if (this.isDefined(refreshUrl)) { flowModel.refreshUrl = refreshUrl; }
+        if (this.isDefined(scopes)) {
+            let scopesModel: Oas30Scopes = flowModel.createScopes();
+            this.readScopes(scopes, scopesModel);
+            flowModel.scopes = scopesModel;
+        }
+
+        this.readExtensions(flow, flowModel);
+    }
+
+    /**
+     * Reads an OAS 3.0 Scopes object from the given JS data.
+     * @param scopes
+     * @param scopesModel
+     */
+    public readScopes(scopes: any, scopesModel: Oas30Scopes): void {
+        for (let scopeName in scopes) {
+            if (scopeName.indexOf("x-") === 0) { continue; }
+            let description: string = scopes[scopeName];
+            scopesModel.addScope(scopeName, description);
+        }
+        this.readExtensions(scopes, scopesModel);
     }
 
     /**

@@ -22,19 +22,16 @@ import {Oas20Response, Oas20ResponseDefinition} from "../models/2.0/response.mod
 import {
     Oas20AdditionalPropertiesSchema,
     Oas20AllOfSchema,
-    Oas20SchemaDefinition,
     Oas20ItemsSchema,
     Oas20PropertySchema,
-    Oas20Schema
+    Oas20SchemaDefinition
 } from "../models/2.0/schema.model";
-import {Oas20Header} from "../models/2.0/header.model";
 import {Oas20Example} from "../models/2.0/example.model";
 import {Oas20Items} from "../models/2.0/items.model";
 import {IOas20NodeVisitor, IOas30NodeVisitor, IOasNodeVisitor} from "./visitor.iface";
 import {Oas20SecurityDefinitions} from "../models/2.0/security-definitions.model";
 import {Oas20SecurityScheme} from "../models/2.0/security-scheme.model";
 import {Oas20Scopes} from "../models/2.0/scopes.model";
-import {Oas20XML} from "../models/2.0/xml.model";
 import {Oas20Definitions} from "../models/2.0/definitions.model";
 import {Oas20ParametersDefinitions} from "../models/2.0/parameters-definitions.model";
 import {Oas20ResponsesDefinitions} from "../models/2.0/responses-definitions.model";
@@ -58,30 +55,40 @@ import {OasHeader} from "../models/common/header.model";
 import {OasXML} from "../models/common/xml.model";
 import {Oas30Parameter, Oas30ParameterDefinition} from "../models/3.0/parameter.model";
 import {Oas30Response, Oas30ResponseDefinition} from "../models/3.0/response.model";
-import {Oas30RequestBody} from "../models/3.0/request-body.model";
+import {Oas30RequestBody, Oas30RequestBodyDefinition} from "../models/3.0/request-body.model";
 import {Oas30Callbacks} from "../models/3.0/callbacks.model";
 import {
     Oas30AdditionalPropertiesSchema,
     Oas30AllOfSchema,
     Oas30AnyOfSchema,
-    Oas30SchemaDefinition,
     Oas30ItemsSchema,
     Oas30NotSchema,
     Oas30OneOfSchema,
-    Oas30PropertySchema
+    Oas30PropertySchema,
+    Oas30SchemaDefinition
 } from "../models/3.0/schema.model";
 import {Oas30Content} from "../models/3.0/content.model";
 import {Oas30MediaType} from "../models/3.0/media-type.model";
 import {Oas30Encoding} from "../models/3.0/encoding.model";
 import {Oas30EncodingProperty} from "../models/3.0/encoding-property.model";
-import {Oas30Example} from "../models/3.0/example.model";
+import {Oas30Example, Oas30ExampleDefinition} from "../models/3.0/example.model";
 import {Oas30Links} from "../models/3.0/links.model";
-import {Oas30Link} from "../models/3.0/link.model";
+import {Oas30Link, Oas30LinkDefinition} from "../models/3.0/link.model";
 import {Oas30LinkParameters} from "../models/3.0/link-parameters.model";
 import {Oas30LinkParameterExpression} from "../models/3.0/link-parameter-expression.model";
-import {Oas30Callback} from "../models/3.0/callback.model";
+import {Oas30Callback, Oas30CallbackDefinition} from "../models/3.0/callback.model";
 import {Oas30CallbackPathItem} from "../models/3.0/path-item.model";
 import {Oas30Components} from "../models/3.0/components.model";
+import {Oas30HeaderDefinition} from "../models/3.0/header.model";
+import {Oas30OAuthFlows} from "../models/3.0/oauth-flows.model";
+import {
+    Oas30AuthorizationCodeOAuthFlow,
+    Oas30ClientCredentialsOAuthFlow, Oas30ImplicitOAuthFlow, Oas30OAuthFlow,
+    Oas30PasswordOAuthFlow
+} from "../models/3.0/oauth-flow.model";
+import {Oas30Scopes} from "../models/3.0/scopes.model";
+import {OasSecurityScheme} from "../models/common/security-scheme.model";
+import {Oas30SecurityScheme} from "../models/3.0/security-scheme.model";
 
 
 /**
@@ -102,6 +109,7 @@ export abstract class OasNodeVisitorAdapter implements IOasNodeVisitor {
     public visitHeader(node: OasHeader): void {}
     public visitOperation(node: OasOperation): void {}
     public visitXML(node: OasXML): void {}
+    public visitSecurityScheme(node: OasSecurityScheme): void {}
     public visitSecurityRequirement(node: OasSecurityRequirement): void {}
     public visitTag(node: OasTag): void {}
     public visitExternalDocumentation(node: OasExternalDocumentation): void {}
@@ -167,6 +175,17 @@ export class Oas30NodeVisitorAdapter extends OasNodeVisitorAdapter implements IO
     public visitItemsSchema(node: Oas30ItemsSchema): void {}
     public visitAdditionalPropertiesSchema(node: Oas30AdditionalPropertiesSchema): void {}
     public visitComponents(node: Oas30Components): void {}
+    public visitExampleDefinition(node: Oas30ExampleDefinition): void {}
+    public visitRequestBodyDefinition(node: Oas30RequestBodyDefinition): void {}
+    public visitHeaderDefinition(node: Oas30HeaderDefinition): void {}
+    public visitOAuthFlows(node: Oas30OAuthFlows): void {}
+    public visitImplicitOAuthFlow(node: Oas30ImplicitOAuthFlow): void {}
+    public visitPasswordOAuthFlow(node: Oas30PasswordOAuthFlow): void {}
+    public visitClientCredentialsOAuthFlow(node: Oas30ClientCredentialsOAuthFlow): void {}
+    public visitAuthorizationCodeOAuthFlow(node: Oas30AuthorizationCodeOAuthFlow): void {}
+    public visitScopes(node: Oas30Scopes): void {}
+    public visitLinkDefinition(node: Oas30LinkDefinition): void {}
+    public visitCallbackDefinition(node: Oas30CallbackDefinition): void {}
     public visitSchemaDefinition(node: Oas30SchemaDefinition): void {}
     public visitServer(node: Oas30Server): void {}
     public visitServerVariables(node: Oas30ServerVariables): void {}
@@ -221,22 +240,23 @@ export abstract class OasCompositeVisitor implements IOasNodeVisitor {
         });
     }
 
-    visitDocument(node: OasDocument): void { this._acceptAll(node); }
-    visitInfo(node: OasInfo): void { this._acceptAll(node); }
-    visitContact(node: OasContact): void { this._acceptAll(node); }
-    visitLicense(node: OasLicense): void { this._acceptAll(node); }
-    visitPaths(node: OasPaths): void { this._acceptAll(node); }
-    visitPathItem(node: OasPathItem): void { this._acceptAll(node); }
-    visitOperation(node: OasOperation): void { this._acceptAll(node); }
-    visitResponses(node: OasResponses): void { this._acceptAll(node); }
-    visitSchema(node: OasSchema): void { this._acceptAll(node); }
-    visitHeaders(node: OasHeaders): void { this._acceptAll(node); }
-    visitHeader(node: OasHeader): void { this._acceptAll(node); }
-    visitXML(node: OasXML): void { this._acceptAll(node); }
-    visitSecurityRequirement(node: OasSecurityRequirement): void { this._acceptAll(node); }
-    visitTag(node: OasTag): void { this._acceptAll(node); }
-    visitExternalDocumentation(node: OasExternalDocumentation): void { this._acceptAll(node); }
-    visitExtension(node: OasExtension): void { this._acceptAll(node); }
+    public visitDocument(node: OasDocument): void { this._acceptAll(node); }
+    public visitInfo(node: OasInfo): void { this._acceptAll(node); }
+    public visitContact(node: OasContact): void { this._acceptAll(node); }
+    public visitLicense(node: OasLicense): void { this._acceptAll(node); }
+    public visitPaths(node: OasPaths): void { this._acceptAll(node); }
+    public visitPathItem(node: OasPathItem): void { this._acceptAll(node); }
+    public visitOperation(node: OasOperation): void { this._acceptAll(node); }
+    public visitResponses(node: OasResponses): void { this._acceptAll(node); }
+    public visitSchema(node: OasSchema): void { this._acceptAll(node); }
+    public visitHeaders(node: OasHeaders): void { this._acceptAll(node); }
+    public visitHeader(node: OasHeader): void { this._acceptAll(node); }
+    public visitXML(node: OasXML): void { this._acceptAll(node); }
+    public visitSecurityScheme(node: OasSecurityScheme): void { this._acceptAll(node); }
+    public visitSecurityRequirement(node: OasSecurityRequirement): void { this._acceptAll(node); }
+    public visitTag(node: OasTag): void { this._acceptAll(node); }
+    public visitExternalDocumentation(node: OasExternalDocumentation): void { this._acceptAll(node); }
+    public visitExtension(node: OasExtension): void { this._acceptAll(node); }
 
 }
 
@@ -254,23 +274,23 @@ export class Oas20CompositeVisitor extends OasCompositeVisitor implements IOas20
         super(visitors);
     }
 
-    visitParameter(node: Oas20Parameter): void { this._acceptAll(node); }
-    visitParameterDefinition(node: Oas20ParameterDefinition): void { this._acceptAll(node); }
-    visitResponse(node: Oas20Response): void { this._acceptAll(node); }
-    visitResponseDefinition(node: Oas20ResponseDefinition): void { this._acceptAll(node); }
-    visitExample(node: Oas20Example): void { this._acceptAll(node); }
-    visitItems(node: Oas20Items): void { this._acceptAll(node); }
-    visitSecurityDefinitions(node: Oas20SecurityDefinitions): void { this._acceptAll(node); }
-    visitSecurityScheme(node: Oas20SecurityScheme): void { this._acceptAll(node); }
-    visitScopes(node: Oas20Scopes): void { this._acceptAll(node); }
-    visitSchemaDefinition(node: Oas20SchemaDefinition): void { this._acceptAll(node); }
-    visitPropertySchema(node: Oas20PropertySchema): void { this._acceptAll(node); }
-    visitAdditionalPropertiesSchema(node: Oas20AdditionalPropertiesSchema): void { this._acceptAll(node); }
-    visitAllOfSchema(node: Oas20AllOfSchema): void { this._acceptAll(node); }
-    visitItemsSchema(node: Oas20ItemsSchema): void { this._acceptAll(node); }
-    visitDefinitions(node: Oas20Definitions): void { this._acceptAll(node); }
-    visitParametersDefinitions(node: Oas20ParametersDefinitions): void { this._acceptAll(node); }
-    visitResponsesDefinitions(node: Oas20ResponsesDefinitions): void { this._acceptAll(node); }
+    public visitParameter(node: Oas20Parameter): void { this._acceptAll(node); }
+    public visitParameterDefinition(node: Oas20ParameterDefinition): void { this._acceptAll(node); }
+    public visitResponse(node: Oas20Response): void { this._acceptAll(node); }
+    public visitResponseDefinition(node: Oas20ResponseDefinition): void { this._acceptAll(node); }
+    public visitExample(node: Oas20Example): void { this._acceptAll(node); }
+    public visitItems(node: Oas20Items): void { this._acceptAll(node); }
+    public visitSecurityDefinitions(node: Oas20SecurityDefinitions): void { this._acceptAll(node); }
+    public visitSecurityScheme(node: Oas20SecurityScheme): void { this._acceptAll(node); }
+    public visitScopes(node: Oas20Scopes): void { this._acceptAll(node); }
+    public visitSchemaDefinition(node: Oas20SchemaDefinition): void { this._acceptAll(node); }
+    public visitPropertySchema(node: Oas20PropertySchema): void { this._acceptAll(node); }
+    public visitAdditionalPropertiesSchema(node: Oas20AdditionalPropertiesSchema): void { this._acceptAll(node); }
+    public visitAllOfSchema(node: Oas20AllOfSchema): void { this._acceptAll(node); }
+    public visitItemsSchema(node: Oas20ItemsSchema): void { this._acceptAll(node); }
+    public visitDefinitions(node: Oas20Definitions): void { this._acceptAll(node); }
+    public visitParametersDefinitions(node: Oas20ParametersDefinitions): void { this._acceptAll(node); }
+    public visitResponsesDefinitions(node: Oas20ResponsesDefinitions): void { this._acceptAll(node); }
 
 }
 
@@ -289,35 +309,46 @@ export class Oas30CompositeVisitor extends OasCompositeVisitor implements IOas30
         super(visitors);
     }
 
-    visitParameter(node: Oas30Parameter): void { this._acceptAll(node); }
-    visitParameterDefinition(node: Oas30ParameterDefinition): void { this._acceptAll(node); }
-    visitResponse(node: Oas30Response): void { this._acceptAll(node); }
-    visitLinks(node: Oas30Links): void { this._acceptAll(node); }
-    visitLink(node: Oas30Link): void { this._acceptAll(node); }
-    visitLinkParameters(node: Oas30LinkParameters): void { this._acceptAll(node); }
-    visitLinkParameterExpression(node: Oas30LinkParameterExpression): void { this._acceptAll(node); }
-    visitLinkServer(node: Oas30LinkServer): void { this._acceptAll(node); }
-    visitResponseDefinition(node: Oas30ResponseDefinition): void { this._acceptAll(node); }
-    visitRequestBody(node: Oas30RequestBody): void { this._acceptAll(node); }
-    visitCallbacks(node: Oas30Callbacks): void { this._acceptAll(node); }
-    visitCallback(node: Oas30Callback): void { this._acceptAll(node); }
-    visitCallbackPathItem(node: Oas30CallbackPathItem): void { this._acceptAll(node); }
-    visitContent(node: Oas30Content): void { this._acceptAll(node); }
-    visitMediaType(node: Oas30MediaType): void { this._acceptAll(node); }
-    visitExample(node: Oas30Example): void { this._acceptAll(node); }
-    visitEncoding(node: Oas30Encoding): void { this._acceptAll(node); }
-    visitEncodingProperty(node: Oas30EncodingProperty): void { this._acceptAll(node); }
-    visitAllOfSchema(node: Oas30AllOfSchema): void { this._acceptAll(node); }
-    visitAnyOfSchema(node: Oas30AnyOfSchema): void { this._acceptAll(node); }
-    visitOneOfSchema(node: Oas30OneOfSchema): void { this._acceptAll(node); }
-    visitNotSchema(node: Oas30NotSchema): void { this._acceptAll(node); }
-    visitPropertySchema(node: Oas30PropertySchema): void { this._acceptAll(node); }
-    visitItemsSchema(node: Oas30ItemsSchema): void { this._acceptAll(node); }
-    visitAdditionalPropertiesSchema(node: Oas30AdditionalPropertiesSchema): void { this._acceptAll(node); }
-    visitComponents(node: Oas30Components): void { this._acceptAll(node); }
-    visitSchemaDefinition(node: Oas30SchemaDefinition): void { this._acceptAll(node); }
-    visitServer(node: Oas30Server): void { this._acceptAll(node); }
-    visitServerVariables(node: Oas30ServerVariables): void { this._acceptAll(node); }
-    visitServerVariable(node: Oas30ServerVariable): void { this._acceptAll(node); }
+    public visitParameter(node: Oas30Parameter): void { this._acceptAll(node); }
+    public visitParameterDefinition(node: Oas30ParameterDefinition): void { this._acceptAll(node); }
+    public visitResponse(node: Oas30Response): void { this._acceptAll(node); }
+    public visitLinks(node: Oas30Links): void { this._acceptAll(node); }
+    public visitLink(node: Oas30Link): void { this._acceptAll(node); }
+    public visitLinkParameters(node: Oas30LinkParameters): void { this._acceptAll(node); }
+    public visitLinkParameterExpression(node: Oas30LinkParameterExpression): void { this._acceptAll(node); }
+    public visitLinkServer(node: Oas30LinkServer): void { this._acceptAll(node); }
+    public visitResponseDefinition(node: Oas30ResponseDefinition): void { this._acceptAll(node); }
+    public visitRequestBody(node: Oas30RequestBody): void { this._acceptAll(node); }
+    public visitCallbacks(node: Oas30Callbacks): void { this._acceptAll(node); }
+    public visitCallback(node: Oas30Callback): void { this._acceptAll(node); }
+    public visitCallbackPathItem(node: Oas30CallbackPathItem): void { this._acceptAll(node); }
+    public visitContent(node: Oas30Content): void { this._acceptAll(node); }
+    public visitMediaType(node: Oas30MediaType): void { this._acceptAll(node); }
+    public visitExample(node: Oas30Example): void { this._acceptAll(node); }
+    public visitEncoding(node: Oas30Encoding): void { this._acceptAll(node); }
+    public visitEncodingProperty(node: Oas30EncodingProperty): void { this._acceptAll(node); }
+    public visitAllOfSchema(node: Oas30AllOfSchema): void { this._acceptAll(node); }
+    public visitAnyOfSchema(node: Oas30AnyOfSchema): void { this._acceptAll(node); }
+    public visitOneOfSchema(node: Oas30OneOfSchema): void { this._acceptAll(node); }
+    public visitNotSchema(node: Oas30NotSchema): void { this._acceptAll(node); }
+    public visitPropertySchema(node: Oas30PropertySchema): void { this._acceptAll(node); }
+    public visitItemsSchema(node: Oas30ItemsSchema): void { this._acceptAll(node); }
+    public visitAdditionalPropertiesSchema(node: Oas30AdditionalPropertiesSchema): void { this._acceptAll(node); }
+    public visitComponents(node: Oas30Components): void { this._acceptAll(node); }
+    public visitExampleDefinition(node: Oas30ExampleDefinition): void { this._acceptAll(node); }
+    public visitRequestBodyDefinition(node: Oas30RequestBodyDefinition): void { this._acceptAll(node); }
+    public visitHeaderDefinition(node: Oas30HeaderDefinition): void { this._acceptAll(node); }
+    public visitOAuthFlows(node: Oas30OAuthFlows): void { this._acceptAll(node); }
+    public visitImplicitOAuthFlow(node: Oas30ImplicitOAuthFlow): void { this._acceptAll(node); }
+    public visitPasswordOAuthFlow(node: Oas30PasswordOAuthFlow): void { this._acceptAll(node); }
+    public visitClientCredentialsOAuthFlow(node: Oas30ClientCredentialsOAuthFlow): void { this._acceptAll(node); }
+    public visitAuthorizationCodeOAuthFlow(node: Oas30AuthorizationCodeOAuthFlow): void { this._acceptAll(node); }
+    public visitScopes(node: Oas30Scopes): void { this._acceptAll(node); }
+    public visitLinkDefinition(node: Oas30LinkDefinition): void { this._acceptAll(node); }
+    public visitCallbackDefinition(node: Oas30CallbackDefinition): void { this._acceptAll(node); }
+    public visitSchemaDefinition(node: Oas30SchemaDefinition): void { this._acceptAll(node); }
+    public visitServer(node: Oas30Server): void { this._acceptAll(node); }
+    public visitServerVariables(node: Oas30ServerVariables): void { this._acceptAll(node); }
+    public visitServerVariable(node: Oas30ServerVariable): void { this._acceptAll(node); }
 
 }

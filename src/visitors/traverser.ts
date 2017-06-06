@@ -25,10 +25,10 @@ import {Oas20Response, Oas20ResponseBase, Oas20ResponseDefinition} from "../mode
 import {
     Oas20AdditionalPropertiesSchema,
     Oas20AllOfSchema,
-    Oas20SchemaDefinition,
     Oas20ItemsSchema,
     Oas20PropertySchema,
-    Oas20Schema
+    Oas20Schema,
+    Oas20SchemaDefinition
 } from "../models/2.0/schema.model";
 import {Oas20Header} from "../models/2.0/header.model";
 import {Oas20Example} from "../models/2.0/example.model";
@@ -62,34 +62,43 @@ import {OasXML} from "../models/common/xml.model";
 import {OasSchema} from "../models/common/schema.model";
 import {Oas30Parameter, Oas30ParameterBase, Oas30ParameterDefinition} from "../models/3.0/parameter.model";
 import {Oas30Response, Oas30ResponseBase, Oas30ResponseDefinition} from "../models/3.0/response.model";
-import {Oas30RequestBody} from "../models/3.0/request-body.model";
+import {Oas30RequestBody, Oas30RequestBodyDefinition} from "../models/3.0/request-body.model";
 import {Oas30Callbacks} from "../models/3.0/callbacks.model";
 import {
     Oas30AdditionalPropertiesSchema,
     Oas30AllOfSchema,
     Oas30AnyOfSchema,
-    Oas30SchemaDefinition,
     Oas30ItemsSchema,
     Oas30NotSchema,
     Oas30OneOfSchema,
     Oas30PropertySchema,
-    Oas30Schema
+    Oas30Schema,
+    Oas30SchemaDefinition
 } from "../models/3.0/schema.model";
 import {Oas30CallbackPathItem, Oas30PathItem} from "../models/3.0/path-item.model";
 import {Oas30Operation} from "../models/3.0/operation.model";
-import {Oas30Header} from "../models/3.0/header.model";
+import {Oas30Header, Oas30HeaderDefinition} from "../models/3.0/header.model";
 import {Oas30Content} from "../models/3.0/content.model";
 import {Oas30MediaType} from "../models/3.0/media-type.model";
 import {Oas30Encoding} from "../models/3.0/encoding.model";
 import {Oas30EncodingProperty} from "../models/3.0/encoding-property.model";
 import {IOasIndexedNode} from "../models/inode.model";
-import {Oas30Example} from "../models/3.0/example.model";
+import {Oas30Example, Oas30ExampleDefinition} from "../models/3.0/example.model";
 import {Oas30Links} from "../models/3.0/links.model";
-import {Oas30Link} from "../models/3.0/link.model";
+import {Oas30Link, Oas30LinkDefinition} from "../models/3.0/link.model";
 import {Oas30LinkParameters} from "../models/3.0/link-parameters.model";
 import {Oas30LinkParameterExpression} from "../models/3.0/link-parameter-expression.model";
-import {Oas30Callback} from "../models/3.0/callback.model";
+import {Oas30Callback, Oas30CallbackDefinition} from "../models/3.0/callback.model";
 import {Oas30Components} from "../models/3.0/components.model";
+import {Oas30OAuthFlows} from "../models/3.0/oauth-flows.model";
+import {
+    Oas30AuthorizationCodeOAuthFlow,
+    Oas30ClientCredentialsOAuthFlow, Oas30ImplicitOAuthFlow, Oas30OAuthFlow,
+    Oas30PasswordOAuthFlow
+} from "../models/3.0/oauth-flow.model";
+import {Oas30Scopes} from "../models/3.0/scopes.model";
+import {OasSecurityScheme} from "../models/common/security-scheme.model";
+import {Oas30SecurityScheme} from "../models/3.0/security-scheme.model";
 
 /**
  * Interface implemented by all traversers.
@@ -269,6 +278,12 @@ export abstract class OasTraverser implements IOasNodeVisitor, IOasTraverser {
     public visitSecurityRequirement(node: OasSecurityRequirement): void {
         node.accept(this.visitor);
     }
+
+    /**
+     * Visit the security scheme.
+     * @param node
+     */
+    public abstract visitSecurityScheme(node: OasSecurityScheme): void;
 
     /**
      * Visit the tag.
@@ -587,6 +602,7 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
         this.traverseIfNotNull(node.info);
         this.traverseArray(node.servers);
         this.traverseIfNotNull(node.paths);
+        this.traverseIfNotNull(node.components);
         this.traverseArray(node.security);
         this.traverseArray(node.tags);
         this.traverseIfNotNull(node.externalDocs);
@@ -918,8 +934,130 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
      */
     public visitComponents(node: Oas30Components): void {
         node.accept(this.visitor);
-        // TODO implement components
+        this.traverseArray(node.getSchemaDefinitions());
+        this.traverseArray(node.getResponseDefinitions());
+        this.traverseArray(node.getParameterDefinitions());
+        this.traverseArray(node.getExampleDefinitions());
+        this.traverseArray(node.getRequestBodyDefinitions());
+        this.traverseArray(node.getHeaderDefinitions());
+        this.traverseArray(node.getSecuritySchemes());
+        this.traverseArray(node.getLinkDefinitions());
+        this.traverseArray(node.getCallbackDefinitions());
         this.traverseExtensions(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitExampleDefinition(node: Oas30ExampleDefinition): void {
+        this.visitExample(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitRequestBodyDefinition(node: Oas30RequestBodyDefinition): void {
+        this.visitRequestBody(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitHeaderDefinition(node: Oas30HeaderDefinition): void {
+        this.visitHeader(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitSecurityScheme(node: Oas30SecurityScheme): void {
+        node.accept(this.visitor);
+        this.traverseIfNotNull(node.flows);
+        this.traverseExtensions(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitOAuthFlows(node: Oas30OAuthFlows): void {
+        node.accept(this.visitor);
+        this.traverseIfNotNull(node.implicit);
+        this.traverseIfNotNull(node.password);
+        this.traverseIfNotNull(node.clientCredentials);
+        this.traverseIfNotNull(node.authorizationCode);
+        this.traverseExtensions(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitImplicitOAuthFlow(node: Oas30ImplicitOAuthFlow): void {
+        this.visitOAuthFlow(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitPasswordOAuthFlow(node: Oas30PasswordOAuthFlow): void {
+        this.visitOAuthFlow(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitClientCredentialsOAuthFlow(node: Oas30ClientCredentialsOAuthFlow): void {
+        this.visitOAuthFlow(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitAuthorizationCodeOAuthFlow(node: Oas30AuthorizationCodeOAuthFlow): void {
+        this.visitOAuthFlow(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    private visitOAuthFlow(node: Oas30OAuthFlow): void {
+        node.accept(this.visitor);
+        this.traverseIfNotNull(node.scopes);
+        this.traverseExtensions(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitScopes(node: Oas30Scopes): void {
+        node.accept(this.visitor);
+        this.traverseExtensions(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitLinkDefinition(node: Oas30LinkDefinition): void {
+        this.visitLink(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitCallbackDefinition(node: Oas30CallbackDefinition): void {
+        this.visitCallback(node);
     }
 
     /**
@@ -1041,6 +1179,11 @@ export abstract class OasReverseTraverser implements IOasNodeVisitor, IOasTraver
         this.traverse(node.parent());
     }
 
+    public visitSecurityScheme(node: OasSecurityScheme): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
     public visitSecurityRequirement(node: OasSecurityRequirement): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
@@ -1108,11 +1251,6 @@ export class Oas20ReverseTraverser extends OasReverseTraverser implements IOas20
     }
 
     public visitSecurityDefinitions(node: Oas20SecurityDefinitions): void {
-        node.accept(this.visitor);
-        this.traverse(node.parent());
-    }
-
-    public visitSecurityScheme(node: Oas20SecurityScheme): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
@@ -1304,6 +1442,61 @@ export class Oas30ReverseTraverser extends OasReverseTraverser implements IOas30
     }
 
     visitComponents(node: Oas30Components): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitExampleDefinition(node: Oas30ExampleDefinition): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitRequestBodyDefinition(node: Oas30RequestBodyDefinition): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitHeaderDefinition(node: Oas30HeaderDefinition): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitOAuthFlows(node: Oas30OAuthFlows): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitImplicitOAuthFlow(node: Oas30ImplicitOAuthFlow): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitPasswordOAuthFlow(node: Oas30PasswordOAuthFlow): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitClientCredentialsOAuthFlow(node: Oas30ClientCredentialsOAuthFlow): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitAuthorizationCodeOAuthFlow(node: Oas30AuthorizationCodeOAuthFlow): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitScopes(node: Oas30Scopes): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitLinkDefinition(node: Oas30LinkDefinition): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitCallbackDefinition(node: Oas30CallbackDefinition): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }

@@ -15,28 +15,31 @@
  * limitations under the License.
  */
 
-import {Oas20Scopes} from "./scopes.model";
 import {OasSecurityScheme} from "../common/security-scheme.model";
+import {Oas30OAuthFlows} from "./oauth-flows.model";
 
 /**
- * Models an OAS 2.0 Security Scheme object.  Example:
+ * Models an OAS 3.0 Security Scheme object.  Example:
  *
  * {
  *   "type": "oauth2",
- *   "authorizationUrl": "http://swagger.io/api/oauth/dialog",
- *   "flow": "implicit",
- *   "scopes": {
- *     "write:pets": "modify pets in your account",
- *     "read:pets": "read your pets"
+ *   "flows": {
+ *     "implicit": {
+ *       "authorizationUrl": "https://example.com/api/oauth/dialog",
+ *       "scopes": {
+ *         "write:pets": "modify pets in your account",
+ *         "read:pets": "read your pets"
+ *       }
+ *     }
  *   }
  * }
  */
-export class Oas20SecurityScheme extends OasSecurityScheme {
+export class Oas30SecurityScheme extends OasSecurityScheme {
 
-    public flow: string;
-    public authorizationUrl: string;
-    public tokenUrl: string;
-    public scopes: Oas20Scopes;
+    public scheme: string;
+    public bearerFormat: string;
+    public flows: Oas30OAuthFlows;
+    public openIdConnectUrl: string;
 
     /**
      * Must construct this with a name.
@@ -47,10 +50,10 @@ export class Oas20SecurityScheme extends OasSecurityScheme {
     }
 
     /**
-     * Creates a scopes object.
+     * Creates a OAuth Flows object.
      */
-    public createScopes(): Oas20Scopes {
-        let rval: Oas20Scopes = new Oas20Scopes();
+    public createOAuthFlows(): Oas30OAuthFlows {
+        let rval: Oas30OAuthFlows = new Oas30OAuthFlows();
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;

@@ -18,6 +18,7 @@
 import {OasHeader} from "../common/header.model";
 import {Oas30Schema} from "./schema.model";
 import {Oas30Example, Oas30ExampleItems} from "./example.model";
+import {IOas30NodeVisitor, IOasNodeVisitor} from "../../visitors/visitor.iface";
 
 /**
  * Models an OAS 3.0 Header object.  Example:
@@ -123,6 +124,39 @@ export class Oas30Header extends OasHeader {
             }
         }
         return examples;
+    }
+
+}
+
+
+/**
+ * Models a header definition found in the components section of an OAS document.
+ */
+export class Oas30HeaderDefinition extends Oas30Header {
+
+    /**
+     * Constructor.
+     * @param name
+     */
+    constructor(name: string) {
+        super(name);
+    }
+
+    /**
+     * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.
+     * @param visitor
+     */
+    public accept(visitor: IOasNodeVisitor): void {
+        let viz: IOas30NodeVisitor = <IOas30NodeVisitor> visitor;
+        viz.visitHeaderDefinition(this);
+    }
+
+    /**
+     * Gets the schema's property name.
+     * @return {string}
+     */
+    public name(): string {
+        return this.headerName();
     }
 
 }
