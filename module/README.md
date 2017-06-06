@@ -30,10 +30,10 @@ let library: OasLibraryUtils = new OasLibraryUtils();
 // Use the library utils to create a data model instance from the given
 // data.  This will convert from the source (string or js object) into
 // an instance of the OpenAPI data model.
-let document: Oas20Document = <Oas20Document> library.createDocument(openApiData);
+let document: Oas30Document = <Oas30Document> library.createDocument(openApiData);
 
 // Here you can anayze or manipulate the model.
-document.info.version = "1.1";
+document.info.version = "1.7";
 document.info.description = "Made some changes to the OpenAPI document!";
 
 // Validate that your changes are OK.
@@ -75,7 +75,7 @@ These tasks include:
 Use this method to create an OpenAPI document (data model).  You can pass either
 a string or a JS object into this method.  When passing a string, it can be 
 either JSON formatted data representing an OpenAPI document *or* it can be a
-valid OpenAPI version number such as "2.0".  In the latter case, a new empty
+valid OpenAPI version number such as "3.0.0".  In the latter case, a new empty
 document of the appropriate version will be created and returned.  In all other
 cases the source data will be parsed into a data model instance.
 
@@ -144,7 +144,7 @@ For example, you could quickly get a specific node in the standard OpenAPI
 Pet Store example document with the following code:
 
 ```Typescript
-let document: Oas20Document = ...;
+let document: Oas30Document = ...;
 let path: OasNodePath = new OasNodePath("/paths[/pet/{petId}]/get/responses[200]");
 let resolvedNode: OasNode = path.resolve(document);
 ```
@@ -155,7 +155,7 @@ data model by using the `createNodePath(OasNode)` method in the
 
 ```Typescript
 let library: OasLibraryUtils = new OasLibraryUtils();
-let document: Oas20Document = ...;
+let document: Oas30Document = ...;
 let node: OasNode = document.paths.pathItem("/pet/{petId}").get.responses.response("200");
 let path: OasNodePath = library.createNodePath(node);
 ```
@@ -167,15 +167,15 @@ includes an implementation of the visitor pattern (useful for more advanced
 analysis or transformation of the data model).
 
 To use this feature, you must create a Typescript class that extends the 
-`IOas20NodeVisitor` interface (for OpenAPI 2.0 documents).  You can then
+`IOas30NodeVisitor` interface (for OpenAPI 3.0.0 documents).  You can then
 either call `accept` on any node in the model (which will visit just that
 one node) or else traverse the entire model (either up or down).  Some 
 examples are below.
 
 #### Visit a Single Node
 ```Typescript
-let document: Oas20Document = getOrCreateDocument();
-let visitor: IOas20NodeVisitor = new MyCustomVisitor();
+let document: Oas30Document = getOrCreateDocument();
+let visitor: IOas30NodeVisitor = new MyCustomVisitor();
 // Visit ONLY the "Info" node.
 OasVisitorUtil.visitNode(document.info, visitor);
 ```
@@ -183,15 +183,15 @@ OasVisitorUtil.visitNode(document.info, visitor);
 #### Visit the Entire Document
 
 ```Typescript
-let document: Oas20Document = getOrCreateDocument();
-let visitor: IOas20NodeVisitor = new MyCustomVisitor();
+let document: Oas30Document = getOrCreateDocument();
+let visitor: IOas30NodeVisitor = new MyCustomVisitor();
 OasVisitorUtil.visitTree(document, visitor);
 ```
 
 #### Visit a Node And Its Parents
 ```Typescript
-let document: Oas20Document = getOrCreateDocument();
-let visitor: IOas20NodeVisitor = new MyCustomVisitor();
+let document: Oas30Document = getOrCreateDocument();
+let visitor: IOas30NodeVisitor = new MyCustomVisitor();
 // Visit the Info node and then the Document (root) node
 OasVisitorUtil.visitTree(document.info, visitor, OasTraverserDirection.up);
 ```

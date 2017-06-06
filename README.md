@@ -47,22 +47,25 @@ It also means you can use the project as a dependency in your projects without w
 conflicts or dependency bloat.
 
 ## Project Status
-Currently, the data model fully supports version 2.0 of the OpenAPI spec.  Barring oversights or
-bugs, the full OpenAPI document can be read and written successfully.  In addition, the visitor
+Currently, the data model fully supports versions 2.0 and 3.0.0 of the OpenAPI spec.  Barring oversights 
+or bugs, the full OpenAPI document can be read and written successfully.  In addition, the visitor
 pattern has been fully implemented (along with both up and down traversing).
 
-Work on validation has been started, but most of the validation rules defined by the specification
-have not yet been implemented.  This is the primary area of work going forward, until version 3.0
-of the OpenAPI specification is released (at which point support for 3.0 will need to be added).
+Validation of an OpenAPI 2.0 specification exists, with almost all of the rules outlined in the 
+spec having been implemented.  Work has not yet started on validation for version 3.0.0.
 
 Please refer to the github repository's Issues and other resources for more information on the
 current status of the project.
 
 ## OpenAPI Versions
 One of the design goals of this library is to simultaneously support multiple versions of the OpenAPI
-specification.  Currently the only published version of the specification supported by the library
-is [version 2.0](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md).  As new
-versions of the specification are released, the library will be updated to include support for them.
+specification.  At the time of this writing, there are two versions of the OpenAPI specification:
+
+* [OpenAPI Version 2.0](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md)
+* [OpenAPI Version 3.0.0](https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc1/versions/3.0.md)
+
+Both of these versions are supported by the library.  As new versions of the specification are 
+released, the library will be updated to include support for them.
 
 ## Building the Library
 This section explains how to build, package, test, and publish the library.  If you are a developer
@@ -112,7 +115,7 @@ something like this (trimmed for brevity):
 
 ```
 SUMMARY
- 0: Chrome 55.0.2883 (Windows 10 0.0.0): Executed 76 of 76 SUCCESS (0.628 secs / 0.524 secs)
+ 0: Chrome 58.0.3029 (Windows 10 0.0.0): Executed 136 of 136 (1 FAILED) (1.207 secs / 0.7 secs)
                                                    all   0
   Empty Document Test (2.0)
     Document not null                               ✓    ✓
@@ -121,16 +124,14 @@ SUMMARY
     Document with simple info                       ✓    ✓
     Document with full info                         ✓    ✓
 ...SNIP....
-    Array Parameters (items)                        ✓    ✓
-  Responses I/O (2.0)
-    Spec Example 1                                  ✓    ✓
-    Multiple Spec Examples                          ✓    ✓
+    Mutually Exclusive (All)                        ✓    ✓ 
+    Invalid Reference (All)                         ✓    ✓ 
 
 =============================== Coverage summary ===============================
-Statements   : 91.96% ( 2527/2748 )
-Branches     : 77.98% ( 517/663 )
-Functions    : 77.1% ( 505/655 )
-Lines        : 92.68% ( 2254/2432 )
+Statements   : 85.4% ( 5195/6083 )
+Branches     : 72.27% ( 928/1284 )
+Functions    : 73.21% ( 1093/1493 )
+Lines        : 86.09% ( 4691/5449 )
 ================================================================================
 ```
 
@@ -146,7 +147,7 @@ the `package.json` file:
 ```json
 {
   "name": "oai-ts-core",
-  "version": "0.1.2",
+  "version": "0.2.4",
   "description": "A library to read and write OpenAPI documents.",
   "license": "Apache-2.0"
 }
@@ -183,8 +184,8 @@ code with the version that was just released.  For example, if you have just pub
 3.7.8 of the library, you would tag it in the repository with these commands:
 
 ```
-git tag -a -m 'Release 0.1.5' 0.1.5
-git push origin 0.1.5
+git tag -a -m 'Release 0.2.4' 0.2.4
+git push origin 0.2.4
 ```
 
 ## Contribute Fixes and Features

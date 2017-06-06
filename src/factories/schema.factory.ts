@@ -21,6 +21,8 @@ import {Oas20Definitions} from "../models/2.0/definitions.model";
 import {OasDocument} from "../models/document.model";
 import {OasSchema} from "../models/common/schema.model";
 import {Oas30SchemaDefinition} from "../models/3.0/schema.model";
+import {Oas30Document} from "../models/3.0/document.model";
+import {Oas30Components} from "../models/3.0/components.model";
 
 export class Oas20SchemaFactory {
 
@@ -99,22 +101,21 @@ export class Oas20SchemaFactory {
             resolveAll(example, schema);
             return schema;
         } else if (document.getSpecVersion() === "3.0.0") {
-            // TODO implement this for 3.0.0 when the definition schema is modeled!
-            // let doc: Oas30Document = document as Oas30Document;
-            // let definitions: Oas30Definitions = doc.definitions;
-            // if (!definitions) {
-            //     definitions = doc.createDefinitions();
-            // }
-            // // Parse to object if it's not already an object.
-            // if (typeof example === "string") {
-            //     example = JSON.parse(example);
-            // }
-            //
-            // let schema: Oas30SchemaDefinition = definitions.createSchemaDefinition(name);
-            // schema.title = "Root Type for " + name;
-            // schema.description = "The root of the " + name + " type's schema.";
-            // resolveAll(example, schema);
-            // return schema;
+            let doc: Oas30Document = document as Oas30Document;
+            let components: Oas30Components = doc.components;
+            if (!components) {
+                components = doc.createComponents();
+            }
+            // Parse to object if it's not already an object.
+            if (typeof example === "string") {
+                example = JSON.parse(example);
+            }
+
+            let schema: Oas30SchemaDefinition = components.createSchemaDefinition(name);
+            schema.title = "Root Type for " + name;
+            schema.description = "The root of the " + name + " type's schema.";
+            resolveAll(example, schema);
+            return schema;
         }
     }
 
