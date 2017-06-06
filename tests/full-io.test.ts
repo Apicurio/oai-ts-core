@@ -159,7 +159,7 @@ describe("Full I/O (3.0)", () => {
         { name: "Paths (GET+Response+Header)",          test: "tests/fixtures/full-io/3.0/paths/paths-get-response-headers.json" },
         { name: "Paths (GET+Response+Content)",         test: "tests/fixtures/full-io/3.0/paths/paths-get-response-content.json" },
         { name: "Paths (GET+Response+Links)",           test: "tests/fixtures/full-io/3.0/paths/paths-get-response-links.json" },
-        { name: "Paths (GET+Callbacks)",                test: "tests/fixtures/full-io/3.0/paths/paths-get-callbacks.json", debug: true },
+        { name: "Paths (GET+Callbacks)",                test: "tests/fixtures/full-io/3.0/paths/paths-get-callbacks.json" },
     ];
 
     let library: OasLibraryUtils;

@@ -33,20 +33,15 @@ import {Oas20ResponsesDefinitions} from "./responses-definitions.model";
 export class Oas20Document extends OasDocument {
 
     public readonly swagger: string = "2.0";
-    public info: Oas20Info;
     public host: string;
     public basePath: string;
     public schemes: string[];
     public consumes: string[];
     public produces: string[];
-    public paths: Oas20Paths;
     public definitions: Oas20Definitions;
     public parameters: Oas20ParametersDefinitions;
     public responses: Oas20ResponsesDefinitions;
     public securityDefinitions: Oas20SecurityDefinitions;
-    public security: Oas20SecurityRequirement[];
-    public tags: Oas20Tag[];
-    public externalDocs: Oas20ExternalDocumentation;
 
     constructor() {
         super();

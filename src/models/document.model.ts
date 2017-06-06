@@ -17,12 +17,24 @@
 
 import {OasExtensibleNode} from "./enode.model";
 import {IOasNodeVisitor} from "../visitors/visitor.iface";
+import {OasInfo} from "./common/info.model";
+import {Oas20Info} from "./2.0/info.model";
+import {OasPaths} from "./common/paths.model";
+import {OasSecurityRequirement} from "./common/security-requirement.model";
+import {OasTag} from "./common/tag.model";
+import {OasExternalDocumentation} from "./common/external-documentation.model";
 
 /**
  * Base class for all OAS documents.  A version-specific implementation of this class
  * is expected for each version of the specification supported by the library.
  */
 export abstract class OasDocument extends OasExtensibleNode {
+
+    public info: OasInfo;
+    public paths: OasPaths;
+    public security: OasSecurityRequirement[];
+    public tags: OasTag[];
+    public externalDocs: OasExternalDocumentation;
 
     /**
      * Returns the version of the specification of this document.
@@ -36,5 +48,50 @@ export abstract class OasDocument extends OasExtensibleNode {
     public accept(visitor: IOasNodeVisitor): void {
         visitor.visitDocument(this);
     }
+
+    /**
+     * Creates an OAS info object.
+     * @return {OasInfo}
+     */
+    public abstract createInfo(): OasInfo;
+
+    /**
+     * Creates an OAS Paths object.
+     * @return {OasPaths}
+     */
+    public abstract createPaths(): OasPaths;
+
+    /**
+     * Creates an OAS Security Requirement object.
+     * @return {OasSecurityRequirement}
+     */
+    public abstract createSecurityRequirement(): OasSecurityRequirement;
+
+    /**
+     * Creates an OAS Tag object.
+     * @return {OasTag}
+     */
+    public abstract createTag(): OasTag;
+
+    /**
+     * Adds a tag.
+     * @param name
+     * @param description
+     * @return {OasTag}
+     */
+    public abstract addTag(name: string, description: string): OasTag;
+
+    /**
+     * Creates an OAS External Documentation object.
+     * @return {OasExternalDocumentation}
+     */
+    public abstract createExternalDocumentation(): OasExternalDocumentation;
+
+    /**
+     * Sets the external documentation information.
+     * @param description
+     * @param url
+     */
+    public abstract setExternalDocumentation(description: string, url: string): OasExternalDocumentation;
 
 }

@@ -29,13 +29,8 @@ import {Oas30Paths} from "./paths.model";
 export class Oas30Document extends OasDocument {
 
     public openapi: string = "3.0.0";
-    public info: Oas30Info;
     public servers: Oas30Server[];
-    public paths: Oas30Paths;
     // public components: Oas30Components;
-    public security: Oas30SecurityRequirement[];
-    public tags: Oas30Tag[];
-    public externalDocs: Oas30ExternalDocumentation;
 
     constructor() {
         super();

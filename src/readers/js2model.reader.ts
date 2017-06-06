@@ -94,6 +94,7 @@ import {Oas30LinkParameters} from "../models/3.0/link-parameters.model";
 import {Oas30LinkParameterExpression} from "../models/3.0/link-parameter-expression.model";
 import {Oas30Callbacks} from "../models/3.0/callbacks.model";
 import {Oas30Callback} from "../models/3.0/callback.model";
+import {OasDocument} from "../models/document.model";
 
 
 /**
@@ -112,6 +113,55 @@ export abstract class OasJS2ModelReader {
         } else {
             return true;
         }
+    }
+
+    /**
+     * Reads an OAS Document object from the given javascript data.
+     * @param document
+     * @param documentModel
+     */
+    public readDocument(document: any, documentModel: OasDocument): void {
+        let info: any = document["info"];
+        let paths: any = document["paths"];
+        let security: any[] = document["security"];
+        let tags: any = document["tags"];
+        let externalDocs: any = document["externalDocs"];
+
+        if (this.isDefined(info)) {
+            let infoModel: OasInfo = documentModel.createInfo();
+            this.readInfo(info, infoModel);
+            documentModel.info = infoModel;
+        }
+
+        if (this.isDefined(paths)) {
+            let pathsModel: OasPaths = documentModel.createPaths();
+            this.readPaths(paths, pathsModel);
+            documentModel.paths = pathsModel;
+        }
+        if (this.isDefined(security)) {
+            let securityModels: OasSecurityRequirement[] = [];
+            for (let sec of security) {
+                let secModel: OasSecurityRequirement = documentModel.createSecurityRequirement();
+                this.readSecurityRequirement(sec, secModel);
+                securityModels.push(secModel);
+            }
+            documentModel.security = securityModels;
+        }
+        if (this.isDefined(tags)) {
+            let tagModels: OasTag[] = [];
+            for (let tag of tags) {
+                let tagModel: OasTag = documentModel.createTag();
+                this.readTag(tag, tagModel);
+                tagModels.push(tagModel);
+            }
+            documentModel.tags = tagModels;
+        }
+        if (this.isDefined(externalDocs)) {
+            let externalDocsModel: OasExternalDocumentation = documentModel.createExternalDocumentation();
+            this.readExternalDocumentation(externalDocs, externalDocsModel);
+            documentModel.externalDocs = externalDocsModel;
+        }
+        this.readExtensions(document, documentModel);
     }
 
     /**
@@ -577,90 +627,59 @@ export class Oas20JS2ModelReader extends OasJS2ModelReader {
      */
     public read(jsData: any): Oas20Document {
         let docModel: Oas20Document = new Oas20Document();
+        this.readDocument(jsData, docModel);
+        return docModel;
+    }
 
-        let swagger: string = jsData["swagger"];
+    /**
+     * Reads an OAS 2.0 Document object from the given javascript data.
+     * @param document
+     * @param documentModel
+     */
+    public readDocument(document: any, documentModel: Oas20Document): void {
+        let swagger: string = document["swagger"];
         if (swagger != "2.0") {
             throw Error("Unsupported specification version: " + swagger);
         }
 
-        let info: any = jsData["info"];
-        let host: string = jsData["host"];
-        let basePath: string = jsData["basePath"];
-        let schemes: string[] = jsData["schemes"];
-        let consumes: string[] = jsData["consumes"];
-        let produces: string[] = jsData["produces"];
-        let paths: any = jsData["paths"];
-        let definitions: any = jsData["definitions"];
-        let parameters: any = jsData["parameters"];
-        let responses: any = jsData["responses"];
-        let securityDefinitions: any[] = jsData["securityDefinitions"];
-        let security: any[] = jsData["security"];
-        let tags: any = jsData["tags"];
-        let externalDocs: any = jsData["externalDocs"];
+        super.readDocument(document, documentModel);
 
-        if (this.isDefined(info)) {
-            let infoModel: Oas20Info = docModel.createInfo();
-            this.readInfo(info, infoModel);
-            docModel.info = infoModel;
-        }
-        if (this.isDefined(host)) { docModel.host = host; }
-        if (this.isDefined(basePath)) { docModel.basePath = basePath; }
-        if (this.isDefined(schemes)) { docModel.schemes = schemes; }
-        if (this.isDefined(consumes)) { docModel.consumes = consumes; }
-        if (this.isDefined(produces)) { docModel.produces = produces; }
+        let host: string = document["host"];
+        let basePath: string = document["basePath"];
+        let schemes: string[] = document["schemes"];
+        let consumes: string[] = document["consumes"];
+        let produces: string[] = document["produces"];
+        let definitions: any = document["definitions"];
+        let parameters: any = document["parameters"];
+        let responses: any = document["responses"];
+        let securityDefinitions: any[] = document["securityDefinitions"];
+
+        if (this.isDefined(host)) { documentModel.host = host; }
+        if (this.isDefined(basePath)) { documentModel.basePath = basePath; }
+        if (this.isDefined(schemes)) { documentModel.schemes = schemes; }
+        if (this.isDefined(consumes)) { documentModel.consumes = consumes; }
+        if (this.isDefined(produces)) { documentModel.produces = produces; }
         if (this.isDefined(definitions)) {
-            let definitionsModel: Oas20Definitions = docModel.createDefinitions();
+            let definitionsModel: Oas20Definitions = documentModel.createDefinitions();
             this.readDefinitions(definitions, definitionsModel);
-            docModel.definitions = definitionsModel;
+            documentModel.definitions = definitionsModel;
         }
 
         if (this.isDefined(parameters)) {
-            let parametersDefinitionsModel: Oas20ParametersDefinitions = docModel.createParametersDefinitions();
+            let parametersDefinitionsModel: Oas20ParametersDefinitions = documentModel.createParametersDefinitions();
             this.readParametersDefinitions(parameters, parametersDefinitionsModel);
-            docModel.parameters = parametersDefinitionsModel;
+            documentModel.parameters = parametersDefinitionsModel;
         }
         if (this.isDefined(responses)) {
-            let responsesDefinitionsModel: Oas20ResponsesDefinitions = docModel.createResponsesDefinitions();
+            let responsesDefinitionsModel: Oas20ResponsesDefinitions = documentModel.createResponsesDefinitions();
             this.readResponsesDefinitions(responses, responsesDefinitionsModel);
-            docModel.responses = responsesDefinitionsModel;
-        }
-
-        if (this.isDefined(paths)) {
-            let pathsModel: Oas20Paths = docModel.createPaths();
-            this.readPaths(paths, pathsModel);
-            docModel.paths = pathsModel;
+            documentModel.responses = responsesDefinitionsModel;
         }
         if (this.isDefined(securityDefinitions)) {
-            let securityDefinitionsModel: Oas20SecurityDefinitions = docModel.createSecurityDefinitions();
+            let securityDefinitionsModel: Oas20SecurityDefinitions = documentModel.createSecurityDefinitions();
             this.readSecurityDefinitions(securityDefinitions, securityDefinitionsModel);
-            docModel.securityDefinitions = securityDefinitionsModel;
+            documentModel.securityDefinitions = securityDefinitionsModel;
         }
-        if (this.isDefined(security)) {
-            let securityModels: Oas20SecurityRequirement[] = [];
-            for (let sec of security) {
-                let secModel: Oas20SecurityRequirement = docModel.createSecurityRequirement();
-                this.readSecurityRequirement(sec, secModel);
-                securityModels.push(secModel);
-            }
-            docModel.security = securityModels;
-        }
-        if (this.isDefined(tags)) {
-            let tagModels: Oas20Tag[] = [];
-            for (let tag of tags) {
-                let tagModel: Oas20Tag = docModel.createTag();
-                this.readTag(tag, tagModel);
-                tagModels.push(tagModel);
-            }
-            docModel.tags = tagModels;
-        }
-        if (this.isDefined(externalDocs)) {
-            let externalDocsModel: Oas20ExternalDocumentation = docModel.createExternalDocumentation();
-            this.readExternalDocumentation(externalDocs, externalDocsModel);
-            docModel.externalDocs = externalDocsModel;
-        }
-        this.readExtensions(jsData, docModel);
-
-        return docModel;
     }
 
     /**
@@ -1120,63 +1139,34 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      */
     public read(jsData: any): Oas30Document {
         let docModel: Oas30Document = new Oas30Document();
+        this.readDocument(jsData, docModel);
+        return docModel;
+    }
 
-        let openapi: string = jsData["openapi"];
+    /**
+     * Reads an OAS 3.0 Document object from the given JS data.
+     * @param document
+     * @param documentModel
+     */
+    public readDocument(document: any, documentModel: Oas30Document): void {
+        let openapi: string = document["openapi"];
         if (openapi != "3.0.0") {
             throw Error("Unsupported specification version: " + openapi);
         }
-        let info: any = jsData["info"];
-        let servers: any = jsData["servers"];
-        let paths: any = jsData["paths"];
-        let security: any[] = jsData["security"];
-        let tags: any = jsData["tags"];
-        let externalDocs: any[] = jsData["externalDocs"];
 
-        docModel.openapi = openapi;
-        if (this.isDefined(info)) {
-            let infoModel: Oas30Info = docModel.createInfo();
-            this.readInfo(info, infoModel);
-            docModel.info = infoModel;
-        }
+        super.readDocument(document, documentModel);
+
+        let servers: any = document["servers"];
+
+        documentModel.openapi = openapi;
         if (Array.isArray(servers)) {
-            docModel.servers = [];
+            documentModel.servers = [];
             servers.forEach( server => {
-                let serverModel: Oas30Server = docModel.createServer();
+                let serverModel: Oas30Server = documentModel.createServer();
                 this.readServer(server, serverModel);
-                docModel.servers.push(serverModel);
+                documentModel.servers.push(serverModel);
             })
         }
-        if (this.isDefined(paths)) {
-            let pathsModel: Oas30Paths = docModel.createPaths();
-            this.readPaths(paths, pathsModel);
-            docModel.paths = pathsModel;
-        }
-        if (this.isDefined(security)) {
-            let securityModels: Oas30SecurityRequirement[] = [];
-            for (let sec of security) {
-                let secModel: Oas30SecurityRequirement = docModel.createSecurityRequirement();
-                this.readSecurityRequirement(sec, secModel);
-                securityModels.push(secModel);
-            }
-            docModel.security = securityModels;
-        }
-        if (this.isDefined(tags)) {
-            let tagModels: Oas30Tag[] = [];
-            for (let tag of tags) {
-                let tagModel: Oas30Tag = docModel.createTag();
-                this.readTag(tag, tagModel);
-                tagModels.push(tagModel);
-            }
-            docModel.tags = tagModels;
-        }
-        if (this.isDefined(externalDocs)) {
-            let externalDocsModel: Oas30ExternalDocumentation = docModel.createExternalDocumentation();
-            this.readExternalDocumentation(externalDocs, externalDocsModel);
-            docModel.externalDocs = externalDocsModel;
-        }
-        this.readExtensions(jsData, docModel);
-
-        return docModel;
     }
 
     /**
