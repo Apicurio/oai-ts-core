@@ -25,7 +25,7 @@ import {Oas20Response, Oas20ResponseBase, Oas20ResponseDefinition} from "../mode
 import {
     Oas20AdditionalPropertiesSchema,
     Oas20AllOfSchema,
-    Oas20DefinitionSchema,
+    Oas20SchemaDefinition,
     Oas20ItemsSchema,
     Oas20PropertySchema,
     Oas20Schema
@@ -68,7 +68,7 @@ import {
     Oas30AdditionalPropertiesSchema,
     Oas30AllOfSchema,
     Oas30AnyOfSchema,
-    Oas30DefinitionSchema,
+    Oas30SchemaDefinition,
     Oas30ItemsSchema,
     Oas30NotSchema,
     Oas30OneOfSchema,
@@ -89,6 +89,7 @@ import {Oas30Link} from "../models/3.0/link.model";
 import {Oas30LinkParameters} from "../models/3.0/link-parameters.model";
 import {Oas30LinkParameterExpression} from "../models/3.0/link-parameter-expression.model";
 import {Oas30Callback} from "../models/3.0/callback.model";
+import {Oas30Components} from "../models/3.0/components.model";
 
 /**
  * Interface implemented by all traversers.
@@ -450,7 +451,7 @@ export class Oas20Traverser extends OasTraverser implements IOas20NodeVisitor {
      * Visit the schema.
      * @param node
      */
-    public visitDefinitionSchema(node: Oas20DefinitionSchema): void {
+    public visitSchemaDefinition(node: Oas20SchemaDefinition): void {
         this.visitSchema(node);
     }
 
@@ -915,7 +916,17 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
      * Visit the node.
      * @param node
      */
-    public visitDefinitionSchema(node: Oas30DefinitionSchema): void {
+    public visitComponents(node: Oas30Components): void {
+        node.accept(this.visitor);
+        // TODO implement components
+        this.traverseExtensions(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitSchemaDefinition(node: Oas30SchemaDefinition): void {
         this.visitSchema(node);
     }
 
@@ -1111,7 +1122,7 @@ export class Oas20ReverseTraverser extends OasReverseTraverser implements IOas20
         this.traverse(node.parent());
     }
 
-    public visitDefinitionSchema(node: Oas20DefinitionSchema): void {
+    public visitSchemaDefinition(node: Oas20SchemaDefinition): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }
@@ -1292,7 +1303,12 @@ export class Oas30ReverseTraverser extends OasReverseTraverser implements IOas30
         this.traverse(node.parent());
     }
 
-    visitDefinitionSchema(node: Oas30DefinitionSchema): void {
+    visitComponents(node: Oas30Components): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitSchemaDefinition(node: Oas30SchemaDefinition): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }

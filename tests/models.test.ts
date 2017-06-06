@@ -21,7 +21,7 @@
 import {Oas20Document} from "../src/models/2.0/document.model";
 import {OasLibraryUtils} from "../src/library.utils";
 import {Oas20PathItem} from "../src/models/2.0/path-item.model";
-import {Oas20DefinitionSchema} from "../src/models/2.0/schema.model";
+import {Oas20SchemaDefinition} from "../src/models/2.0/schema.model";
 import {OasPathItem} from "../src/models/common/path-item.model";
 
 
@@ -67,7 +67,7 @@ describe("Models (2.0)", () => {
         let json: any = readJSON('tests/fixtures/full-io/2.0/complete/pet-store.json');
         let document: Oas20Document = <Oas20Document>library.createDocument(json);
 
-        let definitions: Oas20DefinitionSchema[] = document.definitions.definitions();
+        let definitions: Oas20SchemaDefinition[] = document.definitions.definitions();
         expect(definitions.length).toEqual(6);
 
         expect(definitions[2].definitionName()).toEqual("User");

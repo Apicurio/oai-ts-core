@@ -17,7 +17,7 @@
 
 import {IOasNodeVisitor, IOas20NodeVisitor} from "../../visitors/visitor.iface";
 import {OasNode} from "../node.model";
-import {Oas20DefinitionSchema} from "./schema.model";
+import {Oas20SchemaDefinition} from "./schema.model";
 import {IOasIndexedNode} from "../inode.model";
 
 /**
@@ -51,7 +51,7 @@ import {IOasIndexedNode} from "../inode.model";
  *   }
  * }
  */
-export class Oas20Definitions extends OasNode implements IOasIndexedNode<Oas20DefinitionSchema> {
+export class Oas20Definitions extends OasNode implements IOasIndexedNode<Oas20SchemaDefinition> {
 
     __instanceof_IOasIndexedNode: boolean = true;
 
@@ -69,18 +69,18 @@ export class Oas20Definitions extends OasNode implements IOasIndexedNode<Oas20De
     /**
      * Returns a single definition schema by name.
      * @param name
-     * @return {Oas20DefinitionSchema}
+     * @return {Oas20SchemaDefinition}
      */
-    public definition(name: string): Oas20DefinitionSchema {
+    public definition(name: string): Oas20SchemaDefinition {
         return this._definitions[name];
     }
 
     /**
      * Returns an array of all the definitions.
      */
-    public definitions(): Oas20DefinitionSchema[] {
+    public definitions(): Oas20SchemaDefinition[] {
         let names: string[] = this.definitionNames();
-        let rval: Oas20DefinitionSchema[] = [];
+        let rval: Oas20SchemaDefinition[] = [];
         for (let name of names) {
             rval.push(this.definition(name));
         }
@@ -92,7 +92,7 @@ export class Oas20Definitions extends OasNode implements IOasIndexedNode<Oas20De
      * @param name
      * @param schema
      */
-    public addDefinition(name: string, schema: Oas20DefinitionSchema): Oas20DefinitionSchema {
+    public addDefinition(name: string, schema: Oas20SchemaDefinition): Oas20SchemaDefinition {
         this._definitions[name] = schema;
         return schema;
     }
@@ -101,8 +101,8 @@ export class Oas20Definitions extends OasNode implements IOasIndexedNode<Oas20De
      * Removes a definition by name.
      * @param name
      */
-    public removeDefinition(name: string): Oas20DefinitionSchema {
-        let rval: Oas20DefinitionSchema = this._definitions[name];
+    public removeDefinition(name: string): Oas20SchemaDefinition {
+        let rval: Oas20SchemaDefinition = this._definitions[name];
         if (this._definitions && rval) {
             delete this._definitions[name];
         }
@@ -123,20 +123,20 @@ export class Oas20Definitions extends OasNode implements IOasIndexedNode<Oas20De
     /**
      * Creates an OAS 2.0 Schema object.
      * @param name
-     * @return {Oas20DefinitionSchema}
+     * @return {Oas20SchemaDefinition}
      */
-    public createDefinitionSchema(name: string): Oas20DefinitionSchema {
-        let rval: Oas20DefinitionSchema = new Oas20DefinitionSchema(name);
+    public createSchemaDefinition(name: string): Oas20SchemaDefinition {
+        let rval: Oas20SchemaDefinition = new Oas20SchemaDefinition(name);
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;
     }
 
-    getItem(name: string): Oas20DefinitionSchema {
+    getItem(name: string): Oas20SchemaDefinition {
         return this.definition(name);
     }
 
-    getItems(): Oas20DefinitionSchema[] {
+    getItems(): Oas20SchemaDefinition[] {
         return this.definitions();
     }
 
@@ -144,11 +144,11 @@ export class Oas20Definitions extends OasNode implements IOasIndexedNode<Oas20De
         return this.definitionNames();
     }
 
-    addItem(name: string, item: Oas20DefinitionSchema): void {
+    addItem(name: string, item: Oas20SchemaDefinition): void {
         this.addDefinition(name, item);
     }
 
-    deleteItem(name: string): Oas20DefinitionSchema {
+    deleteItem(name: string): Oas20SchemaDefinition {
         return this.removeDefinition(name);
     }
 
@@ -156,6 +156,6 @@ export class Oas20Definitions extends OasNode implements IOasIndexedNode<Oas20De
 
 export class Oas20DefinitionItems {
 
-    [key: string]: Oas20DefinitionSchema;
+    [key: string]: Oas20SchemaDefinition;
 
 }

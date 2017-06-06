@@ -35,7 +35,7 @@ import {Oas20SecurityRequirement} from "../models/2.0/security-requirement.model
 import {Oas20Responses} from "../models/2.0/responses.model";
 import {Oas20Response, Oas20ResponseDefinition} from "../models/2.0/response.model";
 import {
-    Oas20Schema, Oas20DefinitionSchema, Oas20PropertySchema,
+    Oas20Schema, Oas20SchemaDefinition, Oas20PropertySchema,
     Oas20AdditionalPropertiesSchema, Oas20AllOfSchema, Oas20ItemsSchema
 } from "../models/2.0/schema.model";
 import {Oas20Headers} from "../models/2.0/headers.model";
@@ -147,7 +147,7 @@ export class Oas20ValidationVisitor extends Oas20CompositeVisitor implements IOa
     visitSecurityScheme(node: Oas20SecurityScheme): void { this.clearAndAcceptAll(node); }
     visitScopes(node: Oas20Scopes): void { this.clearAndAcceptAll(node); }
     visitXML(node: Oas20XML): void { this.clearAndAcceptAll(node); }
-    visitDefinitionSchema(node: Oas20DefinitionSchema): void { this.clearAndAcceptAll(node); }
+    visitSchemaDefinition(node: Oas20SchemaDefinition): void { this.clearAndAcceptAll(node); }
     visitPropertySchema(node: Oas20PropertySchema): void { this.clearAndAcceptAll(node); }
     visitAdditionalPropertiesSchema(node: Oas20AdditionalPropertiesSchema): void { this.clearAndAcceptAll(node); }
     visitAllOfSchema(node: Oas20AllOfSchema): void { this.clearAndAcceptAll(node); }

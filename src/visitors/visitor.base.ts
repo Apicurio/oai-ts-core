@@ -22,7 +22,7 @@ import {Oas20Response, Oas20ResponseDefinition} from "../models/2.0/response.mod
 import {
     Oas20AdditionalPropertiesSchema,
     Oas20AllOfSchema,
-    Oas20DefinitionSchema,
+    Oas20SchemaDefinition,
     Oas20ItemsSchema,
     Oas20PropertySchema,
     Oas20Schema
@@ -64,7 +64,7 @@ import {
     Oas30AdditionalPropertiesSchema,
     Oas30AllOfSchema,
     Oas30AnyOfSchema,
-    Oas30DefinitionSchema,
+    Oas30SchemaDefinition,
     Oas30ItemsSchema,
     Oas30NotSchema,
     Oas30OneOfSchema,
@@ -81,6 +81,7 @@ import {Oas30LinkParameters} from "../models/3.0/link-parameters.model";
 import {Oas30LinkParameterExpression} from "../models/3.0/link-parameter-expression.model";
 import {Oas30Callback} from "../models/3.0/callback.model";
 import {Oas30CallbackPathItem} from "../models/3.0/path-item.model";
+import {Oas30Components} from "../models/3.0/components.model";
 
 
 /**
@@ -127,7 +128,7 @@ export class Oas20NodeVisitorAdapter extends OasNodeVisitorAdapter implements IO
     public visitAdditionalPropertiesSchema(node: Oas20AdditionalPropertiesSchema): void {}
     public visitItemsSchema(node: Oas20ItemsSchema): void {}
     public visitAllOfSchema(node: Oas20AllOfSchema): void {}
-    public visitDefinitionSchema(node: Oas20DefinitionSchema): void {}
+    public visitSchemaDefinition(node: Oas20SchemaDefinition): void {}
     public visitDefinitions(node: Oas20Definitions): void {}
     public visitParametersDefinitions(node: Oas20ParametersDefinitions): void {}
     public visitResponsesDefinitions(node: Oas20ResponsesDefinitions): void {}
@@ -165,7 +166,8 @@ export class Oas30NodeVisitorAdapter extends OasNodeVisitorAdapter implements IO
     public visitPropertySchema(node: Oas30PropertySchema): void {}
     public visitItemsSchema(node: Oas30ItemsSchema): void {}
     public visitAdditionalPropertiesSchema(node: Oas30AdditionalPropertiesSchema): void {}
-    public visitDefinitionSchema(node: Oas30DefinitionSchema): void {}
+    public visitComponents(node: Oas30Components): void {}
+    public visitSchemaDefinition(node: Oas30SchemaDefinition): void {}
     public visitServer(node: Oas30Server): void {}
     public visitServerVariables(node: Oas30ServerVariables): void {}
     public visitServerVariable(node: Oas30ServerVariable): void {}
@@ -261,7 +263,7 @@ export class Oas20CompositeVisitor extends OasCompositeVisitor implements IOas20
     visitSecurityDefinitions(node: Oas20SecurityDefinitions): void { this._acceptAll(node); }
     visitSecurityScheme(node: Oas20SecurityScheme): void { this._acceptAll(node); }
     visitScopes(node: Oas20Scopes): void { this._acceptAll(node); }
-    visitDefinitionSchema(node: Oas20DefinitionSchema): void { this._acceptAll(node); }
+    visitSchemaDefinition(node: Oas20SchemaDefinition): void { this._acceptAll(node); }
     visitPropertySchema(node: Oas20PropertySchema): void { this._acceptAll(node); }
     visitAdditionalPropertiesSchema(node: Oas20AdditionalPropertiesSchema): void { this._acceptAll(node); }
     visitAllOfSchema(node: Oas20AllOfSchema): void { this._acceptAll(node); }
@@ -312,7 +314,8 @@ export class Oas30CompositeVisitor extends OasCompositeVisitor implements IOas30
     visitPropertySchema(node: Oas30PropertySchema): void { this._acceptAll(node); }
     visitItemsSchema(node: Oas30ItemsSchema): void { this._acceptAll(node); }
     visitAdditionalPropertiesSchema(node: Oas30AdditionalPropertiesSchema): void { this._acceptAll(node); }
-    visitDefinitionSchema(node: Oas30DefinitionSchema): void { this._acceptAll(node); }
+    visitComponents(node: Oas30Components): void { this._acceptAll(node); }
+    visitSchemaDefinition(node: Oas30SchemaDefinition): void { this._acceptAll(node); }
     visitServer(node: Oas30Server): void { this._acceptAll(node); }
     visitServerVariables(node: Oas30ServerVariables): void { this._acceptAll(node); }
     visitServerVariable(node: Oas30ServerVariable): void { this._acceptAll(node); }

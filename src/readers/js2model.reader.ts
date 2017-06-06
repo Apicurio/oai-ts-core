@@ -33,7 +33,7 @@ import {Oas20Parameter, Oas20ParameterBase, Oas20ParameterDefinition} from "../m
 import {
     Oas20AdditionalPropertiesSchema,
     Oas20AllOfSchema,
-    Oas20DefinitionSchema,
+    Oas20SchemaDefinition,
     Oas20ItemsSchema,
     Oas20PropertySchema,
     Oas20Schema
@@ -939,7 +939,7 @@ export class Oas20JS2ModelReader extends OasJS2ModelReader {
     public readDefinitions(definitions: any, definitionsModel: Oas20Definitions): void {
         for (let definitionName in definitions) {
             let definition: any = definitions[definitionName];
-            let definitionSchemaModel: Oas20DefinitionSchema = definitionsModel.createDefinitionSchema(definitionName);
+            let definitionSchemaModel: Oas20SchemaDefinition = definitionsModel.createSchemaDefinition(definitionName);
             this.readSchema(definition, definitionSchemaModel);
             definitionsModel.addDefinition(definitionName, definitionSchemaModel);
         }
@@ -1087,7 +1087,7 @@ export class Oas20JS2ModelReaderVisitor implements IOas20NodeVisitor {
         this.reader.readXML(this.jsData, node);
     }
 
-    public visitDefinitionSchema(node: Oas20DefinitionSchema): void {
+    public visitSchemaDefinition(node: Oas20SchemaDefinition): void {
         this.reader.readSchema(this.jsData, node);
     }
 

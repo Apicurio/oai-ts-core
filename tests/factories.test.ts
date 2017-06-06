@@ -21,7 +21,7 @@
 import {Oas20Document} from "../src/models/2.0/document.model";
 import {OasLibraryUtils} from "../src/library.utils";
 import {Oas20PathItem} from "../src/models/2.0/path-item.model";
-import {Oas20DefinitionSchema} from "../src/models/2.0/schema.model";
+import {Oas20SchemaDefinition} from "../src/models/2.0/schema.model";
 import {Oas20SchemaFactory} from "../src/factories/schema.factory";
 
 
@@ -38,8 +38,8 @@ describe("Schema Factory (2.0)", () => {
     });
 
     it("Schema From Example (empty)", () => {
-        let schema: Oas20DefinitionSchema = schemaFactory.createDefinitionSchemaFromExample(document, "Empty", {
-        }) as Oas20DefinitionSchema;
+        let schema: Oas20SchemaDefinition = schemaFactory.createSchemaDefinitionFromExample(document, "Empty", {
+        }) as Oas20SchemaDefinition;
 
         expect(library.writeNode(schema)).toEqual({
             "title": "Root Type for Empty",
@@ -49,12 +49,12 @@ describe("Schema Factory (2.0)", () => {
     });
 
     it("Schema From Example (basic types)", () => {
-        let schema: Oas20DefinitionSchema = schemaFactory.createDefinitionSchemaFromExample(document, "Basic", {
+        let schema: Oas20SchemaDefinition = schemaFactory.createSchemaDefinitionFromExample(document, "Basic", {
             "string-prop": "hello world",
             "int-prop": 17,
             "number-prop": 17.9,
             "boolean-prop": true
-        }) as Oas20DefinitionSchema;
+        }) as Oas20SchemaDefinition;
 
         expect(library.writeNode(schema)).toEqual({
             "title": "Root Type for Basic",
@@ -80,13 +80,13 @@ describe("Schema Factory (2.0)", () => {
     });
 
     it("Schema From Example (type formats)", () => {
-        let schema: Oas20DefinitionSchema = schemaFactory.createDefinitionSchemaFromExample(document, "Basic", {
+        let schema: Oas20SchemaDefinition = schemaFactory.createSchemaDefinitionFromExample(document, "Basic", {
             "string-prop": "hello world",
             "int-prop": 17,
             "large-int-prop": 223372036854775807,
             "date-prop": "2018-03-19",
             "dateTime-prop": "2018-03-19T12:33:00Z"
-        }) as Oas20DefinitionSchema;
+        }) as Oas20SchemaDefinition;
 
         expect(library.writeNode(schema)).toEqual({
             "title": "Root Type for Basic",
@@ -117,8 +117,8 @@ describe("Schema Factory (2.0)", () => {
     });
 
     it("Schema From Example (string array)", () => {
-        let schema: Oas20DefinitionSchema = schemaFactory.createDefinitionSchemaFromExample(document,
-            "Array", [ "one", "two", "three" ]) as Oas20DefinitionSchema;
+        let schema: Oas20SchemaDefinition = schemaFactory.createSchemaDefinitionFromExample(document,
+            "Array", [ "one", "two", "three" ]) as Oas20SchemaDefinition;
 
         expect(library.writeNode(schema)).toEqual({
             "title": "Root Type for Array",
@@ -132,8 +132,8 @@ describe("Schema Factory (2.0)", () => {
 
 
     it("Schema From Example (int32 array)", () => {
-        let schema: Oas20DefinitionSchema = schemaFactory.createDefinitionSchemaFromExample(document,
-            "Array", [ 1, 2, 3, 5, 7, 11 ]) as Oas20DefinitionSchema;
+        let schema: Oas20SchemaDefinition = schemaFactory.createSchemaDefinitionFromExample(document,
+            "Array", [ 1, 2, 3, 5, 7, 11 ]) as Oas20SchemaDefinition;
 
         expect(library.writeNode(schema)).toEqual({
             "title": "Root Type for Array",
@@ -147,7 +147,7 @@ describe("Schema Factory (2.0)", () => {
     });
 
     it("Schema From Example (object array)", () => {
-        let schema: Oas20DefinitionSchema = schemaFactory.createDefinitionSchemaFromExample(document, "Array", [
+        let schema: Oas20SchemaDefinition = schemaFactory.createSchemaDefinitionFromExample(document, "Array", [
             {
                 id: "item-1",
                 name: "Item 1",
@@ -158,7 +158,7 @@ describe("Schema Factory (2.0)", () => {
                 name: "Item 2",
                 description: "Description of item 2."
             }
-        ]) as Oas20DefinitionSchema;
+        ]) as Oas20SchemaDefinition;
 
         expect(library.writeNode(schema)).toEqual({
             "title": "Root Type for Array",
@@ -182,7 +182,7 @@ describe("Schema Factory (2.0)", () => {
     });
 
     it("Schema From Example (complex object)", () => {
-        let schema: Oas20DefinitionSchema = schemaFactory.createDefinitionSchemaFromExample(document, "ComplexObject", {
+        let schema: Oas20SchemaDefinition = schemaFactory.createSchemaDefinitionFromExample(document, "ComplexObject", {
             "id": "home-1",
             "name": {
                 "first": "Robert",
@@ -205,7 +205,7 @@ describe("Schema Factory (2.0)", () => {
                     }
                 }
             }
-        }) as Oas20DefinitionSchema;
+        }) as Oas20SchemaDefinition;
 
         //console.info(JSON.stringify(library.writeNode(schema), null, 3));
 

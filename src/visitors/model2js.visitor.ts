@@ -25,7 +25,7 @@ import {Oas20Response, Oas20ResponseBase, Oas20ResponseDefinition} from "../mode
 import {
     Oas20AdditionalPropertiesSchema,
     Oas20AllOfSchema,
-    Oas20DefinitionSchema,
+    Oas20SchemaDefinition,
     Oas20ItemsSchema,
     Oas20PropertySchema,
     Oas20Schema
@@ -62,7 +62,7 @@ import {
     Oas30AdditionalPropertiesSchema,
     Oas30AllOfSchema,
     Oas30AnyOfSchema,
-    Oas30DefinitionSchema,
+    Oas30SchemaDefinition,
     Oas30ItemsSchema,
     Oas30NotSchema,
     Oas30OneOfSchema,
@@ -87,6 +87,7 @@ import {Oas30Link} from "../models/3.0/link.model";
 import {Oas30LinkParameters} from "../models/3.0/link-parameters.model";
 import {Oas30LinkParameterExpression} from "../models/3.0/link-parameter-expression.model";
 import {Oas30Callback} from "../models/3.0/callback.model";
+import {Oas30Components} from "../models/3.0/components.model";
 
 
 /**
@@ -581,7 +582,7 @@ export class Oas20ModelToJSVisitor extends OasModelToJSVisitor implements IOas20
      * Visits a node.
      * @param node
      */
-    visitDefinitionSchema(node: Oas20DefinitionSchema): void {
+    visitSchemaDefinition(node: Oas20SchemaDefinition): void {
         let parentJS: any = this.lookupParentJS(node);
         let schema: any = this.createSchemaObject(node);
         parentJS[node.definitionName()] = schema;
@@ -1127,10 +1128,10 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * Visits a node.
      * @param node
      */
-    public visitDefinitionSchema(node: Oas30DefinitionSchema): void {
+    public visitSchemaDefinition(node: Oas30SchemaDefinition): void {
         let parentJS: any = this.lookupParentJS(node);
         let schema: any = this.createSchemaObject(node);
-        parentJS[node.definitionName()] = schema;
+        parentJS[node.name()] = schema;
         this.updateIndex(node, schema);
     }
 
@@ -1342,6 +1343,13 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
         this.visitPathItem(node);
     }
 
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitComponents(node: Oas30Components): void {
+        // TODO implement components
+    }
 
     /**
      * Visits a node.

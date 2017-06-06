@@ -238,7 +238,7 @@ export class Oas20AdditionalPropertiesSchema extends Oas20Schema {
  *
  * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#definitionsObject
  */
-export class Oas20DefinitionSchema extends Oas20Schema {
+export class Oas20SchemaDefinition extends Oas20Schema {
 
     private _definitionName: string;
 
@@ -257,7 +257,7 @@ export class Oas20DefinitionSchema extends Oas20Schema {
      */
     public accept(visitor: IOasNodeVisitor): void {
         let viz: IOas20NodeVisitor = <IOas20NodeVisitor> visitor;
-        viz.visitDefinitionSchema(this);
+        viz.visitSchemaDefinition(this);
     }
 
     /**

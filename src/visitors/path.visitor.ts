@@ -31,7 +31,7 @@ import {Oas20Responses} from "../models/2.0/responses.model";
 import {Oas20Response, Oas20ResponseDefinition} from "../models/2.0/response.model";
 import {
     Oas20Schema, Oas20PropertySchema, Oas20AdditionalPropertiesSchema,
-    Oas20AllOfSchema, Oas20DefinitionSchema, Oas20ItemsSchema
+    Oas20AllOfSchema, Oas20SchemaDefinition, Oas20ItemsSchema
 } from "../models/2.0/schema.model";
 import {Oas20Headers} from "../models/2.0/headers.model";
 import {Oas20Header} from "../models/2.0/header.model";
@@ -200,7 +200,7 @@ export class Oas20NodePathVisitor implements IOas20NodeVisitor {
         this._path.prependSegment("xml");
     }
 
-    visitDefinitionSchema(node: Oas20DefinitionSchema): void {
+    visitSchemaDefinition(node: Oas20SchemaDefinition): void {
         this._index = node.definitionName();
     }
 

@@ -20,7 +20,7 @@ import {OasNode} from "../../models/node.model";
 import {Oas20ParameterDefinition} from "../../models/2.0/parameter.model";
 import {Oas20Response, Oas20ResponseDefinition} from "../../models/2.0/response.model";
 import {Oas20SecurityScheme} from "../../models/2.0/security-scheme.model";
-import {Oas20DefinitionSchema} from "../../models/2.0/schema.model";
+import {Oas20SchemaDefinition} from "../../models/2.0/schema.model";
 import {Oas20PathItem} from "../../models/2.0/path-item.model";
 import {Oas20Example} from "../../models/2.0/example.model";
 import {Oas20Scopes} from "../../models/2.0/scopes.model";
@@ -117,7 +117,7 @@ export class Oas20InvalidPropertyNameValidationRule extends Oas20ValidationRule 
         });
     }
 
-    public visitDefinitionSchema(node: Oas20DefinitionSchema): void {
+    public visitSchemaDefinition(node: Oas20SchemaDefinition): void {
         this.reportIfInvalid("SDEF-001", this.isValidDefinitionName(node.definitionName()), node, "Definition name does not conform to requirements (invalid format).");
     }
 

@@ -30,7 +30,7 @@ import {Oas20Response, Oas20ResponseDefinition} from "../models/2.0/response.mod
 import {
     Oas20AdditionalPropertiesSchema,
     Oas20AllOfSchema,
-    Oas20DefinitionSchema,
+    Oas20SchemaDefinition,
     Oas20ItemsSchema,
     Oas20PropertySchema,
     Oas20Schema
@@ -77,7 +77,7 @@ import {OasResponses} from "../models/common/responses.model";
 import {Oas30Responses} from "../models/3.0/responses.model";
 import {OasHeaders} from "../models/common/headers.model";
 import {
-    Oas30AdditionalPropertiesSchema, Oas30AllOfSchema, Oas30AnyOfSchema, Oas30DefinitionSchema, Oas30ItemsSchema,
+    Oas30AdditionalPropertiesSchema, Oas30AllOfSchema, Oas30AnyOfSchema, Oas30SchemaDefinition, Oas30ItemsSchema,
     Oas30NotSchema,
     Oas30OneOfSchema,
     Oas30PropertySchema, Oas30Schema
@@ -100,6 +100,7 @@ import {Oas30Links} from "../models/3.0/links.model";
 import {Oas30LinkParameterExpression} from "../models/3.0/link-parameter-expression.model";
 import {Oas30LinkParameters} from "../models/3.0/link-parameters.model";
 import {Oas30Callback} from "../models/3.0/callback.model";
+import {Oas30Components} from "../models/3.0/components.model";
 
 
 /**
@@ -156,7 +157,7 @@ export interface IOas20NodeVisitor extends IOasNodeVisitor {
     visitSecurityScheme(node: Oas20SecurityScheme): void;
     visitScopes(node: Oas20Scopes): void;
     visitXML(node: Oas20XML): void;
-    visitDefinitionSchema(node: Oas20DefinitionSchema): void;
+    visitSchemaDefinition(node: Oas20SchemaDefinition): void;
     visitPropertySchema(node: Oas20PropertySchema): void;
     visitAdditionalPropertiesSchema(node: Oas20AdditionalPropertiesSchema): void;
     visitAllOfSchema(node: Oas20AllOfSchema): void;
@@ -213,6 +214,7 @@ export interface IOas30NodeVisitor extends IOasNodeVisitor {
     visitPropertySchema(node: Oas30PropertySchema): void;
     visitItemsSchema(node: Oas30ItemsSchema): void;
     visitAdditionalPropertiesSchema(node: Oas30AdditionalPropertiesSchema): void;
-    visitDefinitionSchema(node: Oas30DefinitionSchema): void;
+    visitComponents(node: Oas30Components): void;
+    visitSchemaDefinition(node: Oas30SchemaDefinition): void;
 
 }

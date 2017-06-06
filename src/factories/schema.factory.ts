@@ -15,13 +15,12 @@
  * limitations under the License.
  */
 
-import {Oas20DefinitionSchema, Oas20ItemsSchema, Oas20PropertySchema, Oas20Schema} from "../models/2.0/schema.model";
+import {Oas20SchemaDefinition} from "../models/2.0/schema.model";
 import {Oas20Document} from "../models/2.0/document.model";
 import {Oas20Definitions} from "../models/2.0/definitions.model";
 import {OasDocument} from "../models/document.model";
 import {OasSchema} from "../models/common/schema.model";
-import {Oas30Document} from "../models/3.0/document.model";
-import {Oas30DefinitionSchema} from "../models/3.0/schema.model";
+import {Oas30SchemaDefinition} from "../models/3.0/schema.model";
 
 export class Oas20SchemaFactory {
 
@@ -33,9 +32,9 @@ export class Oas20SchemaFactory {
      * @param document
      * @param name
      * @param example
-     * @return {Oas20DefinitionSchema}
+     * @return {Oas20SchemaDefinition}
      */
-    public createDefinitionSchemaFromExample(document: OasDocument, name: string, example: any): Oas20DefinitionSchema|Oas30DefinitionSchema {
+    public createSchemaDefinitionFromExample(document: OasDocument, name: string, example: any): Oas20SchemaDefinition|Oas30SchemaDefinition {
         let resolveType = function (thing: any, schema: OasSchema): void {
             if (typeof thing === "number") {
                 if (Math.round(thing) === thing) {
@@ -94,7 +93,7 @@ export class Oas20SchemaFactory {
                 example = JSON.parse(example);
             }
 
-            let schema: Oas20DefinitionSchema = definitions.createDefinitionSchema(name);
+            let schema: Oas20SchemaDefinition = definitions.createSchemaDefinition(name);
             schema.title = "Root Type for " + name;
             schema.description = "The root of the " + name + " type's schema.";
             resolveAll(example, schema);
@@ -111,7 +110,7 @@ export class Oas20SchemaFactory {
             //     example = JSON.parse(example);
             // }
             //
-            // let schema: Oas30DefinitionSchema = definitions.createDefinitionSchema(name);
+            // let schema: Oas30SchemaDefinition = definitions.createSchemaDefinition(name);
             // schema.title = "Root Type for " + name;
             // schema.description = "The root of the " + name + " type's schema.";
             // resolveAll(example, schema);

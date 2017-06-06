@@ -339,22 +339,20 @@ export class Oas30AdditionalPropertiesSchema extends Oas30Schema {
 
 
 /**
- * Subclass of Schema to indicate that this is actually a Definition schema (a schema defined in
- * the "definitions" section of the OpenAPI document).  References:
- *
- * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#definitionsObject
+ * Subclass of Schema to indicate that this is actually a Definition (a schema defined in
+ * the "components" section of the OpenAPI document).
  */
-export class Oas30DefinitionSchema extends Oas30Schema {
+export class Oas30SchemaDefinition extends Oas30Schema {
 
-    private _definitionName: string;
+    private _name: string;
 
     /**
      * Constructor.
-     * @param definitionName
+     * @param name
      */
-    constructor(definitionName: string) {
-        super()
-        this._definitionName = definitionName;
+    constructor(name: string) {
+        super();
+        this._name = name;
     }
 
     /**
@@ -363,15 +361,15 @@ export class Oas30DefinitionSchema extends Oas30Schema {
      */
     public accept(visitor: IOasNodeVisitor): void {
         let viz: IOas30NodeVisitor = <IOas30NodeVisitor> visitor;
-        viz.visitDefinitionSchema(this);
+        viz.visitSchemaDefinition(this);
     }
 
     /**
      * Gets the schema's property name.
      * @return {string}
      */
-    public definitionName(): string {
-        return this._definitionName;
+    public name(): string {
+        return this._name;
     }
 
 }
