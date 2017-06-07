@@ -20,12 +20,12 @@
 
 import {Oas20Document} from "../src/models/2.0/document.model";
 import {Oas20Info} from "../src/models/2.0/info.model";
-import {Oas20Operation} from "../src/models/2.0/operation.model";
-import {Oas20PathItem} from "../src/models/2.0/path-item.model";
 import {Oas20ResponseDefinition} from "../src/models/2.0/response.model";
 import {OasLibraryUtils} from "../src/library.utils";
 import {OasPathItem} from "../src/models/common/path-item.model";
 import {OasOperation} from "../src/models/common/operation.model";
+import {Oas30Document} from "../src/models/3.0/document.model";
+import {Oas30Info} from "../src/models/3.0/info.model";
 
 describe("Partial Read (2.0)", () => {
 
@@ -82,6 +82,47 @@ describe("Partial Read (2.0)", () => {
             responses: {
                 "ExampleResponse": json
             }
+        }
+        let actualObj: any = library.writeNode(document);
+        expect(actualObj).toEqual(expectedObj);
+    });
+
+});
+
+
+
+describe("Partial Read (3.0)", () => {
+
+    let library: OasLibraryUtils;
+    let document: Oas30Document;
+
+    beforeEach(() => {
+        library = new OasLibraryUtils();
+        document = <Oas30Document> library.createDocument("3.0.0");
+    });
+
+    it("Info", () => {
+        let json: any = readJSON('tests/fixtures/partial-read/3.0/info.json');
+        let infoModel: Oas30Info = document.createInfo();
+        library.readNode(json, infoModel);
+        document.info = infoModel;
+
+        let expectedObj: any = {
+            openapi: "3.0.0",
+            info: json
+        }
+        let actualObj: any = library.writeNode(document);
+        expect(actualObj).toEqual(expectedObj);
+    });
+
+    it("Components", () => {
+        let json: any = readJSON('tests/fixtures/partial-read/3.0/components.json');
+        document.components = document.createComponents();
+        library.readNode(json, document.components);
+
+        let expectedObj: any = {
+            openapi: "3.0.0",
+            components: json
         }
         let actualObj: any = library.writeNode(document);
         expect(actualObj).toEqual(expectedObj);

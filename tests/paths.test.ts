@@ -22,8 +22,10 @@ import {Oas20Document} from "../src/models/2.0/document.model";
 import {OasLibraryUtils} from "../src/library.utils";
 import {OasNodePath} from "../src/models/node-path";
 import {OasNode} from "../src/models/node.model";
+import {Oas30Document} from "../src/models/3.0/document.model";
+import {Oas30Operation} from "../src/models/3.0/operation.model";
 
-describe("Node Path (Create)", () => {
+describe("Node Path (Create 2.0)", () => {
 
     let library: OasLibraryUtils;
 
@@ -138,7 +140,7 @@ describe("Node Path (Create)", () => {
 });
 
 
-describe("Node Path (Resolve)", () => {
+describe("Node Path (Resolve 2.0)", () => {
 
     let library: OasLibraryUtils;
 
@@ -228,6 +230,69 @@ describe("Node Path (Resolve)", () => {
         let expectedNode: OasNode = document.securityDefinitions.securityScheme("petstore_auth");
         let actualNode: any = resolvedNode;
         expect(actualNode).toEqual(expectedNode);
+    });
+
+});
+
+
+describe("Node Path (Create 3.0)", () => {
+
+    let library: OasLibraryUtils;
+
+    beforeEach(() => {
+        library = new OasLibraryUtils();
+    });
+
+    it("Info", () => {
+        let json: any = readJSON('tests/fixtures/paths/3.0/example.json');
+        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+
+        let node: OasNode = document.info;
+        let path: OasNodePath = library.createNodePath(node);
+
+        let actual: string = path.toString();
+        let expected: string = "/info";
+
+        expect(actual).toEqual(expected);
+    });
+
+    it("Contact", () => {
+        let json: any = readJSON('tests/fixtures/paths/3.0/example.json');
+        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+
+        let node: OasNode = document.info.contact;
+        let path: OasNodePath = library.createNodePath(node);
+
+        let actual: string = path.toString();
+        let expected: string = "/info/contact";
+
+        expect(actual).toEqual(expected);
+    });
+
+    it("Request Body Content", () => {
+        let json: any = readJSON('tests/fixtures/paths/3.0/example.json');
+        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+
+        let node: OasNode = (<Oas30Operation>(document.paths.pathItem("/foo").get)).requestBody.content;
+        let path: OasNodePath = library.createNodePath(node);
+
+        let actual: string = path.toString();
+        let expected: string = "/paths[/foo]/get/requestBody/content";
+
+        expect(actual).toEqual(expected);
+    });
+
+    it("Server", () => {
+        let json: any = readJSON('tests/fixtures/paths/3.0/example.json');
+        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+
+        let node: OasNode = document.servers[2].variables.serverVariable("port");
+        let path: OasNodePath = library.createNodePath(node);
+
+        let actual: string = path.toString();
+        let expected: string = "/servers[2]/variables[port]";
+
+        expect(actual).toEqual(expected);
     });
 
 });

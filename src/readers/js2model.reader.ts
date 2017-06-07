@@ -33,10 +33,10 @@ import {Oas20Parameter, Oas20ParameterBase, Oas20ParameterDefinition} from "../m
 import {
     Oas20AdditionalPropertiesSchema,
     Oas20AllOfSchema,
-    Oas20SchemaDefinition,
     Oas20ItemsSchema,
     Oas20PropertySchema,
-    Oas20Schema
+    Oas20Schema,
+    Oas20SchemaDefinition
 } from "../models/2.0/schema.model";
 import {Oas20Items} from "../models/2.0/items.model";
 import {Oas20Responses} from "../models/2.0/responses.model";
@@ -48,14 +48,14 @@ import {Oas20XML} from "../models/2.0/xml.model";
 import {Oas20Definitions} from "../models/2.0/definitions.model";
 import {Oas20ParametersDefinitions} from "../models/2.0/parameters-definitions.model";
 import {Oas20ResponsesDefinitions} from "../models/2.0/responses-definitions.model";
-import {IOas20NodeVisitor} from "../visitors/visitor.iface";
+import {IOas20NodeVisitor, IOas30NodeVisitor} from "../visitors/visitor.iface";
 import {OasExtension} from "../models/extension.model";
 import {OasInfo} from "../models/common/info.model";
 import {OasContact} from "../models/common/contact.model";
 import {OasLicense} from "../models/common/license.model";
 import {Oas30Info} from "../models/3.0/info.model";
 import {Oas30Document} from "../models/3.0/document.model";
-import {Oas30Server} from "../models/3.0/server.model";
+import {Oas30LinkServer, Oas30Server} from "../models/3.0/server.model";
 import {Oas30ServerVariables} from "../models/3.0/server-variables.model";
 import {Oas30ServerVariable} from "../models/3.0/server-variable.model";
 import {OasExternalDocumentation} from "../models/common/external-documentation.model";
@@ -75,10 +75,20 @@ import {OasSchema} from "../models/common/schema.model";
 import {OasPaths} from "../models/common/paths.model";
 import {OasPathItem} from "../models/common/path-item.model";
 import {Oas30Paths} from "../models/3.0/paths.model";
-import {Oas30PathItem} from "../models/3.0/path-item.model";
+import {Oas30CallbackPathItem, Oas30PathItem} from "../models/3.0/path-item.model";
 import {Oas30Operation} from "../models/3.0/operation.model";
 import {Oas30Parameter, Oas30ParameterBase, Oas30ParameterDefinition} from "../models/3.0/parameter.model";
-import {Oas30Schema, Oas30SchemaDefinition} from "../models/3.0/schema.model";
+import {
+    Oas30AdditionalPropertiesSchema,
+    Oas30AllOfSchema,
+    Oas30AnyOfSchema,
+    Oas30ItemsSchema,
+    Oas30NotSchema,
+    Oas30OneOfSchema,
+    Oas30PropertySchema,
+    Oas30Schema,
+    Oas30SchemaDefinition
+} from "../models/3.0/schema.model";
 import {Oas30Response, Oas30ResponseBase, Oas30ResponseDefinition} from "../models/3.0/response.model";
 import {Oas30Header, Oas30HeaderDefinition} from "../models/3.0/header.model";
 import {Oas30RequestBody, Oas30RequestBodyDefinition} from "../models/3.0/request-body.model";
@@ -99,8 +109,18 @@ import {Oas30Components} from "../models/3.0/components.model";
 import {Oas30SecurityScheme} from "../models/3.0/security-scheme.model";
 import {OasSecurityScheme} from "../models/common/security-scheme.model";
 import {Oas30OAuthFlows} from "../models/3.0/oauth-flows.model";
-import {Oas30ImplicitOAuthFlow, Oas30OAuthFlow} from "../models/3.0/oauth-flow.model";
+import {
+    Oas30AuthorizationCodeOAuthFlow,
+    Oas30ClientCredentialsOAuthFlow,
+    Oas30ImplicitOAuthFlow,
+    Oas30OAuthFlow,
+    Oas30PasswordOAuthFlow
+} from "../models/3.0/oauth-flow.model";
 import {Oas30Scopes} from "../models/3.0/scopes.model";
+import {Oas30Contact} from "../models/3.0/contact.model";
+import {Oas30License} from "../models/3.0/license.model";
+import {Oas30Responses} from "../models/3.0/responses.model";
+import {Oas30XML} from "../models/3.0/xml.model";
 
 
 /**
@@ -998,7 +1018,6 @@ export class Oas20JS2ModelReader extends OasJS2ModelReader {
  * class.  This is useful when reading a partial (non root) model from a JS object.  The
  * caller still needs to first construct the appropriate model prior to reading into it.
  */
-// TODO implement a 3.0.0 version of this visitor
 export class Oas20JS2ModelReaderVisitor implements IOas20NodeVisitor {
 
     /**
@@ -1007,7 +1026,6 @@ export class Oas20JS2ModelReaderVisitor implements IOas20NodeVisitor {
      * @param jsData
      */
     constructor(private reader: Oas20JS2ModelReader, private jsData: any) {}
-
 
     public visitDocument(node: Oas20Document): void {
         // Not supported - call the reader directly if you want to read a full document.
@@ -1135,6 +1153,256 @@ export class Oas20JS2ModelReaderVisitor implements IOas20NodeVisitor {
 
     public visitResponsesDefinitions(node: Oas20ResponsesDefinitions): void {
         this.reader.readResponsesDefinitions(this.jsData, node);
+    }
+
+    public visitExtension(node: OasExtension): void {
+        // Not supported:  cannot read a single extension
+    }
+
+}
+
+
+
+/**
+ * A visitor used to invoke the appropriate readXYZ() method on the Oas20JS2ModelReader
+ * class.  This is useful when reading a partial (non root) model from a JS object.  The
+ * caller still needs to first construct the appropriate model prior to reading into it.
+ */
+export class Oas30JS2ModelReaderVisitor implements IOas30NodeVisitor {
+
+    /**
+     * Constructor.
+     * @param reader
+     * @param jsData
+     */
+    constructor(private reader: Oas30JS2ModelReader, private jsData: any) {}
+
+    public visitDocument(node: Oas30Document): void {
+        // Not supported - call the reader directly if you want to read a full document.
+    }
+
+    public visitInfo(node: Oas30Info): void {
+        this.reader.readInfo(this.jsData, node);
+    }
+
+    public visitContact(node: Oas30Contact): void {
+        this.reader.readContact(this.jsData, node);
+    }
+
+    public visitLicense(node: Oas30License): void {
+        this.reader.readLicense(this.jsData, node);
+    }
+
+    public visitPaths(node: Oas30Paths): void {
+        this.reader.readPaths(this.jsData, node);
+    }
+
+    public visitPathItem(node: Oas30PathItem): void {
+        this.reader.readPathItem(this.jsData, node);
+    }
+
+    public visitOperation(node: Oas30Operation): void {
+        this.reader.readOperation(this.jsData, node);
+    }
+
+    public visitParameter(node: Oas30Parameter): void {
+        this.reader.readParameter(this.jsData, node);
+    }
+
+    public visitParameterDefinition(node: Oas30ParameterDefinition): void {
+        this.reader.readParameterBase(this.jsData, node);
+    }
+
+    public visitResponses(node: Oas30Responses): void {
+        this.reader.readResponses(this.jsData, node);
+    }
+
+    public visitResponse(node: Oas30Response): void {
+        this.reader.readResponse(this.jsData, node);
+    }
+
+    public visitContent(node: Oas30Content): void {
+        this.reader.readContent(this.jsData, node);
+    }
+
+    public visitMediaType(node: Oas30MediaType): void {
+        this.reader.readMediaType(this.jsData, node);
+    }
+
+    public visitEncoding(node: Oas30Encoding): void {
+        this.reader.readEncoding(this.jsData, node);
+    }
+
+    public visitEncodingProperty(node: Oas30EncodingProperty): void {
+        this.reader.readEncodingProperty(this.jsData, node);
+    }
+
+    public visitExample(node: Oas30Example): void {
+        this.reader.readExample(this.jsData, node);
+    }
+
+    public visitLinks(node: Oas30Links): void {
+        this.reader.readLinks(this.jsData, node);
+    }
+
+    public visitLink(node: Oas30Link): void {
+        this.reader.readLink(this.jsData, node);
+    }
+
+    public visitLinkParameters(node: Oas30LinkParameters): void {
+        this.reader.readLinkParameters(this.jsData, node);
+    }
+
+    public visitLinkParameterExpression(node: Oas30LinkParameterExpression): void {
+        // Nothing to read - the expression is simple and not extensible
+    }
+
+    public visitLinkServer(node: Oas30LinkServer): void {
+        this.reader.readServer(this.jsData, node);
+    }
+
+    public visitResponseDefinition(node: Oas30ResponseDefinition): void {
+        this.reader.readResponseBase(this.jsData, node);
+    }
+
+    public visitSchema(node: Oas30Schema): void {
+        this.reader.readSchema(this.jsData, node);
+    }
+
+    public visitXML(node: Oas30XML): void {
+        this.reader.readXML(this.jsData, node);
+    }
+
+    public visitHeaders(node: Oas30Headers): void {
+        this.reader.readHeaders(this.jsData, node);
+    }
+
+    public visitHeader(node: Oas30Header): void {
+        this.reader.readHeader(this.jsData, node);
+    }
+
+    public visitRequestBody(node: Oas30RequestBody): void {
+        this.reader.readRequestBody(this.jsData, node);
+    }
+
+    public visitCallbacks(node: Oas30Callbacks): void {
+        this.reader.readCallbacks(this.jsData, node);
+    }
+
+    public visitCallback(node: Oas30Callback): void {
+        this.reader.readCallback(this.jsData, node);
+    }
+
+    public visitCallbackPathItem(node: Oas30CallbackPathItem): void {
+        this.reader.readPathItem(this.jsData, node);
+    }
+
+    public visitServer(node: Oas30Server): void {
+        this.reader.readServer(this.jsData, node);
+    }
+
+    public visitServerVariables(node: Oas30ServerVariables): void {
+        this.reader.readServerVariables(this.jsData, node);
+    }
+
+    public visitServerVariable(node: Oas30ServerVariable): void {
+        this.reader.readServerVariable(this.jsData, node);
+    }
+
+    public visitSecurityRequirement(node: Oas30SecurityRequirement): void {
+        this.reader.readSecurityRequirement(this.jsData, node);
+    }
+
+    public visitTag(node: Oas30Tag): void {
+        this.reader.readTag(this.jsData, node);
+    }
+
+    public visitExternalDocumentation(node: Oas30ExternalDocumentation): void {
+        this.reader.readExternalDocumentation(this.jsData, node);
+    }
+
+    public visitAllOfSchema(node: Oas30AllOfSchema): void {
+        this.reader.readSchema(this.jsData, node);
+    }
+
+    public visitAnyOfSchema(node: Oas30AnyOfSchema): void {
+        this.reader.readSchema(this.jsData, node);
+    }
+
+    public visitOneOfSchema(node: Oas30OneOfSchema): void {
+        this.reader.readSchema(this.jsData, node);
+    }
+
+    public visitNotSchema(node: Oas30NotSchema): void {
+        this.reader.readSchema(this.jsData, node);
+    }
+
+    public visitPropertySchema(node: Oas30PropertySchema): void {
+        this.reader.readSchema(this.jsData, node);
+    }
+
+    public visitItemsSchema(node: Oas30ItemsSchema): void {
+        this.reader.readSchema(this.jsData, node);
+    }
+
+    public visitAdditionalPropertiesSchema(node: Oas30AdditionalPropertiesSchema): void {
+        this.reader.readSchema(this.jsData, node);
+    }
+
+    public visitComponents(node: Oas30Components): void {
+        this.reader.readComponents(this.jsData, node);
+    }
+
+    public visitSchemaDefinition(node: Oas30SchemaDefinition): void {
+        this.reader.readSchema(this.jsData, node);
+    }
+
+    public visitExampleDefinition(node: Oas30ExampleDefinition): void {
+        this.reader.readExample(this.jsData, node);
+    }
+
+    public visitRequestBodyDefinition(node: Oas30RequestBodyDefinition): void {
+        this.reader.readRequestBody(this.jsData, node);
+    }
+
+    public visitHeaderDefinition(node: Oas30HeaderDefinition): void {
+        this.reader.readHeader(this.jsData, node);
+    }
+
+    public visitOAuthFlows(node: Oas30OAuthFlows): void {
+        this.reader.readOAuthFlows(this.jsData, node);
+    }
+
+    public visitImplicitOAuthFlow(node: Oas30ImplicitOAuthFlow): void {
+        this.reader.readOAuthFlow(this.jsData, node);
+    }
+
+    public visitPasswordOAuthFlow(node: Oas30PasswordOAuthFlow): void {
+        this.reader.readOAuthFlow(this.jsData, node);
+    }
+
+    public visitClientCredentialsOAuthFlow(node: Oas30ClientCredentialsOAuthFlow): void {
+        this.reader.readOAuthFlow(this.jsData, node);
+    }
+
+    public visitAuthorizationCodeOAuthFlow(node: Oas30AuthorizationCodeOAuthFlow): void {
+        this.reader.readOAuthFlow(this.jsData, node);
+    }
+
+    public visitScopes(node: Oas30Scopes): void {
+        this.reader.readScopes(this.jsData, node);
+    }
+
+    public visitSecurityScheme(node: Oas30SecurityScheme): void {
+        this.reader.readSecurityScheme(this.jsData, node);
+    }
+
+    public visitLinkDefinition(node: Oas30LinkDefinition): void {
+        this.reader.readLink(this.jsData, node);
+    }
+
+    public visitCallbackDefinition(node: Oas30CallbackDefinition): void {
+        this.reader.readCallback(this.jsData, node);
     }
 
     public visitExtension(node: OasExtension): void {
@@ -1421,7 +1689,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      * @param header
      * @param headerModel
      */
-    protected readHeader(header: any, headerModel: Oas30Header): void {
+    public readHeader(header: any, headerModel: Oas30Header): void {
         let description: string = header["description"];
         let required: boolean = header["required"];
         let schema: any = header["schema"];
@@ -1463,7 +1731,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      * @param parameter
      * @param paramModel
      */
-    private readParameterBase(parameter: any, paramModel: Oas30ParameterBase): void {
+    public readParameterBase(parameter: any, paramModel: Oas30ParameterBase): void {
         let name: string = parameter["name"];
         let in_: string = parameter["in"];
         let description: string = parameter["description"];
@@ -1666,7 +1934,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      * @param example
      * @param exampleModel
      */
-    private readExample(example: any, exampleModel: Oas30Example) {
+    public readExample(example: any, exampleModel: Oas30Example) {
         let $ref: string = example["$ref"];
         let summary: string = example["summary"];
         let description: string = example["description"];
@@ -1733,7 +2001,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      * @param response
      * @param responseModel
      */
-    private readResponseBase(response: any, responseModel: Oas30ResponseBase): void {
+    public readResponseBase(response: any, responseModel: Oas30ResponseBase): void {
         let description: string = response["description"];
         let headers: any = response["headers"];
         let content: any = response["content"];

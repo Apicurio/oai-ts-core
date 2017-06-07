@@ -18,13 +18,16 @@
 import {OasDocument} from "./models/document.model";
 import {OasDocumentFactory} from "./factories/document.factory";
 import {OasNode} from "./models/node.model";
-import {Oas20JS2ModelReader, Oas20JS2ModelReaderVisitor} from "./readers/js2model.reader";
+import {
+    Oas20JS2ModelReader, Oas20JS2ModelReaderVisitor, Oas30JS2ModelReader,
+    Oas30JS2ModelReaderVisitor
+} from "./readers/js2model.reader";
 import {Oas20ModelToJSVisitor, Oas30ModelToJSVisitor} from "./visitors/model2js.visitor";
 import {OasVisitorUtil, OasTraverserDirection} from "./visitors/visitor.utils";
 import {Oas20ValidationVisitor} from "./validation/validation.visitor";
 import {OasValidationError} from "./validation/validation";
 import {OasNodePath} from "./models/node-path";
-import {Oas20NodePathVisitor} from "./visitors/path.visitor";
+import {Oas20NodePathVisitor, Oas30NodePathVisitor} from "./visitors/path.visitor";
 
 /**
  * Represents the global OAS library entry point.  This is used, for example, when
@@ -78,6 +81,11 @@ export class OasLibraryUtils {
             let dispatcher: Oas20JS2ModelReaderVisitor = new Oas20JS2ModelReaderVisitor(reader, <any>source);
             node.accept(dispatcher);
             return node;
+        } else if (node.ownerDocument().getSpecVersion() === "3.0.0") {
+            let reader: Oas30JS2ModelReader = new Oas30JS2ModelReader();
+            let dispatcher: Oas30JS2ModelReaderVisitor = new Oas30JS2ModelReaderVisitor(reader, <any>source);
+            node.accept(dispatcher);
+            return node;
         } else {
             throw new Error("Unsupported OAS version: " + node.ownerDocument().getSpecVersion());
         }
@@ -89,16 +97,16 @@ export class OasLibraryUtils {
      * @param node
      */
     public writeNode(node: OasNode): any {
-        if (node._ownerDocument.getSpecVersion() === "2.0") {
+        if (node.ownerDocument().getSpecVersion() === "2.0") {
             let visitor: Oas20ModelToJSVisitor = new Oas20ModelToJSVisitor();
             OasVisitorUtil.visitTree(node, visitor);
             return visitor.getResult();
-        } else if (node._ownerDocument.getSpecVersion() === "3.0.0") {
+        } else if (node.ownerDocument().getSpecVersion() === "3.0.0") {
             let visitor: Oas30ModelToJSVisitor = new Oas30ModelToJSVisitor();
             OasVisitorUtil.visitTree(node, visitor);
             return visitor.getResult();
         } else {
-            throw new Error("OAS version " + node._ownerDocument.getSpecVersion() + " not supported.");
+            throw new Error("OAS version " + node.ownerDocument().getSpecVersion() + " not supported.");
         }
     }
 
@@ -109,7 +117,7 @@ export class OasLibraryUtils {
      * @return {any}
      */
     public validate(node: OasNode, recursive: boolean = true): OasValidationError[] {
-        if (node._ownerDocument.getSpecVersion() === "2.0") {
+        if (node.ownerDocument().getSpecVersion() === "2.0") {
             let visitor: Oas20ValidationVisitor = new Oas20ValidationVisitor();
             if (recursive) {
                 OasVisitorUtil.visitTree(node, visitor);
@@ -117,8 +125,11 @@ export class OasLibraryUtils {
                 node.accept(visitor);
             }
             return visitor.getValidationErrors();
+        } else if (node.ownerDocument().getSpecVersion() === "3.0.0") {
+            // TODO implement validation for OpenAPI 3.0.0
+            throw new Error("Validation rules not yet implemented for OpenAPI 3.0.0!");
         } else {
-            throw new Error("OAS version " + node._ownerDocument.getSpecVersion() + " not supported.");
+            throw new Error("OAS version " + node.ownerDocument().getSpecVersion() + " not supported.");
         }
     }
 
@@ -128,12 +139,16 @@ export class OasLibraryUtils {
      * @return {OasNodePath}
      */
     public createNodePath(node: OasNode): OasNodePath {
-        if (node._ownerDocument.getSpecVersion() === "2.0") {
+        if (node.ownerDocument().getSpecVersion() === "2.0") {
             let viz: Oas20NodePathVisitor = new Oas20NodePathVisitor();
             OasVisitorUtil.visitTree(node, viz, OasTraverserDirection.up);
             return viz.path();
+        } else if (node.ownerDocument().getSpecVersion() === "3.0.0") {
+            let viz: Oas30NodePathVisitor = new Oas30NodePathVisitor();
+            OasVisitorUtil.visitTree(node, viz, OasTraverserDirection.up);
+            return viz.path();
         } else {
-            throw new Error("OAS version " + node._ownerDocument.getSpecVersion() + " not supported.");
+            throw new Error("OAS version " + node.ownerDocument().getSpecVersion() + " not supported.");
         }
     }
 

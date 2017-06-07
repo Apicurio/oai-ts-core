@@ -1,0 +1,77 @@
+{
+  "headers": {
+    "Header1": {
+      "description": "The number of allowed requests in the current period",
+      "schema": {
+        "type": "integer"
+      }
+    },
+    "Header2": {
+      "description": "The number of allowed requests in the current period",
+      "schema": {
+        "type": "integer"
+      }
+    }
+  },
+  "examples": {
+    "Example1": {
+      "summary" : "Example 1 Summary",
+      "description": "Example 1 description.",
+      "value": "Example1Value"
+    },
+    "Example2": {
+      "summary" : "Example 2 Summary",
+      "description": "Example 2 description.",
+      "value": 47
+    },
+    "Example3": {
+      "summary" : "Example 1 Summary",
+      "description": "Example 1 description.",
+      "externalValue": "http://example.org/examples/address-example.xml"
+    }
+  },
+  "callbacks": {
+    "Callback1": {
+      "$request.header#/put-url": {
+        "put": {
+          "requestBody": {
+            "description": "Callback payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OtherPayload"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "webhook successfully processed and no retries will be performed"
+            }
+          }
+        }
+      }
+    },
+    "Callback2": {
+      "$request.body#/url": {
+        "post": {
+          "requestBody": {
+            "description": "Callback payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SomePayload"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "webhook successfully processed and no retries will be performed"
+            }
+          }
+        }
+      }
+    }
+  }
+}

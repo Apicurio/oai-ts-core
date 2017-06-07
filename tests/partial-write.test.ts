@@ -18,6 +18,7 @@
  */
 import {Oas20Document} from "../src/models/2.0/document.model";
 import {OasLibraryUtils} from "../src/library.utils";
+import {Oas30Document} from "../src/models/3.0/document.model";
 
 describe("Partial Write (2.0)", () => {
 
@@ -66,6 +67,52 @@ describe("Partial Write (2.0)", () => {
         expect(actualObj).toEqual(expectedObj);
     });
 
+});
 
+
+
+describe("Partial Write (3.0)", () => {
+
+    let library: OasLibraryUtils;
+
+    beforeEach(() => {
+        library = new OasLibraryUtils();
+    });
+
+    it("Info", () => {
+        let json: any = readJSON('tests/fixtures/partial-write/3.0/example.json');
+        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+
+        let expectedObj: any = json.info;
+        let actualObj: any = library.writeNode(document.info);
+        expect(actualObj).toEqual(expectedObj);
+    });
+
+    it("Components", () => {
+        let json: any = readJSON('tests/fixtures/partial-write/3.0/example.json');
+        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+
+        let expectedObj: any = json.components;
+        let actualObj: any = library.writeNode(document.components);
+        expect(actualObj).toEqual(expectedObj);
+    });
+
+    it("Callback", () => {
+        let json: any = readJSON('tests/fixtures/partial-write/3.0/example.json');
+        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+
+        let expectedObj: any = json.components.callbacks["Callback1"];
+        let actualObj: any = library.writeNode(document.components.callbacks["Callback1"]);
+        expect(actualObj).toEqual(expectedObj);
+    });
+
+    it("Operation", () => {
+        let json: any = readJSON('tests/fixtures/partial-write/3.0/example.json');
+        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+
+        let expectedObj: any = json.paths["/foo"].get;
+        let actualObj: any = library.writeNode(document.paths.pathItem("/foo").get);
+        expect(actualObj).toEqual(expectedObj);
+    });
 
 });

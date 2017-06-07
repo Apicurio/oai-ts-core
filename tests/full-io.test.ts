@@ -166,8 +166,8 @@ describe("Full I/O (3.0)", () => {
         { name: "Components (Parameters)",              test: "tests/fixtures/full-io/3.0/components/components-parameters.json" },
         { name: "Components (Examples)",                test: "tests/fixtures/full-io/3.0/components/components-examples.json" },
         { name: "Components (Request Bodies)",          test: "tests/fixtures/full-io/3.0/components/components-requestBodies.json" },
-        { name: "Components (Headers)",                 test: "tests/fixtures/full-io/3.0/components/components-headers.json", debug: true },
-        { name: "Components (Security Schemes)",        test: "tests/fixtures/full-io/3.0/components/components-securitySchemes.json", debug: true },
+        { name: "Components (Headers)",                 test: "tests/fixtures/full-io/3.0/components/components-headers.json" },
+        { name: "Components (Security Schemes)",        test: "tests/fixtures/full-io/3.0/components/components-securitySchemes.json" },
         { name: "Components (Links)",                   test: "tests/fixtures/full-io/3.0/components/components-links.json" },
         { name: "Components (Callbacks)",               test: "tests/fixtures/full-io/3.0/components/components-callbacks.json" },
     ];

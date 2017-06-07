@@ -18,6 +18,7 @@
 import {OasDocument} from "../models/document.model";
 import {Oas20Document} from "../models/2.0/document.model";
 import {Oas20JS2ModelReader, Oas30JS2ModelReader} from "../readers/js2model.reader";
+import {Oas30Document} from "../models/3.0/document.model";
 
 /**
  * The main factory for creating new OAS Documents.  This can be used to create a new, empty
@@ -33,6 +34,9 @@ export class OasDocumentFactory {
     public createEmpty(oasVersion: string): OasDocument {
         if (oasVersion === "2.0") {
             return new Oas20Document();
+        }
+        if (oasVersion === "3.0.0") {
+            return new Oas30Document();
         }
 
         throw new Error("Unsupported OAS version: " + oasVersion);
