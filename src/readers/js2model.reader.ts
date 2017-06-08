@@ -503,7 +503,11 @@ export abstract class OasJS2ModelReader {
 
         if (this.isDefined(items)) {
             if (Array.isArray(items)) {
-                // TODO read an array of items schemas here
+                schemaModel.items = items.map( item => {
+                    let itemsSchemaModel: OasSchema = schemaModel.createItemsSchema();
+                    this.readSchema(item, itemsSchemaModel);
+                    return itemsSchemaModel;
+                });
             } else {
                 let itemsSchemaModel: OasSchema = schemaModel.createItemsSchema();
                 this.readSchema(items, itemsSchemaModel);
