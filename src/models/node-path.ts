@@ -30,51 +30,71 @@ export class OasNodePath {
 
     constructor(path?: string) {
         if (path && path.indexOf("/") === 0 && path !== "/") {
+            let currentScanType: string = "path";
             let currentIdx: number = 1;
-            let segStart: number;
-            let segEnd: number;
             while (currentIdx < path.length) {
-                segStart = currentIdx;
-                let nextPathSep: number = path.indexOf("/", segStart);
-                if (nextPathSep === -1) {
-                    nextPathSep = path.length;
-                }
-                let nextBrace: number = path.indexOf("[", segStart);
-                if (nextBrace != -1 && nextBrace < nextPathSep) {
-                    let endBrace: number = path.indexOf("]", nextBrace);
-                    if (endBrace != -1) {
-                        segEnd = endBrace + 1;
+                let segStart: number = currentIdx;
+                let segEnd: number;
+                if (currentScanType === "path") {
+                    let nextPathSep: number = path.indexOf("/", segStart);
+                    let nextBrace: number = path.indexOf("[", segStart);
+                    if (nextPathSep === -1) { nextPathSep = path.length; }
+                    if (nextBrace === -1) { nextBrace = path.length; }
+                    if (nextPathSep <= nextBrace) {
+                        segEnd = nextPathSep;
                     } else {
-                        segEnd = path.length;
+                        segEnd = nextBrace;
                     }
                 } else {
-                    segEnd = nextPathSep;
+                    let nextCloseBrace: number = path.indexOf("]", segStart);
+                    if (nextCloseBrace === -1) { nextCloseBrace = path.length; }
+                    segEnd = nextCloseBrace + 1;
                 }
 
-                let segment: OasNodePathSegment = OasNodePathSegment.fromString(path.substring(segStart, segEnd));
+                let seg: string = path.substring(segStart, segEnd);
+                let segment: OasNodePathSegment = OasNodePathSegment.fromString(seg);
                 this._segments.push(segment);
 
+                // Default next values.
+                currentScanType = "path";
                 currentIdx = segEnd + 1;
+
+                // Find real next values.
+                if (path.charAt(segEnd) === '/') {
+                    currentScanType = "path";
+                    currentIdx = segEnd + 1;
+                } else if (path.charAt(segEnd) === '[') {
+                    currentScanType = "index";
+                    currentIdx = segEnd;
+                } else if (path.charAt(segEnd) === ']') {
+                    if (path.charAt(segEnd+1) === '[') {
+                        currentScanType = "index";
+                        currentIdx = segEnd + 1;
+                    } else if (path.charAt(segEnd+1) === '/') {
+                        currentScanType = "path";
+                        currentIdx = segEnd + 1;
+                    }
+                }
             }
         }
     }
 
     /**
      * Adds a segment to the beginning of the path.
-     * @param name
+     * @param value
      * @param index
      */
-    public prependSegment(name: string, index?: string | number): void {
-        this._segments.unshift(new OasNodePathSegment(name, index));
+    public prependSegment(value: string|number, index?: boolean): void {
+        this._segments.unshift(new OasNodePathSegment(value, index));
     }
 
     /**
      * Adds a segment to the end of the path.
-     * @param name
+     * @param value
      * @param index
      */
-    public appendSegment(name: string, index?: string | number): void {
-        this._segments.push(new OasNodePathSegment(name, index));
+    public appendSegment(value: string | number, index?: boolean): void {
+        this._segments.push(new OasNodePathSegment(value, index));
     }
 
     /**
@@ -97,15 +117,18 @@ export class OasNodePath {
      * Converts the path to a string.
      */
     public toString(): string {
-        let array: string[] = [];
-        for (let segment of this._segments) {
-            let sval: string = segment.name();
-            if (segment.isIndexed()) {
-                sval += "[" + segment.index() + "]";
-            }
-            array.push(sval);
+        if (this._segments.length === 0) {
+            return "/";
         }
-        return "/" + array.join("/");
+        let rval: string = "";
+        for (let segment of this._segments) {
+            if (segment.isIndex()) {
+                rval += '[' + segment.value() + ']';
+            } else {
+                rval += '/' + segment.value();
+            }
+        }
+        return rval;
     }
 
 }
@@ -116,47 +139,36 @@ export class OasNodePath {
  */
 export class OasNodePathSegment {
 
-    private _name: string;
-    private _index: string | number;
+    private _value: string | number;
+    private _index: boolean = false;
 
-    constructor(name: string, index?: string | number) {
-        this._name = name;
-        this._index = index;
+    constructor(value: string | number, index?: boolean) {
+        this._value = value;
+        if (index) {
+            this._index = true;
+        }
     }
 
-    public name(): string {
-        return this._name;
+    public value(): string | number {
+        return this._value;
     }
 
-    public index(): string | number {
+    public isIndex(): boolean {
         return this._index;
     }
 
-    public isIndexed(): boolean {
-        return this._index != undefined && this._index != null;
-    }
-
     public resolve(node: OasNode): OasNode {
-        let childNode: any = (<any>node)[this.name()];
-        if (this.isIndexed()) {
-            if (Array.isArray(childNode)) {
-                childNode = childNode[this.index()];
-            } else if (childNode.getItem) {
-                childNode = (<IOasIndexedNode<OasNode>> childNode).getItem(<string>this.index());
-            } else {
-                childNode = childNode[this.index()];
-            }
+        let childNode: any = null;
+        if (this.isIndex() && node["__instanceof_IOasIndexedNode"]) {
+            childNode = (<any>node as IOasIndexedNode<OasNode>).getItem(<string>this.value());
+        } else {
+            childNode = node[this.value()];
         }
         return <OasNode>childNode;
     }
 
     /**
-     * Creates a new segment from a string.  Possible formats are:
-     *
-     *   "name"
-     *   "name[propertyIndex]"
-     *   "name[numbericIndex]"
-     *
+     * Creates a new segment from a string.
      * @param segment
      * @return {OasNodePathSegment}
      */
@@ -164,14 +176,13 @@ export class OasNodePathSegment {
         if (!segment) {
             return new OasNodePathSegment(null);
         }
-        if (segment.indexOf("[") === -1) {
+        if (segment.indexOf("[") !== 0) {
             return new OasNodePathSegment(segment);
         } else {
             let bStart: number = segment.indexOf("[");
             let bEnd: number = segment.indexOf("]", bStart);
-            let name: string = segment.substring(0, bStart);
-            let index: string = segment.substring(bStart + 1, bEnd);
-            return new OasNodePathSegment(name, index);
+            let value: string = segment.substring(bStart + 1, bEnd);
+            return new OasNodePathSegment(value, true);
         }
     }
 

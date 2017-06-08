@@ -97,7 +97,6 @@ import {Oas30ServerVariable} from "../models/3.0/server-variable.model";
 export abstract class OasNodePathVisitor implements IOasNodeVisitor {
 
     protected _path: OasNodePath = new OasNodePath();
-    protected _index: string | number;
 
     public path(): OasNodePath {
         return this._path;
@@ -120,12 +119,11 @@ export abstract class OasNodePathVisitor implements IOasNodeVisitor {
     }
 
     visitPaths(node: OasPaths): void {
-        this._path.prependSegment("paths", this._index);
-        this._index = undefined;
+        this._path.prependSegment("paths");
     }
 
     visitPathItem(node: OasPathItem): void {
-        this._index = node.path();
+        this._path.prependSegment(node.path(), true);
     }
 
     visitOperation(node: OasOperation): void {
@@ -141,7 +139,8 @@ export abstract class OasNodePathVisitor implements IOasNodeVisitor {
         let idx: number = 0;
         for (let securityRequirement of securityRequirements) {
             if (securityRequirement === node) {
-                this._path.prependSegment("security", idx);
+                this._path.prependSegment(idx, true);
+                this._path.prependSegment("security");
                 break;
             } else {
                 idx++;
@@ -150,8 +149,7 @@ export abstract class OasNodePathVisitor implements IOasNodeVisitor {
     }
 
     visitResponses(node: OasResponses): void {
-        this._path.prependSegment("responses", this._index);
-        this._index = undefined;
+        this._path.prependSegment("responses");
     }
 
     visitSchema(node: OasSchema): void {
@@ -159,12 +157,11 @@ export abstract class OasNodePathVisitor implements IOasNodeVisitor {
     }
 
     visitHeaders(node: OasHeaders): void {
-        this._path.prependSegment("headers", this._index);
-        this._index = undefined;
+        this._path.prependSegment("headers");
     }
 
     visitHeader(node: OasHeader): void {
-        this._index = node.headerName();
+        this._path.prependSegment(node.headerName(), true);
     }
 
     visitTag(node: OasTag): void {
@@ -172,7 +169,8 @@ export abstract class OasNodePathVisitor implements IOasNodeVisitor {
         let idx: number = 0;
         for (let tag of tags) {
             if (tag === node) {
-                this._path.prependSegment("tags", idx);
+                this._path.prependSegment(idx, true);
+                this._path.prependSegment("tags");
                 break;
             } else {
                 idx++;
@@ -181,7 +179,7 @@ export abstract class OasNodePathVisitor implements IOasNodeVisitor {
     }
 
     visitSecurityScheme(node: OasSecurityScheme): void {
-        this._index = node.schemeName();
+        this._path.prependSegment(node.schemeName(), true);
     }
 
     visitXML(node: OasXML): void {
@@ -223,7 +221,8 @@ export class Oas20NodePathVisitor extends OasNodePathVisitor implements IOas20No
         let idx: number = 0;
         for (let param of params) {
             if (param === node) {
-                this._path.prependSegment("parameters", idx);
+                this._path.prependSegment(idx, true);
+                this._path.prependSegment("parameters");
                 break;
             } else {
                 idx++;
@@ -232,11 +231,11 @@ export class Oas20NodePathVisitor extends OasNodePathVisitor implements IOas20No
     }
 
     visitParameterDefinition(node: Oas20ParameterDefinition): void {
-        this._index = node.parameterName();
+        this._path.prependSegment(node.parameterName(), true);
     }
 
     visitResponseDefinition(node: Oas20ResponseDefinition): void {
-        this._index = node.name();
+        this._path.prependSegment(node.name(), true);
     }
 
     visitExample(node: Oas20Example): void {
@@ -248,8 +247,7 @@ export class Oas20NodePathVisitor extends OasNodePathVisitor implements IOas20No
     }
 
     visitSecurityDefinitions(node: Oas20SecurityDefinitions): void {
-        this._path.prependSegment("securityDefinitions", this._index);
-        this._index = undefined;
+        this._path.prependSegment("securityDefinitions");
     }
 
     visitScopes(node: Oas20Scopes): void {
@@ -257,11 +255,12 @@ export class Oas20NodePathVisitor extends OasNodePathVisitor implements IOas20No
     }
 
     visitSchemaDefinition(node: Oas20SchemaDefinition): void {
-        this._index = node.definitionName();
+        this._path.prependSegment(node.definitionName(), true);
     }
 
     visitPropertySchema(node: Oas20PropertySchema): void {
-        this._path.prependSegment("properties", node.propertyName());
+        this._path.prependSegment(node.propertyName(), true);
+        this._path.prependSegment("properties");
     }
 
     visitAdditionalPropertiesSchema(node: Oas20AdditionalPropertiesSchema): void {
@@ -273,7 +272,8 @@ export class Oas20NodePathVisitor extends OasNodePathVisitor implements IOas20No
         let idx: number = 0;
         for (let schema of schemas) {
             if (schema === node) {
-                this._path.prependSegment("allOf", idx);
+                this._path.prependSegment(idx, true);
+                this._path.prependSegment("allOf");
                 break;
             } else {
                 idx++;
@@ -287,7 +287,8 @@ export class Oas20NodePathVisitor extends OasNodePathVisitor implements IOas20No
             let idx: number = 0;
             for (let schema of schemas) {
                 if (schema === node) {
-                    this._path.prependSegment("items", idx);
+                    this._path.prependSegment(idx, true);
+                    this._path.prependSegment("items");
                     break;
                 } else {
                     idx++;
@@ -299,22 +300,19 @@ export class Oas20NodePathVisitor extends OasNodePathVisitor implements IOas20No
     }
 
     visitDefinitions(node: Oas20Definitions): void {
-        this._path.prependSegment("definitions", this._index);
-        this._index = undefined;
+        this._path.prependSegment("definitions");
     }
 
     visitParametersDefinitions(node: Oas20ParametersDefinitions): void {
-        this._path.prependSegment("parameters", this._index);
-        this._index = undefined;
+        this._path.prependSegment("parameters");
     }
 
     visitResponsesDefinitions(node: Oas20ResponsesDefinitions): void {
-        this._path.prependSegment("responses", this._index);
-        this._index = undefined;
+        this._path.prependSegment("responses");
     }
 
     visitResponse(node: Oas20Response): void {
-        this._index = node.statusCode();
+        this._path.prependSegment(node.statusCode(), true);
     }
 
 }
@@ -330,7 +328,8 @@ export class Oas30NodePathVisitor extends OasNodePathVisitor implements IOas30No
         let idx: number = 0;
         for (let param of params) {
             if (param === node) {
-                this._path.prependSegment("parameters", idx);
+                this._path.prependSegment(idx, true);
+                this._path.prependSegment("parameters");
                 break;
             } else {
                 idx++;
@@ -339,33 +338,32 @@ export class Oas30NodePathVisitor extends OasNodePathVisitor implements IOas30No
     }
 
     visitParameterDefinition(node: Oas30ParameterDefinition): void {
-        this._path.prependSegment("parameters", node.parameterName());
+        this._path.prependSegment("parameters");
     }
 
     visitResponse(node: Oas30Response): void {
-        this._index = node.statusCode();
+        this._path.prependSegment(node.statusCode(), true);
     }
 
     visitContent(node: Oas30Content): void {
-        this._path.prependSegment("content", this._index);
-        this._index = null;
+        this._path.prependSegment("content");
     }
 
     visitMediaType(node: Oas30MediaType): void {
-        this._index = node.name();
+        this._path.prependSegment(node.name(), true);
     }
 
     visitEncoding(node: Oas30Encoding): void {
-        this._path.prependSegment("encoding", this._index);
-        this._index = null;
+        this._path.prependSegment("encoding");
     }
 
     visitEncodingProperty(node: Oas30EncodingProperty): void {
-        this._index = node.name();
+        this._path.prependSegment(node.name(), true);
     }
 
     visitExample(node: Oas30Example): void {
-        this._index = node.name();
+        this._path.prependSegment(node.name(), true);
+        this._path.prependSegment("examples");
     }
 
     visitLinks(node: Oas30Links): void {
@@ -373,16 +371,15 @@ export class Oas30NodePathVisitor extends OasNodePathVisitor implements IOas30No
     }
 
     visitLink(node: Oas30Link): void {
-        this._index = node.name();
+        this._path.prependSegment(node.name(), true);
     }
 
     visitLinkParameters(node: Oas30LinkParameters): void {
-        this._path.prependSegment("parameters", this._index);
-        this._index = null;
+        this._path.prependSegment("parameters");
     }
 
     visitLinkParameterExpression(node: Oas30LinkParameterExpression): void {
-        this._index = node.name();
+        this._path.prependSegment(node.name(), true);
     }
 
     visitLinkServer(node: Oas30LinkServer): void {
@@ -390,7 +387,8 @@ export class Oas30NodePathVisitor extends OasNodePathVisitor implements IOas30No
     }
 
     visitResponseDefinition(node: Oas30ResponseDefinition): void {
-        this._path.prependSegment("responses", node.name());
+        this._path.prependSegment(node.name(), true);
+        this._path.prependSegment("responses");
     }
 
     visitRequestBody(node: Oas30RequestBody): void {
@@ -398,20 +396,15 @@ export class Oas30NodePathVisitor extends OasNodePathVisitor implements IOas30No
     }
 
     visitCallbacks(node: Oas30Callbacks): void {
-        // TODO callbacks is problematic because it is indexed two layers deep :(
-        this._path.prependSegment("callbacks", this._index);
-        this._index = undefined;
+        this._path.prependSegment("callbacks");
     }
 
     visitCallback(node: Oas30Callback): void {
-        // TODO callbacks is problematic because it is indexed two layers deep :(
-        this._path.prependSegment("callback", this._index);
-        this._index = undefined;
+        this._path.prependSegment(node.name(), true);
     }
 
     visitCallbackPathItem(node: Oas30CallbackPathItem): void {
-        // TODO callbacks is problematic because it is indexed two layers deep :(
-        super.visitPathItem(node);
+        this._path.prependSegment(node.path(), true);
     }
 
     visitServer(node: Oas30Server): void {
@@ -419,7 +412,8 @@ export class Oas30NodePathVisitor extends OasNodePathVisitor implements IOas30No
         let idx: number = 0;
         for (let server of servers) {
             if (server === node) {
-                this._path.prependSegment("servers", idx);
+                this._path.prependSegment(idx, true);
+                this._path.prependSegment("servers");
                 break;
             } else {
                 idx++;
@@ -428,12 +422,11 @@ export class Oas30NodePathVisitor extends OasNodePathVisitor implements IOas30No
     }
 
     visitServerVariables(node: Oas30ServerVariables): void {
-        this._path.prependSegment("variables", this._index);
-        this._index = null;
+        this._path.prependSegment("variables");
     }
 
     visitServerVariable(node: Oas30ServerVariable): void {
-        this._index = node.name();
+        this._path.prependSegment(node.name(), true);
     }
 
     visitAllOfSchema(node: Oas30AllOfSchema): void {
@@ -441,7 +434,8 @@ export class Oas30NodePathVisitor extends OasNodePathVisitor implements IOas30No
         let idx: number = 0;
         for (let schema of schemas) {
             if (schema === node) {
-                this._path.prependSegment("allOf", idx);
+                this._path.prependSegment(idx, true);
+                this._path.prependSegment("allOf");
                 break;
             } else {
                 idx++;
@@ -454,7 +448,8 @@ export class Oas30NodePathVisitor extends OasNodePathVisitor implements IOas30No
         let idx: number = 0;
         for (let schema of schemas) {
             if (schema === node) {
-                this._path.prependSegment("anyOf", idx);
+                this._path.prependSegment(idx, true);
+                this._path.prependSegment("anyOf");
                 break;
             } else {
                 idx++;
@@ -467,7 +462,8 @@ export class Oas30NodePathVisitor extends OasNodePathVisitor implements IOas30No
         let idx: number = 0;
         for (let schema of schemas) {
             if (schema === node) {
-                this._path.prependSegment("oneOf", idx);
+                this._path.prependSegment(idx, true);
+                this._path.prependSegment("oneOf");
                 break;
             } else {
                 idx++;
@@ -480,7 +476,8 @@ export class Oas30NodePathVisitor extends OasNodePathVisitor implements IOas30No
     }
 
     visitPropertySchema(node: Oas30PropertySchema): void {
-        this._path.prependSegment("properties", node.propertyName());
+        this._path.prependSegment(node.propertyName(), true);
+        this._path.prependSegment("properties");
     }
 
     visitItemsSchema(node: Oas30ItemsSchema): void {
@@ -489,7 +486,8 @@ export class Oas30NodePathVisitor extends OasNodePathVisitor implements IOas30No
             let idx: number = 0;
             for (let schema of schemas) {
                 if (schema === node) {
-                    this._path.prependSegment("items", idx);
+                    this._path.prependSegment(idx, true);
+                    this._path.prependSegment("items");
                     break;
                 } else {
                     idx++;
@@ -509,19 +507,23 @@ export class Oas30NodePathVisitor extends OasNodePathVisitor implements IOas30No
     }
 
     visitSchemaDefinition(node: Oas30SchemaDefinition): void {
-        this._path.prependSegment("schemas", node.name());
+        this._path.prependSegment(node.name(), true);
+        this._path.prependSegment("schemas");
     }
 
     visitExampleDefinition(node: Oas30ExampleDefinition): void {
-        this._path.prependSegment("examples", node.name());
+        this._path.prependSegment(node.name(), true);
+        this._path.prependSegment("examples");
     }
 
     visitRequestBodyDefinition(node: Oas30RequestBodyDefinition): void {
-        this._path.prependSegment("requestBodies", node.name());
+        this._path.prependSegment(node.name(), true);
+        this._path.prependSegment("requestBodies");
     }
 
     visitHeaderDefinition(node: Oas30HeaderDefinition): void {
-        this._path.prependSegment("headers", node.name());
+        this._path.prependSegment(node.name(), true);
+        this._path.prependSegment("headers");
     }
 
     visitOAuthFlows(node: Oas30OAuthFlows): void {
@@ -549,15 +551,18 @@ export class Oas30NodePathVisitor extends OasNodePathVisitor implements IOas30No
     }
 
     visitLinkDefinition(node: Oas30LinkDefinition): void {
-        this._path.prependSegment("links", node.name());
+        this._path.prependSegment(node.name(), true);
+        this._path.prependSegment("links");
     }
 
     visitCallbackDefinition(node: Oas30CallbackDefinition): void {
-        this._path.prependSegment("callbacks", node.name());
+        this._path.prependSegment(node.name(), true);
+        this._path.prependSegment("callbacks");
     }
 
     visitSecurityScheme(node: OasSecurityScheme): void {
-        this._path.prependSegment("securitySchemes", node.schemeName());
+        this._path.prependSegment(node.schemeName(), true);
+        this._path.prependSegment("securitySchemes");
     }
 
 }

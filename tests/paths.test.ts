@@ -20,10 +20,61 @@
 
 import {Oas20Document} from "../src/models/2.0/document.model";
 import {OasLibraryUtils} from "../src/library.utils";
-import {OasNodePath} from "../src/models/node-path";
+import {OasNodePath, OasNodePathSegment} from "../src/models/node-path";
 import {OasNode} from "../src/models/node.model";
 import {Oas30Document} from "../src/models/3.0/document.model";
 import {Oas30Operation} from "../src/models/3.0/operation.model";
+
+
+describe("Node Path Parser", () => {
+
+    it("Info", () => {
+        let path: OasNodePath = new OasNodePath("/info");
+        let segments: OasNodePathSegment[] = path["_segments"];
+
+        expect(segments.length).toEqual(1);
+        expect(segments[0].value()).toEqual("info");
+    });
+
+    it("Just Path Segments", () => {
+        let path: OasNodePath = new OasNodePath("/foo/bar/baz");
+        let segments: OasNodePathSegment[] = path["_segments"];
+
+        expect(segments.length).toEqual(3);
+        expect(segments[0].value()).toEqual("foo");
+        expect(segments[1].value()).toEqual("bar");
+        expect(segments[2].value()).toEqual("baz");
+    });
+
+    it("Path and Index Segments", () => {
+        let path: OasNodePath = new OasNodePath("/foo/bar[10]/baz[/zippy]/crash");
+        let segments: OasNodePathSegment[] = path["_segments"];
+
+        expect(segments.length).toEqual(6);
+        expect(segments[0].value()).toEqual("foo");
+        expect(segments[1].value()).toEqual("bar");
+        expect(segments[2].value()).toEqual('10');
+        expect(segments[3].value()).toEqual("baz");
+        expect(segments[4].value()).toEqual("/zippy");
+        expect(segments[5].value()).toEqual("crash");
+    });
+
+    it("Multiple Index Segments", () => {
+        let path: OasNodePath = new OasNodePath("/foo/bar[10][baz]/res1[10][3][6]");
+        let segments: OasNodePathSegment[] = path["_segments"];
+
+        expect(segments.length).toEqual(8);
+        expect(segments[0].value()).toEqual("foo");
+        expect(segments[1].value()).toEqual("bar");
+        expect(segments[2].value()).toEqual('10');
+        expect(segments[3].value()).toEqual("baz");
+        expect(segments[4].value()).toEqual("res1");
+        expect(segments[5].value()).toEqual('10');
+        expect(segments[6].value()).toEqual('3');
+        expect(segments[7].value()).toEqual('6');
+    });
+
+});
 
 describe("Node Path (Create 2.0)", () => {
 
@@ -282,6 +333,19 @@ describe("Node Path (Create 3.0)", () => {
         expect(actual).toEqual(expected);
     });
 
+    it("Request Body Example", () => {
+        let json: any = readJSON('tests/fixtures/paths/3.0/example.json');
+        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+
+        let node: OasNode = (<Oas30Operation>(document.paths.pathItem("/foo").get)).requestBody.content.mediaType("application/xml").examples["user"];
+        let path: OasNodePath = library.createNodePath(node);
+
+        let actual: string = path.toString();
+        let expected: string = "/paths[/foo]/get/requestBody/content[application/xml]/examples[user]";
+
+        expect(actual).toEqual(expected);
+    });
+
     it("Server", () => {
         let json: any = readJSON('tests/fixtures/paths/3.0/example.json');
         let document: Oas30Document = <Oas30Document> library.createDocument(json);
@@ -293,6 +357,65 @@ describe("Node Path (Create 3.0)", () => {
         let expected: string = "/servers[2]/variables[port]";
 
         expect(actual).toEqual(expected);
+    });
+
+    it("Callback", () => {
+        let json: any = readJSON('tests/fixtures/paths/3.0/example.json');
+        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+
+        let node: OasNode = document.components.callbacks["Callback1"].pathItem("$request.header#/put-url").put;
+        let path: OasNodePath = library.createNodePath(node);
+
+        let actual: string = path.toString();
+        let expected: string = "/components/callbacks[Callback1][$request.header#/put-url]/put";
+
+        expect(actual).toEqual(expected);
+    });
+
+});
+
+describe("Node Path (Resolve 3.0)", () => {
+
+    let library: OasLibraryUtils;
+
+    beforeEach(() => {
+        library = new OasLibraryUtils();
+    });
+
+    it("Root", () => {
+        let json: any = readJSON('tests/fixtures/paths/3.0/example.json');
+        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+
+        let path: OasNodePath = new OasNodePath("/");
+        let resolvedNode: OasNode = path.resolve(document);
+
+        let expectedObj: any = json;
+        let actualObj: any = library.writeNode(resolvedNode);
+        expect(actualObj).toEqual(expectedObj);
+    });
+
+    it("Info", () => {
+        let json: any = readJSON('tests/fixtures/paths/3.0/example.json');
+        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+
+        let path: OasNodePath = new OasNodePath("/info");
+        let resolvedNode: OasNode = path.resolve(document);
+
+        let expectedObj: any = json.info;
+        let actualObj: any = library.writeNode(resolvedNode);
+        expect(actualObj).toEqual(expectedObj);
+    });
+
+    it("Callback Request Body", () => {
+        let json: any = readJSON('tests/fixtures/paths/3.0/example.json');
+        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+
+        let path: OasNodePath = new OasNodePath("/components/callbacks[Callback2][$request.body#/url]/post/requestBody/content[application/json]");
+        let resolvedNode: OasNode = path.resolve(document);
+
+        let expectedObj: any = json.components.callbacks["Callback2"]["$request.body#/url"].post.requestBody.content["application/json"];
+        let actualObj: any = library.writeNode(resolvedNode);
+        expect(actualObj).toEqual(expectedObj);
     });
 
 });
