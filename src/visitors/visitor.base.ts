@@ -81,6 +81,7 @@ import {
 } from "../models/3.0/oauth-flow.model";
 import {OasSecurityScheme} from "../models/common/security-scheme.model";
 import {Oas20Headers} from "../models/2.0/headers.model";
+import {Oas30LinkRequestBodyExpression} from "../models/3.0/link-request-body-expression.model";
 
 
 /**
@@ -146,6 +147,7 @@ export class Oas30NodeVisitorAdapter extends OasNodeVisitorAdapter implements IO
     public visitResponse(node: Oas30Response): void {}
     public visitLink(node: Oas30Link): void {}
     public visitLinkParameterExpression(node: Oas30LinkParameterExpression): void {}
+    public visitLinkRequestBodyExpression(node: Oas30LinkRequestBodyExpression): void {}
     public visitLinkServer(node: Oas30LinkServer): void {}
     public visitResponseDefinition(node: Oas30ResponseDefinition): void {}
     public visitRequestBody(node: Oas30RequestBody): void {}
@@ -299,6 +301,7 @@ export class Oas30CompositeVisitor extends OasCompositeVisitor implements IOas30
     public visitResponse(node: Oas30Response): void { this._acceptAll(node); }
     public visitLink(node: Oas30Link): void { this._acceptAll(node); }
     public visitLinkParameterExpression(node: Oas30LinkParameterExpression): void { this._acceptAll(node); }
+    public visitLinkRequestBodyExpression(node: Oas30LinkRequestBodyExpression): void { this._acceptAll(node); }
     public visitLinkServer(node: Oas30LinkServer): void { this._acceptAll(node); }
     public visitResponseDefinition(node: Oas30ResponseDefinition): void { this._acceptAll(node); }
     public visitRequestBody(node: Oas30RequestBody): void { this._acceptAll(node); }

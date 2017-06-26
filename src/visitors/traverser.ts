@@ -92,6 +92,7 @@ import {
 import {OasSecurityScheme} from "../models/common/security-scheme.model";
 import {Oas30SecurityScheme} from "../models/3.0/security-scheme.model";
 import {Oas20Headers} from "../models/2.0/headers.model";
+import {Oas30LinkRequestBodyExpression} from "../models/3.0/link-request-body-expression.model";
 
 /**
  * Interface implemented by all traversers.
@@ -740,7 +741,7 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
     public visitLink(node: Oas30Link): void {
         node.accept(this.visitor);
         this.traverseArray(node.getLinkParameterExpressions());
-        this.traverseArray(node.getHeaders());
+        this.traverseIfNotNull(node.requestBody);
         this.traverseIfNotNull(node.server);
         this.traverseExtensions(node);
     }
@@ -750,6 +751,14 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
      * @param node
      */
     public visitLinkParameterExpression(node: Oas30LinkParameterExpression): void {
+        node.accept(this.visitor);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitLinkRequestBodyExpression(node: Oas30LinkRequestBodyExpression): void {
         node.accept(this.visitor);
     }
 
@@ -1265,6 +1274,11 @@ export class Oas30ReverseTraverser extends OasReverseTraverser implements IOas30
     }
 
     visitLinkParameterExpression(node: Oas30LinkParameterExpression): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitLinkRequestBodyExpression(node: Oas30LinkRequestBodyExpression): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }

@@ -82,6 +82,7 @@ import {Oas30LinkParameterExpression} from "../models/3.0/link-parameter-express
 import {Oas30LinkServer, Oas30Server} from "../models/3.0/server.model";
 import {Oas30ServerVariable} from "../models/3.0/server-variable.model";
 import {Oas20Headers} from "../models/2.0/headers.model";
+import {Oas30LinkRequestBodyExpression} from "../models/3.0/link-request-body-expression.model";
 
 
 /**
@@ -361,6 +362,10 @@ export class Oas30NodePathVisitor extends OasNodePathVisitor implements IOas30No
     visitLinkParameterExpression(node: Oas30LinkParameterExpression): void {
         this._path.prependSegment(node.name(), true);
         this._path.prependSegment("parameters");
+    }
+
+    visitLinkRequestBodyExpression(node: Oas30LinkRequestBodyExpression): void {
+        this._path.prependSegment("requestBody");
     }
 
     visitLinkServer(node: Oas30LinkServer): void {

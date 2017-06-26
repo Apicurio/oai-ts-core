@@ -90,6 +90,7 @@ import {
 } from "../models/3.0/oauth-flow.model";
 import {OasSecurityScheme} from "../models/common/security-scheme.model";
 import {Oas20Headers} from "../models/2.0/headers.model";
+import {Oas30LinkRequestBodyExpression} from "../models/3.0/link-request-body-expression.model";
 
 
 /**
@@ -1050,7 +1051,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
             operationRef: node.operationRef,
             operationId: node.operationId,
             parameters: null,
-            headers: null,
+            requestBody: null,
             description: node.description,
             server: null
         };
@@ -1083,7 +1084,16 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
             parentJS["parameters"] = {};
         }
         parentJS["parameters"][node.name()] = expression;
-        this.updateIndex(node, expression);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitLinkRequestBodyExpression(node: Oas30LinkRequestBodyExpression): void {
+        let parentJS: any = this.lookupParentJS(node);
+        let expression: any = node.value();
+        parentJS.requestBody = expression;
     }
 
     /**

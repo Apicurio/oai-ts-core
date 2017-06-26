@@ -112,6 +112,7 @@ import {Oas30Contact} from "../models/3.0/contact.model";
 import {Oas30License} from "../models/3.0/license.model";
 import {Oas30Responses} from "../models/3.0/responses.model";
 import {Oas30XML} from "../models/3.0/xml.model";
+import {Oas30LinkRequestBodyExpression} from "../models/3.0/link-request-body-expression.model";
 
 
 /**
@@ -1229,6 +1230,10 @@ export class Oas30JS2ModelReaderVisitor implements IOas30NodeVisitor {
         // Nothing to read - the expression is simple and not extensible
     }
 
+    public visitLinkRequestBodyExpression(node: Oas30LinkRequestBodyExpression): void {
+        // Nothing to read - the expression is simple and not extensible
+    }
+
     public visitLinkServer(node: Oas30LinkServer): void {
         this.reader.readServer(this.jsData, node);
     }
@@ -1967,7 +1972,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         let operationRef: string = link["operationRef"];
         let operationId: string = link["operationId"];
         let parameters: any = link["parameters"];
-        let headers: any = link["headers"];
+        let requestBody: any = link["requestBody"];
         let description: string = link["description"];
         let server: any = link["server"];
 
@@ -1980,13 +1985,9 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
                 linkModel.addLinkParameter(name, expression);
             }
         }
-        if (this.isDefined(headers)) {
-            for (let name in headers) {
-                let header: any = headers[name];
-                let headerModel: Oas30Header = linkModel.createHeader(name);
-                this.readHeader(header, headerModel);
-                linkModel.addHeader(name, headerModel);
-            }
+        if (this.isDefined(requestBody)) {
+            let linkRequestBodyExpressionModel: Oas30LinkRequestBodyExpression = linkModel.createLinkRequestBodyExpression(requestBody);
+            linkModel.requestBody = linkRequestBodyExpressionModel;
         }
         if (this.isDefined(description)) { linkModel.description = description; }
         if (this.isDefined(server)) {

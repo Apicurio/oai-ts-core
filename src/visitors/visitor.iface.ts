@@ -107,6 +107,7 @@ import {
 } from "../models/3.0/oauth-flow.model";
 import {Oas30SecurityScheme} from "../models/3.0/security-scheme.model";
 import {Oas30Encoding} from "../models/3.0/encoding.model";
+import {Oas30LinkRequestBodyExpression} from "../models/3.0/link-request-body-expression.model";
 
 
 /**
@@ -193,6 +194,7 @@ export interface IOas30NodeVisitor extends IOasNodeVisitor {
     visitExample(node: Oas30Example): void;
     visitLink(node: Oas30Link): void;
     visitLinkParameterExpression(node: Oas30LinkParameterExpression): void;
+    visitLinkRequestBodyExpression(node: Oas30LinkRequestBodyExpression): void;
     visitLinkServer(node: Oas30LinkServer): void;
     visitResponseDefinition(node: Oas30ResponseDefinition): void;
     visitSchema(node: Oas30Schema): void;
