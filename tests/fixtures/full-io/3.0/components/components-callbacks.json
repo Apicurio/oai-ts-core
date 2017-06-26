@@ -43,6 +43,9 @@
             }
           }
         }
+      },
+      "RefCallback": {
+        "$ref": "#/foo/RCB"
       }
     }
   }

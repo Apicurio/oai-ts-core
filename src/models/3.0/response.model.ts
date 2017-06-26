@@ -38,6 +38,7 @@ import {Oas30Link} from "./link.model";
  */
 export abstract class Oas30ResponseBase extends OasResponse {
 
+    public $ref: string;
     public headers: Oas30ResponseHeaders = new Oas30ResponseHeaders();
     public content: Oas30ResponseContent = new Oas30ResponseContent();
     public links: Oas30Links = new Oas30Links();
@@ -217,7 +218,6 @@ export abstract class Oas30ResponseBase extends OasResponse {
 export class Oas30Response extends Oas30ResponseBase implements IOasReferenceNode {
 
     private _statusCode: string; // null if 'default'
-    public $ref: string;
 
     /**
      * Constructor.

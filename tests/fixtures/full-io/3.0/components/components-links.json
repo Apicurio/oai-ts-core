@@ -21,6 +21,9 @@
           "slug": "$response.body#/repository/slug",
           "pid": "$response.body#/id"
         }
+      },
+      "RefLink": {
+        "$ref": "#/other/Ref"
       }
     }
   }

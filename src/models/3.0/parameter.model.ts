@@ -43,6 +43,7 @@ import {Oas30MediaType} from "./media-type.model";
  */
 export abstract class Oas30ParameterBase extends OasParameterBase {
 
+    public $ref: string;
     public deprecated: boolean;
     public style: string; // matrix, label, form, simple, spaceDelimited, pipeDelimited, deepObject
     public explode: boolean;
@@ -225,8 +226,6 @@ export class Oas30ParameterDefinition extends Oas30ParameterBase {
  * Extends the base parameter to add support for references.
  */
 export class Oas30Parameter extends Oas30ParameterBase implements IOasReferenceNode {
-
-    public $ref: string;
 
     /**
      * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.

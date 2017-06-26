@@ -16,6 +16,9 @@
         "summary" : "Example 1 Summary",
         "description": "Example 1 description.",
         "externalValue": "http://example.org/examples/address-example.xml"
+      },
+      "RefExample": {
+        "$ref": "#/other/Ref"
       }
     }
   }

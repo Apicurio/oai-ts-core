@@ -943,6 +943,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      */
     private createHeaderObject(node: Oas30Header): any {
         let header: any = {
+            $ref: node.$ref,
             description : node.description,
             required : node.required,
             schema : null,
@@ -963,6 +964,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      */
     private createParameterObject(node: Oas30ParameterBase): any {
         let parameter: any = {
+            $ref: node.$ref,
             name : node.name,
             in : node.in,
             description : node.description,
@@ -990,10 +992,6 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
             parentJS.parameters = [];
         }
         let parameter: any = this.createParameterObject(node);
-        let paramRef: any = {
-            $ref : node.$ref
-        };
-        parameter = this.merge(paramRef, parameter);
         parentJS.parameters.push(parameter);
         this.updateIndex(node, parameter);
     }
@@ -1004,6 +1002,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      */
     private createResponseObject(node: Oas30ResponseBase): any {
         return {
+            $ref: node.$ref,
             description: node.description,
             headers: null,
             content: null,
@@ -1018,10 +1017,6 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
     public visitResponse(node: Oas30Response): void {
         let parentJS: any = this.lookupParentJS(node);
         let response: any = this.createResponseObject(node);
-        let responseRef: any = {
-            $ref: node.$ref
-        };
-        response = this.merge(responseRef, response);
         if (node.statusCode() === null || node.statusCode() === "default") {
             parentJS.default = response;
         } else {
@@ -1495,6 +1490,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
     public visitSecurityScheme(node: Oas30SecurityScheme): void {
         let parentJS: any = this.lookupParentJS(node);
         let securityScheme: any = {
+            $ref: node.$ref,
             type: node.type,
             description: node.description,
             name: node.name,
@@ -1532,6 +1528,9 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
     public visitCallbackDefinition(node: Oas30CallbackDefinition): void {
         let parentJS: any = this.lookupParentJS(node);
         let callback: any = {};
+        if (this.isDefined(node.$ref)) {
+            callback.$ref = node.$ref;
+        }
         if (!this.isDefined(parentJS["callbacks"])) {
             parentJS["callbacks"] = {};
         }

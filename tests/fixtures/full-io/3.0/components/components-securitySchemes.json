@@ -27,6 +27,9 @@
             }
           }
         }
+      },
+      "RefAuth": {
+        "$ref": "#/other/Ref"
       }
     }
   }

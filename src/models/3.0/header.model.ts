@@ -33,6 +33,7 @@ import {IOas30NodeVisitor, IOasNodeVisitor} from "../../visitors/visitor.iface";
  */
 export class Oas30Header extends OasHeader {
 
+    public $ref: string;
     public required: boolean;
     public deprecated: boolean;
     public allowEmptyValue: boolean;

@@ -1517,11 +1517,13 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
     public readSecurityScheme(securityScheme: any, securitySchemeModel: Oas30SecurityScheme): void {
         super.readSecurityScheme(securityScheme, securitySchemeModel);
 
+        let $ref: string = securityScheme["$ref"];
         let scheme: string = securityScheme["scheme"];
         let bearerFormat: string = securityScheme["bearerFormat"];
         let flows: any = securityScheme["flows"];
         let openIdConnectUrl: string = securityScheme["openIdConnectUrl"];
 
+        if (this.isDefined($ref)) { securitySchemeModel.$ref = $ref; }
         if (this.isDefined(scheme)) { securitySchemeModel.scheme = scheme; }
         if (this.isDefined(bearerFormat)) { securitySchemeModel.bearerFormat = bearerFormat; }
         if (this.isDefined(flows)) {
@@ -1633,6 +1635,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      * @param headerModel
      */
     public readHeader(header: any, headerModel: Oas30Header): void {
+        let $ref: string = header["$ref"];
         let description: string = header["description"];
         let required: boolean = header["required"];
         let schema: any = header["schema"];
@@ -1644,6 +1647,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         let example: any = header["example"];
         let examples: any = header["examples"];
 
+        if (this.isDefined($ref)) { headerModel.$ref = $ref; }
         if (this.isDefined(description)) { headerModel.description = description; }
         if (this.isDefined(required)) { headerModel.required = required; }
         if (this.isDefined(schema)) {
@@ -1675,6 +1679,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      * @param paramModel
      */
     public readParameterBase(parameter: any, paramModel: Oas30ParameterBase): void {
+        let $ref: string = parameter["$ref"];
         let name: string = parameter["name"];
         let in_: string = parameter["in"];
         let description: string = parameter["description"];
@@ -1689,6 +1694,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         let examples: any = parameter["examples"];
         let content: any = parameter["content"];
 
+        if (this.isDefined($ref)) { paramModel.$ref = $ref; }
         if (this.isDefined(name)) { paramModel.name = name; }
         if (this.isDefined(in_)) { paramModel.in = in_; }
         if (this.isDefined(description)) { paramModel.description = description; }
@@ -1778,7 +1784,6 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      */
     public readCallback(callback: any, callbackModel: Oas30Callback): void {
         for (let name in callback) {
-            if (name.indexOf("x-") === 0) { continue; }
             if (name === "$ref") {
                 callbackModel.$ref = callback[name];
                 continue;
@@ -1909,9 +1914,6 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      * @param responseModel
      */
     public readResponse(response: any, responseModel: Oas30Response): void {
-        let $ref: string = response["$ref"];
-        if (this.isDefined($ref)) { responseModel.$ref = $ref; }
-
         this.readResponseBase(response, responseModel);
     }
     /**
@@ -1920,11 +1922,13 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      * @param responseModel
      */
     public readResponseBase(response: any, responseModel: Oas30ResponseBase): void {
+        let $ref: string = response["$ref"];
         let description: string = response["description"];
         let headers: any = response["headers"];
         let content: any = response["content"];
         let links: any = response["links"];
 
+        if (this.isDefined($ref)) { responseModel.$ref = $ref; }
         if (this.isDefined(description)) { responseModel.description = description; }
         if (this.isDefined(headers)) {
             for (let name in headers) {

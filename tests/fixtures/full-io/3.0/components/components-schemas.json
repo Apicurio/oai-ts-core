@@ -24,6 +24,9 @@
       "MySchema2": {
         "type": "string",
         "format": "email"
+      },
+      "RefSchema":{
+        "$ref": "#/other/Ref"
       }
     }
   }

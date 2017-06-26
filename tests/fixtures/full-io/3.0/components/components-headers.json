@@ -13,6 +13,9 @@
         "schema": {
           "type": "integer"
         }
+      },
+      "RefHeader": {
+        "$ref": "#/other/Ref"
       }
     }
   }

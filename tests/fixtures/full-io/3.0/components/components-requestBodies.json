@@ -28,6 +28,9 @@
           }
         },
         "required": false
+      },
+      "RefBody": {
+        "$ref": "#/other/Ref"
       }
     }
   }

@@ -24,6 +24,9 @@
         },
         "style": "form",
         "explode": true
+      },
+      "RefParam": {
+        "$ref": "#/other/Ref"
       }
     }
   }

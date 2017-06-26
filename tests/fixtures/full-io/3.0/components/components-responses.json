@@ -21,6 +21,9 @@
             }
           }
         }
+      },
+      "RefResponse": {
+        "$ref": "#/other/Ref"
       }
     }
   }

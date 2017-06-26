@@ -36,6 +36,7 @@ import {Oas30OAuthFlows} from "./oauth-flows.model";
  */
 export class Oas30SecurityScheme extends OasSecurityScheme {
 
+    public $ref: string;
     public scheme: string;
     public bearerFormat: string;
     public flows: Oas30OAuthFlows;
