@@ -154,6 +154,7 @@ describe("Full I/O (3.0)", () => {
         { name: "Paths (GET+Security)",                 test: "tests/fixtures/full-io/3.0/paths/paths-get-security.json" },
         { name: "Paths (GET+Parameters)",               test: "tests/fixtures/full-io/3.0/paths/paths-get-parameters.json" },
         { name: "Paths (GET+RequestBody)",              test: "tests/fixtures/full-io/3.0/paths/paths-get-requestBody.json" },
+        { name: "Paths (GET+RequestBody+Content)",      test: "tests/fixtures/full-io/3.0/paths/paths-get-requestBody-content.json" },
         { name: "Paths (GET+RequestBody+Examples)",     test: "tests/fixtures/full-io/3.0/paths/paths-get-requestBody.json" },
         { name: "Paths (GET+Responses)",                test: "tests/fixtures/full-io/3.0/paths/paths-get-responses.json" },
         { name: "Paths (GET+Response+Header)",          test: "tests/fixtures/full-io/3.0/paths/paths-get-response-headers.json" },

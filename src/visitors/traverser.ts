@@ -789,6 +789,7 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
      */
     public visitEncoding(node: Oas30Encoding): void {
         node.accept(this.visitor);
+        this.traverseArray(node.getHeaders());
         this.traverseExtensions(node);
     }
 

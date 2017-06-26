@@ -1846,7 +1846,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
             for (let name in encodings) {
                 let encoding: any = encodings[name];
                 let encodingModel: Oas30Encoding = mediaTypeModel.createEncoding(name);
-                this.readEncoding(mediaType, encodingModel);
+                this.readEncoding(encoding, encodingModel);
                 mediaTypeModel.addEncoding(name, encodingModel);
             }
         }

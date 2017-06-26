@@ -1252,7 +1252,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
         let parentJS: any = this.lookupParentJS(node);
         let encoding: any = {
             contentType: node.contentType,
-            headers: node.headers,
+            headers: null,
             style: node.style,
             explode: node.explode,
             allowReserved: node.allowReserved
