@@ -39,6 +39,7 @@ import {OasResponse} from "../common/response.model";
  */
 export abstract class Oas20ResponseBase extends OasResponse {
 
+    public headers: Oas20Headers;
     public schema: Oas20Schema;
     public examples: Oas20Example;
 

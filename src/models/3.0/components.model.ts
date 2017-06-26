@@ -210,10 +210,10 @@ export class Oas30Components extends OasExtensibleNode {
     /**
      * Adds a response definition.
      * @param name
-     * @param schemaDefinition
+     * @param responseDefinition
      */
-    public addResponseDefinition(name: string, schemaDefinition: Oas30ResponseDefinition): void {
-        this.responses[name] = schemaDefinition;
+    public addResponseDefinition(name: string, responseDefinition: Oas30ResponseDefinition): void {
+        this.responses[name] = responseDefinition;
     }
 
     /**
@@ -265,10 +265,10 @@ export class Oas30Components extends OasExtensibleNode {
     /**
      * Adds a parameter definition.
      * @param name
-     * @param schemaDefinition
+     * @param parameterDefinition
      */
-    public addParameterDefinition(name: string, schemaDefinition: Oas30ParameterDefinition): void {
-        this.parameters[name] = schemaDefinition;
+    public addParameterDefinition(name: string, parameterDefinition: Oas30ParameterDefinition): void {
+        this.parameters[name] = parameterDefinition;
     }
 
     /**
@@ -320,10 +320,10 @@ export class Oas30Components extends OasExtensibleNode {
     /**
      * Adds a example definition.
      * @param name
-     * @param schemaDefinition
+     * @param exampleDefinition
      */
-    public addExampleDefinition(name: string, schemaDefinition: Oas30ExampleDefinition): void {
-        this.examples[name] = schemaDefinition;
+    public addExampleDefinition(name: string, exampleDefinition: Oas30ExampleDefinition): void {
+        this.examples[name] = exampleDefinition;
     }
 
     /**
@@ -375,10 +375,10 @@ export class Oas30Components extends OasExtensibleNode {
     /**
      * Adds a request body definition.
      * @param name
-     * @param schemaDefinition
+     * @param requestBodyDefinition
      */
-    public addRequestBodyDefinition(name: string, schemaDefinition: Oas30RequestBodyDefinition): void {
-        this.requestBodies[name] = schemaDefinition;
+    public addRequestBodyDefinition(name: string, requestBodyDefinition: Oas30RequestBodyDefinition): void {
+        this.requestBodies[name] = requestBodyDefinition;
     }
 
     /**
@@ -430,10 +430,10 @@ export class Oas30Components extends OasExtensibleNode {
     /**
      * Adds a header definition.
      * @param name
-     * @param schemaDefinition
+     * @param headerDefinition
      */
-    public addHeaderDefinition(name: string, schemaDefinition: Oas30HeaderDefinition): void {
-        this.headers[name] = schemaDefinition;
+    public addHeaderDefinition(name: string, headerDefinition: Oas30HeaderDefinition): void {
+        this.headers[name] = headerDefinition;
     }
 
     /**
@@ -485,10 +485,10 @@ export class Oas30Components extends OasExtensibleNode {
     /**
      * Adds a security scheme definition.
      * @param name
-     * @param schemaDefinition
+     * @param securityScheme
      */
-    public addSecurityScheme(name: string, schemaDefinition: Oas30SecurityScheme): void {
-        this.securitySchemes[name] = schemaDefinition;
+    public addSecurityScheme(name: string, securityScheme: Oas30SecurityScheme): void {
+        this.securitySchemes[name] = securityScheme;
     }
 
     /**
@@ -540,10 +540,10 @@ export class Oas30Components extends OasExtensibleNode {
     /**
      * Adds a link definition.
      * @param name
-     * @param schemaDefinition
+     * @param linkDefinition
      */
-    public addLinkDefinition(name: string, schemaDefinition: Oas30LinkDefinition): void {
-        this.links[name] = schemaDefinition;
+    public addLinkDefinition(name: string, linkDefinition: Oas30LinkDefinition): void {
+        this.links[name] = linkDefinition;
     }
 
     /**
@@ -595,10 +595,10 @@ export class Oas30Components extends OasExtensibleNode {
     /**
      * Adds a callback definition.
      * @param name
-     * @param schemaDefinition
+     * @param callbackDefinition
      */
-    public addCallbackDefinition(name: string, schemaDefinition: Oas30CallbackDefinition): void {
-        this.callbacks[name] = schemaDefinition;
+    public addCallbackDefinition(name: string, callbackDefinition: Oas30CallbackDefinition): void {
+        this.callbacks[name] = callbackDefinition;
     }
 
     /**

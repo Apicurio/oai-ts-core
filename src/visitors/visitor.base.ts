@@ -40,7 +40,6 @@ import {OasInfo} from "../models/common/info.model";
 import {OasContact} from "../models/common/contact.model";
 import {OasLicense} from "../models/common/license.model";
 import {Oas30ServerVariable} from "../models/3.0/server-variable.model";
-import {Oas30ServerVariables} from "../models/3.0/server-variables.model";
 import {Oas30LinkServer, Oas30Server} from "../models/3.0/server.model";
 import {OasTag} from "../models/common/tag.model";
 import {OasSecurityRequirement} from "../models/common/security-requirement.model";
@@ -48,7 +47,6 @@ import {OasExternalDocumentation} from "../models/common/external-documentation.
 import {OasPaths} from "../models/common/paths.model";
 import {OasPathItem} from "../models/common/path-item.model";
 import {OasOperation} from "../models/common/operation.model";
-import {OasHeaders} from "../models/common/headers.model";
 import {OasResponses} from "../models/common/responses.model";
 import {OasSchema} from "../models/common/schema.model";
 import {OasHeader} from "../models/common/header.model";
@@ -56,7 +54,6 @@ import {OasXML} from "../models/common/xml.model";
 import {Oas30Parameter, Oas30ParameterDefinition} from "../models/3.0/parameter.model";
 import {Oas30Response, Oas30ResponseDefinition} from "../models/3.0/response.model";
 import {Oas30RequestBody, Oas30RequestBodyDefinition} from "../models/3.0/request-body.model";
-import {Oas30Callbacks} from "../models/3.0/callbacks.model";
 import {
     Oas30AdditionalPropertiesSchema,
     Oas30AllOfSchema,
@@ -67,14 +64,10 @@ import {
     Oas30PropertySchema,
     Oas30SchemaDefinition
 } from "../models/3.0/schema.model";
-import {Oas30Content} from "../models/3.0/content.model";
 import {Oas30MediaType} from "../models/3.0/media-type.model";
 import {Oas30Encoding} from "../models/3.0/encoding.model";
-import {Oas30EncodingProperty} from "../models/3.0/encoding-property.model";
 import {Oas30Example, Oas30ExampleDefinition} from "../models/3.0/example.model";
-import {Oas30Links} from "../models/3.0/links.model";
 import {Oas30Link, Oas30LinkDefinition} from "../models/3.0/link.model";
-import {Oas30LinkParameters} from "../models/3.0/link-parameters.model";
 import {Oas30LinkParameterExpression} from "../models/3.0/link-parameter-expression.model";
 import {Oas30Callback, Oas30CallbackDefinition} from "../models/3.0/callback.model";
 import {Oas30CallbackPathItem} from "../models/3.0/path-item.model";
@@ -83,12 +76,11 @@ import {Oas30HeaderDefinition} from "../models/3.0/header.model";
 import {Oas30OAuthFlows} from "../models/3.0/oauth-flows.model";
 import {
     Oas30AuthorizationCodeOAuthFlow,
-    Oas30ClientCredentialsOAuthFlow, Oas30ImplicitOAuthFlow, Oas30OAuthFlow,
+    Oas30ClientCredentialsOAuthFlow, Oas30ImplicitOAuthFlow,
     Oas30PasswordOAuthFlow
 } from "../models/3.0/oauth-flow.model";
-import {Oas30Scopes} from "../models/3.0/scopes.model";
 import {OasSecurityScheme} from "../models/common/security-scheme.model";
-import {Oas30SecurityScheme} from "../models/3.0/security-scheme.model";
+import {Oas20Headers} from "../models/2.0/headers.model";
 
 
 /**
@@ -105,7 +97,6 @@ export abstract class OasNodeVisitorAdapter implements IOasNodeVisitor {
     public visitPathItem(node: OasPathItem): void {}
     public visitResponses(node: OasResponses): void {}
     public visitSchema(node: OasSchema): void {}
-    public visitHeaders(node: OasHeaders): void {}
     public visitHeader(node: OasHeader): void {}
     public visitOperation(node: OasOperation): void {}
     public visitXML(node: OasXML): void {}
@@ -126,6 +117,7 @@ export class Oas20NodeVisitorAdapter extends OasNodeVisitorAdapter implements IO
     public visitParameter(node: Oas20Parameter): void {}
     public visitParameterDefinition(node: Oas20ParameterDefinition): void {}
     public visitResponse(node: Oas20Response): void {}
+    public visitHeaders(node: Oas20Headers): void {}
     public visitResponseDefinition(node: Oas20ResponseDefinition): void {}
     public visitExample(node: Oas20Example): void {}
     public visitItems(node: Oas20Items): void {}
@@ -152,19 +144,14 @@ export class Oas30NodeVisitorAdapter extends OasNodeVisitorAdapter implements IO
     public visitParameter(node: Oas30Parameter): void {}
     public visitParameterDefinition(node: Oas30ParameterDefinition): void {}
     public visitResponse(node: Oas30Response): void {}
-    public visitLinks(node: Oas30Links): void {}
     public visitLink(node: Oas30Link): void {}
-    public visitLinkParameters(node: Oas30LinkParameters): void {}
     public visitLinkParameterExpression(node: Oas30LinkParameterExpression): void {}
     public visitLinkServer(node: Oas30LinkServer): void {}
     public visitResponseDefinition(node: Oas30ResponseDefinition): void {}
     public visitRequestBody(node: Oas30RequestBody): void {}
-    public visitContent(node: Oas30Content): void {}
     public visitMediaType(node: Oas30MediaType): void {}
     public visitExample(node: Oas30Example): void {}
     public visitEncoding(node: Oas30Encoding): void {}
-    public visitEncodingProperty(node: Oas30EncodingProperty): void {}
-    public visitCallbacks(node: Oas30Callbacks): void {}
     public visitCallback(node: Oas30Callback): void {}
     public visitCallbackPathItem(node: Oas30CallbackPathItem): void {}
     public visitAllOfSchema(node: Oas30AllOfSchema): void {}
@@ -183,12 +170,10 @@ export class Oas30NodeVisitorAdapter extends OasNodeVisitorAdapter implements IO
     public visitPasswordOAuthFlow(node: Oas30PasswordOAuthFlow): void {}
     public visitClientCredentialsOAuthFlow(node: Oas30ClientCredentialsOAuthFlow): void {}
     public visitAuthorizationCodeOAuthFlow(node: Oas30AuthorizationCodeOAuthFlow): void {}
-    public visitScopes(node: Oas30Scopes): void {}
     public visitLinkDefinition(node: Oas30LinkDefinition): void {}
     public visitCallbackDefinition(node: Oas30CallbackDefinition): void {}
     public visitSchemaDefinition(node: Oas30SchemaDefinition): void {}
     public visitServer(node: Oas30Server): void {}
-    public visitServerVariables(node: Oas30ServerVariables): void {}
     public visitServerVariable(node: Oas30ServerVariable): void {}
 }
 
@@ -249,7 +234,6 @@ export abstract class OasCompositeVisitor implements IOasNodeVisitor {
     public visitOperation(node: OasOperation): void { this._acceptAll(node); }
     public visitResponses(node: OasResponses): void { this._acceptAll(node); }
     public visitSchema(node: OasSchema): void { this._acceptAll(node); }
-    public visitHeaders(node: OasHeaders): void { this._acceptAll(node); }
     public visitHeader(node: OasHeader): void { this._acceptAll(node); }
     public visitXML(node: OasXML): void { this._acceptAll(node); }
     public visitSecurityScheme(node: OasSecurityScheme): void { this._acceptAll(node); }
@@ -277,6 +261,7 @@ export class Oas20CompositeVisitor extends OasCompositeVisitor implements IOas20
     public visitParameter(node: Oas20Parameter): void { this._acceptAll(node); }
     public visitParameterDefinition(node: Oas20ParameterDefinition): void { this._acceptAll(node); }
     public visitResponse(node: Oas20Response): void { this._acceptAll(node); }
+    public visitHeaders(node: Oas20Headers): void { this._acceptAll(node); }
     public visitResponseDefinition(node: Oas20ResponseDefinition): void { this._acceptAll(node); }
     public visitExample(node: Oas20Example): void { this._acceptAll(node); }
     public visitItems(node: Oas20Items): void { this._acceptAll(node); }
@@ -312,21 +297,16 @@ export class Oas30CompositeVisitor extends OasCompositeVisitor implements IOas30
     public visitParameter(node: Oas30Parameter): void { this._acceptAll(node); }
     public visitParameterDefinition(node: Oas30ParameterDefinition): void { this._acceptAll(node); }
     public visitResponse(node: Oas30Response): void { this._acceptAll(node); }
-    public visitLinks(node: Oas30Links): void { this._acceptAll(node); }
     public visitLink(node: Oas30Link): void { this._acceptAll(node); }
-    public visitLinkParameters(node: Oas30LinkParameters): void { this._acceptAll(node); }
     public visitLinkParameterExpression(node: Oas30LinkParameterExpression): void { this._acceptAll(node); }
     public visitLinkServer(node: Oas30LinkServer): void { this._acceptAll(node); }
     public visitResponseDefinition(node: Oas30ResponseDefinition): void { this._acceptAll(node); }
     public visitRequestBody(node: Oas30RequestBody): void { this._acceptAll(node); }
-    public visitCallbacks(node: Oas30Callbacks): void { this._acceptAll(node); }
     public visitCallback(node: Oas30Callback): void { this._acceptAll(node); }
     public visitCallbackPathItem(node: Oas30CallbackPathItem): void { this._acceptAll(node); }
-    public visitContent(node: Oas30Content): void { this._acceptAll(node); }
     public visitMediaType(node: Oas30MediaType): void { this._acceptAll(node); }
     public visitExample(node: Oas30Example): void { this._acceptAll(node); }
     public visitEncoding(node: Oas30Encoding): void { this._acceptAll(node); }
-    public visitEncodingProperty(node: Oas30EncodingProperty): void { this._acceptAll(node); }
     public visitAllOfSchema(node: Oas30AllOfSchema): void { this._acceptAll(node); }
     public visitAnyOfSchema(node: Oas30AnyOfSchema): void { this._acceptAll(node); }
     public visitOneOfSchema(node: Oas30OneOfSchema): void { this._acceptAll(node); }
@@ -343,12 +323,10 @@ export class Oas30CompositeVisitor extends OasCompositeVisitor implements IOas30
     public visitPasswordOAuthFlow(node: Oas30PasswordOAuthFlow): void { this._acceptAll(node); }
     public visitClientCredentialsOAuthFlow(node: Oas30ClientCredentialsOAuthFlow): void { this._acceptAll(node); }
     public visitAuthorizationCodeOAuthFlow(node: Oas30AuthorizationCodeOAuthFlow): void { this._acceptAll(node); }
-    public visitScopes(node: Oas30Scopes): void { this._acceptAll(node); }
     public visitLinkDefinition(node: Oas30LinkDefinition): void { this._acceptAll(node); }
     public visitCallbackDefinition(node: Oas30CallbackDefinition): void { this._acceptAll(node); }
     public visitSchemaDefinition(node: Oas30SchemaDefinition): void { this._acceptAll(node); }
     public visitServer(node: Oas30Server): void { this._acceptAll(node); }
-    public visitServerVariables(node: Oas30ServerVariables): void { this._acceptAll(node); }
     public visitServerVariable(node: Oas30ServerVariable): void { this._acceptAll(node); }
 
 }

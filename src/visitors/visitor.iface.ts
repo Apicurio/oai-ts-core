@@ -55,7 +55,6 @@ import {Oas30Info} from "../models/3.0/info.model";
 import {Oas30Contact} from "../models/3.0/contact.model";
 import {Oas30License} from "../models/3.0/license.model";
 import {Oas30ServerVariable} from "../models/3.0/server-variable.model";
-import {Oas30ServerVariables} from "../models/3.0/server-variables.model";
 import {Oas30LinkServer, Oas30Server} from "../models/3.0/server.model";
 import {OasSecurityRequirement} from "../models/common/security-requirement.model";
 import {OasExternalDocumentation} from "../models/common/external-documentation.model";
@@ -70,12 +69,10 @@ import {OasPathItem} from "../models/common/path-item.model";
 import {Oas30Paths} from "../models/3.0/paths.model";
 import {Oas30CallbackPathItem, Oas30PathItem} from "../models/3.0/path-item.model";
 import {Oas30RequestBody, Oas30RequestBodyDefinition} from "../models/3.0/request-body.model";
-import {Oas30Callbacks} from "../models/3.0/callbacks.model";
 import {OasOperation} from "../models/common/operation.model";
 import {Oas30Operation} from "../models/3.0/operation.model";
 import {OasResponses} from "../models/common/responses.model";
 import {Oas30Responses} from "../models/3.0/responses.model";
-import {OasHeaders} from "../models/common/headers.model";
 import {
     Oas30AdditionalPropertiesSchema,
     Oas30AllOfSchema,
@@ -89,21 +86,15 @@ import {
 } from "../models/3.0/schema.model";
 import {OasHeader} from "../models/common/header.model";
 import {Oas30Response, Oas30ResponseDefinition} from "../models/3.0/response.model";
-import {Oas30Headers} from "../models/3.0/headers.model";
 import {OasSchema} from "../models/common/schema.model";
 import {Oas30Parameter, Oas30ParameterDefinition} from "../models/3.0/parameter.model";
 import {Oas30Header, Oas30HeaderDefinition} from "../models/3.0/header.model";
 import {OasXML} from "../models/common/xml.model";
 import {Oas30XML} from "../models/3.0/xml.model";
-import {Oas30Content} from "../models/3.0/content.model";
-import {Oas30EncodingProperty} from "../models/3.0/encoding-property.model";
-import {Oas30Encoding} from "../models/3.0/encoding.model";
 import {Oas30MediaType} from "../models/3.0/media-type.model";
 import {Oas30Example, Oas30ExampleDefinition} from "../models/3.0/example.model";
 import {Oas30Link, Oas30LinkDefinition} from "../models/3.0/link.model";
-import {Oas30Links} from "../models/3.0/links.model";
 import {Oas30LinkParameterExpression} from "../models/3.0/link-parameter-expression.model";
-import {Oas30LinkParameters} from "../models/3.0/link-parameters.model";
 import {Oas30Callback, Oas30CallbackDefinition} from "../models/3.0/callback.model";
 import {Oas30Components} from "../models/3.0/components.model";
 import {OasSecurityScheme} from "../models/common/security-scheme.model";
@@ -114,8 +105,8 @@ import {
     Oas30ImplicitOAuthFlow,
     Oas30PasswordOAuthFlow
 } from "../models/3.0/oauth-flow.model";
-import {Oas30Scopes} from "../models/3.0/scopes.model";
 import {Oas30SecurityScheme} from "../models/3.0/security-scheme.model";
+import {Oas30Encoding} from "../models/3.0/encoding.model";
 
 
 /**
@@ -132,7 +123,6 @@ export interface IOasNodeVisitor {
     visitPathItem(node: OasPathItem): void;
     visitOperation(node: OasOperation): void;
     visitResponses(node: OasResponses): void;
-    visitHeaders(node: OasHeaders): void;
     visitHeader(node: OasHeader): void;
     visitSchema(node: OasSchema): void;
     visitXML(node: OasXML): void;
@@ -198,27 +188,20 @@ export interface IOas30NodeVisitor extends IOasNodeVisitor {
     visitParameterDefinition(node: Oas30ParameterDefinition): void;
     visitResponses(node: Oas30Responses): void;
     visitResponse(node: Oas30Response): void;
-    visitContent(node: Oas30Content): void;
     visitMediaType(node: Oas30MediaType): void;
     visitEncoding(node: Oas30Encoding): void;
-    visitEncodingProperty(node: Oas30EncodingProperty): void;
     visitExample(node: Oas30Example): void;
-    visitLinks(node: Oas30Links): void;
     visitLink(node: Oas30Link): void;
-    visitLinkParameters(node: Oas30LinkParameters): void;
     visitLinkParameterExpression(node: Oas30LinkParameterExpression): void;
     visitLinkServer(node: Oas30LinkServer): void;
     visitResponseDefinition(node: Oas30ResponseDefinition): void;
     visitSchema(node: Oas30Schema): void;
     visitXML(node: Oas30XML): void;
-    visitHeaders(node: Oas30Headers): void;
     visitHeader(node: Oas30Header): void;
     visitRequestBody(node: Oas30RequestBody): void;
-    visitCallbacks(node: Oas30Callbacks): void;
     visitCallback(node: Oas30Callback): void;
     visitCallbackPathItem(node: Oas30CallbackPathItem): void;
     visitServer(node: Oas30Server): void;
-    visitServerVariables(node: Oas30ServerVariables): void;
     visitServerVariable(node: Oas30ServerVariable): void;
     visitSecurityRequirement(node: Oas30SecurityRequirement): void;
     visitTag(node: Oas30Tag): void;
@@ -240,7 +223,6 @@ export interface IOas30NodeVisitor extends IOasNodeVisitor {
     visitPasswordOAuthFlow(node: Oas30PasswordOAuthFlow): void;
     visitClientCredentialsOAuthFlow(node: Oas30ClientCredentialsOAuthFlow): void;
     visitAuthorizationCodeOAuthFlow(node: Oas30AuthorizationCodeOAuthFlow): void;
-    visitScopes(node: Oas30Scopes): void;
     visitSecurityScheme(node: Oas30SecurityScheme): void;
     visitLinkDefinition(node: Oas30LinkDefinition): void;
     visitCallbackDefinition(node: Oas30CallbackDefinition): void;

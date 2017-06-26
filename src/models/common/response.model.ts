@@ -16,7 +16,6 @@
  */
 
 import {OasExtensibleNode} from "../enode.model";
-import {OasHeaders} from "./headers.model";
 
 
 /**
@@ -25,12 +24,5 @@ import {OasHeaders} from "./headers.model";
 export abstract class OasResponse extends OasExtensibleNode {
 
     public description: string;
-    public headers: OasHeaders;
-
-    /**
-     * Creates an OAS Headers object.
-     * @return {OasOperation}
-     */
-    public abstract createHeaders(): OasHeaders;
 
 }

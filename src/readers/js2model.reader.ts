@@ -56,7 +56,6 @@ import {OasLicense} from "../models/common/license.model";
 import {Oas30Info} from "../models/3.0/info.model";
 import {Oas30Document} from "../models/3.0/document.model";
 import {Oas30LinkServer, Oas30Server} from "../models/3.0/server.model";
-import {Oas30ServerVariables} from "../models/3.0/server-variables.model";
 import {Oas30ServerVariable} from "../models/3.0/server-variable.model";
 import {OasExternalDocumentation} from "../models/common/external-documentation.model";
 import {Oas30SecurityRequirement} from "../models/3.0/security-requirement.model";
@@ -64,7 +63,6 @@ import {Oas30ExternalDocumentation} from "../models/3.0/external-documentation.m
 import {OasTag} from "../models/common/tag.model";
 import {Oas30Tag} from "../models/3.0/tag.model";
 import {OasXML} from "../models/common/xml.model";
-import {OasHeaders} from "../models/common/headers.model";
 import {OasHeader} from "../models/common/header.model";
 import {OasSecurityRequirement} from "../models/common/security-requirement.model";
 import {OasOperation} from "../models/common/operation.model";
@@ -92,17 +90,11 @@ import {
 import {Oas30Response, Oas30ResponseBase, Oas30ResponseDefinition} from "../models/3.0/response.model";
 import {Oas30Header, Oas30HeaderDefinition} from "../models/3.0/header.model";
 import {Oas30RequestBody, Oas30RequestBodyDefinition} from "../models/3.0/request-body.model";
-import {Oas30Content} from "../models/3.0/content.model";
 import {Oas30MediaType} from "../models/3.0/media-type.model";
 import {Oas30Encoding} from "../models/3.0/encoding.model";
-import {Oas30EncodingProperty} from "../models/3.0/encoding-property.model";
 import {Oas30Example, Oas30ExampleDefinition} from "../models/3.0/example.model";
-import {Oas30Headers} from "../models/3.0/headers.model";
-import {Oas30Links} from "../models/3.0/links.model";
 import {Oas30Link, Oas30LinkDefinition} from "../models/3.0/link.model";
-import {Oas30LinkParameters} from "../models/3.0/link-parameters.model";
 import {Oas30LinkParameterExpression} from "../models/3.0/link-parameter-expression.model";
-import {Oas30Callbacks} from "../models/3.0/callbacks.model";
 import {Oas30Callback, Oas30CallbackDefinition} from "../models/3.0/callback.model";
 import {OasDocument} from "../models/document.model";
 import {Oas30Components} from "../models/3.0/components.model";
@@ -116,7 +108,6 @@ import {
     Oas30OAuthFlow,
     Oas30PasswordOAuthFlow
 } from "../models/3.0/oauth-flow.model";
-import {Oas30Scopes} from "../models/3.0/scopes.model";
 import {Oas30Contact} from "../models/3.0/contact.model";
 import {Oas30License} from "../models/3.0/license.model";
 import {Oas30Responses} from "../models/3.0/responses.model";
@@ -331,27 +322,6 @@ export abstract class OasJS2ModelReader {
 
         this.readExtensions(pathItem, pathItemModel);
     }
-
-    /**
-     * Reads an OAS Headers object from the given JS data.
-     * @param headers
-     * @param headersModel
-     */
-    public readHeaders(headers: any, headersModel: OasHeaders): void {
-        for (let headerName in headers) {
-            let header: any = headers[headerName];
-            let headerModel: OasHeader = headersModel.createHeader(headerName);
-            this.readHeader(header, headerModel);
-            headersModel.addHeader(headerName, headerModel);
-        }
-    }
-
-    /**
-     * Reads an OAS Header object from the given JS data.
-     * @param header
-     * @param headerModel
-     */
-    protected abstract readHeader(header: any, headerModel: OasHeader): void;
 
     /**
      * Reads an OAS Operation object from the given JS data.
@@ -962,6 +932,20 @@ export class Oas20JS2ModelReader extends OasJS2ModelReader {
     }
 
     /**
+     * Reads an OAS Headers object from the given JS data.
+     * @param headers
+     * @param headersModel
+     */
+    public readHeaders(headers: any, headersModel: Oas20Headers): void {
+        for (let headerName in headers) {
+            let header: any = headers[headerName];
+            let headerModel: Oas20Header = headersModel.createHeader(headerName);
+            this.readHeader(header, headerModel);
+            headersModel.addHeader(headerName, headerModel);
+        }
+    }
+
+    /**
      * Reads an OAS 2.0 Header object from the given JS data.
      * @param header
      * @param headerModel
@@ -1225,10 +1209,6 @@ export class Oas30JS2ModelReaderVisitor implements IOas30NodeVisitor {
         this.reader.readResponse(this.jsData, node);
     }
 
-    public visitContent(node: Oas30Content): void {
-        this.reader.readContent(this.jsData, node);
-    }
-
     public visitMediaType(node: Oas30MediaType): void {
         this.reader.readMediaType(this.jsData, node);
     }
@@ -1237,24 +1217,12 @@ export class Oas30JS2ModelReaderVisitor implements IOas30NodeVisitor {
         this.reader.readEncoding(this.jsData, node);
     }
 
-    public visitEncodingProperty(node: Oas30EncodingProperty): void {
-        this.reader.readEncodingProperty(this.jsData, node);
-    }
-
     public visitExample(node: Oas30Example): void {
         this.reader.readExample(this.jsData, node);
     }
 
-    public visitLinks(node: Oas30Links): void {
-        this.reader.readLinks(this.jsData, node);
-    }
-
     public visitLink(node: Oas30Link): void {
         this.reader.readLink(this.jsData, node);
-    }
-
-    public visitLinkParameters(node: Oas30LinkParameters): void {
-        this.reader.readLinkParameters(this.jsData, node);
     }
 
     public visitLinkParameterExpression(node: Oas30LinkParameterExpression): void {
@@ -1277,20 +1245,12 @@ export class Oas30JS2ModelReaderVisitor implements IOas30NodeVisitor {
         this.reader.readXML(this.jsData, node);
     }
 
-    public visitHeaders(node: Oas30Headers): void {
-        this.reader.readHeaders(this.jsData, node);
-    }
-
     public visitHeader(node: Oas30Header): void {
         this.reader.readHeader(this.jsData, node);
     }
 
     public visitRequestBody(node: Oas30RequestBody): void {
         this.reader.readRequestBody(this.jsData, node);
-    }
-
-    public visitCallbacks(node: Oas30Callbacks): void {
-        this.reader.readCallbacks(this.jsData, node);
     }
 
     public visitCallback(node: Oas30Callback): void {
@@ -1303,10 +1263,6 @@ export class Oas30JS2ModelReaderVisitor implements IOas30NodeVisitor {
 
     public visitServer(node: Oas30Server): void {
         this.reader.readServer(this.jsData, node);
-    }
-
-    public visitServerVariables(node: Oas30ServerVariables): void {
-        this.reader.readServerVariables(this.jsData, node);
     }
 
     public visitServerVariable(node: Oas30ServerVariable): void {
@@ -1391,10 +1347,6 @@ export class Oas30JS2ModelReaderVisitor implements IOas30NodeVisitor {
 
     public visitAuthorizationCodeOAuthFlow(node: Oas30AuthorizationCodeOAuthFlow): void {
         this.reader.readOAuthFlow(this.jsData, node);
-    }
-
-    public visitScopes(node: Oas30Scopes): void {
-        this.reader.readScopes(this.jsData, node);
     }
 
     public visitSecurityScheme(node: Oas30SecurityScheme): void {
@@ -1626,32 +1578,19 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         let authorizationUrl: string = flow["authorizationUrl"];
         let tokenUrl: string = flow["tokenUrl"];
         let refreshUrl: string = flow["refreshUrl"];
-        let scopes: string = flow["scopes"];
+        let scopes: any = flow["scopes"];
 
         if (this.isDefined(authorizationUrl)) { flowModel.authorizationUrl = authorizationUrl; }
         if (this.isDefined(tokenUrl)) { flowModel.tokenUrl = tokenUrl; }
         if (this.isDefined(refreshUrl)) { flowModel.refreshUrl = refreshUrl; }
         if (this.isDefined(scopes)) {
-            let scopesModel: Oas30Scopes = flowModel.createScopes();
-            this.readScopes(scopes, scopesModel);
-            flowModel.scopes = scopesModel;
+            for (let name in scopes) {
+                let scopeDescription: any = scopes[name];
+                flowModel.addScope(name, scopeDescription);
+            }
         }
 
         this.readExtensions(flow, flowModel);
-    }
-
-    /**
-     * Reads an OAS 3.0 Scopes object from the given JS data.
-     * @param scopes
-     * @param scopesModel
-     */
-    public readScopes(scopes: any, scopesModel: Oas30Scopes): void {
-        for (let scopeName in scopes) {
-            if (scopeName.indexOf("x-") === 0) { continue; }
-            let description: string = scopes[scopeName];
-            scopesModel.addScope(scopeName, description);
-        }
-        this.readExtensions(scopes, scopesModel);
     }
 
     /**
@@ -1774,9 +1713,12 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
             }
         }
         if (this.isDefined(content)) {
-            let contentModel: Oas30Content = paramModel.createContent();
-            this.readContent(content, contentModel);
-            paramModel.content = contentModel;
+            for (let name in content) {
+                let mediaType: any = content[name];
+                let mediaTypeModel: Oas30MediaType = paramModel.createMediaType(name);
+                this.readMediaType(mediaType, mediaTypeModel);
+                paramModel.addMediaType(name, mediaTypeModel);
+            }
         }
 
         this.readExtensions(parameter, paramModel);
@@ -1812,9 +1754,12 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
             operationModel.requestBody = requestBodyModel;
         }
         if (this.isDefined(callbacks)) {
-            let callbacksModel: Oas30Callbacks = operationModel.createCallbacks();
-            this.readCallbacks(callbacks, callbacksModel);
-            operationModel.callbacks = callbacksModel;
+            for (let name in callbacks) {
+                let callback: any = callbacks[name];
+                let callbackModel: Oas30Callback = operationModel.createCallback(name);
+                this.readCallback(callback, callbackModel);
+                operationModel.addCallback(name, callbackModel);
+            }
         }
         if (Array.isArray(servers)) {
             operationModel.servers = [];
@@ -1824,22 +1769,6 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
                 operationModel.servers.push(serverModel);
             })
         }
-    }
-
-    /**
-     * Reads an OAS 3.0 Callbacks object from the given JS data.
-     * @param callbacks
-     * @param callbacksModel
-     */
-    public readCallbacks(callbacks: any, callbacksModel: Oas30Callbacks): void {
-        for (let name in callbacks) {
-            if (name.indexOf("x-") === 0) { continue; }
-            let callback: any = callbacks[name];
-            let callbackModel: Oas30Callback = callbacksModel.createCallback(name);
-            this.readCallback(callback, callbackModel);
-            callbacksModel.addCallback(name, callbackModel);
-        }
-        this.readExtensions(callbacks, callbacksModel);
     }
 
     /**
@@ -1876,27 +1805,16 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         if (this.isDefined($ref)) { requestBodyModel.$ref = $ref; }
         if (this.isDefined(description)) { requestBodyModel.description = description; }
         if (this.isDefined(content)) {
-            let contentModel: Oas30Content = requestBodyModel.createContent();
-            this.readContent(content, contentModel);
-            requestBodyModel.content = contentModel;
+            for (let name in content) {
+                let mediaType: any = content[name];
+                let mediaTypeModel: Oas30MediaType = requestBodyModel.createMediaType(name);
+                this.readMediaType(mediaType, mediaTypeModel);
+                requestBodyModel.addMediaType(name, mediaTypeModel);
+            }
         }
         if (this.isDefined(required)) { requestBodyModel.required = required; }
 
         this.readExtensions(requestBody, requestBodyModel);
-    }
-
-    /**
-     * Reads an OAS 3.0 Content from the given js data.
-     * @param content
-     * @param contentModel
-     */
-    public readContent(content: any, contentModel: Oas30Content): void {
-        for (let name in content) {
-            let mediaType: any = content[name];
-            let mediaTypeModel: Oas30MediaType = contentModel.createMediaType(name);
-            this.readMediaType(mediaType, mediaTypeModel);
-            contentModel.addMediaType(name, mediaTypeModel);
-        }
     }
 
     /**
@@ -1908,7 +1826,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         let schema: any = mediaType["schema"];
         let example: any = mediaType["example"];
         let examples: any = mediaType["examples"];
-        let encoding: any = mediaType["encoding"];
+        let encodings: any = mediaType["encoding"];
 
         if (this.isDefined(schema)) {
             let schemaModel: Oas30Schema = mediaTypeModel.createSchema();
@@ -1924,10 +1842,13 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
                 mediaTypeModel.addExample(exampleModel);
             }
         }
-        if (this.isDefined(encoding)) {
-            let encodingModel: Oas30Encoding = mediaTypeModel.createEncoding();
-            this.readEncoding(encoding, encodingModel);
-            mediaTypeModel.encoding = encodingModel;
+        if (this.isDefined(encodings)) {
+            for (let name in encodings) {
+                let encoding: any = encodings[name];
+                let encodingModel: Oas30Encoding = mediaTypeModel.createEncoding(name);
+                this.readEncoding(mediaType, encodingModel);
+                mediaTypeModel.addEncoding(name, encodingModel);
+            }
         }
 
         this.readExtensions(mediaType, mediaTypeModel);
@@ -1956,37 +1877,30 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
 
     /**
      * Reads an OAS 3.0 Encoding from the given js data.
-     * @param encoding
+     * @param encodingProperty
      * @param encodingModel
      */
-    public readEncoding(encoding: any, encodingModel: Oas30Encoding): void {
-        for (let name in encoding) {
-            let encodingProperty: any = encoding[name];
-            let encodingPropertyModel: Oas30EncodingProperty = encodingModel.createEncodingProperty(name);
-            this.readEncodingProperty(encodingProperty, encodingPropertyModel);
-            encodingModel.addEncodingProperty(name, encodingPropertyModel);
-        }
-    }
-
-    /**
-     * Reads an OAS 3.0 Encoding Property from the given js data.
-     * @param encodingProperty
-     * @param encodingPropertyModel
-     */
-    public readEncodingProperty(encodingProperty: any, encodingPropertyModel: Oas30EncodingProperty): void {
+    public readEncoding(encodingProperty: any, encodingModel: Oas30Encoding): void {
         let contentType: string = encodingProperty["contentType"];
         let headers: any = encodingProperty["headers"];
         let style: string = encodingProperty["style"];
         let explode: boolean = encodingProperty["explode"];
         let allowReserved: boolean = encodingProperty["allowReserved"];
 
-        if (this.isDefined(contentType)) { encodingPropertyModel.contentType = contentType; }
-        if (this.isDefined(headers)) { encodingPropertyModel.headers = headers; }
-        if (this.isDefined(style)) { encodingPropertyModel.style = style; }
-        if (this.isDefined(explode)) { encodingPropertyModel.explode = explode; }
-        if (this.isDefined(allowReserved)) { encodingPropertyModel.allowReserved = allowReserved; }
+        if (this.isDefined(contentType)) { encodingModel.contentType = contentType; }
+        if (this.isDefined(headers)) {
+            for (let name in headers) {
+                let header: any = headers[name];
+                let headerModel: Oas30Header = encodingModel.createHeader(name);
+                this.readHeader(header, headerModel);
+                encodingModel.addHeader(name, headerModel);
+            }
+        }
+        if (this.isDefined(style)) { encodingModel.style = style; }
+        if (this.isDefined(explode)) { encodingModel.explode = explode; }
+        if (this.isDefined(allowReserved)) { encodingModel.allowReserved = allowReserved; }
 
-        this.readExtensions(encodingProperty, encodingPropertyModel);
+        this.readExtensions(encodingProperty, encodingModel);
     }
 
     /**
@@ -2013,35 +1927,30 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
 
         if (this.isDefined(description)) { responseModel.description = description; }
         if (this.isDefined(headers)) {
-            let headersModel: Oas30Headers = responseModel.createHeaders();
-            this.readHeaders(headers, headersModel);
-            responseModel.headers = headersModel;
+            for (let name in headers) {
+                let header: any = headers[name];
+                let headerModel: Oas30Header = responseModel.createHeader(name);
+                this.readHeader(header, headerModel);
+                responseModel.addHeader(name, headerModel);
+            }
         }
         if (this.isDefined(content)) {
-            let contentModel: Oas30Content = responseModel.createContent();
-            this.readContent(content, contentModel);
-            responseModel.content = contentModel;
+            for (let name in content) {
+                let mediaType: any = content[name];
+                let mediaTypeModel: Oas30MediaType = responseModel.createMediaType(name);
+                this.readMediaType(mediaType, mediaTypeModel);
+                responseModel.addMediaType(name, mediaTypeModel);
+            }
         }
         if (this.isDefined(links)) {
-            let linksModel: Oas30Links = responseModel.createLinks();
-            this.readLinks(links, linksModel);
-            responseModel.links = linksModel;
+            for (let name in links) {
+                let link: any = links[name];
+                let linkModel: Oas30Link = responseModel.createLink(name);
+                this.readLink(link, linkModel);
+                responseModel.addLink(name, linkModel);
+            }
         }
         this.readExtensions(response, responseModel);
-    }
-
-    /**
-     * Reads an OAS 3.0 Links object from the given js data.
-     * @param links
-     * @param linksModel
-     */
-    public readLinks(links: any, linksModel: Oas30Links): void {
-        for (let name in links) {
-            let link: any = links[name];
-            let linkModel: Oas30Link = linksModel.createLink(name);
-            this.readLink(link, linkModel);
-            linksModel.addLink(name, linkModel);
-        }
     }
 
     /**
@@ -2062,14 +1971,18 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         if (this.isDefined(operationRef)) { linkModel.operationRef = operationRef; }
         if (this.isDefined(operationId)) { linkModel.operationId = operationId; }
         if (this.isDefined(parameters)) {
-            let linkParametersModel: Oas30LinkParameters = linkModel.createLinkParameters();
-            this.readLinkParameters(parameters, linkParametersModel);
-            linkModel.parameters = linkParametersModel;
+            for (let name in parameters) {
+                let expression: any = parameters[name];
+                linkModel.addLinkParameter(name, expression);
+            }
         }
         if (this.isDefined(headers)) {
-            let headersModel: Oas30Headers = linkModel.createHeaders();
-            this.readHeaders(headers, headersModel);
-            linkModel.headers = headersModel;
+            for (let name in headers) {
+                let header: any = headers[name];
+                let headerModel: Oas30Header = linkModel.createHeader(name);
+                this.readHeader(header, headerModel);
+                linkModel.addHeader(name, headerModel);
+            }
         }
         if (this.isDefined(description)) { linkModel.description = description; }
         if (this.isDefined(server)) {
@@ -2079,19 +1992,6 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         }
 
         this.readExtensions(link, linkModel);
-    }
-
-    /**
-     * Reads the link parameters.
-     * @param linkParameters
-     * @param linkParametersModel
-     */
-    public readLinkParameters(linkParameters: any, linkParametersModel: Oas30LinkParameters): void {
-        for (let name in linkParameters) {
-            let value: any = linkParameters[name];
-            let expression: Oas30LinkParameterExpression = linkParametersModel.createExpression(name, value);
-            linkParametersModel.addExpression(name, expression);
-        }
     }
 
     /**
@@ -2144,28 +2044,15 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         if (this.isDefined(url)) { serverModel.url = url; }
         if (this.isDefined(description)) { serverModel.description = description; }
         if (this.isDefined(variables)) {
-            let serverVariablesModel: Oas30ServerVariables = serverModel.createServerVariables();
-            this.readServerVariables(variables, serverVariablesModel);
-            serverModel.variables = serverVariablesModel;
+            for (let name in variables) {
+                let serverVariable: any = variables[name];
+                let serverVariableModel: Oas30ServerVariable = serverModel.createServerVariable(name);
+                this.readServerVariable(serverVariable, serverVariableModel);
+                serverModel.addServerVariable(name, serverVariableModel);
+            }
         }
 
         this.readExtensions(server, serverModel);
-    }
-
-    /**
-     * Reads an OAS 3.0 Server Variables object from the given JS data.
-     * @param variables
-     * @param serverVariablesModel
-     */
-    public readServerVariables(serverVariables: any, serverVariablesModel: Oas30ServerVariables): void {
-        for (let serverVariableName in serverVariables) {
-            if (serverVariableName.indexOf("x-") === 0) { continue; }
-            let serverVariable: any = serverVariables[serverVariableName];
-            let serverVariableModel: Oas30ServerVariable = serverVariablesModel.createServerVariable(serverVariableName);
-            this.readServerVariable(serverVariable, serverVariableModel);
-            serverVariablesModel.addServerVariable(serverVariableName, serverVariableModel);
-        }
-        this.readExtensions(serverVariables, serverVariablesModel);
     }
 
     /**

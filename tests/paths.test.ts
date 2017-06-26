@@ -320,15 +320,15 @@ describe("Node Path (Create 3.0)", () => {
         expect(actual).toEqual(expected);
     });
 
-    it("Request Body Content", () => {
+    it("Request Body", () => {
         let json: any = readJSON('tests/fixtures/paths/3.0/example.json');
         let document: Oas30Document = <Oas30Document> library.createDocument(json);
 
-        let node: OasNode = (<Oas30Operation>(document.paths.pathItem("/foo").get)).requestBody.content;
+        let node: OasNode = (<Oas30Operation>(document.paths.pathItem("/foo").get)).requestBody;
         let path: OasNodePath = library.createNodePath(node);
 
         let actual: string = path.toString();
-        let expected: string = "/paths[/foo]/get/requestBody/content";
+        let expected: string = "/paths[/foo]/get/requestBody";
 
         expect(actual).toEqual(expected);
     });
@@ -337,7 +337,7 @@ describe("Node Path (Create 3.0)", () => {
         let json: any = readJSON('tests/fixtures/paths/3.0/example.json');
         let document: Oas30Document = <Oas30Document> library.createDocument(json);
 
-        let node: OasNode = (<Oas30Operation>(document.paths.pathItem("/foo").get)).requestBody.content.mediaType("application/xml").examples["user"];
+        let node: OasNode = (<Oas30Operation>(document.paths.pathItem("/foo").get)).requestBody.getMediaType("application/xml").examples["user"];
         let path: OasNodePath = library.createNodePath(node);
 
         let actual: string = path.toString();
@@ -350,7 +350,7 @@ describe("Node Path (Create 3.0)", () => {
         let json: any = readJSON('tests/fixtures/paths/3.0/example.json');
         let document: Oas30Document = <Oas30Document> library.createDocument(json);
 
-        let node: OasNode = document.servers[2].variables.serverVariable("port");
+        let node: OasNode = document.servers[2].getServerVariable("port");
         let path: OasNodePath = library.createNodePath(node);
 
         let actual: string = path.toString();

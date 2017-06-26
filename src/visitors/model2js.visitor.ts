@@ -46,12 +46,10 @@ import {OasContact} from "../models/common/contact.model";
 import {OasLicense} from "../models/common/license.model";
 import {Oas30Document} from "../models/3.0/document.model";
 import {Oas30LinkServer, Oas30Server} from "../models/3.0/server.model";
-import {Oas30ServerVariables} from "../models/3.0/server-variables.model";
 import {Oas30ServerVariable} from "../models/3.0/server-variable.model";
 import {OasSecurityRequirement} from "../models/common/security-requirement.model";
 import {OasTag} from "../models/common/tag.model";
 import {OasExternalDocumentation} from "../models/common/external-documentation.model";
-import {OasHeaders} from "../models/common/headers.model";
 import {OasPaths} from "../models/common/paths.model";
 import {Oas30CallbackPathItem, Oas30PathItem} from "../models/3.0/path-item.model";
 import {Oas30Operation} from "../models/3.0/operation.model";
@@ -72,19 +70,14 @@ import {
 import {OasXML} from "../models/common/xml.model";
 import {Oas30Header, Oas30HeaderDefinition} from "../models/3.0/header.model";
 import {Oas30RequestBody, Oas30RequestBodyDefinition} from "../models/3.0/request-body.model";
-import {Oas30Callbacks} from "../models/3.0/callbacks.model";
 import {OasPathItem} from "../models/common/path-item.model";
 import {OasOperation} from "../models/common/operation.model";
 import {OasHeader} from "../models/common/header.model";
 import {OasSchema} from "../models/common/schema.model";
 import {Oas30Encoding} from "../models/3.0/encoding.model";
-import {Oas30EncodingProperty} from "../models/3.0/encoding-property.model";
-import {Oas30Content} from "../models/3.0/content.model";
 import {Oas30MediaType} from "../models/3.0/media-type.model";
 import {Oas30Example, Oas30ExampleDefinition} from "../models/3.0/example.model";
-import {Oas30Links} from "../models/3.0/links.model";
 import {Oas30Link, Oas30LinkDefinition} from "../models/3.0/link.model";
-import {Oas30LinkParameters} from "../models/3.0/link-parameters.model";
 import {Oas30LinkParameterExpression} from "../models/3.0/link-parameter-expression.model";
 import {Oas30Callback, Oas30CallbackDefinition} from "../models/3.0/callback.model";
 import {Oas30Components} from "../models/3.0/components.model";
@@ -95,8 +88,8 @@ import {
     Oas30ClientCredentialsOAuthFlow, Oas30ImplicitOAuthFlow, Oas30OAuthFlow,
     Oas30PasswordOAuthFlow
 } from "../models/3.0/oauth-flow.model";
-import {Oas30Scopes} from "../models/3.0/scopes.model";
 import {OasSecurityScheme} from "../models/common/security-scheme.model";
+import {Oas20Headers} from "../models/2.0/headers.model";
 
 
 /**
@@ -280,19 +273,6 @@ export abstract class OasModelToJSVisitor implements IOasNodeVisitor {
         let parentJS: any = this.lookupParentJS(node);
         parentJS.paths = paths;
         this.updateIndex(node, paths);
-    }
-
-    /**
-     * Visits a node.
-     * @param node
-     */
-    public visitHeaders(node: OasHeaders): void {
-        if (node.headerNames().length > 0) {
-            let parentJS: any = this.lookupParentJS(node);
-            let headers: any = {};
-            parentJS.headers = headers;
-            this.updateIndex(node, headers);
-        }
     }
 
     /**
@@ -536,6 +516,19 @@ export class Oas20ModelToJSVisitor extends OasModelToJSVisitor implements IOas20
             headers: null,
             examples: null
         };
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitHeaders(node: Oas20Headers): void {
+        if (node.headerNames().length > 0) {
+            let parentJS: any = this.lookupParentJS(node);
+            let headers: any = {};
+            parentJS.headers = headers;
+            this.updateIndex(node, headers);
+        }
     }
 
     /**
@@ -937,7 +930,10 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
     public visitHeader(node: Oas30Header): void {
         let parentJS: any = this.lookupParentJS(node);
         let header: any = this.createHeaderObject(node);
-        parentJS[node.headerName()] = header;
+        if (!this.isDefined(parentJS["headers"])) {
+            parentJS["headers"] = {};
+        }
+        parentJS["headers"][node.headerName()] = header;
         this.updateIndex(node, header);
     }
 
@@ -1038,21 +1034,13 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * Visits a node.
      * @param node
      */
-    public visitLinks(node: Oas30Links): void {
-        let links: any = {};
-        let parentJS: any = this.lookupParentJS(node);
-        parentJS.links = links;
-        this.updateIndex(node, links);
-    }
-
-    /**
-     * Visits a node.
-     * @param node
-     */
     public visitLink(node: Oas30Link): void {
         let parentJS: any = this.lookupParentJS(node);
         let link: any = this.createLinkObject(node);
-        parentJS[node.name()] = link;
+        if (!this.isDefined(parentJS["links"])) {
+            parentJS["links"] = {};
+        }
+        parentJS["links"][node.name()] = link;
         this.updateIndex(node, link);
     }
 
@@ -1078,17 +1066,6 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * Visits a node.
      * @param node
      */
-    public visitLinkParameters(node: Oas30LinkParameters): void {
-        let parameters: any = {};
-        let parentJS: any = this.lookupParentJS(node);
-        parentJS.parameters = parameters;
-        this.updateIndex(node, parameters);
-    }
-
-    /**
-     * Visits a node.
-     * @param node
-     */
     public visitLinkServer(node: Oas30LinkServer): void {
         let parentJS: any = this.lookupParentJS(node);
         let server: any = {
@@ -1107,7 +1084,10 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
     public visitLinkParameterExpression(node: Oas30LinkParameterExpression): void {
         let parentJS: any = this.lookupParentJS(node);
         let expression: any = node.value();
-        parentJS[node.name()] = expression;
+        if (!this.isDefined(parentJS["parameters"])) {
+            parentJS["parameters"] = {};
+        }
+        parentJS["parameters"][node.name()] = expression;
         this.updateIndex(node, expression);
     }
 
@@ -1249,17 +1229,6 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * Visits a node.
      * @param node
      */
-    public visitContent(node: Oas30Content): void {
-        let content: any = {};
-        let parentJS: any = this.lookupParentJS(node);
-        parentJS.content = content;
-        this.updateIndex(node, content);
-    }
-
-    /**
-     * Visits a node.
-     * @param node
-     */
     public visitMediaType(node: Oas30MediaType): void {
         let parentJS: any = this.lookupParentJS(node);
         let mediaType: any = {
@@ -1268,7 +1237,10 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
             examples: null,
             encoding: null
         }
-        parentJS[node.name()] = mediaType;
+        if (!this.isDefined(parentJS["content"])) {
+            parentJS["content"] = {};
+        }
+        parentJS["content"][node.name()] = mediaType;
         this.updateIndex(node, mediaType);
     }
 
@@ -1277,27 +1249,19 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * @param node
      */
     public visitEncoding(node: Oas30Encoding): void {
-        let encoding: any = {};
         let parentJS: any = this.lookupParentJS(node);
-        parentJS.content = encoding;
-        this.updateIndex(node, encoding);
-    }
-
-    /**
-     * Visits a node.
-     * @param node
-     */
-    public visitEncodingProperty(node: Oas30EncodingProperty): void {
-        let parentJS: any = this.lookupParentJS(node);
-        let encodingProperty: any = {
+        let encoding: any = {
             contentType: node.contentType,
             headers: node.headers,
             style: node.style,
             explode: node.explode,
             allowReserved: node.allowReserved
         };
-        parentJS[node.name()] = encodingProperty;
-        this.updateIndex(node, encodingProperty);
+        if (!this.isDefined(parentJS["encoding"])) {
+            parentJS["encoding"] = {};
+        }
+        parentJS["encoding"][node.name()] = encoding;
+        this.updateIndex(node, encoding);
     }
 
     /**
@@ -1333,24 +1297,16 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * Visits a node.
      * @param node
      */
-    public visitCallbacks(node: Oas30Callbacks): void {
-        let callbacks: any = {};
-        let parentJS: any = this.lookupParentJS(node);
-        parentJS.callbacks = callbacks;
-        this.updateIndex(node, callbacks);
-    }
-
-    /**
-     * Visits a node.
-     * @param node
-     */
     public visitCallback(node: Oas30Callback): void {
         let callback: any = {};
         let parentJS: any = this.lookupParentJS(node);
         if (this.isDefined(node.$ref)) {
             callback.$ref = node.$ref;
         }
-        parentJS[node.name()] = callback;
+        if (!this.isDefined(parentJS["callbacks"])) {
+            parentJS["callbacks"] = {};
+        }
+        parentJS["callbacks"][node.name()] = callback;
         this.updateIndex(node, callback);
     }
 
@@ -1527,23 +1483,9 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
             authorizationUrl: node.authorizationUrl,
             tokenUrl: node.tokenUrl,
             refreshUrl: node.refreshUrl,
-            scopes: null
+            scopes: node.scopes
         };
         return flow;
-    }
-
-    /**
-     * Visits a node.
-     * @param node
-     */
-    public visitScopes(node: Oas30Scopes): void {
-        let parentJS: any = this.lookupParentJS(node);
-        let scopes: any = {};
-        for (let scopeName of node.scopeNames()) {
-            scopes[scopeName] = node.scopeDescription(scopeName);
-        }
-        parentJS.scopes = scopes;
-        this.updateIndex(node, scopes);
     }
 
     /**
@@ -1619,20 +1561,6 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * Visits a node.
      * @param node
      */
-    public visitServerVariables(node: Oas30ServerVariables): void {
-        let variableNames: string[] = node.serverVariableNames();
-        if (variableNames && variableNames.length > 0) {
-            let parent: any = this.lookupParentJS(node);
-            let serverVariables: any = {};
-            parent.variables = serverVariables;
-            this.updateIndex(node, serverVariables);
-        }
-    }
-
-    /**
-     * Visits a node.
-     * @param node
-     */
     public visitServerVariable(node: Oas30ServerVariable): void {
         let parentJS: any = this.lookupParentJS(node);
         let serverVariable: any = {
@@ -1640,7 +1568,10 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
             default : node.default,
             description : node.description
         }
-        parentJS[node.name()] = serverVariable;
+        if (!this.isDefined(parentJS["variables"])) {
+            parentJS["variables"] = {};
+        }
+        parentJS["variables"][node.name()] = serverVariable;
         this.updateIndex(node, serverVariable);
     }
 

@@ -18,7 +18,7 @@
 import {OasExtensibleNode} from "../enode.model";
 import {IOas30NodeVisitor, IOasNodeVisitor} from "../../visitors/visitor.iface";
 import {IOasReferenceNode} from "../reference.model";
-import {Oas30Content} from "./content.model";
+import {Oas30MediaType} from "./media-type.model";
 
 /**
  * Models an OAS 3.0 RequestBody object.  Example:
@@ -72,7 +72,7 @@ export class Oas30RequestBody extends OasExtensibleNode implements IOasReference
 
     public $ref: string;
     public description: string;
-    public content: Oas30Content;
+    public content: Oas30RequestBodyContent = new Oas30RequestBodyContent();
     public required: boolean;
 
     /**
@@ -85,13 +85,57 @@ export class Oas30RequestBody extends OasExtensibleNode implements IOasReference
     }
 
     /**
-     * Creates a 3.0 Content object.
-     * @return {Oas30Content}
+     * Creates a media type.
+     * @param name
+     * @return {Oas30MediaType}
      */
-    public createContent(): Oas30Content {
-        let rval: Oas30Content = new Oas30Content();
+    public createMediaType(name: string): Oas30MediaType {
+        let rval: Oas30MediaType = new Oas30MediaType(name);
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
+        return rval;
+    }
+
+    /**
+     * Adds a media type.
+     * @param name
+     * @param mediaType
+     */
+    public addMediaType(name: string, mediaType: Oas30MediaType): void {
+        this.content[name] = mediaType;
+    }
+
+    /**
+     * Gets a single media type by name.
+     * @param name
+     * @return {Oas30MediaType}
+     */
+    public getMediaType(name: string): Oas30MediaType {
+        return this.content[name];
+    }
+
+    /**
+     * Removes a single media type and returns it.  This may return null or undefined if none found.
+     * @param name
+     * @return {Oas30MediaType}
+     */
+    public removeMediaType(name: string): Oas30MediaType {
+        let rval: Oas30MediaType = this.content[name];
+        if (rval) {
+            delete this.content[name];
+        }
+        return rval;
+    }
+
+    /**
+     * Gets a list of all media types.
+     * @return {Oas30MediaType[]}
+     */
+    public getMediaTypes(): Oas30MediaType[] {
+        let rval: Oas30MediaType[] = [];
+        for (let name in this.content) {
+            rval.push(this.content[name]);
+        }
         return rval;
     }
 
@@ -131,4 +175,8 @@ export class Oas30RequestBodyDefinition extends Oas30RequestBody {
         return this._name;
     }
 
+}
+
+export class Oas30RequestBodyContent {
+    [key: string]: Oas30MediaType;
 }

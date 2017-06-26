@@ -18,8 +18,8 @@
 import {OasExtensibleNode} from "../enode.model";
 import {IOas30NodeVisitor, IOasNodeVisitor} from "../../visitors/visitor.iface";
 import {Oas30LinkServer} from "./server.model";
-import {Oas30Headers} from "./headers.model";
-import {Oas30LinkParameters} from "./link-parameters.model";
+import {Oas30Header} from "./header.model";
+import {Oas30LinkParameterExpression} from "./link-parameter-expression.model";
 
 /**
  * Models an OAS 3.0 Link object.
@@ -31,8 +31,8 @@ export class Oas30Link extends OasExtensibleNode {
     public $ref: string;
     public operationRef: string;
     public operationId: string;
-    public parameters: Oas30LinkParameters;
-    public headers: Oas30Headers;
+    public parameters: Oas30LinkParameters = new Oas30LinkParameters();
+    public headers: Oas30LinkHeaders = new Oas30LinkHeaders();
     public description: string;
     public server: Oas30LinkServer;
 
@@ -63,24 +63,125 @@ export class Oas30Link extends OasExtensibleNode {
     }
 
     /**
-     * Creates a child link parameters model.
-     * @return {Oas30LinkParameters}
+     * Creates a link parameter expression.
+     * @param name
+     * @param value
+     * @return {Oas30LinkParameterExpression}
      */
-    public createLinkParameters(): Oas30LinkParameters {
-        let rval: Oas30LinkParameters = new Oas30LinkParameters();
+    public createLinkParameterExpression(name: string, value: string): Oas30LinkParameterExpression {
+        let rval: Oas30LinkParameterExpression = new Oas30LinkParameterExpression(name, value);
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;
     }
 
     /**
-     * Creates an OAS 3.0 Headers object.
-     * @return {Oas30Headers}
+     * Adds a link parameter expression.
+     * @param name
+     * @param expression
      */
-    public createHeaders(): Oas30Headers {
-        let rval: Oas30Headers = new Oas30Headers();
+    public addLinkParameterExpression(name: string, expression: Oas30LinkParameterExpression): void {
+        this.parameters[name] = expression;
+    }
+
+    /**
+     * Adds a link parameter expression.
+     * @param name
+     * @param expression
+     * @return {Oas30LinkParameterExpression}
+     */
+    public addLinkParameter(name: string, expression: string): Oas30LinkParameterExpression {
+        let model: Oas30LinkParameterExpression = this.createLinkParameterExpression(name, expression);
+        this.addLinkParameterExpression(name, model);
+        return model;
+    }
+
+    /**
+     * Gets a single link parameter expression by name.
+     * @param name
+     * @return {Oas30LinkParameterExpression}
+     */
+    public getLinkParameterExpression(name: string): Oas30LinkParameterExpression {
+        return this.parameters[name];
+    }
+
+    /**
+     * Removes a single link parameter expression and returns it.  This may return null or undefined if none found.
+     * @param name
+     * @return {Oas30LinkParameterExpression}
+     */
+    public removeLinkParameterExpression(name: string): Oas30LinkParameterExpression {
+        let rval: Oas30LinkParameterExpression = this.parameters[name];
+        if (rval) {
+            delete this.parameters[name];
+        }
+        return rval;
+    }
+
+    /**
+     * Gets a list of all link parameter expressions.
+     * @return {Oas30LinkParameterExpression[]}
+     */
+    public getLinkParameterExpressions(): Oas30LinkParameterExpression[] {
+        let rval: Oas30LinkParameterExpression[] = [];
+        for (let name in this.parameters) {
+            rval.push(this.parameters[name]);
+        }
+        return rval;
+    }
+
+    /**
+     * Creates a header.
+     * @param name
+     * @return {Oas30Header}
+     */
+    public createHeader(name: string): Oas30Header {
+        let rval: Oas30Header = new Oas30Header(name);
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
+        return rval;
+    }
+
+    /**
+     * Adds a header.
+     * @param name
+     * @param header
+     */
+    public addHeader(name: string, header: Oas30Header): void {
+        this.headers[name] = header;
+    }
+
+    /**
+     * Gets a single header by name.
+     * @param name
+     * @return {Oas30Header}
+     */
+    public getHeader(name: string): Oas30Header {
+        return this.headers[name];
+    }
+
+    /**
+     * Removes a single header and returns it.  This may return null or undefined if none found.
+     * @param name
+     * @return {Oas30Header}
+     */
+    public removeHeader(name: string): Oas30Header {
+        let rval: Oas30Header = this.headers[name];
+        if (rval) {
+            delete this.headers[name];
+        }
+        return rval;
+    }
+
+    /**
+     * Gets a list of all headers.
+     * @return {Oas30Header[]}
+     */
+    public getHeaders(): Oas30Header[] {
+        let rval: Oas30Header[] = [];
+        for (let name in this.headers) {
+            rval.push(this.headers[name]);
+        }
         return rval;
     }
 
@@ -120,4 +221,14 @@ export class Oas30LinkDefinition extends Oas30Link {
         viz.visitLinkDefinition(this);
     }
 
+}
+
+
+export class Oas30LinkHeaders {
+    [key: string]: Oas30Header;
+}
+
+
+export class Oas30LinkParameters {
+    [key: string]: Oas30LinkParameterExpression;
 }

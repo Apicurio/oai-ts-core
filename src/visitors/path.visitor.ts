@@ -46,7 +46,6 @@ import {OasExternalDocumentation} from "../models/common/external-documentation.
 import {OasSecurityRequirement} from "../models/common/security-requirement.model";
 import {OasResponses} from "../models/common/responses.model";
 import {OasSchema} from "../models/common/schema.model";
-import {OasHeaders} from "../models/common/headers.model";
 import {OasHeader} from "../models/common/header.model";
 import {OasTag} from "../models/common/tag.model";
 import {OasSecurityScheme} from "../models/common/security-scheme.model";
@@ -62,13 +61,11 @@ import {
     Oas30SchemaDefinition
 } from "../models/3.0/schema.model";
 import {Oas30Parameter, Oas30ParameterDefinition} from "../models/3.0/parameter.model";
-import {Oas30Content} from "../models/3.0/content.model";
 import {Oas30Link, Oas30LinkDefinition} from "../models/3.0/link.model";
 import {Oas30Callback, Oas30CallbackDefinition} from "../models/3.0/callback.model";
 import {Oas30Example, Oas30ExampleDefinition} from "../models/3.0/example.model";
 import {Oas30RequestBody, Oas30RequestBodyDefinition} from "../models/3.0/request-body.model";
 import {Oas30HeaderDefinition} from "../models/3.0/header.model";
-import {Oas30Scopes} from "../models/3.0/scopes.model";
 import {
     Oas30AuthorizationCodeOAuthFlow,
     Oas30ClientCredentialsOAuthFlow,
@@ -77,18 +74,14 @@ import {
 } from "../models/3.0/oauth-flow.model";
 import {Oas30OAuthFlows} from "../models/3.0/oauth-flows.model";
 import {Oas30Components} from "../models/3.0/components.model";
-import {Oas30Callbacks} from "../models/3.0/callbacks.model";
-import {Oas30Links} from "../models/3.0/links.model";
 import {Oas30CallbackPathItem} from "../models/3.0/path-item.model";
 import {Oas30Response, Oas30ResponseDefinition} from "../models/3.0/response.model";
 import {Oas30MediaType} from "../models/3.0/media-type.model";
 import {Oas30Encoding} from "../models/3.0/encoding.model";
-import {Oas30EncodingProperty} from "../models/3.0/encoding-property.model";
-import {Oas30LinkParameters} from "../models/3.0/link-parameters.model";
 import {Oas30LinkParameterExpression} from "../models/3.0/link-parameter-expression.model";
 import {Oas30LinkServer, Oas30Server} from "../models/3.0/server.model";
-import {Oas30ServerVariables} from "../models/3.0/server-variables.model";
 import {Oas30ServerVariable} from "../models/3.0/server-variable.model";
+import {Oas20Headers} from "../models/2.0/headers.model";
 
 
 /**
@@ -154,10 +147,6 @@ export abstract class OasNodePathVisitor implements IOasNodeVisitor {
 
     visitSchema(node: OasSchema): void {
         this._path.prependSegment("schema");
-    }
-
-    visitHeaders(node: OasHeaders): void {
-        this._path.prependSegment("headers");
     }
 
     visitHeader(node: OasHeader): void {
@@ -315,6 +304,10 @@ export class Oas20NodePathVisitor extends OasNodePathVisitor implements IOas20No
         this._path.prependSegment(node.statusCode(), true);
     }
 
+    visitHeaders(node: Oas20Headers): void {
+        this._path.prependSegment("headers");
+    }
+
 }
 
 
@@ -345,20 +338,14 @@ export class Oas30NodePathVisitor extends OasNodePathVisitor implements IOas30No
         this._path.prependSegment(node.statusCode(), true);
     }
 
-    visitContent(node: Oas30Content): void {
+    visitMediaType(node: Oas30MediaType): void {
+        this._path.prependSegment(node.name(), true);
         this._path.prependSegment("content");
     }
 
-    visitMediaType(node: Oas30MediaType): void {
-        this._path.prependSegment(node.name(), true);
-    }
-
     visitEncoding(node: Oas30Encoding): void {
-        this._path.prependSegment("encoding");
-    }
-
-    visitEncodingProperty(node: Oas30EncodingProperty): void {
         this._path.prependSegment(node.name(), true);
+        this._path.prependSegment("encoding");
     }
 
     visitExample(node: Oas30Example): void {
@@ -366,20 +353,14 @@ export class Oas30NodePathVisitor extends OasNodePathVisitor implements IOas30No
         this._path.prependSegment("examples");
     }
 
-    visitLinks(node: Oas30Links): void {
-        this._path.prependSegment("links");
-    }
-
     visitLink(node: Oas30Link): void {
         this._path.prependSegment(node.name(), true);
-    }
-
-    visitLinkParameters(node: Oas30LinkParameters): void {
-        this._path.prependSegment("parameters");
+        this._path.prependSegment("links");
     }
 
     visitLinkParameterExpression(node: Oas30LinkParameterExpression): void {
         this._path.prependSegment(node.name(), true);
+        this._path.prependSegment("parameters");
     }
 
     visitLinkServer(node: Oas30LinkServer): void {
@@ -395,12 +376,9 @@ export class Oas30NodePathVisitor extends OasNodePathVisitor implements IOas30No
         this._path.prependSegment("requestBody");
     }
 
-    visitCallbacks(node: Oas30Callbacks): void {
-        this._path.prependSegment("callbacks");
-    }
-
     visitCallback(node: Oas30Callback): void {
         this._path.prependSegment(node.name(), true);
+        this._path.prependSegment("callbacks");
     }
 
     visitCallbackPathItem(node: Oas30CallbackPathItem): void {
@@ -421,12 +399,9 @@ export class Oas30NodePathVisitor extends OasNodePathVisitor implements IOas30No
         }
     }
 
-    visitServerVariables(node: Oas30ServerVariables): void {
-        this._path.prependSegment("variables");
-    }
-
     visitServerVariable(node: Oas30ServerVariable): void {
         this._path.prependSegment(node.name(), true);
+        this._path.prependSegment("variables");
     }
 
     visitAllOfSchema(node: Oas30AllOfSchema): void {
@@ -544,10 +519,6 @@ export class Oas30NodePathVisitor extends OasNodePathVisitor implements IOas30No
 
     visitAuthorizationCodeOAuthFlow(node: Oas30AuthorizationCodeOAuthFlow): void {
         this._path.prependSegment("authorizationCode");
-    }
-
-    visitScopes(node: Oas30Scopes): void {
-        this._path.prependSegment("scopes");
     }
 
     visitLinkDefinition(node: Oas30LinkDefinition): void {

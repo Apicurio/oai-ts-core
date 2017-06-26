@@ -16,8 +16,8 @@
  */
 
 import {OasExtensibleNode} from "../enode.model";
-import {Oas30ServerVariables} from "./server-variables.model";
 import {IOas30NodeVisitor, IOasNodeVisitor} from "../../visitors/visitor.iface";
+import {Oas30ServerVariable} from "./server-variable.model";
 
 /**
  * Models an OAS 3.0 Server object.  Example:
@@ -47,7 +47,7 @@ export class Oas30Server extends OasExtensibleNode {
 
     public url: string;
     public description: string;
-    public variables: Oas30ServerVariables;
+    public variables: Oas30ServerVariables = new Oas30ServerVariables();
 
     /**
      * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.
@@ -59,15 +59,60 @@ export class Oas30Server extends OasExtensibleNode {
     }
 
     /**
-     * Creates an OAS 3.0 Server Variables object.
-     * @return {Oas30ServerVariables}
+     * Creates a server variable.
+     * @param name
+     * @return {Oas30ServerVariable}
      */
-    public createServerVariables(): Oas30ServerVariables {
-        let rval: Oas30ServerVariables = new Oas30ServerVariables();
+    public createServerVariable(name: string): Oas30ServerVariable {
+        let rval: Oas30ServerVariable = new Oas30ServerVariable(name);
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;
     }
+
+    /**
+     * Adds a server variable.
+     * @param name
+     * @param serverVariable
+     */
+    public addServerVariable(name: string, serverVariable: Oas30ServerVariable): void {
+        this.variables[name] = serverVariable;
+    }
+
+    /**
+     * Gets a single server variable by name.
+     * @param name
+     * @return {Oas30ServerVariable}
+     */
+    public getServerVariable(name: string): Oas30ServerVariable {
+        return this.variables[name];
+    }
+
+    /**
+     * Removes a single server variable and returns it.  This may return null or undefined if none found.
+     * @param name
+     * @return {Oas30ServerVariable}
+     */
+    public removeServerVariable(name: string): Oas30ServerVariable {
+        let rval: Oas30ServerVariable = this.variables[name];
+        if (rval) {
+            delete this.variables[name];
+        }
+        return rval;
+    }
+
+    /**
+     * Gets a list of all server variables.
+     * @return {Oas30ServerVariable[]}
+     */
+    public getServerVariables(): Oas30ServerVariable[] {
+        let rval: Oas30ServerVariable[] = [];
+        for (let name in this.variables) {
+            rval.push(this.variables[name]);
+        }
+        return rval;
+    }
+
 }
 
 
@@ -84,4 +129,9 @@ export class Oas30LinkServer extends Oas30Server {
         viz.visitLinkServer(this);
     }
 
+}
+
+
+export class Oas30ServerVariables {
+    [key: string]: Oas30ServerVariable;
 }

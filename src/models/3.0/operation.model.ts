@@ -18,12 +18,12 @@
 import {OasOperation} from "../common/operation.model";
 import {Oas30Server} from "./server.model";
 import {Oas30RequestBody} from "./request-body.model";
-import {Oas30Callbacks} from "./callbacks.model";
 import {Oas30ExternalDocumentation} from "./external-documentation.model";
 import {Oas30Responses} from "./responses.model";
 import {Oas30SecurityRequirement} from "./security-requirement.model";
 import {Oas30Parameter} from "./parameter.model";
 import {IOasParameterParent} from "../common/parameter.model";
+import {Oas30Callback} from "./callback.model";
 
 
 /**
@@ -93,7 +93,7 @@ import {IOasParameterParent} from "../common/parameter.model";
 export class Oas30Operation extends OasOperation implements IOasParameterParent {
 
     public requestBody: Oas30RequestBody;
-    public callbacks: Oas30Callbacks;
+    public callbacks: Oas30Callbacks = new Oas30Callbacks();
     public servers: Oas30Server[];
 
     /**
@@ -149,13 +149,57 @@ export class Oas30Operation extends OasOperation implements IOasParameterParent 
     }
 
     /**
-     * Creates a child Callbacks model.
-     * @return {Oas30Callbacks}
+     * Creates a callback.
+     * @param name
+     * @return {Oas30Callback}
      */
-    public createCallbacks(): Oas30Callbacks {
-        let rval: Oas30Callbacks = new Oas30Callbacks();
+    public createCallback(name: string): Oas30Callback {
+        let rval: Oas30Callback = new Oas30Callback(name);
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
+        return rval;
+    }
+
+    /**
+     * Adds a callback.
+     * @param name
+     * @param callback
+     */
+    public addCallback(name: string, callback: Oas30Callback): void {
+        this.callbacks[name] = callback;
+    }
+
+    /**
+     * Gets a single callback by name.
+     * @param name
+     * @return {Oas30Callback}
+     */
+    public getCallback(name: string): Oas30Callback {
+        return this.callbacks[name];
+    }
+
+    /**
+     * Removes a single callback and returns it.  This may return null or undefined if none found.
+     * @param name
+     * @return {Oas30Callback}
+     */
+    public removeCallback(name: string): Oas30Callback {
+        let rval: Oas30Callback = this.callbacks[name];
+        if (rval) {
+            delete this.callbacks[name];
+        }
+        return rval;
+    }
+
+    /**
+     * Gets a list of all callbacks.
+     * @return {Oas30Callback[]}
+     */
+    public getCallbacks(): Oas30Callback[] {
+        let rval: Oas30Callback[] = [];
+        for (let name in this.callbacks) {
+            rval.push(this.callbacks[name]);
+        }
         return rval;
     }
 
@@ -181,4 +225,9 @@ export class Oas30Operation extends OasOperation implements IOasParameterParent 
         return rval;
     }
 
+}
+
+
+export class Oas30Callbacks {
+    [key: string]: Oas30Callback;
 }

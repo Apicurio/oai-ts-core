@@ -15,29 +15,34 @@
  * limitations under the License.
  */
 
-import {OasContact} from "../common/contact.model";
-import {OasNode} from "../node.model";
-import {IOasIndexedNode} from "../inode.model";
+import {OasExtensibleNode} from "../enode.model";
 import {IOas30NodeVisitor, IOasNodeVisitor} from "../../visitors/visitor.iface";
-import {Oas30EncodingProperty} from "./encoding-property.model";
+import {Oas30Header} from "./header.model";
 
 /**
- * Models an OAS 3.0 Encoding object.  Example:
- *
- * {
- *   "historyMetadata": {
- *     "contentType": "application/xml; charset=utf-8"
- *   },
- *   "profileImage": {
- *     "contentType": "image/png, image/jpeg"
- *   }
- * }
+ * Models an OAS 3.0 Encoding object.
  */
-export class Oas30Encoding extends OasNode implements IOasIndexedNode<Oas30EncodingProperty> {
+export class Oas30Encoding extends OasExtensibleNode {
 
-    __instanceof_IOasIndexedNode: boolean = true;
+    private _name: string;
+    public contentType: string;
+    public headers: Oas30EncodingHeaders = new Oas30EncodingHeaders();
+    public style: string;
+    public explode: boolean;
+    public allowReserved: boolean;
 
-    private _encodingProperties: Oas30EncodingPropertyItems;
+    /**
+     * Constructor.
+     * @param name
+     */
+    constructor(name: string) {
+        super();
+        this._name = name;
+    }
+
+    public name(): string {
+        return this._name;
+    }
 
     /**
      * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.
@@ -49,101 +54,63 @@ export class Oas30Encoding extends OasNode implements IOasIndexedNode<Oas30Encod
     }
 
     /**
-     * Returns a single encodingProperty by name.
+     * Creates a header.
      * @param name
-     * @return {Oas30EncodingProperty}
+     * @return {Oas30Header}
      */
-    public encodingProperty(name: string): Oas30EncodingProperty {
-        if (this._encodingProperties) {
-            return this._encodingProperties[name];
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Returns an array of all the encodingPropertys.
-     */
-    public encodingPropertys(): Oas30EncodingProperty[] {
-        let names: string[] = this.encodingPropertyStatusCodes();
-        let rval: Oas30EncodingProperty[] = [];
-        for (let name of names) {
-            rval.push(this.encodingProperty(name));
-        }
-        return rval;
-    }
-
-    /**
-     * Adds a encodingProperty.
-     * @param name
-     * @param encodingProperty
-     */
-    public addEncodingProperty(name: string, encodingProperty: Oas30EncodingProperty): Oas30EncodingProperty {
-        if (this._encodingProperties == null) {
-            this._encodingProperties = new Oas30EncodingPropertyItems();
-        }
-        this._encodingProperties[name] = encodingProperty;
-        return encodingProperty;
-    }
-
-    /**
-     * Removes a single encodingProperty child model.
-     * @param name
-     */
-    public removeEncodingProperty(name: string): Oas30EncodingProperty {
-        let rval: Oas30EncodingProperty = this._encodingProperties[name];
-        if (this._encodingProperties && rval) {
-            delete this._encodingProperties[name];
-        }
-        return rval;
-    }
-
-    /**
-     * Gets a list of all the encodingProperty status codes.
-     */
-    public encodingPropertyStatusCodes(): string[] {
-        let rval: string[] = [];
-        for (let pname in this._encodingProperties) {
-            rval.push(pname);
-        }
-        return rval;
-    }
-
-    /**
-     * Creates an OAS EncodingProperty object.
-     * @param name
-     * @return {Oas30EncodingProperty}
-     */
-    public createEncodingProperty(name: string): Oas30EncodingProperty {
-        let rval: Oas30EncodingProperty = new Oas30EncodingProperty(name);
+    public createHeader(name: string): Oas30Header {
+        let rval: Oas30Header = new Oas30Header(name);
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
         return rval;
     }
 
-    getItem(name: string): Oas30EncodingProperty {
-        return this.encodingProperty(name);
+    /**
+     * Adds a header.
+     * @param name
+     * @param header
+     */
+    public addHeader(name: string, header: Oas30Header): void {
+        this.headers[name] = header;
     }
 
-    getItems(): Oas30EncodingProperty[] {
-        return this.encodingPropertys();
+    /**
+     * Gets a single header by name.
+     * @param name
+     * @return {Oas30Header}
+     */
+    public getHeader(name: string): Oas30Header {
+        return this.headers[name];
     }
 
-    getItemNames(): string[] {
-        return this.encodingPropertyStatusCodes();
+    /**
+     * Removes a single header and returns it.  This may return null or undefined if none found.
+     * @param name
+     * @return {Oas30Header}
+     */
+    public removeHeader(name: string): Oas30Header {
+        let rval: Oas30Header = this.headers[name];
+        if (rval) {
+            delete this.headers[name];
+        }
+        return rval;
     }
 
-    addItem(name: string, item: Oas30EncodingProperty): void {
-        this.addEncodingProperty(name, item);
-    }
-
-    deleteItem(name: string): Oas30EncodingProperty {
-        return this.removeEncodingProperty(name);
+    /**
+     * Gets a list of all headers.
+     * @return {Oas30Header[]}
+     */
+    public getHeaders(): Oas30Header[] {
+        let rval: Oas30Header[] = [];
+        for (let name in this.headers) {
+            rval.push(this.headers[name]);
+        }
+        return rval;
     }
 
 }
 
 
-export class Oas30EncodingPropertyItems {
-    [key: string]: Oas30EncodingProperty;
+export class Oas30EncodingHeaders {
+    [key: string]: Oas30Header;
 }

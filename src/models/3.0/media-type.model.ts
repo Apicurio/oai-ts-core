@@ -17,9 +17,9 @@
 
 import {Oas30Schema} from "./schema.model";
 import {OasExtensibleNode} from "../enode.model";
-import {Oas30Encoding} from "./encoding.model";
 import {IOas30NodeVisitor, IOasNodeVisitor} from "../../visitors/visitor.iface";
 import {Oas30Example, Oas30ExampleItems} from "./example.model";
+import {Oas30Encoding} from "./encoding.model";
 
 /**
  * Models an OAS 3.0 MediaType object.  Example:
@@ -65,7 +65,7 @@ export class Oas30MediaType extends OasExtensibleNode {
     public schema: Oas30Schema;
     public example: any;
     public examples: Oas30ExampleItems;
-    public encoding: Oas30Encoding;
+    public encoding: Oas30EncodingItems = new Oas30EncodingItems();
 
     /**
      * Constructor.
@@ -101,13 +101,57 @@ export class Oas30MediaType extends OasExtensibleNode {
     }
 
     /**
-     * Creates a child Encoding model.
+     * Creates a encoding.
+     * @param name
      * @return {Oas30Encoding}
      */
-    public createEncoding(): Oas30Encoding {
-        let rval: Oas30Encoding = new Oas30Encoding();
+    public createEncoding(name: string): Oas30Encoding {
+        let rval: Oas30Encoding = new Oas30Encoding(name);
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
+        return rval;
+    }
+
+    /**
+     * Adds a encoding.
+     * @param name
+     * @param encoding
+     */
+    public addEncoding(name: string, encoding: Oas30Encoding): void {
+        this.encoding[name] = encoding;
+    }
+
+    /**
+     * Gets a single encoding by name.
+     * @param name
+     * @return {Oas30Encoding}
+     */
+    public getEncoding(name: string): Oas30Encoding {
+        return this.encoding[name];
+    }
+
+    /**
+     * Removes a single encoding and returns it.  This may return null or undefined if none found.
+     * @param name
+     * @return {Oas30Encoding}
+     */
+    public removeEncoding(name: string): Oas30Encoding {
+        let rval: Oas30Encoding = this.encoding[name];
+        if (rval) {
+            delete this.encoding[name];
+        }
+        return rval;
+    }
+
+    /**
+     * Gets a list of all encodings.
+     * @return {Oas30Encoding[]}
+     */
+    public getEncodings(): Oas30Encoding[] {
+        let rval: Oas30Encoding[] = [];
+        for (let name in this.encoding) {
+            rval.push(this.encoding[name]);
+        }
         return rval;
     }
 
@@ -175,4 +219,9 @@ export class Oas30MediaType extends OasExtensibleNode {
         return examples;
     }
 
+}
+
+
+export class Oas30EncodingItems {
+    [key: string]: Oas30Encoding;
 }

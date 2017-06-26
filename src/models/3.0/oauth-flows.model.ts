@@ -17,12 +17,9 @@
 
 import {OasExtensibleNode} from "../enode.model";
 import {IOas30NodeVisitor, IOasNodeVisitor} from "../../visitors/visitor.iface";
-import {Oas30LinkServer} from "./server.model";
-import {Oas30Headers} from "./headers.model";
-import {Oas30LinkParameters} from "./link-parameters.model";
 import {
     Oas30AuthorizationCodeOAuthFlow,
-    Oas30ClientCredentialsOAuthFlow, Oas30ImplicitOAuthFlow, Oas30OAuthFlow,
+    Oas30ClientCredentialsOAuthFlow, Oas30ImplicitOAuthFlow,
     Oas30PasswordOAuthFlow
 } from "./oauth-flow.model";
 

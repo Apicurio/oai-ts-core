@@ -17,10 +17,6 @@
 
 import {OasExtensibleNode} from "../enode.model";
 import {IOas30NodeVisitor, IOasNodeVisitor} from "../../visitors/visitor.iface";
-import {Oas30LinkServer} from "./server.model";
-import {Oas30Headers} from "./headers.model";
-import {Oas30LinkParameters} from "./link-parameters.model";
-import {Oas30Scopes} from "./scopes.model";
 
 /**
  * Models an OAS 3.0 OAuth Flow object.
@@ -30,16 +26,21 @@ export abstract class Oas30OAuthFlow extends OasExtensibleNode {
     public authorizationUrl: string;
     public tokenUrl: string;
     public refreshUrl: string;
-    public scopes: Oas30Scopes;
+    public scopes: any = {};
 
-    /**
-     * Creates a Scopes object.
-     * @return {Oas30Scopes}
-     */
-    public createScopes(): Oas30Scopes {
-        let rval: Oas30Scopes = new Oas30Scopes();
-        rval._ownerDocument = this._ownerDocument;
-        rval._parent = this;
+    public addScope(scope: string, description: string): void {
+        this.scopes[scope] = description;
+    }
+
+    public removeScope(scope: string): void {
+        delete this.scopes[scope];
+    }
+
+    public getScopes(): string[] {
+        let rval: string[] = [];
+        for (let scope in this.scopes) {
+            rval.push(scope);
+        }
         return rval;
     }
 
