@@ -91,6 +91,7 @@ import {
 import {OasSecurityScheme} from "../models/common/security-scheme.model";
 import {Oas20Headers} from "../models/2.0/headers.model";
 import {Oas30LinkRequestBodyExpression} from "../models/3.0/link-request-body-expression.model";
+import {Oas30Discriminator} from "../models/3.0/discriminator.model";
 
 
 /**
@@ -1105,6 +1106,20 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
         let schema: any = this.createSchemaObject(node);
         parentJS.schema = schema;
         this.updateIndex(node, schema);
+    }
+
+    /**
+     * Visits a node.
+     * @param node
+     */
+    public visitDiscriminator(node: Oas30Discriminator): void {
+        let parentJS: any = this.lookupParentJS(node);
+        let discriminator: any = {
+            propertyName: node.propertyName,
+            mapping: node.mapping
+        };
+        parentJS.discriminator = discriminator;
+        this.updateIndex(node, discriminator);
     }
 
     /**

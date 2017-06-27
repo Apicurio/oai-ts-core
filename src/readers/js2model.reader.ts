@@ -113,6 +113,7 @@ import {Oas30License} from "../models/3.0/license.model";
 import {Oas30Responses} from "../models/3.0/responses.model";
 import {Oas30XML} from "../models/3.0/xml.model";
 import {Oas30LinkRequestBodyExpression} from "../models/3.0/link-request-body-expression.model";
+import {Oas30Discriminator} from "../models/3.0/discriminator.model";
 
 
 /**
@@ -444,7 +445,6 @@ export abstract class OasJS2ModelReader {
         let properties: any = schema["properties"];
         let additionalProperties: boolean | Oas20Schema = schema["additionalProperties"];
 
-        let discriminator: string = schema["discriminator"];
         let readOnly: boolean = schema["readOnly"];
         let xml: Oas20XML = schema["xml"];
         let externalDocs: any = schema["externalDocs"];
@@ -512,7 +512,6 @@ export abstract class OasJS2ModelReader {
             }
         }
 
-        if (this.isDefined(discriminator)) { schemaModel.discriminator = discriminator; }
         if (this.isDefined(readOnly)) { schemaModel.readOnly = readOnly; }
         if (this.isDefined(xml)) {
             let xmlModel: Oas20XML = schemaModel.createXML();
@@ -700,6 +699,19 @@ export class Oas20JS2ModelReader extends OasJS2ModelReader {
             this.readSecurityDefinitions(securityDefinitions, securityDefinitionsModel);
             documentModel.securityDefinitions = securityDefinitionsModel;
         }
+    }
+
+    /**
+     * Reads an OAS 2.0 Schema object from the given javascript data.
+     * @param schema
+     * @param schemaModel
+     */
+    public readSchema(schema: any, schemaModel: Oas20Schema): void {
+        super.readSchema(schema, schemaModel);
+
+        let discriminator: string = schema["discriminator"];
+        if (this.isDefined(discriminator)) { schemaModel.discriminator = discriminator; }
+
     }
 
     /**
@@ -1244,6 +1256,10 @@ export class Oas30JS2ModelReaderVisitor implements IOas30NodeVisitor {
 
     public visitSchema(node: Oas30Schema): void {
         this.reader.readSchema(this.jsData, node);
+    }
+
+    public visitDiscriminator(node: Oas30Discriminator): void {
+        this.reader.readDiscriminator(this.jsData, node);
     }
 
     public visitXML(node: Oas30XML): void {
@@ -2011,10 +2027,17 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         let anyOf: any[] = schema["anyOf"];
         let not: any = schema["not"];
 
+        let discriminator: any = schema["discriminator"];
+
         let nullable: boolean = schema["nullable"];
         let writeOnly: boolean = schema["writeOnly"];
         let deprecated: boolean = schema["deprecated"];
 
+        if (this.isDefined(discriminator)) {
+            let discriminatorModel: Oas30Discriminator = schemaModel.createDiscriminator();
+            this.readDiscriminator(discriminator, discriminatorModel);
+            schemaModel.discriminator = discriminator;
+        }
         if (this.isDefined(oneOf)) {
             let schemaModels: OasSchema[] = [];
             for (let oneOfSchema of oneOf) {
@@ -2061,7 +2084,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
     }
 
     /**
-     * Reads an OAD 3.0 Server Variable object from the given JS data.
+     * Reads an OAS 3.0 Server Variable object from the given JS data.
      * @param serverVariable
      * @param serverVariableModel
      */
@@ -2077,4 +2100,16 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         this.readExtensions(serverVariable, serverVariableModel);
     }
 
+    /**
+     * Reads an OAS 3.0 Discriminator object from the given JS data.
+     * @param discriminator
+     * @param discriminatorModel
+     */
+    public readDiscriminator(discriminator: any, discriminatorModel: Oas30Discriminator) {
+        let propertyName: string = discriminator["propertyName"];
+        let mapping: any = discriminator["mapping"];
+
+        if (this.isDefined(propertyName)) { discriminatorModel.propertyName = propertyName; }
+        if (this.isDefined(mapping)) { discriminatorModel.mapping = mapping; }
+    }
 }

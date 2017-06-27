@@ -68,6 +68,7 @@ export * from "./models/2.0/xml.model";
 export * from "./models/3.0/callback.model";
 export * from "./models/3.0/components.model";
 export * from "./models/3.0/contact.model";
+export * from "./models/3.0/discriminator.model";
 export * from "./models/3.0/document.model";
 export * from "./models/3.0/encoding.model";
 export * from "./models/3.0/example.model";

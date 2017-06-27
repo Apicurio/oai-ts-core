@@ -82,6 +82,7 @@ import {
 import {OasSecurityScheme} from "../models/common/security-scheme.model";
 import {Oas20Headers} from "../models/2.0/headers.model";
 import {Oas30LinkRequestBodyExpression} from "../models/3.0/link-request-body-expression.model";
+import {Oas30Discriminator} from "../models/3.0/discriminator.model";
 
 
 /**
@@ -177,6 +178,7 @@ export class Oas30NodeVisitorAdapter extends OasNodeVisitorAdapter implements IO
     public visitSchemaDefinition(node: Oas30SchemaDefinition): void {}
     public visitServer(node: Oas30Server): void {}
     public visitServerVariable(node: Oas30ServerVariable): void {}
+    public visitDiscriminator(node: Oas30Discriminator): void {}
 }
 
 
@@ -317,6 +319,7 @@ export class Oas30CompositeVisitor extends OasCompositeVisitor implements IOas30
     public visitPropertySchema(node: Oas30PropertySchema): void { this._acceptAll(node); }
     public visitItemsSchema(node: Oas30ItemsSchema): void { this._acceptAll(node); }
     public visitAdditionalPropertiesSchema(node: Oas30AdditionalPropertiesSchema): void { this._acceptAll(node); }
+    public visitDiscriminator(node: Oas30Discriminator): void { this._acceptAll(node); }
     public visitComponents(node: Oas30Components): void { this._acceptAll(node); }
     public visitExampleDefinition(node: Oas30ExampleDefinition): void { this._acceptAll(node); }
     public visitRequestBodyDefinition(node: Oas30RequestBodyDefinition): void { this._acceptAll(node); }

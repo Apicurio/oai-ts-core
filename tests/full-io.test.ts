@@ -171,6 +171,7 @@ describe("Full I/O (3.0)", () => {
         { name: "Components (Security Schemes)",        test: "tests/fixtures/full-io/3.0/components/components-securitySchemes.json" },
         { name: "Components (Links)",                   test: "tests/fixtures/full-io/3.0/components/components-links.json" },
         { name: "Components (Callbacks)",               test: "tests/fixtures/full-io/3.0/components/components-callbacks.json" },
+        { name: "Schemas (Discriminator)",              test: "tests/fixtures/full-io/3.0/schemas/discriminator.json" },
     ];
 
     let library: OasLibraryUtils;

@@ -19,6 +19,7 @@ import {IOas30NodeVisitor, IOasNodeVisitor} from "../../visitors/visitor.iface";
 import {Oas30XML} from "./xml.model";
 import {OasSchema} from "../common/schema.model";
 import {Oas30ExternalDocumentation} from "./external-documentation.model";
+import {Oas30Discriminator} from "./discriminator.model";
 
 
 /**
@@ -48,10 +49,23 @@ export class Oas30Schema extends OasSchema {
     public oneOf: OasSchema[];
     public anyOf: OasSchema[];
     public not: OasSchema;
+
+    public discriminator: Oas30Discriminator;
+
     public nullable: boolean;
     public writeOnly: boolean;
     public deprecated: boolean;
 
+    /**
+     * Creates a child Discriminator model.
+     * @return {Oas30Discriminator}
+     */
+    public createDiscriminator(): Oas30Discriminator {
+        let rval: Oas30Discriminator = new Oas30Discriminator();
+        rval._ownerDocument = this._ownerDocument;
+        rval._parent = this;
+        return rval;
+    }
 
     /**
      * Creates a child external documentation model.

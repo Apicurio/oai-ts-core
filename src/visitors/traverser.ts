@@ -93,6 +93,7 @@ import {OasSecurityScheme} from "../models/common/security-scheme.model";
 import {Oas30SecurityScheme} from "../models/3.0/security-scheme.model";
 import {Oas20Headers} from "../models/2.0/headers.model";
 import {Oas30LinkRequestBodyExpression} from "../models/3.0/link-request-body-expression.model";
+import {Oas30Discriminator} from "../models/3.0/discriminator.model";
 
 /**
  * Interface implemented by all traversers.
@@ -676,6 +677,14 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
         this.traverseIfNotNull(node.not);
         this.traverseIfNotNull(node.xml);
         this.traverseExtensions(node);
+    }
+
+    /**
+     * Visit the node.
+     * @param node
+     */
+    public visitDiscriminator(node: Oas30Discriminator): void {
+        node.accept(this.visitor);
     }
 
     /**
@@ -1354,6 +1363,11 @@ export class Oas30ReverseTraverser extends OasReverseTraverser implements IOas30
     }
 
     visitAdditionalPropertiesSchema(node: Oas30AdditionalPropertiesSchema): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    visitDiscriminator(node: Oas30Discriminator): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }

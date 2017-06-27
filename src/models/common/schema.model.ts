@@ -53,7 +53,6 @@ export abstract class OasSchema extends OasExtensibleNode {
     public properties: OasSchemaProperties;
     public additionalProperties: (boolean | OasSchema);
 
-    public discriminator: string;
     public readOnly: boolean;
     public xml: OasXML;
     public externalDocs: OasExternalDocumentation;

@@ -45,6 +45,8 @@ import {OasSchema} from "../common/schema.model";
  */
 export class Oas20Schema extends OasSchema {
 
+    public discriminator: string;
+
     /**
      * Creates a child external documentation model.
      * @return {Oas20ExternalDocumentation}
