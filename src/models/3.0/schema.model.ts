@@ -137,7 +137,7 @@ export class Oas30Schema extends OasSchema {
      * Creates a child schema model.
      * @return {Oas30Schema}
      */
-    public createItemsSchema(): Oas30AllOfSchema {
+    public createItemsSchema(): Oas30ItemsSchema {
         let rval: Oas30ItemsSchema = new Oas30ItemsSchema();
         rval._ownerDocument = this._ownerDocument;
         rval._parent = this;
