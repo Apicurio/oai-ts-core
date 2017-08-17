@@ -78,6 +78,7 @@ export * from "./models/3.0/info.model";
 export * from "./models/3.0/license.model";
 export * from "./models/3.0/link.model";
 export * from "./models/3.0/link-parameter-expression.model";
+export * from "./models/3.0/link-request-body-expression.model";
 export * from "./models/3.0/media-type.model";
 export * from "./models/3.0/oauth-flow.model";
 export * from "./models/3.0/oauth-flows.model";
