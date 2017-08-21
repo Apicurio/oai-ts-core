@@ -20,7 +20,7 @@ npmjs.com:
 
 This documentation can also be found in this repository here:
 
-  [./module/README.md](https://github.com/EricWittmann/oai-ts-core/blob/master/module/README.md)
+  [./module/README.md](https://github.com/Apicurio/oai-ts-core/blob/master/module/README.md)
 
 ## Project Goals
 
@@ -93,7 +93,7 @@ does not have any runtime dependencies, but it has several *build* dependencies 
 karma, jasmine, etc).  The following commands should help clone and configure:
 
 ```
-git clone https://github.com/EricWittmann/oai-ts-core.git
+git clone https://github.com/Apicurio/oai-ts-core.git
 cd oai-ts-core
 yarn install
 ```
@@ -198,7 +198,7 @@ of this repository, and then clone your fork:
 ```bash
 $ git clone git@github.com:<you>/oai-ts-core.git
 $ cd oai-ts-core
-$ git remote add upstream git://github.com/EricWittmann/oai-ts-core.git
+$ git remote add upstream git://github.com/Apicurio/oai-ts-core.git
 ```
 
 At any time, you can pull changes from the upstream and merge them onto your master:
@@ -213,7 +213,7 @@ The general idea is to keep your 'master' branch in-sync with the 'upstream/mast
 
 ### Track Your Change
 If you want to fix a bug or make any changes, please log an issue in the github 
-[Issue Tracker](https://github.com/EricWittmann/oai-ts-core/issues) describing the bug or new 
+[Issue Tracker](https://github.com/Apicurio/oai-ts-core/issues) describing the bug or new 
 feature. Then we highly recommend making the changes on a topic branch named with the issue 
 number. For example, this command creates a branch for issue #7:
 
