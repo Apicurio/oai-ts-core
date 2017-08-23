@@ -333,6 +333,7 @@ export class Oas30NodePathVisitor extends OasNodePathVisitor implements IOas30No
     }
 
     visitParameterDefinition(node: Oas30ParameterDefinition): void {
+        this._path.prependSegment(node.parameterName(), true);
         this._path.prependSegment("parameters");
     }
 

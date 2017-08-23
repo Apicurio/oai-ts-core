@@ -188,6 +188,19 @@ describe("Node Path (Create 2.0)", () => {
         expect(actual).toEqual(expected);
     });
 
+    it("Parameter Definition", () => {
+        let json: any = readJSON('tests/fixtures/paths/2.0/pet-store.json');
+        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+
+        let node: OasNode = document.parameters.parameter("limitParam");
+        let path: OasNodePath = library.createNodePath(node);
+
+        let actual: string = path.toString();
+        let expected: string = "/parameters[limitParam]";
+
+        expect(actual).toEqual(expected);
+    });
+
 });
 
 
@@ -368,6 +381,32 @@ describe("Node Path (Create 3.0)", () => {
 
         let actual: string = path.toString();
         let expected: string = "/components/callbacks[Callback1][$request.header#/put-url]/put";
+
+        expect(actual).toEqual(expected);
+    });
+
+    it("Parameter", () => {
+        let json: any = readJSON('tests/fixtures/paths/3.0/example.json');
+        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+
+        let node: OasNode = document.paths.pathItem("/foo").get.parameters[1];
+        let path: OasNodePath = library.createNodePath(node);
+
+        let actual: string = path.toString();
+        let expected: string = "/paths[/foo]/get/parameters[1]";
+
+        expect(actual).toEqual(expected);
+    });
+
+    it("Parameter Definition", () => {
+        let json: any = readJSON('tests/fixtures/paths/3.0/example.json');
+        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+
+        let node: OasNode = document.components.getParameterDefinition("Param2");
+        let path: OasNodePath = library.createNodePath(node);
+
+        let actual: string = path.toString();
+        let expected: string = "/components/parameters[Param2]";
 
         expect(actual).toEqual(expected);
     });

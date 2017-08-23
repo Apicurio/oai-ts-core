@@ -45,7 +45,43 @@
               }
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "description": "username to fetch",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "description": "ID of the object to fetch",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "freeForm",
+            "in": "query",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer"
+              }
+            },
+            "style": "form"
+          }
+        ]
       }
     }
   },
@@ -79,6 +115,34 @@
         "summary" : "Example 1 Summary",
         "description": "Example 1 description.",
         "externalValue": "http://example.org/examples/address-example.xml"
+      }
+    },
+    "parameters": {
+      "Param1": {
+        "name": "username",
+        "in": "path",
+        "description": "username to fetch",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "Param2": {
+        "name": "id",
+        "in": "query",
+        "description": "ID of the object to fetch",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "style": "form",
+        "explode": true
+      },
+      "RefParam": {
+        "$ref": "#/other/Ref"
       }
     },
     "callbacks": {
