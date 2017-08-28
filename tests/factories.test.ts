@@ -22,18 +22,18 @@ import {Oas20Document} from "../src/models/2.0/document.model";
 import {OasLibraryUtils} from "../src/library.utils";
 import {Oas20PathItem} from "../src/models/2.0/path-item.model";
 import {Oas20SchemaDefinition} from "../src/models/2.0/schema.model";
-import {Oas20SchemaFactory} from "../src/factories/schema.factory";
+import {OasSchemaFactory} from "../src/factories/schema.factory";
 
 
 describe("Schema Factory (2.0)", () => {
 
     let library: OasLibraryUtils;
-    let schemaFactory: Oas20SchemaFactory;
+    let schemaFactory: OasSchemaFactory;
     let document: Oas20Document;
 
     beforeEach(() => {
         library = new OasLibraryUtils();
-        schemaFactory = new Oas20SchemaFactory();
+        schemaFactory = new OasSchemaFactory();
         document = <Oas20Document>library.createDocument("2.0");
     });
 

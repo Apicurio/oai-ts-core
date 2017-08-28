@@ -24,7 +24,8 @@ import {Oas30SchemaDefinition} from "../models/3.0/schema.model";
 import {Oas30Document} from "../models/3.0/document.model";
 import {Oas30Components} from "../models/3.0/components.model";
 
-export class Oas20SchemaFactory {
+
+export class OasSchemaFactory {
 
     /**
      * Creates a new definition schema from a given example.  This method will analyze the example

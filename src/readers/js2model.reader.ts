@@ -436,7 +436,7 @@ export abstract class OasJS2ModelReader {
         let uniqueItems: boolean = schema["uniqueItems"];
         let maxProperties: number = schema["maxProperties"];
         let minProperties: number = schema["minProperties"];
-        let required: boolean = schema["required"];
+        let required: string[] = schema["required"];
         let enum_: any[] = schema["enum"];
         let type: string = schema["type"];
 

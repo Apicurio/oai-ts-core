@@ -44,7 +44,7 @@ export abstract class OasSchema extends OasExtensibleNode {
     public uniqueItems: boolean;
     public maxProperties: number;
     public minProperties: number;
-    public required: boolean;
+    public required: string[];
     public enum: any[];
     public type: string;
 
