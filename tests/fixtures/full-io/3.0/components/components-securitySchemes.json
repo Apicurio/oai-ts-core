@@ -28,6 +28,19 @@
           }
         }
       },
+      "ClientCredentialsOAuth2": {
+        "type": "oauth2",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "https://example.com/api/oauth/token",
+            "refreshUrl": "https://example.com/api/oauth/refresh",
+            "scopes": {
+              "write:client": "modify clients",
+              "read:admin": "read admin info"
+            }
+          }
+        }
+      },
       "RefAuth": {
         "$ref": "#/other/Ref"
       }

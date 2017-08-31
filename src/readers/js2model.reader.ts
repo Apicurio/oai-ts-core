@@ -1569,24 +1569,24 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         let authorizationCode: any = flows["authorizationCode"];
 
         if (this.isDefined(implicit)) {
-            let implicitModel: Oas30ImplicitOAuthFlow = flowsModel.createImplicitOAuthFlow();
-            this.readOAuthFlow(implicit, implicitModel);
-            flowsModel.implicit = implicitModel;
+            let flowModel: Oas30ImplicitOAuthFlow = flowsModel.createImplicitOAuthFlow();
+            this.readOAuthFlow(implicit, flowModel);
+            flowsModel.implicit = flowModel;
         }
         if (this.isDefined(password)) {
-            let passwordModel: Oas30ImplicitOAuthFlow = flowsModel.createImplicitOAuthFlow();
-            this.readOAuthFlow(password, passwordModel);
-            flowsModel.password = passwordModel;
+            let flowModel: Oas30PasswordOAuthFlow = flowsModel.createPasswordOAuthFlow();
+            this.readOAuthFlow(password, flowModel);
+            flowsModel.password = flowModel;
         }
         if (this.isDefined(clientCredentials)) {
-            let clientCredentialsModel: Oas30ImplicitOAuthFlow = flowsModel.createImplicitOAuthFlow();
-            this.readOAuthFlow(clientCredentials, clientCredentialsModel);
-            flowsModel.clientCredentials = clientCredentialsModel;
+            let flowModel: Oas30ClientCredentialsOAuthFlow = flowsModel.createClientCredentialsOAuthFlow();
+            this.readOAuthFlow(clientCredentials, flowModel);
+            flowsModel.clientCredentials = flowModel;
         }
         if (this.isDefined(authorizationCode)) {
-            let authorizationCodeModel: Oas30ImplicitOAuthFlow = flowsModel.createImplicitOAuthFlow();
-            this.readOAuthFlow(authorizationCode, authorizationCodeModel);
-            flowsModel.authorizationCode = authorizationCodeModel;
+            let flowModel: Oas30AuthorizationCodeOAuthFlow = flowsModel.createAuthorizationCodeOAuthFlow();
+            this.readOAuthFlow(authorizationCode, flowModel);
+            flowsModel.authorizationCode = flowModel;
         }
 
         this.readExtensions(flows, flowsModel);
