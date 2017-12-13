@@ -158,11 +158,17 @@ export class OasNodePathSegment {
     }
 
     public resolve(node: OasNode): OasNode {
+        if (node === null) {
+            return null;
+        }
         let childNode: any = null;
         if (this.isIndex() && node["__instanceof_IOasIndexedNode"]) {
             childNode = (<any>node as IOasIndexedNode<OasNode>).getItem(<string>this.value());
         } else {
             childNode = node[this.value()];
+            if (childNode === undefined) {
+                childNode = null;
+            }
         }
         return <OasNode>childNode;
     }

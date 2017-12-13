@@ -2056,6 +2056,15 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
             }
             schemaModel.anyOf = schemaModels;
         }
+        if (this.isDefined(not)) {
+            let notSchema: OasSchema = schemaModel.createNotSchema();
+            this.readSchema(not, notSchema as Oas30Schema);
+            schemaModel.not = notSchema;
+        }
+
+        if (this.isDefined(nullable)) { schemaModel.nullable = nullable; }
+        if (this.isDefined(writeOnly)) { schemaModel.writeOnly = writeOnly; }
+        if (this.isDefined(deprecated)) { schemaModel.deprecated = deprecated; }
 
     }
 

@@ -445,6 +445,18 @@ describe("Node Path (Resolve 3.0)", () => {
         expect(actualObj).toEqual(expectedObj);
     });
 
+    it("Contact N/A", () => {
+        let json: any = readJSON('tests/fixtures/paths/3.0/contact-na.json');
+        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+
+        let path: OasNodePath = new OasNodePath("/info/contact");
+        let resolvedNode: OasNode = path.resolve(document);
+
+        console.info("*********** " + resolvedNode);
+
+        expect(resolvedNode).toBeNull();
+    });
+
     it("Callback Request Body", () => {
         let json: any = readJSON('tests/fixtures/paths/3.0/example.json');
         let document: Oas30Document = <Oas30Document> library.createDocument(json);
