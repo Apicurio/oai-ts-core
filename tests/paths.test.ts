@@ -452,8 +452,6 @@ describe("Node Path (Resolve 3.0)", () => {
         let path: OasNodePath = new OasNodePath("/info/contact");
         let resolvedNode: OasNode = path.resolve(document);
 
-        console.info("*********** " + resolvedNode);
-
         expect(resolvedNode).toBeNull();
     });
 

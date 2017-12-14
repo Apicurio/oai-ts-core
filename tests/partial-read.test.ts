@@ -98,7 +98,7 @@ describe("Partial Read (3.0)", () => {
 
     beforeEach(() => {
         library = new OasLibraryUtils();
-        document = <Oas30Document> library.createDocument("3.0.0");
+        document = <Oas30Document> library.createDocument("3.0.1");
     });
 
     it("Info", () => {
@@ -108,7 +108,7 @@ describe("Partial Read (3.0)", () => {
         document.info = infoModel;
 
         let expectedObj: any = {
-            openapi: "3.0.0",
+            openapi: "3.0.1",
             info: json
         }
         let actualObj: any = library.writeNode(document);
@@ -121,7 +121,7 @@ describe("Partial Read (3.0)", () => {
         library.readNode(json, document.components);
 
         let expectedObj: any = {
-            openapi: "3.0.0",
+            openapi: "3.0.1",
             components: json
         }
         let actualObj: any = library.writeNode(document);
