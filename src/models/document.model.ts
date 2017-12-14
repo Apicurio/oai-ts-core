@@ -94,4 +94,20 @@ export abstract class OasDocument extends OasExtensibleNode {
      */
     public abstract setExternalDocumentation(description: string, url: string): OasExternalDocumentation;
 
+    /**
+     * Returns true if the document is an OpenAPI/Swagger 2.0 document.
+     * @return {boolean}
+     */
+    public is2xDocument(): boolean {
+        return this.getSpecVersion() === "2.0";
+    }
+
+    /**
+     * Returns true if the document is an OpenAPI 3.x document.
+     * @return {boolean}
+     */
+    public is3xDocument(): boolean {
+        return this.getSpecVersion().indexOf("3.") === 0;
+    }
+
 }

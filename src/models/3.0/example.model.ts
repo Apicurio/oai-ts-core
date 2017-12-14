@@ -67,7 +67,7 @@ export class Oas30Example extends OasExtensibleNode {
 
 
 /**
- * Models an Example Definition (in the components section of the OpenAPI 3.0.0 document).
+ * Models an Example Definition (in the components section of the OpenAPI 3.0.x document).
  */
 export class Oas30ExampleDefinition extends Oas30Example {
 

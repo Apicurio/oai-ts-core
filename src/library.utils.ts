@@ -76,12 +76,12 @@ export class OasLibraryUtils {
         if (typeof source === "string") {
             source = JSON.parse(source);
         }
-        if (node.ownerDocument().getSpecVersion() === "2.0") {
+        if (node.ownerDocument().is2xDocument()) {
             let reader: Oas20JS2ModelReader = new Oas20JS2ModelReader();
             let dispatcher: Oas20JS2ModelReaderVisitor = new Oas20JS2ModelReaderVisitor(reader, <any>source);
             node.accept(dispatcher);
             return node;
-        } else if (node.ownerDocument().getSpecVersion() === "3.0.0") {
+        } else if (node.ownerDocument().is3xDocument()) {
             let reader: Oas30JS2ModelReader = new Oas30JS2ModelReader();
             let dispatcher: Oas30JS2ModelReaderVisitor = new Oas30JS2ModelReaderVisitor(reader, <any>source);
             node.accept(dispatcher);
@@ -97,11 +97,11 @@ export class OasLibraryUtils {
      * @param node
      */
     public writeNode(node: OasNode): any {
-        if (node.ownerDocument().getSpecVersion() === "2.0") {
+        if (node.ownerDocument().is2xDocument()) {
             let visitor: Oas20ModelToJSVisitor = new Oas20ModelToJSVisitor();
             OasVisitorUtil.visitTree(node, visitor);
             return visitor.getResult();
-        } else if (node.ownerDocument().getSpecVersion() === "3.0.0") {
+        } else if (node.ownerDocument().is3xDocument()) {
             let visitor: Oas30ModelToJSVisitor = new Oas30ModelToJSVisitor();
             OasVisitorUtil.visitTree(node, visitor);
             return visitor.getResult();
@@ -117,7 +117,7 @@ export class OasLibraryUtils {
      * @return {any}
      */
     public validate(node: OasNode, recursive: boolean = true): OasValidationError[] {
-        if (node.ownerDocument().getSpecVersion() === "2.0") {
+        if (node.ownerDocument().is2xDocument()) {
             let visitor: Oas20ValidationVisitor = new Oas20ValidationVisitor();
             if (recursive) {
                 OasVisitorUtil.visitTree(node, visitor);
@@ -125,9 +125,9 @@ export class OasLibraryUtils {
                 node.accept(visitor);
             }
             return visitor.getValidationErrors();
-        } else if (node.ownerDocument().getSpecVersion() === "3.0.0") {
-            // TODO implement validation for OpenAPI 3.0.0
-            throw new Error("Validation rules not yet implemented for OpenAPI 3.0.0!");
+        } else if (node.ownerDocument().is3xDocument()) {
+            // TODO implement validation for OpenAPI 3.x
+            throw new Error("Validation rules not yet implemented for OpenAPI 3.0.x!");
         } else {
             throw new Error("OAS version " + node.ownerDocument().getSpecVersion() + " not supported.");
         }
@@ -139,11 +139,11 @@ export class OasLibraryUtils {
      * @return {OasNodePath}
      */
     public createNodePath(node: OasNode): OasNodePath {
-        if (node.ownerDocument().getSpecVersion() === "2.0") {
+        if (node.ownerDocument().is2xDocument()) {
             let viz: Oas20NodePathVisitor = new Oas20NodePathVisitor();
             OasVisitorUtil.visitTree(node, viz, OasTraverserDirection.up);
             return viz.path();
-        } else if (node.ownerDocument().getSpecVersion() === "3.0.0") {
+        } else if (node.ownerDocument().is3xDocument()) {
             let viz: Oas30NodePathVisitor = new Oas30NodePathVisitor();
             OasVisitorUtil.visitTree(node, viz, OasTraverserDirection.up);
             return viz.path();

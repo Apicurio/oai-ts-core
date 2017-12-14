@@ -1397,7 +1397,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
 
     /**
      * Reads the given javascript data and returns an OAS 3.0 document.  Throws an error if
-     * the root 'openapi' property is not found or if its value is not "3.0.0".
+     * the root 'openapi' property is not found or if its value is not "3.0.x".
      * @param jsData
      */
     public read(jsData: any): Oas30Document {
@@ -1413,7 +1413,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      */
     public readDocument(document: any, documentModel: Oas30Document): void {
         let openapi: string = document["openapi"];
-        if (openapi != "3.0.0") {
+        if (openapi.indexOf("3.") != 0) {
             throw Error("Unsupported specification version: " + openapi);
         }
 

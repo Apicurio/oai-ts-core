@@ -29,7 +29,7 @@ import {Oas30Components} from "./components.model";
  */
 export class Oas30Document extends OasDocument {
 
-    public openapi: string = "3.0.0";
+    public openapi: string = "3.0.1";
     public servers: Oas30Server[];
     public components: Oas30Components;
 

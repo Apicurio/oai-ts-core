@@ -45,7 +45,7 @@ export class OasVisitorUtil {
      * @param visitor the visitor to call for each node visited
      */
     public static visitTree(node: OasNode, visitor: IOasNodeVisitor, direction: OasTraverserDirection = OasTraverserDirection.down) {
-        if (node.ownerDocument().getSpecVersion() === "2.0") {
+        if (node.ownerDocument().is2xDocument()) {
             let traverser: IOasTraverser;
             if (direction === OasTraverserDirection.up) {
                 traverser = new Oas20ReverseTraverser(visitor as IOas20NodeVisitor);
@@ -53,7 +53,7 @@ export class OasVisitorUtil {
                 traverser = new Oas20Traverser(visitor as IOas20NodeVisitor);
             }
             traverser.traverse(node);
-        } else if (node.ownerDocument().getSpecVersion() === "3.0.0") {
+        } else if (node.ownerDocument().is3xDocument()) {
             let traverser: IOasTraverser;
             if (direction === OasTraverserDirection.up) {
                 traverser = new Oas30ReverseTraverser(visitor as IOas30NodeVisitor);

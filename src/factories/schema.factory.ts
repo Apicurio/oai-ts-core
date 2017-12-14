@@ -85,7 +85,7 @@ export class OasSchemaFactory {
         };
 
 
-        if (document.getSpecVersion() === "2.0") {
+        if (document.is2xDocument()) {
             let doc: Oas20Document = document as Oas20Document;
             let definitions: Oas20Definitions = doc.definitions;
             if (!definitions) {
@@ -101,7 +101,7 @@ export class OasSchemaFactory {
             schema.description = "The root of the " + name + " type's schema.";
             resolveAll(example, schema);
             return schema;
-        } else if (document.getSpecVersion() === "3.0.0") {
+        } else if (document.is3xDocument()) {
             let doc: Oas30Document = document as Oas30Document;
             let components: Oas30Components = doc.components;
             if (!components) {
