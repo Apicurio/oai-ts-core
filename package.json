@@ -7,7 +7,7 @@
     "type": "git",
     "url": "https://github.com/EricWittmann/oai-ts-core"
   },
-  "main": "bundles/OAI.umd.min.js",
+  "main": "bundles/OAI.umd.js",
   "module": "index.js",
   "typings": "index.d.ts",
   "typescript": {
