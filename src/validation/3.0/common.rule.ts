@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-import {Oas20NodeVisitorAdapter} from "../../visitors/visitor.base";
+import {Oas30NodeVisitorAdapter} from "../../visitors/visitor.base";
 import {OasNode} from "../../models/node.model";
 import {IOasValidationErrorReporter, OasValidationRuleUtil} from "../validation";
 
 /**
- * Base class for all 2.0 validation rules.
+ * Base class for all 3.0 validation rules.
  */
-export abstract class Oas20ValidationRule extends Oas20NodeVisitorAdapter {
+export abstract class Oas30ValidationRule extends Oas30NodeVisitorAdapter {
 
     private _reporter: IOasValidationErrorReporter;
 

@@ -29,6 +29,7 @@ import {Oas20PathItem} from "../../models/2.0/path-item.model";
 import {Oas20Schema} from "../../models/2.0/schema.model";
 import {Oas20SecurityDefinitions} from "../../models/2.0/security-definitions.model";
 import {Oas20Scopes} from "../../models/2.0/scopes.model";
+import {OasValidationRuleUtil} from "../validation";
 
 /**
  * Implements the Invalid Property Value validation rule.  This rule is responsible
@@ -50,30 +51,6 @@ export class Oas20InvalidPropertyValueValidationRule extends Oas20ValidationRule
         if (!isValid) {
             this.report(code, node, message);
         }
-    }
-
-    /**
-     * Returns true only if the given value is a valid mime-type.
-     * @param propertyValue
-     * @return {boolean}
-     */
-    private isValidMimeType(propertyValue: string[]): boolean {
-        let mt: RegExp = /^.*\/.*(;.*)?$/;
-        for (let v of propertyValue) {
-            if (!mt.test(v)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Returns true if the given value is an item in the enum list.
-     * @param value
-     * @param items
-     */
-    private isValidEnumItem(value: string, items: string[]): boolean {
-        return items.indexOf(value) != -1;
     }
 
     /**
@@ -137,15 +114,15 @@ export class Oas20InvalidPropertyValueValidationRule extends Oas20ValidationRule
     public visitDocument(node: Oas20Document): void {
         if (this.hasValue(node.schemes)) {
             node.schemes.forEach(scheme => {
-                this.reportIfInvalid("R-006", this.isValidEnumItem(scheme, ["http", "https", "ws", "wss"]), node,
+                this.reportIfInvalid("R-006", OasValidationRuleUtil.isValidEnumItem(scheme, ["http", "https", "ws", "wss"]), node,
                     "Invalid property value.  Each \"schemes\" property value must be one of: http, https, ws, wss (Invalid value found: '" + scheme + "')");
             });
         }
         if (this.hasValue(node.consumes)) {
-            this.reportIfInvalid("R-007", this.isValidMimeType(node.consumes), node, "Invalid property value.  The \"consumes\" property value must be a valid mime-type.");
+            this.reportIfInvalid("R-007", OasValidationRuleUtil.isValidMimeType(node.consumes), node, "Invalid property value.  The \"consumes\" property value must be a valid mime-type.");
         }
         if (this.hasValue(node.produces)) {
-            this.reportIfInvalid("R-008", this.isValidMimeType(node.produces), node, "Invalid property value.  The \"produces\" property value must be a valid mime-type.");
+            this.reportIfInvalid("R-008", OasValidationRuleUtil.isValidMimeType(node.produces), node, "Invalid property value.  The \"produces\" property value must be a valid mime-type.");
         }
     }
 
@@ -158,7 +135,7 @@ export class Oas20InvalidPropertyValueValidationRule extends Oas20ValidationRule
         }
         if (this.hasValue(node.schemes)) {
             node.schemes.forEach( scheme => {
-                this.reportIfInvalid("OP-010", this.isValidEnumItem(scheme, ["http", "https", "ws", "wss"]), node,
+                this.reportIfInvalid("OP-010", OasValidationRuleUtil.isValidEnumItem(scheme, ["http", "https", "ws", "wss"]), node,
                     "Invalid property value.  Each \"schemes\" property value must be one of: http, https, ws, wss (Invalid value found: '" + scheme + "')");
             });
         }
@@ -175,7 +152,7 @@ export class Oas20InvalidPropertyValueValidationRule extends Oas20ValidationRule
             }
             let path: string = pathItem.path();
             let pathVars: string[] = this.parsePathTemplate(path);
-            this.reportIfInvalid("PAR-007", this.isValidEnumItem(node.name, pathVars), node,
+            this.reportIfInvalid("PAR-007", OasValidationRuleUtil.isValidEnumItem(node.name, pathVars), node,
                 "The \"name\" property value for a 'path' style parameter must match one of the items in the path template.  Invalid path property name found: " + node.name);
         }
 
@@ -195,22 +172,22 @@ export class Oas20InvalidPropertyValueValidationRule extends Oas20ValidationRule
         }
 
         if (this.hasValue(node.in)) {
-            this.reportIfInvalid("PAR-009", this.isValidEnumItem(node.in, [ "query", "header", "path", "formData", "body" ]), node,
+            this.reportIfInvalid("PAR-009", OasValidationRuleUtil.isValidEnumItem(node.in, [ "query", "header", "path", "formData", "body" ]), node,
                 "Invalid property value.  The \"in\" property value must be one of: query, header, path, formData, body (Found value: '" + node.in + "')");
         }
 
         if (this.hasValue(node.type)) {
-            this.reportIfInvalid("PAR-011", this.isValidEnumItem(node.type, [ "string", "number", "integer", "boolean", "array", "file" ]), node,
+            this.reportIfInvalid("PAR-011", OasValidationRuleUtil.isValidEnumItem(node.type, [ "string", "number", "integer", "boolean", "array", "file" ]), node,
                 "Invalid property value.  The \"type\" property value must be one of: string, number, integer, boolean, array, file (Found value: '" + node.type + "')");
         }
 
         if (this.hasValue(node.format)) {
-            this.reportIfInvalid("PAR-012", this.isValidEnumItem(node.format, [ "int32", "int64", "float", "double", "byte", "binary", "date", "date-time", "password" ]), node,
+            this.reportIfInvalid("PAR-012", OasValidationRuleUtil.isValidEnumItem(node.format, [ "int32", "int64", "float", "double", "byte", "binary", "date", "date-time", "password" ]), node,
                 "Invalid property value.  The \"format\" property value must be one of: int32, int64, float, double, byte, binary, date, date-time, password (Found value: '" + node.format + "')");
         }
 
         if (this.hasValue(node.allowEmptyValue)) {
-            this.reportIfInvalid("PAR-013", this.isValidEnumItem(node.in, [ "query", "formData" ]), node,
+            this.reportIfInvalid("PAR-013", OasValidationRuleUtil.isValidEnumItem(node.in, [ "query", "formData" ]), node,
                 "The \"allowEmptyValue\" property is only allowed for 'query' or 'formData' parameters.");
         }
 
@@ -220,12 +197,12 @@ export class Oas20InvalidPropertyValueValidationRule extends Oas20ValidationRule
         }
 
         if (this.hasValue(node.collectionFormat)) {
-            this.reportIfInvalid("PAR-015", this.isValidEnumItem(node.collectionFormat, [ "csv", "ssv", "tsv", "pipes", "multi" ]), node,
+            this.reportIfInvalid("PAR-015", OasValidationRuleUtil.isValidEnumItem(node.collectionFormat, [ "csv", "ssv", "tsv", "pipes", "multi" ]), node,
                 "Invalid property value.  The \"collectionFormat\" property value must be one of: csv, ssv, tsv, pipes, multi (Found value: '" + node.collectionFormat + "')");
         }
 
         if (node.collectionFormat === "multi") {
-            this.reportIfInvalid("PAR-016", this.isValidEnumItem(node.in, [ "query", "formData" ]), node,
+            this.reportIfInvalid("PAR-016", OasValidationRuleUtil.isValidEnumItem(node.in, [ "query", "formData" ]), node,
                 "Invalid property value.  The \"collectionFormat\" property value can only be 'multi' for 'query' or 'formData' parameters.");
         }
 
@@ -238,17 +215,17 @@ export class Oas20InvalidPropertyValueValidationRule extends Oas20ValidationRule
 
     public visitItems(node: Oas20Items): void {
         if (this.hasValue(node.type)) {
-            this.reportIfInvalid("IT-003", this.isValidEnumItem(node.type, [ "string", "number", "integer", "boolean", "array" ]), node,
+            this.reportIfInvalid("IT-003", OasValidationRuleUtil.isValidEnumItem(node.type, [ "string", "number", "integer", "boolean", "array" ]), node,
                 "Invalid property value.  The \"type\" property value must be one of: string, number, integer, boolean, array (Found value: '" + node.type + "')");
         }
 
         if (this.hasValue(node.format)) {
-            this.reportIfInvalid("IT-004", this.isValidEnumItem(node.format, [ "int32", "int64", "float", "double", "byte", "binary", "date", "date-time", "password" ]), node,
+            this.reportIfInvalid("IT-004", OasValidationRuleUtil.isValidEnumItem(node.format, [ "int32", "int64", "float", "double", "byte", "binary", "date", "date-time", "password" ]), node,
                 "Invalid property value.  The \"format\" property value must be one of: int32, int64, float, double, byte, binary, date, date-time, password (Found value: '" + node.format + "')");
         }
 
         if (this.hasValue(node.collectionFormat)) {
-            this.reportIfInvalid("IT-005", this.isValidEnumItem(node.collectionFormat, [ "csv", "ssv", "tsv", "pipes" ]), node,
+            this.reportIfInvalid("IT-005", OasValidationRuleUtil.isValidEnumItem(node.collectionFormat, [ "csv", "ssv", "tsv", "pipes" ]), node,
                 "Invalid property value.  The \"collectionFormat\" property value must be one of: csv, ssv, tsv, pipes (Found value: '" + node.collectionFormat + "')");
         }
 
@@ -261,12 +238,12 @@ export class Oas20InvalidPropertyValueValidationRule extends Oas20ValidationRule
 
     public visitHeader(node: Oas20Header): void {
         if (this.hasValue(node.type)) {
-            this.reportIfInvalid("HEAD-003", this.isValidEnumItem(node.type, [ "string", "number", "integer", "boolean", "array" ]), node,
+            this.reportIfInvalid("HEAD-003", OasValidationRuleUtil.isValidEnumItem(node.type, [ "string", "number", "integer", "boolean", "array" ]), node,
                 "Invalid property value.  The \"type\" property value must be one of: string, number, integer, boolean, array (Found value: '" + node.type + "')");
         }
 
         if (this.hasValue(node.format)) {
-            this.reportIfInvalid("HEAD-004", this.isValidEnumItem(node.format, [ "int32", "int64", "float", "double", "byte", "binary", "date", "date-time", "password" ]), node,
+            this.reportIfInvalid("HEAD-004", OasValidationRuleUtil.isValidEnumItem(node.format, [ "int32", "int64", "float", "double", "byte", "binary", "date", "date-time", "password" ]), node,
                 "Invalid property value.  The \"format\" property value must be one of: int32, int64, float, double, byte, binary, date, date-time, password (Found value: '" + node.format + "')");
         }
 
@@ -276,7 +253,7 @@ export class Oas20InvalidPropertyValueValidationRule extends Oas20ValidationRule
         }
 
         if (this.hasValue(node.collectionFormat)) {
-            this.reportIfInvalid("HEAD-007", this.isValidEnumItem(node.collectionFormat, [ "csv", "ssv", "tsv", "pipes" ]), node,
+            this.reportIfInvalid("HEAD-007", OasValidationRuleUtil.isValidEnumItem(node.collectionFormat, [ "csv", "ssv", "tsv", "pipes" ]), node,
                 "Invalid property value.  The \"collectionFormat\" property value must be one of: csv, ssv, tsv, pipes (Found value: '" + node.collectionFormat + "')");
         }
     }
@@ -290,17 +267,17 @@ export class Oas20InvalidPropertyValueValidationRule extends Oas20ValidationRule
 
     public visitSecurityScheme(node: Oas20SecurityScheme): void {
         if (this.hasValue(node.type)) {
-            this.reportIfInvalid("SS-008", this.isValidEnumItem(node.type, [ "apiKey", "basic", "oauth2" ]), node,
+            this.reportIfInvalid("SS-008", OasValidationRuleUtil.isValidEnumItem(node.type, [ "apiKey", "basic", "oauth2" ]), node,
                 "Invalid property value.  The \"type\" property value must be one of: basic, apiKey, oauth2 (Found value: '" + node.type + "')");
         }
 
         if (this.hasValue(node.in)) {
-            this.reportIfInvalid("SS-009", this.isValidEnumItem(node.in, [ "query", "header" ]), node,
+            this.reportIfInvalid("SS-009", OasValidationRuleUtil.isValidEnumItem(node.in, [ "query", "header" ]), node,
                 "Invalid property value.  The \"in\" property value must be one of: query, header (Found value: '" + node.in + "')");
         }
 
         if (this.hasValue(node.flow)) {
-            this.reportIfInvalid("SS-010", this.isValidEnumItem(node.flow, [ "implicit", "password", "application", "accessCode" ]), node,
+            this.reportIfInvalid("SS-010", OasValidationRuleUtil.isValidEnumItem(node.flow, [ "implicit", "password", "application", "accessCode" ]), node,
                 "Invalid property value.  The \"flow\" property value must be one of: implicit, password, application, accessCode (Found value: '" + node.flow + "')");
         }
     }

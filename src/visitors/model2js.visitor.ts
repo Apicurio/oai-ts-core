@@ -408,6 +408,10 @@ export class Oas20ModelToJSVisitor extends OasModelToJSVisitor implements IOas20
             consumes: node.consumes,
             produces: node.produces,
             paths: null,
+            definitions: null,
+            parameters: null,
+            responses: null,
+            securityDefinitions: null,
             security: null,
             tags: null,
             externalDocs: null
@@ -894,8 +898,8 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
             head : null,
             patch : null,
             trace: null,
-            parameters : null,
-            servers: null
+            servers: null,
+            parameters : null
         }
         parentJS[node.path()] = pathItem;
         this.updateIndex(node, pathItem);
@@ -914,11 +918,11 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
             externalDocs : null,
             operationId : node.operationId,
             parameters : null,
+            requestBody: null,
             responses : null,
+            callbacks: null,
             deprecated : node.deprecated,
             security : null,
-            requestBody: null,
-            callbacks: null,
             servers: null
         }
         parentJS[node.method()] = operation;
@@ -944,16 +948,17 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * @param node
      */
     private createHeaderObject(node: Oas30Header): any {
+        // TODO missing the "content" property!
         let header: any = {
             $ref: node.$ref,
             description : node.description,
             required : node.required,
-            schema : null,
-            allowEmptyValue : node.allowEmptyValue,
             deprecated : node.deprecated,
+            allowEmptyValue : node.allowEmptyValue,
             style : node.style,
             explode : node.explode,
             allowReserved : node.allowReserved,
+            schema : null,
             example : node.example,
             examples : null
         };
@@ -971,12 +976,12 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
             in : node.in,
             description : node.description,
             required : node.required,
-            schema : null,
-            allowEmptyValue : node.allowEmptyValue,
             deprecated : node.deprecated,
+            allowEmptyValue : node.allowEmptyValue,
             style : node.style,
             explode : node.explode,
             allowReserved : node.allowReserved,
+            schema : null,
             example : node.example,
             examples : null,
             content : null
@@ -1637,14 +1642,14 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
             properties: null,
             additionalProperties: null,
 
-            discriminator: node.discriminator,
             nullable: node.nullable,
+            discriminator: node.discriminator,
             readOnly: node.readOnly,
             writeOnly: node.writeOnly,
-            deprecated: node.deprecated,
             xml: null,
             externalDocs: null,
-            example: node.example
+            example: node.example,
+            deprecated: node.deprecated
         };
         if (typeof node.additionalProperties === "boolean") {
             schema.additionalProperties = node.additionalProperties;

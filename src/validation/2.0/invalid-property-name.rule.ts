@@ -24,9 +24,9 @@ import {Oas20SchemaDefinition} from "../../models/2.0/schema.model";
 import {Oas20PathItem} from "../../models/2.0/path-item.model";
 import {Oas20Example} from "../../models/2.0/example.model";
 import {Oas20Scopes} from "../../models/2.0/scopes.model";
-import {Oas20SecurityRequirement} from "../../models/2.0/security-requirement.model";
 import {Oas20Document} from "../../models/2.0/document.model";
 import {Oas20Operation} from "../../models/2.0/operation.model";
+import {OasValidationRuleUtil} from "../validation";
 
 /**
  * Implements the Invalid Property Name validation rule.  This rule is responsible
@@ -34,18 +34,6 @@ import {Oas20Operation} from "../../models/2.0/operation.model";
  * format defined by the specification.
  */
 export class Oas20InvalidPropertyNameValidationRule extends Oas20ValidationRule {
-
-    /**
-     * List of valid HTTP response status codes from:  https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
-     */
-    private static HTTP_STATUS_CODES: number[] = [
-        100, 101, 102,
-        200, 201, 202, 203, 204, 205, 206, 207, 208, 226,
-        300, 301, 302, 303, 304, 305, 306, 307, 308,
-        400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417,
-        421, 422, 423, 424, 426, 427, 428, 429, 431, 451,
-        500, 501, 502, 503, 504, 505, 506, 507, 508, 510, 511
-    ];
 
     /**
      * Reports a validation error if the property is not valid.
@@ -58,15 +46,6 @@ export class Oas20InvalidPropertyNameValidationRule extends Oas20ValidationRule 
         if (!isValid) {
             this.report(code, node, message);
         }
-    }
-
-    /**
-     * Returns true if the given status code is a valid HTTP response code.
-     * @param statusCode
-     * @return {boolean}
-     */
-    private isValidHttpCode(statusCode: string): boolean {
-        return Oas20InvalidPropertyNameValidationRule.HTTP_STATUS_CODES.indexOf(parseInt(statusCode)) != -1;
     }
 
     /**
@@ -95,7 +74,7 @@ export class Oas20InvalidPropertyNameValidationRule extends Oas20ValidationRule 
     public visitResponse(node: Oas20Response): void {
         // The "default" response will have a statusCode of "null"
         if (this.hasValue(node.statusCode())) {
-            this.reportIfInvalid("RES-003", this.isValidHttpCode(node.statusCode()), node,
+            this.reportIfInvalid("RES-003", OasValidationRuleUtil.isValidHttpCode(node.statusCode()), node,
                 "Response status code is not a valid HTTP response status code: " + node.statusCode());
         }
     }

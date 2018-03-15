@@ -29,6 +29,7 @@ import {Oas20Document} from "../../models/2.0/document.model";
 import {Oas20Definitions} from "../../models/2.0/definitions.model";
 import {Oas20ParametersDefinitions} from "../../models/2.0/parameters-definitions.model";
 import {IOasIndexedNode} from "../../models/inode.model";
+import {OasValidationRuleUtil} from "../validation";
 
 /**
  * Implements the Invalid Reference validation rule.  This rule is responsible
@@ -61,68 +62,30 @@ export class Oas20InvalidReferenceValidationRule extends Oas20ValidationRule {
         return this.hasValue(doc.securityDefinitions) && this.isDefined(doc.securityDefinitions.securityScheme(securityReqName));
     }
 
-    /**
-     * Resolves a reference from a relative position in the data model.
-     * @param $ref
-     * @param from
-     */
-    private resolveRef($ref: string, from: OasNode): OasNode {
-        // TODO implement a proper reference resolver including external file resolution: https://github.com/EricWittmann/oai-ts-core/issues/8
-        let split: string[] = $ref.split("/");
-        let cnode: OasNode = null;
-        split.forEach( seg => {
-            if (seg === "#") {
-                cnode = from.ownerDocument();
-            } else if (this.hasValue(cnode)) {
-                if (cnode["__instanceof_IOasIndexedNode"]) {
-                    cnode = cnode["getItem"](seg);
-                } else {
-                    cnode = cnode[seg];
-                }
-            }
-        });
-        return cnode;
-    }
-
-    /**
-     * Returns true only if the given reference can be resolved relative to the given document.  Examples
-     * of $ref values include:
-     *
-     * #/definitions/ExampleDefinition
-     * #/parameters/fooId
-     * #/responses/NotFoundResponse
-     *
-     * @param $ref
-     * @param oasDocument
-     */
-    private canResolveRef($ref: string, from: OasNode): boolean {
-        return this.hasValue(this.resolveRef($ref, from));
-    }
-
     public visitParameter(node: Oas20Parameter): void {
         if (this.hasValue(node.$ref)) {
-            this.reportIfInvalid("PAR-018", this.canResolveRef(node.$ref, node), node,
+            this.reportIfInvalid("PAR-018", OasValidationRuleUtil.canResolveRef(node.$ref, node), node,
                 "The \"$ref\" property must reference a valid Parameter Definition: " + node.$ref);
         }
     }
 
     public visitPathItem(node: Oas20PathItem): void {
         if (this.hasValue(node.$ref)) {
-            this.reportIfInvalid("PATH-001", this.canResolveRef(node.$ref, node), node,
+            this.reportIfInvalid("PATH-001", OasValidationRuleUtil.canResolveRef(node.$ref, node), node,
                 "Reference to external path is either invalid or not found: " + node.$ref);
         }
     }
 
     public visitResponse(node: Oas20Response): void {
         if (this.hasValue(node.$ref)) {
-            this.reportIfInvalid("RES-002", this.canResolveRef(node.$ref, node), node,
+            this.reportIfInvalid("RES-002", OasValidationRuleUtil.canResolveRef(node.$ref, node), node,
                 "The \"$ref\" property must reference a valid Response Definition: " + node.$ref);
         }
     }
 
     public visitSchema(node: Oas20Schema): void {
         if (this.hasValue(node.$ref)) {
-            this.reportIfInvalid("SCH-001", this.canResolveRef(node.$ref, node), node,
+            this.reportIfInvalid("SCH-001", OasValidationRuleUtil.canResolveRef(node.$ref, node), node,
                 "The \"$ref\" property must reference a valid Definition: " + node.$ref);
         }
     }
