@@ -21,6 +21,7 @@ import {Oas20NodeVisitorAdapter} from "../visitors/visitor.base";
 import {Oas20Schema} from "../models/2.0/schema.model";
 import {Oas20Items} from "../models/2.0/items.model";
 import {Oas20InvalidPropertyNameValidationRule} from "./2.0/invalid-property-name.rule";
+import {Oas30Schema} from "../models/3.0/schema.model";
 
 /**
  * Interface used by validation rules to report errors.
@@ -82,13 +83,13 @@ export class OasValidationRuleUtil {
     /**
      * List of valid HTTP response status codes from:  https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
      */
-    private static HTTP_STATUS_CODES: number[] = [
-        100, 101, 102,
-        200, 201, 202, 203, 204, 205, 206, 207, 208, 226,
-        300, 301, 302, 303, 304, 305, 306, 307, 308,
-        400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417,
-        421, 422, 423, 424, 426, 427, 428, 429, 431, 451,
-        500, 501, 502, 503, 504, 505, 506, 507, 508, 510, 511
+    private static HTTP_STATUS_CODES: string[] = [
+        "100", "101", "102", "1XX", "10X",
+        "200", "201", "202", "203", "204", "205", "206", "207", "208", "226", "2XX", "20X", "21X", "22X",
+        "300", "301", "302", "303", "304", "305", "306", "307", "308", "3XX", "30X",
+        "400", "401", "402", "403", "404", "405", "406", "407", "408", "409", "410", "411", "412", "413", "414", "415", "416", "417", "4XX", "40X", "41X",
+        "421", "422", "423", "424", "426", "427", "428", "429", "431", "451", "42X", "43X", "44X", "45X",
+        "500", "501", "502", "503", "504", "505", "506", "507", "508", "510", "511", "5XX", "50X", "51X"
     ];
 
     /**
@@ -240,7 +241,7 @@ export class OasValidationRuleUtil {
      * @param value
      * @param node
      */
-    public static isValidForType(value: any, node: Oas20Items | Oas20Schema): boolean {
+    public static isValidForType(value: any, node: Oas20Items | Oas20Schema | Oas30Schema): boolean {
         // TODO validate the value against the schema
         return true;
     }
@@ -251,7 +252,7 @@ export class OasValidationRuleUtil {
      * @return {boolean}
      */
     public static isValidHttpCode(statusCode: string): boolean {
-        return OasValidationRuleUtil.HTTP_STATUS_CODES.indexOf(parseInt(statusCode)) != -1;
+        return OasValidationRuleUtil.HTTP_STATUS_CODES.indexOf(statusCode) != -1;
     }
 
 }

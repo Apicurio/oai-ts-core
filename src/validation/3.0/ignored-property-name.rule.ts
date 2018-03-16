@@ -27,7 +27,7 @@ export class Oas30IgnoredPropertyNameValidationRule extends Oas30ValidationRule 
     
     public visitHeader(node: Oas30Header): void {
         if (node.headerName().toLowerCase() === "content-type") {
-            this.report("INF-3-003", node, `The "Content-Type" header will be ignored.`);
+            this.report("HEAD-3-011", node, `The "Content-Type" header will be ignored.`);
         }
     }
     public visitHeaderDefinition(node: Oas30HeaderDefinition): void {

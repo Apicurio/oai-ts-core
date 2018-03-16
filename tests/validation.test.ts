@@ -279,4 +279,43 @@ describe("Validation (3.0)", () => {
         expect(actual).toEqual(expected);
     });
 
+    it("Ignored Property Name", () => {
+        let json: any = readJSON('tests/fixtures/validation/3.0/ignored-property-name.json');
+        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+
+        let node: OasNode = document;
+        let errors: OasValidationError[] = library.validate(node);
+
+        let actual: string = errorsAsString(errors);
+        let expected: string =
+`[HEAD-3-011] {/paths[/pets]/get/responses[200]/content[application/json]/encoding[id][Content-Type]} :: The "Content-Type" header will be ignored.`;
+
+        expect(actual).toEqual(expected);
+    });
+
+    it("Invalid Property Name", () => {
+        let json: any = readJSON('tests/fixtures/validation/3.0/invalid-property-name.json');
+        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+
+        let node: OasNode = document;
+        let errors: OasValidationError[] = library.validate(node);
+
+        let actual: string = errorsAsString(errors);
+        let expected: string =
+`[RES-3-001] {/paths[/pets]/get/responses[Success]} :: Response status code "Success" is not a valid HTTP response status code.
+[PATH-3-004] {/paths[pets/{id}]} :: The path must start with a '/' character.
+[COMP-3-001] {/components/schemas[Pet+Foo]} :: The Schema Definition name must match the regular expression: ^[a-zA-Z0-9\\.\\-_]+$
+[COMP-3-003] {/components/responses[The Response]} :: The Response Definition name must match the regular expression: ^[a-zA-Z0-9\\.\\-_]+$
+[COMP-3-002] {/components/parameters[Some$Parameter]} :: The Parameter Definition name must match the regular expression: ^[a-zA-Z0-9\\.\\-_]+$
+[COMP-3-005] {/components/examples[Example|1]} :: The Example Definition name must match the regular expression: ^[a-zA-Z0-9\\.\\-_]+$
+[COMP-3-006] {/components/requestBodies[Request Body]} :: The Request Body Definition name must match the regular expression: ^[a-zA-Z0-9\\.\\-_]+$
+[COMP-3-007] {/components/headers[[Header]]} :: The Header Definition name must match the regular expression: ^[a-zA-Z0-9\\.\\-_]+$
+[COMP-3-004] {/components/securitySchemes[Security%Scheme]} :: The Security Scheme name must match the regular expression: ^[a-zA-Z0-9\\.\\-_]+$
+[COMP-3-008] {/components/links[Link*Twelve]} :: The Link Definition name must match the regular expression: ^[a-zA-Z0-9\\.\\-_]+$
+[COMP-3-009] {/components/callbacks[Invalid Callback Name]} :: The Callback Definition name must match the regular expression: ^[a-zA-Z0-9\\.\\-_]+$
+[SREQ-3-001] {/security[1]} :: Security Requirement "MissingAuth" does not correspond to a declared Security Scheme.`;
+
+        expect(actual).toEqual(expected);
+    });
+
 });
