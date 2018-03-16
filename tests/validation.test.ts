@@ -22,6 +22,7 @@ import {Oas20Document} from "../src/models/2.0/document.model";
 import {OasLibraryUtils} from "../src/library.utils";
 import {OasNode} from "../src/models/node.model";
 import {OasValidationError} from "../src/validation/validation";
+import {Oas30Document} from "../src/models/3.0/document.model";
 
 describe("Validation (2.0)", () => {
 
@@ -206,6 +207,8 @@ describe("Validation (2.0)", () => {
 
         let actual: string = errorsAsString(errors);
         let expected: string = `[PATH-001] {/paths[/pet]/post} :: An operation may not have both a "body" and a "formData" parameter.`;
+
+        expect(actual).toEqual(expected);
     });
 
     it("Invalid Reference (All)", () => {
@@ -229,3 +232,51 @@ describe("Validation (2.0)", () => {
 
 });
 
+
+
+
+describe("Validation (3.0)", () => {
+
+    let library: OasLibraryUtils;
+
+    function errorsAsString(errors: OasValidationError[]): string {
+        let es: string[] = [];
+        for (let error of errors) {
+            es.push("[" + error.errorCode + "] {" + error.nodePath + "} :: " + error.message);
+        }
+        return es.join("\n");
+    };
+
+    beforeEach(() => {
+        library = new OasLibraryUtils();
+    });
+
+    it("Valid Pet Store Document", () => {
+        let json: any = readJSON('tests/fixtures/validation/3.0/valid-pet-store.json');
+        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+
+        let node: OasNode = document;
+        let errors: OasValidationError[] = library.validate(node);
+
+        expect(errors).toEqual([]);
+    });
+
+    it("Invalid Property Format", () => {
+        let json: any = readJSON('tests/fixtures/validation/3.0/invalid-property-format.json');
+        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+
+        let node: OasNode = document;
+        let errors: OasValidationError[] = library.validate(node);
+
+        let actual: string = errorsAsString(errors);
+        let expected: string =
+`[CTC-3-004] {/info} :: The "termsOfService" property must be a valid URL.
+[CTC-3-001] {/info/contact} :: The "url" property must be a valid URL.
+[CTC-3-002] {/info/contact} :: The "email" property must be a valid email address.
+[LIC-3-002] {/info/license} :: The "url" property must be a valid URL.
+[SRV-3-002] {/servers[0]} :: The "url" property must be a valid URL.`;
+
+        expect(actual).toEqual(expected);
+    });
+
+});

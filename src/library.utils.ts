@@ -24,7 +24,7 @@ import {
 } from "./readers/js2model.reader";
 import {Oas20ModelToJSVisitor, Oas30ModelToJSVisitor} from "./visitors/model2js.visitor";
 import {OasVisitorUtil, OasTraverserDirection} from "./visitors/visitor.utils";
-import {Oas20ValidationVisitor} from "./validation/validation.visitor";
+import {Oas20ValidationVisitor, Oas30ValidationVisitor} from "./validation/validation.visitor";
 import {OasValidationError} from "./validation/validation";
 import {OasNodePath} from "./models/node-path";
 import {Oas20NodePathVisitor, Oas30NodePathVisitor} from "./visitors/path.visitor";
@@ -126,8 +126,13 @@ export class OasLibraryUtils {
             }
             return visitor.getValidationErrors();
         } else if (node.ownerDocument().is3xDocument()) {
-            // TODO implement validation for OpenAPI 3.x
-            throw new Error("Validation rules not yet implemented for OpenAPI 3.0.x!");
+            let visitor: Oas30ValidationVisitor = new Oas30ValidationVisitor();
+            if (recursive) {
+                OasVisitorUtil.visitTree(node, visitor);
+            } else {
+                node.accept(visitor);
+            }
+            return visitor.getValidationErrors();
         } else {
             throw new Error("OAS version " + node.ownerDocument().getSpecVersion() + " not supported.");
         }

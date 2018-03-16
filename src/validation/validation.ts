@@ -140,6 +140,16 @@ export class OasValidationRuleUtil {
     }
 
     /**
+     * Returns true only if the given value is valid CommonMark style markup.
+     * @param propertyValue
+     * @return {boolean}
+     */
+    public static isValidCommonMark(propertyValue: string): boolean {
+        // TODO implement a regexp to test for a valid CommonMark string
+        return true;
+    }
+
+    /**
      * Returns true only if the given value is a valid email address.
      * @param propertyValue
      * @return {boolean}
