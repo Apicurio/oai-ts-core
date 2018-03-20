@@ -114,6 +114,7 @@ import {Oas30Responses} from "../models/3.0/responses.model";
 import {Oas30XML} from "../models/3.0/xml.model";
 import {Oas30LinkRequestBodyExpression} from "../models/3.0/link-request-body-expression.model";
 import {Oas30Discriminator} from "../models/3.0/discriminator.model";
+import {OasLibraryUtils} from "../library.utils";
 
 
 /**
@@ -2036,7 +2037,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         if (this.isDefined(discriminator)) {
             let discriminatorModel: Oas30Discriminator = schemaModel.createDiscriminator();
             this.readDiscriminator(discriminator, discriminatorModel);
-            schemaModel.discriminator = discriminator;
+            schemaModel.discriminator = discriminatorModel;
         }
         if (this.isDefined(oneOf)) {
             let schemaModels: OasSchema[] = [];
@@ -2120,5 +2121,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
 
         if (this.isDefined(propertyName)) { discriminatorModel.propertyName = propertyName; }
         if (this.isDefined(mapping)) { discriminatorModel.mapping = mapping; }
+
+        this.readExtensions(discriminator, discriminatorModel);
     }
 }

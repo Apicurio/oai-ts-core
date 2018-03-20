@@ -54,7 +54,7 @@
           "200": {
             "description": "pet response",
             "content": {
-              "application/json": {
+              "multipart/form-data": {
                 "schema": {
                   "type": "object",
                   "properties": {

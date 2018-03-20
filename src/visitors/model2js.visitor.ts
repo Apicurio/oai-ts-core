@@ -1643,7 +1643,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
             additionalProperties: null,
 
             nullable: node.nullable,
-            discriminator: node.discriminator,
+            discriminator: null,
             readOnly: node.readOnly,
             writeOnly: node.writeOnly,
             xml: null,

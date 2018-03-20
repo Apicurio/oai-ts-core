@@ -50,19 +50,6 @@ import {Oas30Link, Oas30LinkDefinition} from "../../models/3.0/link.model";
  */
 export class Oas30InvalidPropertyFormatValidationRule extends Oas30ValidationRule {
 
-    /**
-     * Reports a validation error if the property is not valid.
-     * @param code
-     * @param isValid
-     * @param node
-     * @param message
-     */
-    private reportIfInvalid(code: string, isValid: boolean, node: OasNode, message: string): void {
-        if (!isValid) {
-            this.report(code, node, message);
-        }
-    }
-
     public visitInfo(node: Oas30Info): void {
         if (this.hasValue(node.description)) {
             this.reportIfInvalid("INF-3-003", OasValidationRuleUtil.isValidCommonMark(node.description), node, `The "description" property must be valid CommonMark syntax (or plain text).`);
@@ -179,7 +166,7 @@ export class Oas30InvalidPropertyFormatValidationRule extends Oas30ValidationRul
 
     public visitHeader(node: Oas30Header): void {
         if (this.hasValue(node.description)) {
-            this.reportIfInvalid("HEAD-3-003", OasValidationRuleUtil.isValidCommonMark(node.description), node, `The "description" property must be valid CommonMark syntax (or plain text).`);
+            this.reportIfInvalid("HEAD-3-002", OasValidationRuleUtil.isValidCommonMark(node.description), node, `The "description" property must be valid CommonMark syntax (or plain text).`);
         }
     }
     public visitHeaderDefinition(node: Oas30HeaderDefinition): void {
@@ -206,7 +193,7 @@ export class Oas30InvalidPropertyFormatValidationRule extends Oas30ValidationRul
             this.reportIfInvalid("SRV-3-003", OasValidationRuleUtil.isValidCommonMark(node.description), node, `The "description" property must be valid CommonMark syntax (or plain text).`);
         }
         if (this.hasValue(node.url)) {
-            this.reportIfInvalid("SRV-3-002", OasValidationRuleUtil.isValidUrl(node.url), node, `The "url" property must be a valid URL.`);
+            this.reportIfInvalid("SRV-3-002", OasValidationRuleUtil.isValidUrlTemplate(node.url), node, `The "url" property must be a valid URL.`);
         }
     }
 

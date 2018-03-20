@@ -23,6 +23,12 @@ import {OasLibraryUtils} from "../src/library.utils";
 import {Oas30Document} from "../src/models/3.0/document.model";
 
 
+export interface TestSpec {
+    name: string;
+    test: string;
+    debug?: boolean;
+}
+
 /**
  * This function recursively sorts all objects by property name.  This is so that it is
  * easier to compare two objects.
@@ -46,7 +52,7 @@ function sortObj(original: any): any {
  */
 describe("Full I/O (2.0)", () => {
 
-    let TESTS: any = [
+    let TESTS: TestSpec[] = [
         { name: "Simple (Easy 2.0 spec)",               test: "tests/fixtures/full-io/2.0/simple/simplest.json" },
         { name: "Simple (Info)",                        test: "tests/fixtures/full-io/2.0/simple/simple-info.json" },
         { name: "Simple (Info + extensions)",           test: "tests/fixtures/full-io/2.0/simple/simple-info-extensions.json" },
@@ -134,7 +140,7 @@ describe("Full I/O (2.0)", () => {
  */
 describe("Full I/O (3.0)", () => {
 
-    let TESTS: any = [
+    let TESTS: TestSpec[] = [
         { name: "Simple (Easy 3.0 spec)",               test: "tests/fixtures/full-io/3.0/simple/simplest.json" },
         { name: "Simple (Info)",                        test: "tests/fixtures/full-io/3.0/simple/simple-info.json" },
         { name: "Simple (Info + extensions)",           test: "tests/fixtures/full-io/3.0/simple/simple-info-extensions.json" },

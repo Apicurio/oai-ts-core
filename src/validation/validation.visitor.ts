@@ -31,6 +31,7 @@ import {Oas20InvalidReferenceValidationRule} from "./2.0/invalid-reference.rule"
 import {Oas30InvalidPropertyFormatValidationRule} from "./3.0/invalid-property-format.rule";
 import {Oas30IgnoredPropertyNameValidationRule} from "./3.0/ignored-property-name.rule";
 import {Oas30InvalidPropertyNameValidationRule} from "./3.0/invalid-property-name.rule";
+import {Oas30InvalidPropertyValueValidationRule} from "./3.0/invalid-property-value.rule";
 
 /**
  * Visitor used to validate a OpenAPI document (or a subsection of the document).  The result
@@ -116,7 +117,8 @@ export class Oas30ValidationVisitor extends Oas30CompositeVisitor implements IOa
         this.addVisitors([
             new Oas30InvalidPropertyFormatValidationRule(this),
             new Oas30IgnoredPropertyNameValidationRule(this),
-            new Oas30InvalidPropertyNameValidationRule(this)
+            new Oas30InvalidPropertyNameValidationRule(this),
+            new Oas30InvalidPropertyValueValidationRule(this)
         ]);
     }
 

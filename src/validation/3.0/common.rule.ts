@@ -32,12 +32,45 @@ export abstract class Oas30ValidationRule extends Oas30NodeVisitorAdapter {
     }
 
     /**
+     * Reports a validation error if the property is not valid.
+     * @param code
+     * @param condition
+     * @param node
+     * @param message
+     */
+    protected reportIf(code: string, condition: boolean, node: OasNode, message: string): void {
+        if (condition) {
+            this.report(code, node, message);
+        }
+    }
+
+    /**
+     * Reports a validation error if the property is not valid.
+     * @param code
+     * @param isValid
+     * @param node
+     * @param message
+     */
+    protected reportIfInvalid(code: string, isValid: boolean, node: OasNode, message: string): void {
+        this.reportIf(code, !isValid, node, message);
+    }
+
+    /**
      * Check if a property was defined.
      * @param propertyValue
      * @return {boolean}
      */
     protected isDefined(propertyValue: any): boolean {
         return OasValidationRuleUtil.isDefined(propertyValue);
+    }
+
+    /**
+     * Check if a value is either null or undefined.
+     * @param value
+     * @return {boolean}
+     */
+    protected isNullOrUndefined(value: any): boolean {
+        return value === null || value === undefined;
     }
 
     /**

@@ -28,8 +28,10 @@ import {Oas30PathItem} from "../../models/3.0/path-item.model";
 import {Oas30Response, Oas30ResponseDefinition} from "../../models/3.0/response.model";
 import {Oas30Document} from "../../models/3.0/document.model";
 import {Oas30SecurityScheme} from "../../models/3.0/security-scheme.model";
-import {Oas30SchemaDefinition} from "../../models/3.0/schema.model";
+import {Oas30Schema, Oas30SchemaDefinition} from "../../models/3.0/schema.model";
 import {Oas30ParameterDefinition} from "../../models/3.0/parameter.model";
+import {Oas30Encoding} from "../../models/3.0/encoding.model";
+import {Oas30MediaType} from "../../models/3.0/media-type.model";
 
 /**
  * Implements the Invalid Property Name validation rule.  This rule is responsible
@@ -39,19 +41,6 @@ import {Oas30ParameterDefinition} from "../../models/3.0/parameter.model";
 export class Oas30InvalidPropertyNameValidationRule extends Oas30ValidationRule {
 
     /**
-     * Reports a validation error if the property is not valid.
-     * @param code
-     * @param isValid
-     * @param node
-     * @param message
-     */
-    private reportIfInvalid(code: string, isValid: boolean, node: OasNode, message: string): void {
-        if (!isValid) {
-            this.report(code, node, message);
-        }
-    }
-
-    /**
      * Returns true if the definition name is valid.
      * @param name
      * @return {boolean}
@@ -59,6 +48,19 @@ export class Oas30InvalidPropertyNameValidationRule extends Oas30ValidationRule 
     private static isValidDefinitionName(name: string): boolean {
         let definitionNamePattern: RegExp = /^[a-zA-Z0-9\.\-_]+$/;
         return definitionNamePattern.test(name);
+    }
+
+    /**
+     * Returns true if the given schema has a property defined with the given name.
+     * @param {Oas30Schema} schema
+     * @param {string} propertyName
+     * @return {boolean}
+     */
+    private isValidSchemaProperty(schema: Oas30Schema, propertyName: string): boolean {
+        if (this.isNullOrUndefined(schema)) {
+            return false;
+        }
+        return !this.isNullOrUndefined(schema.property(propertyName));
     }
 
     public visitPathItem(node: Oas30PathItem): void {
@@ -126,6 +128,14 @@ export class Oas30InvalidPropertyNameValidationRule extends Oas30ValidationRule 
     public visitCallbackDefinition(node: Oas30CallbackDefinition): void {
         this.reportIfInvalid("COMP-3-009", Oas30InvalidPropertyNameValidationRule.isValidDefinitionName(node.name()), node,
             `The Callback Definition name must match the regular expression: ^[a-zA-Z0-9\\.\\-_]+$`);
+    }
+
+    public visitEncoding(node: Oas30Encoding): void {
+        let name: string = node.name();
+        let schema: Oas30Schema = (node.parent() as Oas30MediaType).schema;
+
+        this.reportIfInvalid("ENC-3-006", this.isValidSchemaProperty(schema, name), node,
+            `The encoding property "${name}" cannot be found in the associated schema.`);
     }
 
 }

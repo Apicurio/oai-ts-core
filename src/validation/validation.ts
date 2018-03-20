@@ -119,6 +119,7 @@ export class OasValidationRuleUtil {
         }
         return true;
     }
+
     /**
      * Returns true only if the given value is a valid URL.
      * @param propertyValue
@@ -128,6 +129,16 @@ export class OasValidationRuleUtil {
         let urlRegex: string = '^(?!mailto:)(?:(?:http|https|ftp)://)(?:\\S+(?::\\S*)?@)?(?:(?:(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}(?:\\.(?:[0-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))|(?:(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)(?:\\.(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)*(?:\\.(?:[a-z\\u00a1-\\uffff]{2,})))|localhost)(?::\\d{2,5})?(?:(/|\\?|#)[^\\s]*)?$';
         let url: RegExp = new RegExp(urlRegex, 'i');
         return propertyValue.length < 2083 && url.test(propertyValue);
+    }
+
+    /**
+     * Returns true only if the given value is a valid URL template.
+     * @param {string} propertyValue
+     * @return {boolean}
+     */
+    public static isValidUrlTemplate(propertyValue: string): boolean {
+        // TODO is there a regular expression we can use to validate a URL template??
+        return true;
     }
 
     /**

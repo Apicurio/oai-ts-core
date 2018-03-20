@@ -273,8 +273,7 @@ describe("Validation (3.0)", () => {
 `[CTC-3-004] {/info} :: The "termsOfService" property must be a valid URL.
 [CTC-3-001] {/info/contact} :: The "url" property must be a valid URL.
 [CTC-3-002] {/info/contact} :: The "email" property must be a valid email address.
-[LIC-3-002] {/info/license} :: The "url" property must be a valid URL.
-[SRV-3-002] {/servers[0]} :: The "url" property must be a valid URL.`;
+[LIC-3-002] {/info/license} :: The "url" property must be a valid URL.`;
 
         expect(actual).toEqual(expected);
     });
@@ -288,7 +287,7 @@ describe("Validation (3.0)", () => {
 
         let actual: string = errorsAsString(errors);
         let expected: string =
-`[HEAD-3-011] {/paths[/pets]/get/responses[200]/content[application/json]/encoding[id][Content-Type]} :: The "Content-Type" header will be ignored.`;
+`[HEAD-3-001] {/paths[/pets]/get/responses[200]/content[multipart/form-data]/encoding[id][Content-Type]} :: The "Content-Type" header will be ignored.`;
 
         expect(actual).toEqual(expected);
     });
@@ -302,7 +301,8 @@ describe("Validation (3.0)", () => {
 
         let actual: string = errorsAsString(errors);
         let expected: string =
-`[RES-3-001] {/paths[/pets]/get/responses[Success]} :: Response status code "Success" is not a valid HTTP response status code.
+`[ENC-3-006] {/paths[/enc-3-006]/post/requestBody/content[multipart/mixed]/encoding[missingProperty]} :: The encoding property "missingProperty" cannot be found in the associated schema.
+[RES-3-001] {/paths[/pets]/get/responses[Success]} :: Response status code "Success" is not a valid HTTP response status code.
 [PATH-3-004] {/paths[pets/{id}]} :: The path must start with a '/' character.
 [COMP-3-001] {/components/schemas[Pet+Foo]} :: The Schema Definition name must match the regular expression: ^[a-zA-Z0-9\\.\\-_]+$
 [COMP-3-003] {/components/responses[The Response]} :: The Response Definition name must match the regular expression: ^[a-zA-Z0-9\\.\\-_]+$
@@ -314,6 +314,50 @@ describe("Validation (3.0)", () => {
 [COMP-3-008] {/components/links[Link*Twelve]} :: The Link Definition name must match the regular expression: ^[a-zA-Z0-9\\.\\-_]+$
 [COMP-3-009] {/components/callbacks[Invalid Callback Name]} :: The Callback Definition name must match the regular expression: ^[a-zA-Z0-9\\.\\-_]+$
 [SREQ-3-001] {/security[1]} :: Security Requirement "MissingAuth" does not correspond to a declared Security Scheme.`;
+
+        expect(actual).toEqual(expected);
+    });
+
+    it("Invalid Property Value", () => {
+        let json: any = readJSON('tests/fixtures/validation/3.0/invalid-property-value.json');
+        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+
+        let node: OasNode = document;
+        let errors: OasValidationError[] = library.validate(node);
+
+        let actual: string = errorsAsString(errors);
+        let expected: string =
+`[SVAR-3-002] {/servers[0]/variables[missingProperty]} :: The server variable "missingProperty" is not found in the server url template.
+[ENC-3-001] {/paths[/enc-3-001]/post/requestBody/content[application/x-www-form-urlencoded]/encoding[profileImage]} :: The "headers" property is only allowed for "multipart" request body media type encodings.  Found media type "application/x-www-form-urlencoded" instead.
+[ENC-3-002] {/paths[/enc-3-002]/post/requestBody/content[multipart/form-data]/encoding[historyMetadata]} :: The "style" property is only allowed for "application/x-www-form-urlencoded" request body media type encodings.  Found media type "multipart/form-data" instead.
+[ENC-3-003] {/paths[/enc-3-003]/post/requestBody/content[multipart/form-data]/encoding[historyMetadata]} :: The "explode" property is only allowed for "application/x-www-form-urlencoded" request body media type encodings.
+[ENC-3-004] {/paths[/enc-3-004]/post/requestBody/content[multipart/form-data]/encoding[historyMetadata]} :: The "allowReserved" property is only allowed for "application/x-www-form-urlencoded" request body media type encodings.
+[ENC-3-005] {/paths[/enc-3-005]/post/requestBody/content[application/x-www-form-urlencoded]/encoding[historyMetadata]} :: The "style" property value must be one of: ["form", "spaceDelimited", "pipeDelimited", "deepObject"]  Found value "matrix".
+[HEAD-3-003] {/paths[/head-3-003]/post/requestBody/content[multipart/form-data]/encoding[historyMetadata][X-Header-1]} :: The "style" property value must be "simple".  Found value "form".
+[LINK-3-002] {/paths[/link-3-002]/get/responses[200]/links[address]} :: The "operationId" property must refer to an existing Operation.  Cannot find operation with ID "getUserAddress".
+[MT-3-003] {/paths[/mt-3-003]/post/requestBody/content[application/json]} :: The "encoding" property is only allowed for "multipart" and "application/x-www-form-urlencoded" request body media types.  Found "application/json" instead.
+[OP-3-003] {/paths[/op-3-003]/get} :: The "requestBody" property is only supported for POST, PUT, and OPTIONS operations.
+[OP-3-005] {/paths[/op-3-005]/get} :: There must be at least one Response documented.
+[PAR-3-002] {/paths[/par-3-002]/parameters[0]} :: The "in" property value must be one of: ["path", "query", "header", "cookie"] (Found value: 'side')
+[PAR-3-006] {/paths[/par-3-006/{id}]/parameters[0]} :: The "required" property is required for "path" parameters, and must have a value of "true".
+[PAR-3-007] {/paths[/par-3-007/{id}]/parameters[0]} :: The "allowEmptyValue" property is only allowed for "query" parameters.
+[PAR-3-009] {/paths[/par-3-009]/parameters[0]} :: The "style" property value must be one of: ["matrix", "label", "form", "simple", "spaceDelimited", "pipeDelimited", "deepObject"] (Found value "shallowObject").
+[PAR-3-011] {/paths[/par-3-009]/parameters[0]} :: For "query" parameters, the "style" property value must be one of: ["form", "spaceDelimited", "pipeDelimited", "deepObject"] (Found value "shallowObject").
+[PAR-3-010] {/paths[/par-3-010/{id}]/parameters[0]} :: For "path" parameters, the "style" property value must be one of: ["matrix", "label", "simple"]  (Found value "form").
+[PAR-3-011] {/paths[/par-3-011]/parameters[0]} :: For "query" parameters, the "style" property value must be one of: ["form", "spaceDelimited", "pipeDelimited", "deepObject"] (Found value "label").
+[PAR-3-012] {/paths[/par-3-012]/parameters[0]} :: For "cookie" parameters, the "style" property value must be "form". (Found value "label")
+[PAR-3-013] {/paths[/par-3-013]/parameters[0]} :: For "header" parameters, the "style" property value must be "simple". (Found value "label").
+[PAR-3-014] {/paths[/par-3-014]/parameters[0]} :: The "allowReserved" property is only allowed for "query" parameters.
+[PAR-3-016] {/paths[/par-3-016]/parameters[0]} :: The "content" property must contain at most one entry.
+[PAR-3-018] {/paths[/par-3-018/{id}/{sub}]/parameters[1]} :: The "name" property value for a 'path' style parameter must match one of the items in the path template.  Invalid path property name found: "missing"
+[PAR-3-019] {/paths[/par-3-019]/parameters[0]} :: Header parameters "Accept", "Content-Type", and "Authorization" are ignored.
+[SCH-3-001] {/paths[/sch-3-001]/get/responses[200]/content[application/json]/schema/discriminator} :: The "discriminator" property is only valid when using one of: ["oneOf", "anyOf", "allOf"]
+[SREQ-3-002] {/paths[/sreq-3-002]/get/security[0]} :: The value for security requirement "api_key" must be an empty array (required for Security Schemes of type other than "oauth2" and "openIdConnect").
+[XML-3-002] {/components/schemas[xml-3-002]/properties[name]/xml} :: The "wrapped" property is only valid for 'array' types.
+[SS-3-008] {/components/securitySchemes[ss-3-008]} :: The "type" property value must be one of: ["apiKey", "http", "oauth2", "openIdConnect"] (Found value: 'invalid')
+[SS-3-010] {/components/securitySchemes[ss-3-010]} :: The "in" property value must be one of: ["query", "header", "cookie"] (Found value: 'body')
+[SS-3-011] {/components/securitySchemes[ss-3-011]} :: The "bearerFormat" property is only valid for "http" security schemes of type "bearer".
+[SS-3-013] {/components/securitySchemes[ss-3-013]} :: The "scheme" property value must be one of: ["basic", "bearer", "digest", "hoba", "mutual", "negotiate", "oauth", "vapid", "scram-sha-1", "scram-sha-256"] (Found value: 'leveraged')`;
 
         expect(actual).toEqual(expected);
     });
