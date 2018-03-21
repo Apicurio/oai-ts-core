@@ -362,4 +362,27 @@ describe("Validation (3.0)", () => {
         expect(actual).toEqual(expected);
     });
 
+    it("Invalid Reference", () => {
+        let json: any = readJSON('tests/fixtures/validation/3.0/invalid-reference.json');
+        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+
+        let node: OasNode = document;
+        let errors: OasValidationError[] = library.validate(node);
+
+        let actual: string = errorsAsString(errors);
+        let expected: string =
+`[CALL-3-001] {/paths[/call-3-001]/get/callbacks[myRefCallback]} :: The "$ref" property value "#/components/callbacks/MissingCallback" must reference a valid Callback.
+[EX-3-003] {/paths[/ex-3-003]/put/requestBody/content[application/json]/examples[bar]} :: The "$ref" property value "#/components/examples/MissingExample" must reference a valid Example.
+[HEAD-3-005] {/paths[/head-3-005]/get/responses[200][X-Rate-Limit-Reset]} :: The "$ref" property value "#/components/headers/MissingHeader" must reference a valid Header.
+[LINK-3-003] {/paths[/link-3-003]/get/responses[200]/links[MissingLink]} :: The "operationRef" property value "undefined" must reference a valid Link.
+[LINK-3-005] {/paths[/link-3-005]/get/responses[200]/links[MissingLink]} :: The "$ref" property value "#/components/links/MissingLink" must reference a valid Link.
+[PAR-3-017] {/paths[/par-3-017]/parameters[1]} :: The "$ref" property value "#/components/parameters/MissingParameter" must reference a valid Parameter.
+[RB-3-003] {/paths[/rb-3-003]/post/requestBody} :: The "$ref" property value "#/components/requestBodies/MissingRequestBody" must reference a valid Request Body.
+[RES-3-004] {/paths[/res-3-004]/get/responses[200]} :: The "$ref" property value "#/components/responses/MissingResponse" must reference a valid Response.
+[SCH-3-002] {/paths[/sch-3-002]/parameters[0]/schema} :: The "$ref" property value "#/components/schemas/MissingSchema" must reference a valid Schema.
+[SS-3-012] {/components/securitySchemes[BASIC]} :: The "$ref" property value "#/components/securitySchemes/MissingSecurityScheme" must reference a valid Security Scheme.`;
+
+        expect(actual).toEqual(expected);
+    });
+
 });

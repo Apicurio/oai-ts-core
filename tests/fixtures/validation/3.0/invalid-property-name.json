@@ -264,6 +264,9 @@
           }
         ]
       },
+      "Pet": {
+        "type": "string"
+      },
       "NewPet": {
         "required": [
           "name"

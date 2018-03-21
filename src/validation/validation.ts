@@ -231,6 +231,8 @@ export class OasValidationRuleUtil {
      * @param oasDocument
      */
     public static canResolveRef($ref: string, from: OasNode): boolean {
+        // Don't try to resolve e.g. external references.
+        if ($ref.indexOf('#/') !== 0) { return true; }
         return this.hasValue(OasValidationRuleUtil.resolveRef($ref, from));
     }
 

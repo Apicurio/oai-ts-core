@@ -1,0 +1,165 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Invalid Reference Test"
+  },
+  "paths": {
+    "/call-3-001": {
+      "get": {
+        "callbacks": {
+          "myRefCallback": {
+            "$ref": "#/components/callbacks/MissingCallback"
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success!"
+          }
+        }
+      }
+    },
+    "/ex-3-003": {
+      "put": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string"
+              },
+              "examples": {
+                "foo": {
+                  "summary": "A foo example",
+                  "value": {
+                    "foo": "bar"
+                  }
+                },
+                "bar": {
+                  "$ref": "#/components/examples/MissingExample"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success!"
+          }
+        }
+      }
+    },
+    "/head-3-005": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success response.",
+            "headers": {
+              "X-Rate-Limit-Limit": {
+                "description": "The number of allowed requests in the current period",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-Rate-Limit-Reset": {
+                "$ref": "#/components/headers/MissingHeader"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/link-3-003": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success response.",
+            "links": {
+              "MissingLink": {
+                "operationRef": "#/paths/links/MissingLink"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/link-3-005": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success response.",
+            "links": {
+              "MissingLink": {
+                "$ref": "#/components/links/MissingLink"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/par-3-017": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "query",
+          "description": "ID of the object to fetch",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "$ref": "#/components/parameters/MissingParameter"
+        }
+      ]
+    },
+    "/rb-3-003": {
+      "post": {
+        "requestBody": {
+          "$ref": "#/components/requestBodies/MissingRequestBody"
+        },
+        "responses": {
+          "200": {
+            "description": "Success!"
+          }
+        }
+      }
+    },
+    "/res-3-004": {
+      "get": {
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/MissingResponse"
+          }
+        }
+      }
+    },
+    "/sch-3-002": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "query",
+          "description": "ID of the object to fetch",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/MissingSchema"
+          }
+        }
+      ]
+    }
+  },
+  "components": {
+    "schemas": {},
+    "responses": {},
+    "parameters": {},
+    "examples": {},
+    "requestBodies": {},
+    "headers": {},
+    "securitySchemes": {
+      "BASIC": {
+        "$ref": "#/components/securitySchemes/MissingSecurityScheme"
+      }
+    },
+    "links": {},
+    "callbacks": {}
+  }
+}
