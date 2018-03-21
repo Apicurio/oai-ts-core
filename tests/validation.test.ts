@@ -385,4 +385,22 @@ describe("Validation (3.0)", () => {
         expect(actual).toEqual(expected);
     });
 
+    it("Mutually Exclusive", () => {
+        let json: any = readJSON('tests/fixtures/validation/3.0/mutually-exclusive.json');
+        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+
+        let node: OasNode = document;
+        let errors: OasValidationError[] = library.validate(node);
+
+        let actual: string = errorsAsString(errors);
+        let expected: string =
+`[MT-3-001] {/components/parameters[mt-3-001]/content[text/plain]} :: The "example" and "examples" properties are mutually exclusive.
+[PAR-3-008] {/components/parameters[par-3-008]} :: The "schema" and "content" properties are mutually exclusive.
+[PAR-3-015] {/components/parameters[par-3-015]} :: The "example" and "examples" properties are mutually exclusive.
+[EX-3-002] {/components/examples[ex-3-002]} :: The "value" and "externalValue" properties are mutually exclusive.
+[HEAD-3-007] {/components/headers[head-3-007]} :: The "example" and "examples" properties are mutually exclusive.
+[LINK-3-001] {/components/links[link-3-001]} :: The "operationRef" and "operationId" properties are mutually exclusive.`;
+        expect(actual).toEqual(expected);
+    });
+
 });

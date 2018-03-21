@@ -1,0 +1,118 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Swagger Petstore",
+    "description": "A sample API that uses a petstore as an example to demonstrate features in the OpenAPI 3.0 specification"
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "getRepositoriesByOwner",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "examples": {
+      "ex-3-002": {
+        "summary": "Example Summary",
+        "description": "Description of example.",
+        "value": "Some Value",
+        "externalValue": "http://foo.bar/examples/address-example.txt"
+      }
+    },
+    "headers": {
+      "head-3-006": {
+        "description": "The number of allowed requests in the current period",
+        "schema": {
+          "type": "integer"
+        },
+        "content": {
+          "text/plain": {
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "head-3-007": {
+        "description": "The number of allowed requests in the current period",
+        "example": "Some example",
+        "examples": {
+          "application/json": {
+            "name": "Puma",
+            "breed": "Mixed"
+          }
+        }
+      }
+    },
+    "links": {
+      "link-3-001": {
+        "operationRef": "#paths~12.0~1repositories~1{$response.body#/username}",
+        "operationId": "getRepositoriesByOwner",
+        "parameters": {
+          "username": "$response.body#/username"
+        }
+      }
+    },
+    "parameters": {
+      "mt-3-001": {
+        "name": "fooParam",
+        "in": "query",
+        "description": "Some parameter desc.",
+        "content": {
+          "text/plain": {
+            "schema": {
+              "type": "string"
+            },
+            "example": "Quick brown fox",
+            "examples": {
+              "list": {
+                "summary": "List of names",
+                "value" : ["Bob","Diane","Mary","Bill"]
+              },
+              "empty":{
+                "summary": "Empty List",
+                "value": []
+              }
+            }
+          }
+        }
+      },
+      "par-3-008": {
+        "name": "barParam",
+        "in": "query",
+        "description": "Some parameter desc.",
+        "schema": {
+          "type": "string"
+        },
+        "content": {
+          "text/plain": {
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "par-3-015": {
+        "name": "barParam",
+        "in": "query",
+        "description": "Some parameter desc.",
+        "schema": {
+          "type": "string"
+        },
+        "example": "Example of value.",
+        "examples": {
+          "example-1": {
+            "value": "blerg"
+          }
+        }
+      }
+    }
+  }
+}
