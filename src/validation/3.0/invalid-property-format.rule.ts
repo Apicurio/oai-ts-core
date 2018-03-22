@@ -18,7 +18,7 @@
 import {OasValidationRuleUtil} from "../validation";
 import {Oas30ValidationRule} from "./common.rule";
 import {OasNode} from "../../models/node.model";
-import {Oas30Example} from "../../models/3.0/example.model";
+import {Oas30Example, Oas30ExampleDefinition} from "../../models/3.0/example.model";
 import {Oas30Contact} from "../../models/3.0/contact.model";
 import {Oas30XML} from "../../models/3.0/xml.model";
 import {Oas30Info} from "../../models/3.0/info.model";
@@ -84,6 +84,9 @@ export class Oas30InvalidPropertyFormatValidationRule extends Oas30ValidationRul
         if (this.hasValue(node.description)) {
             this.reportIfInvalid("EX-3-001", OasValidationRuleUtil.isValidCommonMark(node.description), node, `The "description" property must be valid CommonMark syntax (or plain text).`);
         }
+    }
+    public visitExampleDefinition(node: Oas30ExampleDefinition): void {
+        this.visitExample(node);
     }
 
     public visitLink(node: Oas30Link): void {

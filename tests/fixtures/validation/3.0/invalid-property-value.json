@@ -490,7 +490,8 @@
     },
     "/op-3-005": {
       "get": {
-        "description": "Creates a new pet in the store.  Duplicates are allowed"
+        "description": "Creates a new pet in the store.  Duplicates are allowed",
+        "responses": {}
       }
     },
     "/par-3-002": {
@@ -718,7 +719,8 @@
       },
       "ss-3-010": {
         "type": "apiKey",
-        "in": "body"
+        "in": "body",
+        "name": "paramname"
       },
       "ss-3-011": {
         "type": "http",

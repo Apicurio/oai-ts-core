@@ -26,19 +26,28 @@ export abstract class Oas30OAuthFlow extends OasExtensibleNode {
     public authorizationUrl: string;
     public tokenUrl: string;
     public refreshUrl: string;
-    public scopes: any = {};
+    public scopes: any;
 
     public addScope(scope: string, description: string): void {
+        if (!this.scopes) {
+            this.scopes = {};
+        }
         this.scopes[scope] = description;
     }
 
     public removeScope(scope: string): void {
-        delete this.scopes[scope];
+        if (this.scopes) {
+            delete this.scopes[scope];
+        }
     }
 
     public getScopes(): string[] {
+        let scopes: any = this.scopes;
+        if (!scopes) {
+            scopes = {};
+        }
         let rval: string[] = [];
-        for (let scope in this.scopes) {
+        for (let scope in scopes) {
             rval.push(scope);
         }
         return rval;

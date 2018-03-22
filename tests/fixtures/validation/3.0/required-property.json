@@ -1,0 +1,168 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "license": {
+    }
+  },
+  "servers": [
+    {
+      "description": "srv-3-001"
+    },
+    {
+      "url": "https://{username}.gigantic-server.com/",
+      "description": "svar-3-001",
+      "variables": {
+        "username": {
+          "description": "this value is assigned by the service provider, in this example `gigantic-server.com`"
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/op-3-004": {
+      "summary": "Foo Resource",
+      "description": "CRUD for Foos.",
+      "get": {
+        "tags": [ "tag1", "tag2" ],
+        "summary": "List Pets",
+        "description": "Returns all pets from the system that the user has access to",
+        "externalDocs": {
+          "description": "Find more info here",
+          "url": "https://example.com"
+        },
+        "operationId": "listPets",
+        "deprecated": false
+      }
+    },
+    "/par-3-003": {
+      "parameters": [
+        {
+          "in": "query",
+          "description": "username to fetch",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/par-3-004": {
+      "parameters": [
+        {
+          "name": "Foo",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    }
+  },
+  "components": {
+    "schemas": {
+      "disc-3-001": {
+        "oneOf": [
+          {
+            "$ref": "https://gigantic-server.com/schemas/Cat/schema.json"
+          },
+          {
+            "$ref": "https://gigantic-server.com/schemas/Monster/schema.json"
+          }
+        ],
+        "discriminator": {
+          "mapping": {
+            "dog": "#/components/schemas/Dog",
+            "monster": "https://gigantic-server.com/schemas/Monster/schema.json"
+          }
+        }
+      },
+      "ed-3-002": {
+        "type": "string",
+        "externalDocs": {
+          "description": "More info"
+        }
+      }
+    },
+    "securitySchemes": {
+      "flow-3-001": {
+        "type": "oauth2",
+        "flows": {
+          "implicit": {
+            "tokenUrl": "http://www.tokens.io/token",
+            "scopes": {
+              "write:pets": "modify pets in your account",
+              "read:pets": "read your pets"
+            }
+          },
+          "authorizationCode": {
+            "tokenUrl": "http://www.tokens.io/token",
+            "scopes": {
+              "read:pets": "read your pets"
+            }
+          }
+        }
+      },
+      "flow-3-002": {
+        "type": "oauth2",
+        "flows": {
+          "implicit": {
+            "authorizationUrl": "http://www.tokens.io/auth",
+            "scopes": {
+              "write:pets": "modify pets in your account",
+              "read:pets": "read your pets"
+            }
+          },
+          "authorizationCode": {
+            "authorizationUrl": "http://www.tokens.io/auth",
+            "scopes": {
+              "read:pets": "read your pets"
+            }
+          },
+          "clientCredentials": {
+            "authorizationUrl": "http://www.tokens.io/auth",
+            "scopes": {
+              "read:pets": "read your pets"
+            }
+          }
+        }
+      },
+      "flow-3-006": {
+        "type": "oauth2",
+        "flows": {
+          "implicit": {
+            "tokenUrl": "http://www.tokens.io/token",
+            "authorizationUrl": "http://www.tokens.io/auth"
+          }
+        }
+      },
+      "ss-3-001": {},
+      "ss-3-002": {
+        "type": "apiKey",
+        "in": "header"
+      },
+      "ss-3-003": {
+        "type": "apiKey",
+        "name": "api_key"
+      },
+      "ss-3-004": {
+        "type": "http"
+      },
+      "ss-3-005": {
+        "type": "oauth2"
+      },
+      "ss-3-006": {
+        "type": "openIdConnect"
+      }
+    },
+    "requestBodies": {
+      "rb-3-002": {
+        "description": "The request body."
+      }
+    }
+  },
+  "tags": [
+    {
+      "description": "tag-3-001"
+    }
+  ]
+}

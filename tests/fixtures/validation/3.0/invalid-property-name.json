@@ -300,10 +300,14 @@
       "The Response": {}
     },
     "parameters": {
-      "Some$Parameter": {}
+      "Some$Parameter": {
+        "$ref": "http://www.example.org/openapi.json#/components/parameters/FooParam"
+      }
     },
     "examples": {
-      "Example|1": {}
+      "Example|1": {
+        "$ref": "http://www.example.org/openapi.json#/components/examples/FooExample"
+      }
     },
     "requestBodies": {
       "Request Body": {}
@@ -312,7 +316,10 @@
       "[Header]": {}
     },
     "securitySchemes": {
-      "Security%Scheme": {},
+      "Security%Scheme": {
+        "type": "http",
+        "scheme": "basic"
+      },
       "BasicAuth": {
         "type": "http",
         "scheme": "basic"

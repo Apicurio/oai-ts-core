@@ -447,6 +447,7 @@ export class Oas20Traverser extends OasTraverser implements IOas20NodeVisitor {
         }
         this.traverseIfNotNull(node.xml);
         this.traverseIfNotNull(node.externalDocs);
+        this.traverseExtensions(node);
     }
 
     /**
@@ -677,6 +678,7 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
         this.traverseIfNotNull(node.not);
         this.traverseIfNotNull(node.discriminator);
         this.traverseIfNotNull(node.xml);
+        this.traverseIfNotNull(node.externalDocs);
         this.traverseExtensions(node);
     }
 

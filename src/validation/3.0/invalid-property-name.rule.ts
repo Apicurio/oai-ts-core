@@ -25,7 +25,7 @@ import {Oas30RequestBodyDefinition} from "../../models/3.0/request-body.model";
 import {Oas30HeaderDefinition} from "../../models/3.0/header.model";
 import {Oas30SecurityRequirement} from "../../models/3.0/security-requirement.model";
 import {Oas30PathItem} from "../../models/3.0/path-item.model";
-import {Oas30Response, Oas30ResponseDefinition} from "../../models/3.0/response.model";
+import {Oas30Response, Oas30ResponseBase, Oas30ResponseDefinition} from "../../models/3.0/response.model";
 import {Oas30Document} from "../../models/3.0/document.model";
 import {Oas30SecurityScheme} from "../../models/3.0/security-scheme.model";
 import {Oas30Schema, Oas30SchemaDefinition} from "../../models/3.0/schema.model";

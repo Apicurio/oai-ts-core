@@ -61,6 +61,9 @@ export abstract class OasResponses extends OasExtensibleNode implements IOasInde
         for (let name of names) {
             rval.push(this.response(name));
         }
+        if (this.default !== undefined && this.default !== null) {
+            rval.push(this.default);
+        }
         return rval;
     }
 

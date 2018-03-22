@@ -23,6 +23,7 @@ import {OasLibraryUtils} from "../src/library.utils";
 import {OasNode} from "../src/models/node.model";
 import {OasValidationError} from "../src/validation/validation";
 import {Oas30Document} from "../src/models/3.0/document.model";
+import * as JsDiff from "diff";
 
 describe("Validation (2.0)", () => {
 
@@ -35,6 +36,25 @@ describe("Validation (2.0)", () => {
         }
         return es.join("\n");
     };
+
+    function assertValidationOutput(actual: string, expected: string): void {
+        let theDiff: any[] = JsDiff.diffLines(actual, expected);
+        let hasDiff: boolean = false;
+        theDiff.forEach( change => {
+            if (change.added) {
+                console.info("--- EXPECTED BUT MISSING ---\n" + change.value);
+                console.info("----------------------------");
+                hasDiff = true;
+            }
+            if (change.removed) {
+                console.info("--- FOUND EXTRA ---\n" + change.value);
+                console.info("-------------------");
+                hasDiff = true;
+            }
+        });
+
+        expect(hasDiff).toBeFalsy();
+    }
 
     beforeEach(() => {
         library = new OasLibraryUtils();
@@ -62,7 +82,7 @@ describe("Validation (2.0)", () => {
 `[R-002] {/} :: Property "info" is required.
 [R-003] {/} :: Property "paths" is required.`;
 
-        expect(actual).toEqual(expected);
+        assertValidationOutput(actual, expected);
     });
 
     it("Document (Invalid Property Format)", () => {
@@ -77,7 +97,7 @@ describe("Validation (2.0)", () => {
 `[R-004] {/} :: Invalid format for "host" property - only the host name (and optionally port) should be specified.
 [R-005] {/} :: The "basePath" property must start with a '/' character.`;
 
-        expect(actual).toEqual(expected);
+        assertValidationOutput(actual, expected);
     });
 
     it("Info (Required Properties)", () => {
@@ -92,7 +112,7 @@ describe("Validation (2.0)", () => {
 `[INF-001] {/info} :: Property "title" is required.
 [INF-002] {/info} :: Property "version" is required.`
 
-        expect(actual).toEqual(expected);
+        assertValidationOutput(actual, expected);
     });
 
     it("Info (Invalid Property Value)", () => {
@@ -107,7 +127,7 @@ describe("Validation (2.0)", () => {
 `[CTC-002] {/info/contact} :: The "email" property must be a valid email address.
 [LIC-002] {/info/license} :: The "url" property must be a valid URL.`;
 
-        expect(actual).toEqual(expected);
+        assertValidationOutput(actual, expected);
     });
 
     it("Security Scheme (Required Properties)", () => {
@@ -134,7 +154,7 @@ describe("Validation (2.0)", () => {
 [SS-006] {/securityDefinitions[oauth2_auth_5]} :: Property "tokenUrl" is is required when "type" property is 'oauth2' AND "flow" property is 'password|application|accessCode'.
 [SS-007] {/securityDefinitions[oauth2_auth_5]} :: Property "scopes" is required when "type" property is 'oauth2'.`;
 
-        expect(actual).toEqual(expected);
+        assertValidationOutput(actual, expected);
     });
 
     it("Security Scheme (Invalid Property Format)", () => {
@@ -150,7 +170,7 @@ describe("Validation (2.0)", () => {
 [SS-011] {/securityDefinitions[petstore_auth_accessCode]} :: The "authorizationUrl" property must be a valid URL.
 [SS-012] {/securityDefinitions[petstore_auth_accessCode]} :: The "tokenUrl" property must be a valid URL.`;
 
-        expect(actual).toEqual(expected);
+        assertValidationOutput(actual, expected);
     });
 
     it("Invalid Property Name (All)", () => {
@@ -168,7 +188,7 @@ describe("Validation (2.0)", () => {
 [RES-003] {/paths[/pet/findByTags]/get/responses[822]} :: Response status code is not a valid HTTP response status code: 822
 [EX-001] {/paths[/pet/findByTags]/get/responses[822]/examples} :: Example for type 'text/plain' does not match any of the "produces" mime-types expected by the operation.`;
 
-        expect(actual).toEqual(expected);
+        assertValidationOutput(actual, expected);
     });
 
     it("Uniqueness (All)", () => {
@@ -195,7 +215,7 @@ describe("Validation (2.0)", () => {
 [TAG-003] {/tags[1]} :: Duplicate tag 'store' found (every tag must have a unique name).
 [TAG-003] {/tags[2]} :: Duplicate tag 'store' found (every tag must have a unique name).`;
 
-        expect(actual).toEqual(expected);
+        assertValidationOutput(actual, expected);
     });
 
     it("Mutually Exclusive (All)", () => {
@@ -208,7 +228,7 @@ describe("Validation (2.0)", () => {
         let actual: string = errorsAsString(errors);
         let expected: string = `[PATH-001] {/paths[/pet]/post} :: An operation may not have both a "body" and a "formData" parameter.`;
 
-        expect(actual).toEqual(expected);
+        assertValidationOutput(actual, expected);
     });
 
     it("Invalid Reference (All)", () => {
@@ -220,14 +240,13 @@ describe("Validation (2.0)", () => {
 
         let actual: string = errorsAsString(errors);
         let expected: string =
-`[PATH-001] {/paths[/reference]} :: Reference to external path is either invalid or not found: paths.json#/paths/ExternalPath
-[PAR-018] {/paths[/pet]/put/parameters[1]} :: The "$ref" property must reference a valid Parameter Definition: #/parameters/FooParam
+`[PAR-018] {/paths[/pet]/put/parameters[1]} :: The "$ref" property must reference a valid Parameter Definition: #/parameters/FooParam
 [SCH-001] {/paths[/pet]/post/parameters[0]/schema} :: The "$ref" property must reference a valid Definition: #/definitions/Not_Available
 [SCH-001] {/paths[/pet/findByStatus]/get/responses[200]/schema/items} :: The "$ref" property must reference a valid Definition: #/definitions/SchemaItemsNotFound
 [SREQ-001] {/paths[/pet/findByStatus]/get/security[0]} :: Security Requirement name 'petstore_auth_notfound' does not match an item declared in the Security Definitions.
 [RES-002] {/paths[/pet/findByTags]/get/responses[404]} :: The "$ref" property must reference a valid Response Definition: #/responses/ResponseNotFound`;
 
-        expect(actual).toEqual(expected);
+        assertValidationOutput(actual, expected);
     });
 
 });
@@ -246,6 +265,25 @@ describe("Validation (3.0)", () => {
         }
         return es.join("\n");
     };
+
+    function assertValidationOutput(actual: string, expected: string): void {
+        let theDiff: any[] = JsDiff.diffLines(actual, expected);
+        let hasDiff: boolean = false;
+        theDiff.forEach( change => {
+            if (change.added) {
+                console.info("--- EXPECTED BUT MISSING ---\n" + change.value);
+                console.info("----------------------------");
+                hasDiff = true;
+            }
+            if (change.removed) {
+                console.info("--- FOUND EXTRA ---\n" + change.value);
+                console.info("-------------------");
+                hasDiff = true;
+            }
+        });
+
+        expect(hasDiff).toBeFalsy();
+    }
 
     beforeEach(() => {
         library = new OasLibraryUtils();
@@ -275,7 +313,7 @@ describe("Validation (3.0)", () => {
 [CTC-3-002] {/info/contact} :: The "email" property must be a valid email address.
 [LIC-3-002] {/info/license} :: The "url" property must be a valid URL.`;
 
-        expect(actual).toEqual(expected);
+        assertValidationOutput(actual, expected);
     });
 
     it("Ignored Property Name", () => {
@@ -289,7 +327,7 @@ describe("Validation (3.0)", () => {
         let expected: string =
 `[HEAD-3-001] {/paths[/pets]/get/responses[200]/content[multipart/form-data]/encoding[id][Content-Type]} :: The "Content-Type" header will be ignored.`;
 
-        expect(actual).toEqual(expected);
+        assertValidationOutput(actual, expected);
     });
 
     it("Invalid Property Name", () => {
@@ -315,7 +353,7 @@ describe("Validation (3.0)", () => {
 [COMP-3-009] {/components/callbacks[Invalid Callback Name]} :: The Callback Definition name must match the regular expression: ^[a-zA-Z0-9\\.\\-_]+$
 [SREQ-3-001] {/security[1]} :: Security Requirement "MissingAuth" does not correspond to a declared Security Scheme.`;
 
-        expect(actual).toEqual(expected);
+        assertValidationOutput(actual, expected);
     });
 
     it("Invalid Property Value", () => {
@@ -359,7 +397,8 @@ describe("Validation (3.0)", () => {
 [SS-3-011] {/components/securitySchemes[ss-3-011]} :: The "bearerFormat" property is only valid for "http" security schemes of type "bearer".
 [SS-3-013] {/components/securitySchemes[ss-3-013]} :: The "scheme" property value must be one of: ["basic", "bearer", "digest", "hoba", "mutual", "negotiate", "oauth", "vapid", "scram-sha-1", "scram-sha-256"] (Found value: 'leveraged')`;
 
-        expect(actual).toEqual(expected);
+        assertValidationOutput(actual, expected);
+        //assertValidationOutput(actual, expected);
     });
 
     it("Invalid Reference", () => {
@@ -382,7 +421,7 @@ describe("Validation (3.0)", () => {
 [SCH-3-002] {/paths[/sch-3-002]/parameters[0]/schema} :: The "$ref" property value "#/components/schemas/MissingSchema" must reference a valid Schema.
 [SS-3-012] {/components/securitySchemes[BASIC]} :: The "$ref" property value "#/components/securitySchemes/MissingSecurityScheme" must reference a valid Security Scheme.`;
 
-        expect(actual).toEqual(expected);
+        assertValidationOutput(actual, expected);
     });
 
     it("Mutually Exclusive", () => {
@@ -400,7 +439,72 @@ describe("Validation (3.0)", () => {
 [EX-3-002] {/components/examples[ex-3-002]} :: The "value" and "externalValue" properties are mutually exclusive.
 [HEAD-3-007] {/components/headers[head-3-007]} :: The "example" and "examples" properties are mutually exclusive.
 [LINK-3-001] {/components/links[link-3-001]} :: The "operationRef" and "operationId" properties are mutually exclusive.`;
-        expect(actual).toEqual(expected);
+        assertValidationOutput(actual, expected);
+    });
+
+    it("Required Property", () => {
+        let json: any = readJSON('tests/fixtures/validation/3.0/required-property.json');
+        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+
+        let node: OasNode = document;
+        let errors: OasValidationError[] = library.validate(node);
+
+        let actual: string = errorsAsString(errors);
+        let expected: string =
+`[INF-3-001] {/info} :: Property "title" is required.
+[INF-3-002] {/info} :: Property "version" is required.
+[LIC-3-001] {/info/license} :: Property "name" is required.
+[SRV-3-001] {/servers[0]} :: Property "url" is required.
+[SVAR-3-001] {/servers[1]/variables[username]} :: Property "default" is required.
+[OP-3-004] {/paths[/op-3-004]/get} :: Property "responses" is required.
+[PAR-3-003] {/paths[/par-3-003]/parameters[0]} :: Property "name" is required.
+[PAR-3-004] {/paths[/par-3-004]/parameters[0]} :: Property "in" is required.
+[DISC-3-001] {/components/schemas[disc-3-001]/discriminator} :: Property "propertyName" is required.
+[ED-3-002] {/components/schemas[ed-3-002]/externalDocs} :: Property "url" is required.
+[FLOW-3-001] {/components/securitySchemes[flow-3-001]/flows/implicit} :: Property "authorizationUrl" is required.
+[FLOW-3-001] {/components/securitySchemes[flow-3-001]/flows/authorizationCode} :: Property "authorizationUrl" is required.
+[FLOW-3-002] {/components/securitySchemes[flow-3-002]/flows/implicit} :: Property "tokenUrl" is required.
+[FLOW-3-002] {/components/securitySchemes[flow-3-002]/flows/clientCredentials} :: Property "tokenUrl" is required.
+[FLOW-3-002] {/components/securitySchemes[flow-3-002]/flows/authorizationCode} :: Property "tokenUrl" is required.
+[FLOW-3-006] {/components/securitySchemes[flow-3-006]/flows/implicit} :: Property "scopes" is required.
+[SS-3-001] {/components/securitySchemes[ss-3-001]} :: Property "type" is required.
+[SS-3-002] {/components/securitySchemes[ss-3-002]} :: Property "name" is required when "type" property is "apiKey".
+[SS-3-003] {/components/securitySchemes[ss-3-003]} :: Property "in" is required when "type" property is "apiKey".
+[SS-3-004] {/components/securitySchemes[ss-3-004]} :: Property "scheme" is required when "type" property is "http".
+[SS-3-005] {/components/securitySchemes[ss-3-005]} :: Property "flows" is required when "type" property is "oauth2".
+[SS-3-006] {/components/securitySchemes[ss-3-006]} :: Property "openIdConnectUrl" is required when "type" property is "openIdConnect".
+[TAG-3-001] {/tags[0]} :: Property "name" is required.`;
+        assertValidationOutput(actual, expected);
+    });
+
+    it("Required Property (Root)", () => {
+        let json: any = readJSON('tests/fixtures/validation/3.0/required-property-root.json');
+        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+
+        let node: OasNode = document;
+        let errors: OasValidationError[] = library.validate(node);
+
+        let actual: string = errorsAsString(errors);
+        let expected: string =
+`[R-3-002] {/} :: Property "info" is required.
+[R-3-003] {/} :: Property "paths" is required.`;
+        assertValidationOutput(actual, expected);
+    });
+
+    it("Uniqueness", () => {
+        let json: any = readJSON('tests/fixtures/validation/3.0/uniqueness.json');
+        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+
+        let node: OasNode = document;
+        let errors: OasValidationError[] = library.validate(node);
+
+        let actual: string = errorsAsString(errors);
+        let expected: string =
+`[OP-3-002] {/paths[/foo]/get} :: The "operationId" property value 'fooId' must be unique across ALL operations.
+[OP-3-002] {/paths[/bar]/get} :: The "operationId" property value 'fooId' must be unique across ALL operations.
+[TAG-3-003] {/tags[0]} :: Duplicate tag "MyTag" found (every tag must have a unique name).
+[TAG-3-003] {/tags[2]} :: Duplicate tag "MyTag" found (every tag must have a unique name).`;
+        assertValidationOutput(actual, expected);
     });
 
 });

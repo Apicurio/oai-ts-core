@@ -227,13 +227,10 @@ export class Oas30InvalidPropertyValueValidationRule extends Oas30ValidationRule
             this.reportIfInvalid("OP-3-003", this.isValidRequestBodyOperation(node), node,
                 `The "requestBody" property is only supported for POST, PUT, and OPTIONS operations.`);
         }
-
-        this.reportIfInvalid("OP-3-005", this.hasValue(node.responses), node,
-            `There must be at least one Response documented.`);
     }
 
     public visitResponses(node: Oas30Responses): void {
-        this.reportIfInvalid("OP-3-005", node.responses().length > 0, node,
+        this.reportIfInvalid("OP-3-005", node.responses().length > 0, node.parent(),
             `There must be at least one Response documented.`);
     }
 
