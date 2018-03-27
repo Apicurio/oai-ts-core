@@ -648,6 +648,7 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
         node.accept(this.visitor);
         this.traverseIfNotNull(node.schema);
         this.traverseArray(node.getExamples());
+        this.traverseArray(node.getMediaTypes());
         this.traverseExtensions(node);
     }
 

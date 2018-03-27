@@ -191,7 +191,7 @@ export abstract class OasModelToJSVisitor implements IOasNodeVisitor {
      * @return {boolean}
      */
     protected isDefined(thing: any): boolean {
-        if (typeof thing === "undefined" || thing === null) {
+        if (thing === undefined || thing === null) {
             return false;
         } else {
             return true;
@@ -948,7 +948,6 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * @param node
      */
     private createHeaderObject(node: Oas30Header): any {
-        // TODO missing the "content" property!
         let header: any = {
             $ref: node.$ref,
             description : node.description,
@@ -960,7 +959,8 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
             allowReserved : node.allowReserved,
             schema : null,
             example : node.example,
-            examples : null
+            examples : null,
+            content: null
         };
         return header;
     }

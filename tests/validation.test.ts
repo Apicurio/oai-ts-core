@@ -325,7 +325,7 @@ describe("Validation (3.0)", () => {
 
         let actual: string = errorsAsString(errors);
         let expected: string =
-`[HEAD-3-001] {/paths[/pets]/get/responses[200]/content[multipart/form-data]/encoding[id][Content-Type]} :: The "Content-Type" header will be ignored.`;
+`[HEAD-3-001] {/paths[/pets]/get/responses[200]/content[multipart/form-data]/encoding[id]/headers[Content-Type]} :: The "Content-Type" header will be ignored.`;
 
         assertValidationOutput(actual, expected);
     });
@@ -365,13 +365,14 @@ describe("Validation (3.0)", () => {
 
         let actual: string = errorsAsString(errors);
         let expected: string =
-`[SVAR-3-002] {/servers[0]/variables[missingProperty]} :: The server variable "missingProperty" is not found in the server url template.
+`[SVAR-3-003] {/servers[0]/variables[missingProperty]} :: The server variable "missingProperty" is not found in the server url template.
 [ENC-3-001] {/paths[/enc-3-001]/post/requestBody/content[application/x-www-form-urlencoded]/encoding[profileImage]} :: The "headers" property is only allowed for "multipart" request body media type encodings.  Found media type "application/x-www-form-urlencoded" instead.
 [ENC-3-002] {/paths[/enc-3-002]/post/requestBody/content[multipart/form-data]/encoding[historyMetadata]} :: The "style" property is only allowed for "application/x-www-form-urlencoded" request body media type encodings.  Found media type "multipart/form-data" instead.
 [ENC-3-003] {/paths[/enc-3-003]/post/requestBody/content[multipart/form-data]/encoding[historyMetadata]} :: The "explode" property is only allowed for "application/x-www-form-urlencoded" request body media type encodings.
 [ENC-3-004] {/paths[/enc-3-004]/post/requestBody/content[multipart/form-data]/encoding[historyMetadata]} :: The "allowReserved" property is only allowed for "application/x-www-form-urlencoded" request body media type encodings.
 [ENC-3-005] {/paths[/enc-3-005]/post/requestBody/content[application/x-www-form-urlencoded]/encoding[historyMetadata]} :: The "style" property value must be one of: ["form", "spaceDelimited", "pipeDelimited", "deepObject"]  Found value "matrix".
-[HEAD-3-003] {/paths[/head-3-003]/post/requestBody/content[multipart/form-data]/encoding[historyMetadata][X-Header-1]} :: The "style" property value must be "simple".  Found value "form".
+[HEAD-3-003] {/paths[/head-3-003]/post/requestBody/content[multipart/form-data]/encoding[historyMetadata]/headers[X-Header-1]} :: The "style" property value must be "simple".  Found value "form".
+[HEAD-3-004] {/paths[/head-3-004]/post/requestBody/content[multipart/form-data]/encoding[historyMetadata]/headers[X-Header-1]} :: The "content" property must contain at most one entry.
 [LINK-3-002] {/paths[/link-3-002]/get/responses[200]/links[address]} :: The "operationId" property must refer to an existing Operation.  Cannot find operation with ID "getUserAddress".
 [MT-3-003] {/paths[/mt-3-003]/post/requestBody/content[application/json]} :: The "encoding" property is only allowed for "multipart" and "application/x-www-form-urlencoded" request body media types.  Found "application/json" instead.
 [OP-3-003] {/paths[/op-3-003]/get} :: The "requestBody" property is only supported for POST, PUT, and OPTIONS operations.
@@ -412,7 +413,7 @@ describe("Validation (3.0)", () => {
         let expected: string =
 `[CALL-3-001] {/paths[/call-3-001]/get/callbacks[myRefCallback]} :: The "$ref" property value "#/components/callbacks/MissingCallback" must reference a valid Callback.
 [EX-3-003] {/paths[/ex-3-003]/put/requestBody/content[application/json]/examples[bar]} :: The "$ref" property value "#/components/examples/MissingExample" must reference a valid Example.
-[HEAD-3-005] {/paths[/head-3-005]/get/responses[200][X-Rate-Limit-Reset]} :: The "$ref" property value "#/components/headers/MissingHeader" must reference a valid Header.
+[HEAD-3-005] {/paths[/head-3-005]/get/responses[200]/headers[X-Rate-Limit-Reset]} :: The "$ref" property value "#/components/headers/MissingHeader" must reference a valid Header.
 [LINK-3-003] {/paths[/link-3-003]/get/responses[200]/links[MissingLink]} :: The "operationRef" property value "undefined" must reference a valid Link.
 [LINK-3-005] {/paths[/link-3-005]/get/responses[200]/links[MissingLink]} :: The "$ref" property value "#/components/links/MissingLink" must reference a valid Link.
 [PAR-3-017] {/paths[/par-3-017]/parameters[1]} :: The "$ref" property value "#/components/parameters/MissingParameter" must reference a valid Parameter.

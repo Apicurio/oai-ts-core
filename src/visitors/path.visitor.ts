@@ -65,7 +65,7 @@ import {Oas30Link, Oas30LinkDefinition} from "../models/3.0/link.model";
 import {Oas30Callback, Oas30CallbackDefinition} from "../models/3.0/callback.model";
 import {Oas30Example, Oas30ExampleDefinition} from "../models/3.0/example.model";
 import {Oas30RequestBody, Oas30RequestBodyDefinition} from "../models/3.0/request-body.model";
-import {Oas30HeaderDefinition} from "../models/3.0/header.model";
+import {Oas30Header, Oas30HeaderDefinition} from "../models/3.0/header.model";
 import {
     Oas30AuthorizationCodeOAuthFlow,
     Oas30ClientCredentialsOAuthFlow,
@@ -381,6 +381,11 @@ export class Oas30NodePathVisitor extends OasNodePathVisitor implements IOas30No
 
     visitRequestBody(node: Oas30RequestBody): void {
         this._path.prependSegment("requestBody");
+    }
+
+    visitHeader(node: Oas30Header): void {
+        this._path.prependSegment(node.headerName(), true);
+        this._path.prependSegment("headers");
     }
 
     visitCallback(node: Oas30Callback): void {

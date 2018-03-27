@@ -194,10 +194,8 @@ export class Oas30InvalidPropertyValueValidationRule extends Oas30ValidationRule
                 `The "style" property value must be "simple".  Found value "${node.style}".`);
         }
 
-        // TODO implement once content is properly modeled!
-        // if (this.hasValue(node.content)) {
-        // TODO HEAD-3-3-004: Content property must contain at most one entry
-        // }
+        this.reportIfInvalid("HEAD-3-004", node.getMediaTypes().length < 2, node,
+            `The "content" property must contain at most one entry.`);
     }
     public visitHeaderDefinition(node: Oas30HeaderDefinition): void {
         this.visitHeader(node);
@@ -364,7 +362,7 @@ export class Oas30InvalidPropertyValueValidationRule extends Oas30ValidationRule
         let server: Oas30Server = node.parent() as Oas30Server;
         let vars: string[] = this.parseServerTemplate(server.url);
 
-        this.reportIfInvalid("SVAR-3-002", OasValidationRuleUtil.isValidEnumItem(varName, vars), node,
+        this.reportIfInvalid("SVAR-3-003", OasValidationRuleUtil.isValidEnumItem(varName, vars), node,
             `The server variable "${varName}" is not found in the server url template.`);
     }
 

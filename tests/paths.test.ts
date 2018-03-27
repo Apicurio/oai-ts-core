@@ -24,6 +24,7 @@ import {OasNodePath, OasNodePathSegment} from "../src/models/node-path";
 import {OasNode} from "../src/models/node.model";
 import {Oas30Document} from "../src/models/3.0/document.model";
 import {Oas30Operation} from "../src/models/3.0/operation.model";
+import {Oas30Header} from "../src/models/3.0/header.model";
 
 
 describe("Node Path Parser", () => {
@@ -465,6 +466,83 @@ describe("Node Path (Resolve 3.0)", () => {
         let expectedObj: any = json.components.callbacks["Callback2"]["$request.body#/url"].post.requestBody.content["application/json"];
         let actualObj: any = library.writeNode(resolvedNode);
         expect(actualObj).toEqual(expectedObj);
+    });
+
+    it("Encoding Header", () => {
+        let json: any = readJSON('tests/fixtures/paths/3.0/encoding-header.json');
+        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+
+        let path: OasNodePath = new OasNodePath("/paths[/encoding/header]/post/requestBody/content[multipart/form-data]/encoding[historyMetadata]/headers[X-Header-1]");
+        let resolvedNode: OasNode = path.resolve(document);
+
+        let expectedObj: any = json.paths["/encoding/header"].post.requestBody.content["multipart/form-data"].encoding["historyMetadata"].headers["X-Header-1"];
+        let actualObj: any = library.writeNode(resolvedNode);
+        expect(actualObj).toEqual(expectedObj);
+
+        let header: Oas30Header = (<Oas30Operation>document.paths.pathItem("/encoding/header").post)
+            .requestBody.getMediaType("multipart/form-data").getEncoding("historyMetadata").getHeader("X-Header-1");
+        let headerPath: OasNodePath = library.createNodePath(header);
+        expect(headerPath.toString()).toEqual("/paths[/encoding/header]/post/requestBody/content[multipart/form-data]/encoding[historyMetadata]/headers[X-Header-1]");
+    });
+
+});
+
+
+describe("Node Path Contains", () => {
+
+    let library: OasLibraryUtils;
+
+    beforeEach(() => {
+        library = new OasLibraryUtils();
+    });
+
+    it("Root Document", () => {
+        let json: any = readJSON('tests/fixtures/paths/2.0/pet-store.json');
+        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+
+        let path: OasNodePath = new OasNodePath("/");
+        expect(path.contains(document)).toBeTruthy();
+    });
+
+    it("Info", () => {
+        let json: any = readJSON('tests/fixtures/paths/2.0/pet-store.json');
+        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+
+        let path: OasNodePath = new OasNodePath("/info");
+
+        expect(path.contains(document)).toBeTruthy();
+        expect(path.contains(document.info)).toBeTruthy();
+
+        path = new OasNodePath("/externalDocs");
+        expect(path.contains(document)).toBeTruthy();
+        expect(path.contains(document.info)).toBeFalsy();
+    });
+
+    it("Schema Definition", () => {
+        let json: any = readJSON('tests/fixtures/paths/2.0/pet-store.json');
+        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+
+        let path: OasNodePath = new OasNodePath("/definitions[Order]");
+        expect(path.contains(document)).toBeTruthy();
+        expect(path.contains(document.info)).toBeFalsy();
+        expect(path.contains(document.definitions.definition("Order"))).toBeTruthy();
+        expect(path.contains(document.definitions.definition("Category"))).toBeFalsy();
+    });
+
+    it("Paths", () => {
+        let json: any = readJSON('tests/fixtures/paths/2.0/pet-store.json');
+        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+
+        let path: OasNodePath = new OasNodePath("/paths[/pet]/post/parameters[0]");
+        expect(path.contains(document)).toBeTruthy();
+        expect(path.contains(document.info)).toBeFalsy();
+        expect(path.contains(document.definitions.definition("Order"))).toBeFalsy();
+        expect(path.contains(document.definitions.definition("Category"))).toBeFalsy();
+        expect(path.contains(document.paths.pathItem("/pet"))).toBeTruthy();
+        expect(path.contains(document.paths.pathItem("/pet").post)).toBeTruthy();
+        expect(path.contains(document.paths.pathItem("/pet").post.parameters[0])).toBeTruthy();
+        expect(path.contains(document.paths.pathItem("/pet").put)).toBeFalsy();
+        expect(path.contains(document.paths.pathItem("/pet/findByStatus"))).toBeFalsy();
     });
 
 });

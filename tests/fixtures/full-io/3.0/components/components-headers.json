@@ -14,6 +14,25 @@
           "type": "integer"
         }
       },
+      "HeaderWithContent": {
+        "description": "The number of allowed requests in the current period",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "address": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      },
       "RefHeader": {
         "$ref": "#/other/Ref"
       }

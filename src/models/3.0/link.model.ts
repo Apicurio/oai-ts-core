@@ -18,7 +18,6 @@
 import {OasExtensibleNode} from "../enode.model";
 import {IOas30NodeVisitor, IOasNodeVisitor} from "../../visitors/visitor.iface";
 import {Oas30LinkServer} from "./server.model";
-import {Oas30Header} from "./header.model";
 import {Oas30LinkParameterExpression} from "./link-parameter-expression.model";
 import {Oas30LinkRequestBodyExpression} from "./link-request-body-expression.model";
 
@@ -145,18 +144,6 @@ export class Oas30Link extends OasExtensibleNode {
     }
 
     /**
-     * Creates a header.
-     * @param name
-     * @return {Oas30Header}
-     */
-    public createHeader(name: string): Oas30Header {
-        let rval: Oas30Header = new Oas30Header(name);
-        rval._ownerDocument = this._ownerDocument;
-        rval._parent = this;
-        return rval;
-    }
-
-    /**
      * Creates an OAS 3.0 Server object.
      * @return {Oas30LinkServer}
      */
@@ -192,11 +179,6 @@ export class Oas30LinkDefinition extends Oas30Link {
         viz.visitLinkDefinition(this);
     }
 
-}
-
-
-export class Oas30LinkHeaders {
-    [key: string]: Oas30Header;
 }
 
 

@@ -114,6 +114,29 @@ export class OasNodePath {
     }
 
     /**
+     * Returns true if this path "contains" the given node.  The path is said to contain
+     * a node if the node is visited while resolving it.  In other words, if one of the
+     * segments of the path represents the node, then this will return true, otherwise it
+     * will return false.
+     * @param {OasNode} node
+     * @return {boolean}
+     */
+    public contains(node: OasNode): boolean {
+        let tnode: OasNode = node.ownerDocument();
+        // Of course the root document is always a match.
+        if (tnode === node) {
+            return true;
+        }
+        for (let segment of this._segments) {
+            tnode = segment.resolve(tnode);
+            if (tnode === node) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Converts the path to a string.
      */
     public toString(): string {

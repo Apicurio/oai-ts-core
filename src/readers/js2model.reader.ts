@@ -1668,6 +1668,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         let allowReserved: boolean = header["allowReserved"];
         let example: any = header["example"];
         let examples: any = header["examples"];
+        let content: any = header["content"];
 
         if (this.isDefined($ref)) { headerModel.$ref = $ref; }
         if (this.isDefined(description)) { headerModel.description = description; }
@@ -1689,6 +1690,14 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
                 let exampleModel: Oas30Example = headerModel.createExample(exampleName);
                 this.readExample(exx, exampleModel);
                 headerModel.addExample(exampleModel);
+            }
+        }
+        if (this.isDefined(content)) {
+            for (let name in content) {
+                let mediaType: any = content[name];
+                let mediaTypeModel: Oas30MediaType = headerModel.createMediaType(name);
+                this.readMediaType(mediaType, mediaTypeModel);
+                headerModel.addMediaType(name, mediaTypeModel);
             }
         }
 

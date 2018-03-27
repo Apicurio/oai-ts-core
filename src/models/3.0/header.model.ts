@@ -19,6 +19,8 @@ import {OasHeader} from "../common/header.model";
 import {Oas30Schema} from "./schema.model";
 import {Oas30Example, Oas30ExampleItems} from "./example.model";
 import {IOas30NodeVisitor, IOasNodeVisitor} from "../../visitors/visitor.iface";
+import {Oas30ParameterContent} from "./parameter.model";
+import {Oas30MediaType} from "./media-type.model";
 
 /**
  * Models an OAS 3.0 Header object.  Example:
@@ -43,6 +45,7 @@ export class Oas30Header extends OasHeader {
     public schema: Oas30Schema;
     public example: any;
     public examples: Oas30ExampleItems;
+    public content: Oas30ParameterContent = new Oas30ParameterContent();
 
     /**
      * Constructor.
@@ -125,6 +128,61 @@ export class Oas30Header extends OasHeader {
             }
         }
         return examples;
+    }
+
+    /**
+     * Creates a media type.
+     * @param name
+     * @return {Oas30MediaType}
+     */
+    public createMediaType(name: string): Oas30MediaType {
+        let rval: Oas30MediaType = new Oas30MediaType(name);
+        rval._ownerDocument = this._ownerDocument;
+        rval._parent = this;
+        return rval;
+    }
+
+    /**
+     * Adds a media type.
+     * @param name
+     * @param mediaType
+     */
+    public addMediaType(name: string, mediaType: Oas30MediaType): void {
+        this.content[name] = mediaType;
+    }
+
+    /**
+     * Gets a single media type by name.
+     * @param name
+     * @return {Oas30MediaType}
+     */
+    public getMediaType(name: string): Oas30MediaType {
+        return this.content[name];
+    }
+
+    /**
+     * Removes a single media type and returns it.  This may return null or undefined if none found.
+     * @param name
+     * @return {Oas30MediaType}
+     */
+    public removeMediaType(name: string): Oas30MediaType {
+        let rval: Oas30MediaType = this.content[name];
+        if (rval) {
+            delete this.content[name];
+        }
+        return rval;
+    }
+
+    /**
+     * Gets a list of all media types.
+     * @return {Oas30MediaType[]}
+     */
+    public getMediaTypes(): Oas30MediaType[] {
+        let rval: Oas30MediaType[] = [];
+        for (let name in this.content) {
+            rval.push(this.content[name]);
+        }
+        return rval;
     }
 
 }
