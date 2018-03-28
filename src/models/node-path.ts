@@ -18,6 +18,7 @@
 import {OasNode} from "./node.model";
 import {OasDocument} from "./document.model";
 import {IOasIndexedNode} from "./inode.model";
+import {IOasNodeVisitor} from "../visitors/visitor.iface";
 
 
 /**
@@ -102,13 +103,20 @@ export class OasNodePath {
      * walks the tree according to the path segments until it reaches the node being
      * referenced.  If the path does not point to a valid node, then this method
      * returns undefined.
-     * @param document
-     * @return {undefined}
+     * @param document the document to resolve the path relative to
+     * @param visitor an optional visitor to invoke for each node in the path
+     * @return {OasNode}
      */
-    public resolve(document: OasDocument): OasNode {
+    public resolve(document: OasDocument, visitor?: IOasNodeVisitor): OasNode {
         let node: OasNode = document;
+        if (visitor) {
+            node.accept(visitor);
+        }
         for (let segment of this._segments) {
             node = segment.resolve(node);
+            if (visitor && node && node["accept"]) {
+                node.accept(visitor);
+            }
         }
         return node;
     }

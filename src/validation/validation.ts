@@ -15,64 +15,20 @@
  * limitations under the License.
  */
 
-import {OasNodePath} from "../models/node-path";
 import {OasNode} from "../models/node.model";
-import {Oas20NodeVisitorAdapter} from "../visitors/visitor.base";
 import {Oas20Schema} from "../models/2.0/schema.model";
 import {Oas20Items} from "../models/2.0/items.model";
-import {Oas20InvalidPropertyNameValidationRule} from "./2.0/invalid-property-name.rule";
 import {Oas30Schema} from "../models/3.0/schema.model";
+
 
 /**
  * Interface used by validation rules to report errors.
  */
-export interface IOasValidationErrorReporter {
+export interface IOasValidationProblemReporter {
 
     report(code: string, node: OasNode, message: string): void;
 
 }
-
-/**
- * Represents a single validation error.
- */
-export class OasValidationError {
-
-    public errorCode: string;
-    public nodePath: OasNodePath;
-    public message: string;
-    protected _attributes: OasValidationErrorAttributes = new OasValidationErrorAttributes();
-
-    constructor(errorCode: string, nodePath: OasNodePath, message: string) {
-        this.errorCode = errorCode;
-        this.nodePath = nodePath;
-        this.message = message;
-    }
-
-    /**
-     * Gets or sets a problem attribute.  When setting the attribute, the previous value
-     * will be returned. Otherwise the current value is returned.
-     * @param name
-     * @param value
-     * @return {any}
-     */
-    public attribute(name: string, value?: any): any {
-        if (value === undefined) {
-            return this._attributes[name];
-        } else {
-            let pvalue: any = this._attributes[name];
-            this._attributes[name] = value;
-            return pvalue;
-        }
-    }
-}
-
-
-export class OasValidationErrorAttributes {
-
-    [key: string]: any;
-
-}
-
 
 
 /**

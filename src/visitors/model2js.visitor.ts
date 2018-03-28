@@ -33,7 +33,7 @@ import {
 import {Oas20Header} from "../models/2.0/header.model";
 import {Oas20Example} from "../models/2.0/example.model";
 import {Oas20Items} from "../models/2.0/items.model";
-import {OasNode} from "../models/node.model";
+import {OasNode, OasValidationProblem} from "../models/node.model";
 import {Oas20SecurityDefinitions} from "../models/2.0/security-definitions.model";
 import {Oas20SecurityScheme} from "../models/2.0/security-scheme.model";
 import {Oas20Scopes} from "../models/2.0/scopes.model";
@@ -377,6 +377,9 @@ export abstract class OasModelToJSVisitor implements IOasNodeVisitor {
     public abstract visitHeader(node: OasHeader): void;
     public abstract visitSchema(node: OasSchema): void;
 
+    public visitValidationProblem(node: OasValidationProblem): void {
+        // Validation problems are transient - they are not written to the JS.
+    }
 }
 
 

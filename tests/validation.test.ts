@@ -20,8 +20,7 @@
 
 import {Oas20Document} from "../src/models/2.0/document.model";
 import {OasLibraryUtils} from "../src/library.utils";
-import {OasNode} from "../src/models/node.model";
-import {OasValidationError} from "../src/validation/validation";
+import {OasNode, OasValidationProblem} from "../src/models/node.model";
 import {Oas30Document} from "../src/models/3.0/document.model";
 import * as JsDiff from "diff";
 
@@ -29,7 +28,7 @@ describe("Validation (2.0)", () => {
 
     let library: OasLibraryUtils;
 
-    function errorsAsString(errors: OasValidationError[]): string {
+    function errorsAsString(errors: OasValidationProblem[]): string {
         let es: string[] = [];
         for (let error of errors) {
             es.push("[" + error.errorCode + "] {" + error.nodePath + "} :: " + error.message);
@@ -65,7 +64,7 @@ describe("Validation (2.0)", () => {
         let document: Oas20Document = <Oas20Document> library.createDocument(json);
 
         let node: OasNode = document;
-        let errors: OasValidationError[] = library.validate(node);
+        let errors: OasValidationProblem[] = library.validate(node);
 
         expect(errors).toEqual([]);
     });
@@ -75,7 +74,7 @@ describe("Validation (2.0)", () => {
         let document: Oas20Document = <Oas20Document> library.createDocument(json);
 
         let node: OasNode = document;
-        let errors: OasValidationError[] = library.validate(node);
+        let errors: OasValidationProblem[] = library.validate(node);
 
         let actual: string = errorsAsString(errors);
         let expected: string =
@@ -90,7 +89,7 @@ describe("Validation (2.0)", () => {
         let document: Oas20Document = <Oas20Document> library.createDocument(json);
 
         let node: OasNode = document;
-        let errors: OasValidationError[] = library.validate(node);
+        let errors: OasValidationProblem[] = library.validate(node);
 
         let actual: string = errorsAsString(errors);
         let expected: string =
@@ -105,7 +104,7 @@ describe("Validation (2.0)", () => {
         let document: Oas20Document = <Oas20Document> library.createDocument(json);
 
         let node: OasNode = document;
-        let errors: OasValidationError[] = library.validate(node);
+        let errors: OasValidationProblem[] = library.validate(node);
 
         let actual: string = errorsAsString(errors);
         let expected: string =
@@ -120,7 +119,7 @@ describe("Validation (2.0)", () => {
         let document: Oas20Document = <Oas20Document> library.createDocument(json);
 
         let node: OasNode = document;
-        let errors: OasValidationError[] = library.validate(node);
+        let errors: OasValidationProblem[] = library.validate(node);
 
         let actual: string = errorsAsString(errors);
         let expected: string =
@@ -135,7 +134,7 @@ describe("Validation (2.0)", () => {
         let document: Oas20Document = <Oas20Document> library.createDocument(json);
 
         let node: OasNode = document;
-        let errors: OasValidationError[] = library.validate(node);
+        let errors: OasValidationProblem[] = library.validate(node);
 
         let actual: string = errorsAsString(errors);
         let expected: string =
@@ -162,7 +161,7 @@ describe("Validation (2.0)", () => {
         let document: Oas20Document = <Oas20Document> library.createDocument(json);
 
         let node: OasNode = document;
-        let errors: OasValidationError[] = library.validate(node);
+        let errors: OasValidationProblem[] = library.validate(node);
 
         let actual: string = errorsAsString(errors);
         let expected: string =
@@ -178,7 +177,7 @@ describe("Validation (2.0)", () => {
         let document: Oas20Document = <Oas20Document> library.createDocument(json);
 
         let node: OasNode = document;
-        let errors: OasValidationError[] = library.validate(node);
+        let errors: OasValidationProblem[] = library.validate(node);
 
         let actual: string = errorsAsString(errors);
         let expected: string =
@@ -196,7 +195,7 @@ describe("Validation (2.0)", () => {
         let document: Oas20Document = <Oas20Document> library.createDocument(json);
 
         let node: OasNode = document;
-        let errors: OasValidationError[] = library.validate(node);
+        let errors: OasValidationProblem[] = library.validate(node);
 
         let actual: string = errorsAsString(errors);
         let expected: string =
@@ -223,7 +222,7 @@ describe("Validation (2.0)", () => {
         let document: Oas20Document = <Oas20Document> library.createDocument(json);
 
         let node: OasNode = document;
-        let errors: OasValidationError[] = library.validate(node);
+        let errors: OasValidationProblem[] = library.validate(node);
 
         let actual: string = errorsAsString(errors);
         let expected: string = `[PATH-001] {/paths[/pet]/post} :: An operation may not have both a "body" and a "formData" parameter.`;
@@ -236,7 +235,7 @@ describe("Validation (2.0)", () => {
         let document: Oas20Document = <Oas20Document> library.createDocument(json);
 
         let node: OasNode = document;
-        let errors: OasValidationError[] = library.validate(node);
+        let errors: OasValidationProblem[] = library.validate(node);
 
         let actual: string = errorsAsString(errors);
         let expected: string =
@@ -258,7 +257,7 @@ describe("Validation (3.0)", () => {
 
     let library: OasLibraryUtils;
 
-    function errorsAsString(errors: OasValidationError[]): string {
+    function errorsAsString(errors: OasValidationProblem[]): string {
         let es: string[] = [];
         for (let error of errors) {
             es.push("[" + error.errorCode + "] {" + error.nodePath + "} :: " + error.message);
@@ -294,7 +293,7 @@ describe("Validation (3.0)", () => {
         let document: Oas30Document = <Oas30Document> library.createDocument(json);
 
         let node: OasNode = document;
-        let errors: OasValidationError[] = library.validate(node);
+        let errors: OasValidationProblem[] = library.validate(node);
 
         expect(errors).toEqual([]);
     });
@@ -304,7 +303,7 @@ describe("Validation (3.0)", () => {
         let document: Oas30Document = <Oas30Document> library.createDocument(json);
 
         let node: OasNode = document;
-        let errors: OasValidationError[] = library.validate(node);
+        let errors: OasValidationProblem[] = library.validate(node);
 
         let actual: string = errorsAsString(errors);
         let expected: string =
@@ -321,7 +320,7 @@ describe("Validation (3.0)", () => {
         let document: Oas30Document = <Oas30Document> library.createDocument(json);
 
         let node: OasNode = document;
-        let errors: OasValidationError[] = library.validate(node);
+        let errors: OasValidationProblem[] = library.validate(node);
 
         let actual: string = errorsAsString(errors);
         let expected: string =
@@ -335,7 +334,7 @@ describe("Validation (3.0)", () => {
         let document: Oas30Document = <Oas30Document> library.createDocument(json);
 
         let node: OasNode = document;
-        let errors: OasValidationError[] = library.validate(node);
+        let errors: OasValidationProblem[] = library.validate(node);
 
         let actual: string = errorsAsString(errors);
         let expected: string =
@@ -361,7 +360,7 @@ describe("Validation (3.0)", () => {
         let document: Oas30Document = <Oas30Document> library.createDocument(json);
 
         let node: OasNode = document;
-        let errors: OasValidationError[] = library.validate(node);
+        let errors: OasValidationProblem[] = library.validate(node);
 
         let actual: string = errorsAsString(errors);
         let expected: string =
@@ -407,7 +406,7 @@ describe("Validation (3.0)", () => {
         let document: Oas30Document = <Oas30Document> library.createDocument(json);
 
         let node: OasNode = document;
-        let errors: OasValidationError[] = library.validate(node);
+        let errors: OasValidationProblem[] = library.validate(node);
 
         let actual: string = errorsAsString(errors);
         let expected: string =
@@ -430,7 +429,7 @@ describe("Validation (3.0)", () => {
         let document: Oas30Document = <Oas30Document> library.createDocument(json);
 
         let node: OasNode = document;
-        let errors: OasValidationError[] = library.validate(node);
+        let errors: OasValidationProblem[] = library.validate(node);
 
         let actual: string = errorsAsString(errors);
         let expected: string =
@@ -448,7 +447,7 @@ describe("Validation (3.0)", () => {
         let document: Oas30Document = <Oas30Document> library.createDocument(json);
 
         let node: OasNode = document;
-        let errors: OasValidationError[] = library.validate(node);
+        let errors: OasValidationProblem[] = library.validate(node);
 
         let actual: string = errorsAsString(errors);
         let expected: string =
@@ -476,6 +475,15 @@ describe("Validation (3.0)", () => {
 [SS-3-006] {/components/securitySchemes[ss-3-006]} :: Property "openIdConnectUrl" is required when "type" property is "openIdConnect".
 [TAG-3-001] {/tags[0]} :: Property "name" is required.`;
         assertValidationOutput(actual, expected);
+
+        // Now test re-validating just the Info node
+        errors = library.validate(document.info);
+        actual = errorsAsString(errors);
+        expected =
+`[INF-3-001] {/info} :: Property "title" is required.
+[INF-3-002] {/info} :: Property "version" is required.
+[LIC-3-001] {/info/license} :: Property "name" is required.`
+        assertValidationOutput(actual, expected);
     });
 
     it("Required Property (Root)", () => {
@@ -483,7 +491,7 @@ describe("Validation (3.0)", () => {
         let document: Oas30Document = <Oas30Document> library.createDocument(json);
 
         let node: OasNode = document;
-        let errors: OasValidationError[] = library.validate(node);
+        let errors: OasValidationProblem[] = library.validate(node);
 
         let actual: string = errorsAsString(errors);
         let expected: string =
@@ -497,9 +505,29 @@ describe("Validation (3.0)", () => {
         let document: Oas30Document = <Oas30Document> library.createDocument(json);
 
         let node: OasNode = document;
-        let errors: OasValidationError[] = library.validate(node);
+        let errors: OasValidationProblem[] = library.validate(node);
 
         let actual: string = errorsAsString(errors);
+        let expected: string =
+`[OP-3-002] {/paths[/foo]/get} :: The "operationId" property value 'fooId' must be unique across ALL operations.
+[OP-3-002] {/paths[/bar]/get} :: The "operationId" property value 'fooId' must be unique across ALL operations.
+[TAG-3-003] {/tags[0]} :: Duplicate tag "MyTag" found (every tag must have a unique name).
+[TAG-3-003] {/tags[2]} :: Duplicate tag "MyTag" found (every tag must have a unique name).`;
+        assertValidationOutput(actual, expected);
+    });
+
+    it("Uniqueness (Re-Validate)", () => {
+        let json: any = readJSON('tests/fixtures/validation/3.0/uniqueness.json');
+        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+
+        let node: OasNode = document;
+        let errors1: OasValidationProblem[] = library.validate(node);
+        let errors2: OasValidationProblem[] = library.validate(node);
+
+        // If we validate twice, the output should be the same!
+        expect(errorsAsString(errors1)).toEqual(errorsAsString(errors2));
+
+        let actual: string = errorsAsString(errors2);
         let expected: string =
 `[OP-3-002] {/paths[/foo]/get} :: The "operationId" property value 'fooId' must be unique across ALL operations.
 [OP-3-002] {/paths[/bar]/get} :: The "operationId" property value 'fooId' must be unique across ALL operations.

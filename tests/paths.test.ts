@@ -21,7 +21,7 @@
 import {Oas20Document} from "../src/models/2.0/document.model";
 import {OasLibraryUtils} from "../src/library.utils";
 import {OasNodePath, OasNodePathSegment} from "../src/models/node-path";
-import {OasNode} from "../src/models/node.model";
+import {OasNode, OasValidationProblem} from "../src/models/node.model";
 import {Oas30Document} from "../src/models/3.0/document.model";
 import {Oas30Operation} from "../src/models/3.0/operation.model";
 import {Oas30Header} from "../src/models/3.0/header.model";
@@ -412,6 +412,21 @@ describe("Node Path (Create 3.0)", () => {
         expect(actual).toEqual(expected);
     });
 
+    it("Validation Problem", () => {
+        let json: any = readJSON('tests/fixtures/paths/3.0/validation-problem.json');
+        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+
+        library.validate(document);
+
+        let node: OasValidationProblem = document.info.validationProblem("INF-3-001");
+        let path: OasNodePath = library.createNodePath(node);
+
+        let actual: string = path.toString();
+        let expected: string = "/info/_validationProblems[INF-3-001]";
+
+        expect(actual).toEqual(expected);
+    });
+
 });
 
 describe("Node Path (Resolve 3.0)", () => {
@@ -483,6 +498,21 @@ describe("Node Path (Resolve 3.0)", () => {
             .requestBody.getMediaType("multipart/form-data").getEncoding("historyMetadata").getHeader("X-Header-1");
         let headerPath: OasNodePath = library.createNodePath(header);
         expect(headerPath.toString()).toEqual("/paths[/encoding/header]/post/requestBody/content[multipart/form-data]/encoding[historyMetadata]/headers[X-Header-1]");
+    });
+
+    it("Validation Problem", () => {
+        let json: any = readJSON('tests/fixtures/paths/3.0/validation-problem.json');
+        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+
+        // Generate validation problems in the data model.
+        library.validate(document);
+
+        let path: OasNodePath = new OasNodePath("/info/_validationProblems[INF-3-001]");
+        let resolvedNode: OasNode = path.resolve(document);
+
+        let resolvedProblem: OasValidationProblem = resolvedNode as OasValidationProblem;
+        expect(resolvedProblem.errorCode).toEqual("INF-3-001");
+        expect(resolvedProblem.message).toEqual(`Property "title" is required.`);
     });
 
 });

@@ -17,16 +17,16 @@
 
 import {Oas30NodeVisitorAdapter} from "../../visitors/visitor.base";
 import {OasNode} from "../../models/node.model";
-import {IOasValidationErrorReporter, OasValidationRuleUtil} from "../validation";
+import {IOasValidationProblemReporter, OasValidationRuleUtil} from "../validation";
 
 /**
  * Base class for all 3.0 validation rules.
  */
 export abstract class Oas30ValidationRule extends Oas30NodeVisitorAdapter {
 
-    private _reporter: IOasValidationErrorReporter;
+    private _reporter: IOasValidationProblemReporter;
 
-    constructor(reporter: IOasValidationErrorReporter) {
+    constructor(reporter: IOasValidationProblemReporter) {
         super();
         this._reporter = reporter;
     }

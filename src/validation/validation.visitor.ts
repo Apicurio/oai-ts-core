@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-import {Oas20CompositeVisitor, Oas30CompositeVisitor} from "../visitors/visitor.base";
-import {IOasValidationErrorReporter, OasValidationError} from "./validation";
-import {OasNode} from "../models/node.model";
+import {Oas20CompositeVisitor, Oas30CompositeVisitor, OasAllNodeVisitor} from "../visitors/visitor.base";
+import {IOasValidationProblemReporter} from "./validation";
+import {OasNode, OasValidationProblem} from "../models/node.model";
 import {Oas20RequiredPropertyValidationRule} from "./2.0/required-property.rule";
 import {Oas20NodePathVisitor, Oas30NodePathVisitor} from "../visitors/path.visitor";
 import {OasTraverserDirection, OasVisitorUtil} from "../visitors/visitor.utils";
@@ -38,13 +38,26 @@ import {Oas30RequiredPropertyValidationRule} from "./3.0/required-property.rule"
 import {Oas30UniquenessValidationRule} from "./3.0/uniqueness.rule";
 
 /**
+ * Visitor used to clear validation problems.  This is typically done just before
+ * validation is run so that the data model is clean.  Validation would then add new
+ * problem nodes to the model.
+ */
+export class OasResetValidationProblemsVisitor extends OasAllNodeVisitor {
+
+    protected doVisitNode(node: OasNode): void {
+        node.clearValidationProblems();
+    }
+
+}
+
+/**
  * Visitor used to validate a OpenAPI document (or a subsection of the document).  The result
  * of the validation will be a list of validation errors.  In addition, the validator will
  * add the validation errors directly to the offending model nodes as attributes.
  */
-export class Oas20ValidationVisitor extends Oas20CompositeVisitor implements IOasValidationErrorReporter {
+export class Oas20ValidationVisitor extends Oas20CompositeVisitor implements IOasValidationProblemReporter {
 
-    private errors: OasValidationError[] = [];
+    private errors: OasValidationProblem[] = [];
 
     constructor() {
         super();
@@ -63,9 +76,9 @@ export class Oas20ValidationVisitor extends Oas20CompositeVisitor implements IOa
 
     /**
      * Returns the array of validation errors found by the visitor.
-     * @return {OasValidationError[]}
+     * @return {OasValidationProblem[]}
      */
-    public getValidationErrors(): OasValidationError[] {
+    public getValidationErrors(): OasValidationProblem[] {
         return this.errors;
     }
 
@@ -79,27 +92,10 @@ export class Oas20ValidationVisitor extends Oas20CompositeVisitor implements IOa
         let viz: Oas20NodePathVisitor = new Oas20NodePathVisitor();
         OasVisitorUtil.visitTree(node, viz, OasTraverserDirection.up);
         let path: OasNodePath = viz.path();
-        let error: OasValidationError = new OasValidationError(code, path, message);
+        let error: OasValidationProblem = node.addValidationProblem(code, path, message);
 
         // Include the error in the list of errors found by this visitor.
         this.errors.push(error);
-
-        // Also make sure to add the error to the list of validation errors on the node model itself.
-        let errors: OasValidationError[] = node.n_attribute("validation-errors");
-        if (errors === undefined || errors === null) {
-            errors = [];
-            node.n_attribute("validation-errors", errors);
-        }
-        errors.push(error);
-    }
-
-    /**
-     * Clears any previous validation errors from the node and re-validates.
-     * @param node
-     */
-    protected _acceptAll(node: OasNode): void {
-        node.n_attribute("validation-errors", null);
-        super._acceptAll(node);
     }
 
 }
@@ -110,9 +106,9 @@ export class Oas20ValidationVisitor extends Oas20CompositeVisitor implements IOa
  * of the validation will be a list of validation errors.  In addition, the validator will
  * add the validation errors directly to the offending model nodes as attributes.
  */
-export class Oas30ValidationVisitor extends Oas30CompositeVisitor implements IOasValidationErrorReporter {
+export class Oas30ValidationVisitor extends Oas30CompositeVisitor implements IOasValidationProblemReporter {
 
-    private errors: OasValidationError[] = [];
+    private errors: OasValidationProblem[] = [];
 
     constructor() {
         super();
@@ -132,9 +128,9 @@ export class Oas30ValidationVisitor extends Oas30CompositeVisitor implements IOa
 
     /**
      * Returns the array of validation errors found by the visitor.
-     * @return {OasValidationError[]}
+     * @return {OasValidationProblem[]}
      */
-    public getValidationErrors(): OasValidationError[] {
+    public getValidationErrors(): OasValidationProblem[] {
         return this.errors;
     }
 
@@ -148,27 +144,10 @@ export class Oas30ValidationVisitor extends Oas30CompositeVisitor implements IOa
         let viz: Oas30NodePathVisitor = new Oas30NodePathVisitor();
         OasVisitorUtil.visitTree(node, viz, OasTraverserDirection.up);
         let path: OasNodePath = viz.path();
-        let error: OasValidationError = new OasValidationError(code, path, message);
+        let error: OasValidationProblem = node.addValidationProblem(code, path, message);
 
         // Include the error in the list of errors found by this visitor.
         this.errors.push(error);
-
-        // Also make sure to add the error to the list of validation errors on the node model itself.
-        let errors: OasValidationError[] = node.n_attribute("validation-errors");
-        if (errors === undefined || errors === null) {
-            errors = [];
-            node.n_attribute("validation-errors", errors);
-        }
-        errors.push(error);
-    }
-
-    /**
-     * Clears any previous validation errors from the node and re-validates.
-     * @param node
-     */
-    protected _acceptAll(node: OasNode): void {
-        node.n_attribute("validation-errors", null);
-        super._acceptAll(node);
     }
 
 }

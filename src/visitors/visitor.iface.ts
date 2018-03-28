@@ -109,6 +109,7 @@ import {Oas30SecurityScheme} from "../models/3.0/security-scheme.model";
 import {Oas30Encoding} from "../models/3.0/encoding.model";
 import {Oas30LinkRequestBodyExpression} from "../models/3.0/link-request-body-expression.model";
 import {Oas30Discriminator} from "../models/3.0/discriminator.model";
+import {OasValidationProblem} from "../models/node.model";
 
 
 /**
@@ -131,8 +132,9 @@ export interface IOasNodeVisitor {
     visitSecurityRequirement(node: OasSecurityRequirement): void;
     visitTag(node: OasTag): void;
     visitExternalDocumentation(node: OasExternalDocumentation): void;
-    visitExtension(node: OasExtension): void;
     visitSecurityScheme(node: OasSecurityScheme): void;
+    visitExtension(node: OasExtension): void;
+    visitValidationProblem(node: OasValidationProblem): void;
 
 }
 

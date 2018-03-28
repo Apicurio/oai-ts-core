@@ -35,7 +35,7 @@ import {Oas20Scopes} from "../models/2.0/scopes.model";
 import {Oas20Definitions} from "../models/2.0/definitions.model";
 import {Oas20ParametersDefinitions} from "../models/2.0/parameters-definitions.model";
 import {Oas20ResponsesDefinitions} from "../models/2.0/responses-definitions.model";
-import {OasNode} from "../models/node.model";
+import {OasNode, OasValidationProblem} from "../models/node.model";
 import {OasInfo} from "../models/common/info.model";
 import {OasContact} from "../models/common/contact.model";
 import {OasLicense} from "../models/common/license.model";
@@ -106,7 +106,8 @@ export abstract class OasNodeVisitorAdapter implements IOasNodeVisitor {
     public visitSecurityRequirement(node: OasSecurityRequirement): void {}
     public visitTag(node: OasTag): void {}
     public visitExternalDocumentation(node: OasExternalDocumentation): void {}
-    public visitExtension(node: OasExtension) {}
+    public visitExtension(node: OasExtension): void {}
+    public visitValidationProblem(node: OasValidationProblem): void {}
 }
 
 
@@ -245,6 +246,7 @@ export abstract class OasCompositeVisitor implements IOasNodeVisitor {
     public visitTag(node: OasTag): void { this._acceptAll(node); }
     public visitExternalDocumentation(node: OasExternalDocumentation): void { this._acceptAll(node); }
     public visitExtension(node: OasExtension): void { this._acceptAll(node); }
+    public visitValidationProblem(node: OasValidationProblem): void { this._acceptAll(node); }
 
 }
 
@@ -398,6 +400,7 @@ export class OasCombinedVisitorAdapter implements IOas20NodeVisitor, IOas30NodeV
     visitLinkDefinition(node: Oas30LinkDefinition): void {}
     visitCallbackDefinition(node: Oas30CallbackDefinition): void {}
     visitDiscriminator(node: Oas30Discriminator): void {}
+    visitValidationProblem(node: OasValidationProblem): void {}
 }
 
 

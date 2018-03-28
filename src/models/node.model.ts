@@ -17,8 +17,10 @@
 
 import {OasDocument} from "./document.model";
 import {IOasNodeVisitor} from "../visitors/visitor.iface";
+import {OasNodePath} from "./node-path";
 
 var __modelIdCounter = 0;
+
 
 /**
  * Base class for all OAS nodes.  Contains common fields and methods across all
@@ -30,6 +32,7 @@ export abstract class OasNode {
     public _parent: OasNode;
     public _modelId: number = __modelIdCounter++;
     public _attributes: OasNodeAttributes = new OasNodeAttributes();
+    public _validationProblems: any = {}; // Really a map of string(errorCode)->OasValidationProblem
 
     /**
      * Gets the owner document.
@@ -77,6 +80,66 @@ export abstract class OasNode {
             return pvalue;
         }
     }
+
+    public validationProblems(): OasValidationProblem[] {
+        let problems: OasValidationProblem[] = [];
+        for (let problem of this._validationProblems) {
+            problems.push(problem);
+        }
+        return problems;
+    }
+
+    public validationProblemCodes(): string[] {
+        let codes: string[] = [];
+        for (let code in this._validationProblems) {
+            codes.push(code);
+        }
+        return codes;
+    }
+
+    public validationProblem(code: string): OasValidationProblem {
+        return this._validationProblems[code];
+    }
+
+    public addValidationProblem(errorCode: string, nodePath: OasNodePath, message: string): OasValidationProblem {
+        let problem: OasValidationProblem = new OasValidationProblem(errorCode, nodePath, message);
+        problem._ownerDocument = this._ownerDocument;
+        problem._parent = this;
+        this._validationProblems[errorCode] = problem;
+        return problem;
+    }
+
+    public clearValidationProblems(): void {
+        this._validationProblems = {};
+    }
+}
+
+/**
+ * Represents a single validation error.
+ */
+export class OasValidationProblem extends OasNode {
+
+    public errorCode: string;
+    public nodePath: OasNodePath;
+    public message: string;
+
+    /**
+     * Constructor.
+     * @param {string} errorCode
+     * @param {OasNodePath} nodePath
+     * @param {string} message
+     */
+    constructor(errorCode: string, nodePath: OasNodePath, message: string) {
+        super();
+        this.errorCode = errorCode;
+        this.nodePath = nodePath;
+        this.message = message;
+    }
+
+    public accept(visitor: IOasNodeVisitor): void {
+        visitor.visitValidationProblem(this);
+    }
+
 }
 
 

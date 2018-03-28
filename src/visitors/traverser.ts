@@ -33,7 +33,7 @@ import {
 import {Oas20Header} from "../models/2.0/header.model";
 import {Oas20Example} from "../models/2.0/example.model";
 import {Oas20Items} from "../models/2.0/items.model";
-import {OasNode} from "../models/node.model";
+import {OasNode, OasValidationProblem} from "../models/node.model";
 import {OasExtensibleNode} from "../models/enode.model";
 import {Oas20Scopes} from "../models/2.0/scopes.model";
 import {Oas20SecurityDefinitions} from "../models/2.0/security-definitions.model";
@@ -169,6 +169,15 @@ export abstract class OasTraverser implements IOasNodeVisitor, IOasTraverser {
     }
 
     /**
+     * Traverse the validation problems, if any exist.  Validation problems would
+     * only exist if validation has been performed on the data model.
+     * @param {OasNode} node
+     */
+    protected traverseValidationProblems(node: OasNode): void {
+        this.traverseArray(node.validationProblems());
+    }
+
+    /**
      * Visit the document.
      * @param node
      */
@@ -183,6 +192,7 @@ export abstract class OasTraverser implements IOasNodeVisitor, IOasTraverser {
         this.traverseIfNotNull(node.contact);
         this.traverseIfNotNull(node.license);
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -192,6 +202,7 @@ export abstract class OasTraverser implements IOasNodeVisitor, IOasTraverser {
     public visitContact(node: OasContact): void {
         node.accept(this.visitor);
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -201,6 +212,7 @@ export abstract class OasTraverser implements IOasNodeVisitor, IOasTraverser {
     public visitLicense(node: OasLicense): void {
         node.accept(this.visitor);
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -211,6 +223,7 @@ export abstract class OasTraverser implements IOasNodeVisitor, IOasTraverser {
         node.accept(this.visitor);
         this.traverseIndexedNode(node);
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -246,6 +259,7 @@ export abstract class OasTraverser implements IOasNodeVisitor, IOasTraverser {
         this.traverseIndexedNode(node);
         this.traverseIfNotNull(node.default);
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -255,6 +269,7 @@ export abstract class OasTraverser implements IOasNodeVisitor, IOasTraverser {
     public visitXML(node: OasXML): void {
         node.accept(this.visitor);
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -263,6 +278,7 @@ export abstract class OasTraverser implements IOasNodeVisitor, IOasTraverser {
      */
     public visitSecurityRequirement(node: OasSecurityRequirement): void {
         node.accept(this.visitor);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -279,6 +295,7 @@ export abstract class OasTraverser implements IOasNodeVisitor, IOasTraverser {
         node.accept(this.visitor);
         this.traverseIfNotNull(node.externalDocs);
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -288,6 +305,7 @@ export abstract class OasTraverser implements IOasNodeVisitor, IOasTraverser {
     public visitExternalDocumentation(node: OasExternalDocumentation): void {
         node.accept(this.visitor);
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -296,6 +314,16 @@ export abstract class OasTraverser implements IOasNodeVisitor, IOasTraverser {
      */
     public visitExtension(node: OasExtension): void {
         node.accept(this.visitor);
+        this.traverseValidationProblems(node);
+    }
+
+    /**
+     * Visit the validation problem.
+     * @param {OasValidationProblem} node
+     */
+    public visitValidationProblem(node: OasValidationProblem): void {
+        node.accept(this);
+        // Don't traverse the validation problem's validation problems. :)
     }
 
 }
@@ -331,6 +359,7 @@ export class Oas20Traverser extends OasTraverser implements IOas20NodeVisitor {
         this.traverseArray(node.tags);
         this.traverseIfNotNull(node.externalDocs);
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -348,6 +377,7 @@ export class Oas20Traverser extends OasTraverser implements IOas20NodeVisitor {
         this.traverseIfNotNull(node.patch);
         this.traverseArray(node.parameters);
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -361,6 +391,7 @@ export class Oas20Traverser extends OasTraverser implements IOas20NodeVisitor {
         this.traverseIfNotNull(node.responses);
         this.traverseArray(node.security);
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -372,6 +403,7 @@ export class Oas20Traverser extends OasTraverser implements IOas20NodeVisitor {
         this.traverseIfNotNull(node.schema);
         this.traverseIfNotNull(node.items);
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -396,6 +428,7 @@ export class Oas20Traverser extends OasTraverser implements IOas20NodeVisitor {
         this.traverseIfNotNull(node.headers);
         this.traverseIfNotNull(node.examples);
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -413,6 +446,7 @@ export class Oas20Traverser extends OasTraverser implements IOas20NodeVisitor {
     public visitHeaders(node: Oas20Headers): void {
         node.accept(this.visitor);
         this.traverseIndexedNode(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -448,6 +482,7 @@ export class Oas20Traverser extends OasTraverser implements IOas20NodeVisitor {
         this.traverseIfNotNull(node.xml);
         this.traverseIfNotNull(node.externalDocs);
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -498,6 +533,7 @@ export class Oas20Traverser extends OasTraverser implements IOas20NodeVisitor {
         node.accept(this.visitor);
         this.traverseIfNotNull(node.items);
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -506,6 +542,7 @@ export class Oas20Traverser extends OasTraverser implements IOas20NodeVisitor {
      */
     public visitExample(node: Oas20Example): void {
         node.accept(this.visitor);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -516,6 +553,7 @@ export class Oas20Traverser extends OasTraverser implements IOas20NodeVisitor {
         node.accept(this.visitor);
         this.traverseIfNotNull(node.items);
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -525,6 +563,7 @@ export class Oas20Traverser extends OasTraverser implements IOas20NodeVisitor {
     public visitSecurityDefinitions(node: Oas20SecurityDefinitions): void {
         node.accept(this.visitor);
         this.traverseIndexedNode(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -535,6 +574,7 @@ export class Oas20Traverser extends OasTraverser implements IOas20NodeVisitor {
         node.accept(this.visitor);
         this.traverseIfNotNull(node.scopes);
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -543,6 +583,7 @@ export class Oas20Traverser extends OasTraverser implements IOas20NodeVisitor {
      */
     public visitScopes(node: Oas20Scopes): void {
         node.accept(this.visitor);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -552,6 +593,7 @@ export class Oas20Traverser extends OasTraverser implements IOas20NodeVisitor {
     public visitDefinitions(node: Oas20Definitions): void {
         node.accept(this.visitor);
         this.traverseIndexedNode(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -561,6 +603,7 @@ export class Oas20Traverser extends OasTraverser implements IOas20NodeVisitor {
     public visitParametersDefinitions(node: Oas20ParametersDefinitions): void {
         node.accept(this.visitor);
         this.traverseIndexedNode(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -570,6 +613,7 @@ export class Oas20Traverser extends OasTraverser implements IOas20NodeVisitor {
     public visitResponsesDefinitions(node: Oas20ResponsesDefinitions): void {
         node.accept(this.visitor);
         this.traverseIndexedNode(node);
+        this.traverseValidationProblems(node);
     }
 
 }
@@ -603,6 +647,7 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
         this.traverseArray(node.tags);
         this.traverseIfNotNull(node.externalDocs);
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -622,6 +667,7 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
         this.traverseArray(node.parameters);
         this.traverseArray(node.servers);
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -638,6 +684,7 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
         this.traverseArray(node.security);
         this.traverseArray(node.servers);
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -650,6 +697,7 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
         this.traverseArray(node.getExamples());
         this.traverseArray(node.getMediaTypes());
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -681,6 +729,7 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
         this.traverseIfNotNull(node.xml);
         this.traverseIfNotNull(node.externalDocs);
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -689,6 +738,7 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
      */
     public visitDiscriminator(node: Oas30Discriminator): void {
         node.accept(this.visitor);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -717,6 +767,7 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
         this.traverseArray(node.getExamples());
         this.traverseArray(node.getMediaTypes());
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -745,6 +796,7 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
         this.traverseArray(node.getLinks());
         this.traverseArray(node.getHeaders());
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -757,6 +809,7 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
         this.traverseIfNotNull(node.requestBody);
         this.traverseIfNotNull(node.server);
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -765,6 +818,7 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
      */
     public visitLinkParameterExpression(node: Oas30LinkParameterExpression): void {
         node.accept(this.visitor);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -773,6 +827,7 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
      */
     public visitLinkRequestBodyExpression(node: Oas30LinkRequestBodyExpression): void {
         node.accept(this.visitor);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -791,6 +846,7 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
         node.accept(this.visitor);
         this.traverseArray(node.getMediaTypes());
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -803,6 +859,7 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
         this.traverseArray(node.getExamples());
         this.traverseArray(node.getEncodings());
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -813,6 +870,7 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
         node.accept(this.visitor);
         this.traverseArray(node.getHeaders());
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -822,6 +880,7 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
     public visitExample(node: Oas30Example): void {
         node.accept(this.visitor);
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -832,6 +891,7 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
         node.accept(this.visitor);
         this.traverseIndexedNode(node);
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -914,6 +974,7 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
         this.traverseArray(node.getLinkDefinitions());
         this.traverseArray(node.getCallbackDefinitions());
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -948,6 +1009,7 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
         node.accept(this.visitor);
         this.traverseIfNotNull(node.flows);
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -961,6 +1023,7 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
         this.traverseIfNotNull(node.clientCredentials);
         this.traverseIfNotNull(node.authorizationCode);
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -1002,6 +1065,7 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
     private visitOAuthFlow(node: Oas30OAuthFlow): void {
         node.accept(this.visitor);
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -1036,6 +1100,7 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
         node.accept(this.visitor);
         this.traverseArray(node.getServerVariables());
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
     /**
@@ -1045,6 +1110,7 @@ export class Oas30Traverser extends OasTraverser implements IOas30NodeVisitor {
     public visitServerVariable(node: Oas30ServerVariable): void {
         node.accept(this.visitor);
         this.traverseExtensions(node);
+        this.traverseValidationProblems(node);
     }
 
 }
@@ -1145,6 +1211,11 @@ export abstract class OasReverseTraverser implements IOasNodeVisitor, IOasTraver
     }
 
     public visitExtension(node: OasExtension): void {
+        node.accept(this.visitor);
+        this.traverse(node.parent());
+    }
+
+    public visitValidationProblem(node: OasValidationProblem): void {
         node.accept(this.visitor);
         this.traverse(node.parent());
     }

@@ -17,15 +17,17 @@
 
 import {OasDocument} from "./models/document.model";
 import {OasDocumentFactory} from "./factories/document.factory";
-import {OasNode} from "./models/node.model";
+import {OasNode, OasValidationProblem} from "./models/node.model";
 import {
     Oas20JS2ModelReader, Oas20JS2ModelReaderVisitor, Oas30JS2ModelReader,
     Oas30JS2ModelReaderVisitor
 } from "./readers/js2model.reader";
 import {Oas20ModelToJSVisitor, Oas30ModelToJSVisitor} from "./visitors/model2js.visitor";
 import {OasVisitorUtil, OasTraverserDirection} from "./visitors/visitor.utils";
-import {Oas20ValidationVisitor, Oas30ValidationVisitor} from "./validation/validation.visitor";
-import {OasValidationError} from "./validation/validation";
+import {
+    Oas20ValidationVisitor, Oas30ValidationVisitor,
+    OasResetValidationProblemsVisitor
+} from "./validation/validation.visitor";
 import {OasNodePath} from "./models/node-path";
 import {Oas20NodePathVisitor, Oas30NodePathVisitor} from "./visitors/path.visitor";
 
@@ -116,7 +118,12 @@ export class OasLibraryUtils {
      * @param recursive
      * @return {any}
      */
-    public validate(node: OasNode, recursive: boolean = true): OasValidationError[] {
+    public validate(node: OasNode, recursive: boolean = true): OasValidationProblem[] {
+        // Reset all problems first
+        let resetter: OasResetValidationProblemsVisitor = new OasResetValidationProblemsVisitor();
+        OasVisitorUtil.visitTree(node, resetter);
+
+        // Now validate the data model.
         if (node.ownerDocument().is2xDocument()) {
             let visitor: Oas20ValidationVisitor = new Oas20ValidationVisitor();
             if (recursive) {

@@ -63,7 +63,6 @@ import {Oas30ExternalDocumentation} from "../models/3.0/external-documentation.m
 import {OasTag} from "../models/common/tag.model";
 import {Oas30Tag} from "../models/3.0/tag.model";
 import {OasXML} from "../models/common/xml.model";
-import {OasHeader} from "../models/common/header.model";
 import {OasSecurityRequirement} from "../models/common/security-requirement.model";
 import {OasOperation} from "../models/common/operation.model";
 import {OasParameterBase} from "../models/common/parameter.model";
@@ -114,7 +113,7 @@ import {Oas30Responses} from "../models/3.0/responses.model";
 import {Oas30XML} from "../models/3.0/xml.model";
 import {Oas30LinkRequestBodyExpression} from "../models/3.0/link-request-body-expression.model";
 import {Oas30Discriminator} from "../models/3.0/discriminator.model";
-import {OasLibraryUtils} from "../library.utils";
+import {OasValidationProblem} from "../models/node.model";
 
 
 /**
@@ -1161,6 +1160,10 @@ export class Oas20JS2ModelReaderVisitor implements IOas20NodeVisitor {
         // Not supported:  cannot read a single extension
     }
 
+    public visitValidationProblem(node: OasValidationProblem): void {
+        // Not supported:  validation problems are transient
+    }
+
 }
 
 
@@ -1385,6 +1388,10 @@ export class Oas30JS2ModelReaderVisitor implements IOas30NodeVisitor {
 
     public visitExtension(node: OasExtension): void {
         // Not supported:  cannot read a single extension
+    }
+
+    public visitValidationProblem(node: OasValidationProblem): void {
+        // Not supported:  validation problems are transient
     }
 
 }

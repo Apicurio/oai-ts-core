@@ -19,6 +19,8 @@ import {OasNode} from "../models/node.model";
 import {IOasNodeVisitor, IOas20NodeVisitor, IOas30NodeVisitor} from "./visitor.iface";
 import {Oas20Traverser, Oas20ReverseTraverser, IOasTraverser, Oas30ReverseTraverser, Oas30Traverser} from "./traverser";
 import {Oas20ModelToJSVisitor} from "./model2js.visitor";
+import {OasNodePath} from "../models/node-path";
+import {OasDocument} from "../models/document.model";
 
 export enum OasTraverserDirection {
     up, down
@@ -34,7 +36,7 @@ export class OasVisitorUtil {
      * @param node
      * @param visitor
      */
-    public static visitNode(node: OasNode, visitor: IOasNodeVisitor) {
+    public static visitNode(node: OasNode, visitor: IOasNodeVisitor): void {
         node.accept(visitor);
     }
 
@@ -44,7 +46,7 @@ export class OasVisitorUtil {
      * @param node the node to traverse and visit
      * @param visitor the visitor to call for each node visited
      */
-    public static visitTree(node: OasNode, visitor: IOasNodeVisitor, direction: OasTraverserDirection = OasTraverserDirection.down) {
+    public static visitTree(node: OasNode, visitor: IOasNodeVisitor, direction: OasTraverserDirection = OasTraverserDirection.down): void {
         if (node.ownerDocument().is2xDocument()) {
             let traverser: IOasTraverser;
             if (direction === OasTraverserDirection.up) {
@@ -64,6 +66,16 @@ export class OasVisitorUtil {
         } else {
             throw new Error("OAS version " + node.ownerDocument().getSpecVersion() + " not supported.");
         }
+    }
+
+    /**
+     * Convenience method for visiting all Nodes in a node path, relative to a given document.
+     * @param {OasNodePath} path
+     * @param {IOasNodeVisitor} visitor
+     * @param {OasDocument} document
+     */
+    public static visitPath(path: OasNodePath, visitor: IOasNodeVisitor, document: OasDocument): void {
+        path.resolve(document, visitor);
     }
 
 }
