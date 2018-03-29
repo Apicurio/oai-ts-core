@@ -445,6 +445,7 @@ export abstract class OasAllNodeVisitor extends OasCombinedVisitorAdapter {
     visitParametersDefinitions(node: Oas20ParametersDefinitions): void { this.doVisitNode(node); }
     visitResponsesDefinitions(node: Oas20ResponsesDefinitions): void { this.doVisitNode(node); }
     visitExtension(node: OasExtension): void { this.doVisitNode(node); }
+    visitValidationProblem(node: OasValidationProblem): void { this.doVisitNode(node); }
     visitMediaType(node: Oas30MediaType): void { this.doVisitNode(node); }
     visitEncoding(node: Oas30Encoding): void { this.doVisitNode(node); }
     visitLink(node: Oas30Link): void { this.doVisitNode(node); }
