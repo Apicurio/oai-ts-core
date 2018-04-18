@@ -463,7 +463,6 @@ describe("Validation (3.0)", () => {
 [ED-3-002] {/components/schemas[ed-3-002]/externalDocs} :: Property "url" is required.
 [FLOW-3-001] {/components/securitySchemes[flow-3-001]/flows/implicit} :: Property "authorizationUrl" is required.
 [FLOW-3-001] {/components/securitySchemes[flow-3-001]/flows/authorizationCode} :: Property "authorizationUrl" is required.
-[FLOW-3-002] {/components/securitySchemes[flow-3-002]/flows/implicit} :: Property "tokenUrl" is required.
 [FLOW-3-002] {/components/securitySchemes[flow-3-002]/flows/clientCredentials} :: Property "tokenUrl" is required.
 [FLOW-3-002] {/components/securitySchemes[flow-3-002]/flows/authorizationCode} :: Property "tokenUrl" is required.
 [FLOW-3-006] {/components/securitySchemes[flow-3-006]/flows/implicit} :: Property "scopes" is required.
