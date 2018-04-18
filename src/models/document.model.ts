@@ -68,6 +68,18 @@ export abstract class OasDocument extends OasExtensibleNode {
     public abstract createSecurityRequirement(): OasSecurityRequirement;
 
     /**
+     * Adds a security requirement child.
+     * @param securityRequirement
+     */
+    public addSecurityRequirement(securityRequirement: OasSecurityRequirement): OasSecurityRequirement {
+        if (this.security == null) {
+            this.security = [];
+        }
+        this.security.push(securityRequirement);
+        return securityRequirement;
+    }
+
+    /**
      * Creates an OAS Tag object.
      * @return {OasTag}
      */

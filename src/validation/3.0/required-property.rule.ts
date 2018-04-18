@@ -92,10 +92,10 @@ export class Oas30RequiredPropertyValidationRule extends Oas30ValidationRule {
     public visitImplicitOAuthFlow(node: Oas30ImplicitOAuthFlow): void {
         this.visitOAuthFlow(node);
         this.requireProperty("FLOW-3-001", node, "authorizationUrl");
-        this.requireProperty("FLOW-3-002", node, "tokenUrl");
     }
     public visitPasswordOAuthFlow(node: Oas30PasswordOAuthFlow): void {
         this.visitOAuthFlow(node);
+        this.requireProperty("FLOW-3-002", node, "tokenUrl");
     }
     public visitClientCredentialsOAuthFlow(node: Oas30ClientCredentialsOAuthFlow): void {
         this.visitOAuthFlow(node);
