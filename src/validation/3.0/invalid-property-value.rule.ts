@@ -158,7 +158,7 @@ export class Oas30InvalidPropertyValueValidationRule extends Oas30ValidationRule
      */
     private isValidRequestBodyOperation(operation: Oas30Operation): boolean {
         let method: string = operation.method();
-        return method === "put" || method === "post" || method === "options";
+        return method === "put" || method === "post" || method === "options" || method === "patch";
     }
 
 
@@ -223,7 +223,7 @@ export class Oas30InvalidPropertyValueValidationRule extends Oas30ValidationRule
     public visitOperation(node: Oas30Operation): void {
         if (this.hasValue(node.requestBody)) {
             this.reportIfInvalid("OP-3-003", this.isValidRequestBodyOperation(node), node,
-                `The "requestBody" property is only supported for POST, PUT, and OPTIONS operations.`);
+                `The "requestBody" property is only supported for POST, PUT, PATCH, and OPTIONS operations.`);
         }
     }
 

@@ -374,7 +374,7 @@ describe("Validation (3.0)", () => {
 [HEAD-3-004] {/paths[/head-3-004]/post/requestBody/content[multipart/form-data]/encoding[historyMetadata]/headers[X-Header-1]} :: The "content" property must contain at most one entry.
 [LINK-3-002] {/paths[/link-3-002]/get/responses[200]/links[address]} :: The "operationId" property must refer to an existing Operation.  Cannot find operation with ID "getUserAddress".
 [MT-3-003] {/paths[/mt-3-003]/post/requestBody/content[application/json]} :: The "encoding" property is only allowed for "multipart" and "application/x-www-form-urlencoded" request body media types.  Found "application/json" instead.
-[OP-3-003] {/paths[/op-3-003]/get} :: The "requestBody" property is only supported for POST, PUT, and OPTIONS operations.
+[OP-3-003] {/paths[/op-3-003]/get} :: The "requestBody" property is only supported for POST, PUT, PATCH, and OPTIONS operations.
 [OP-3-005] {/paths[/op-3-005]/get} :: There must be at least one Response documented.
 [PAR-3-002] {/paths[/par-3-002]/parameters[0]} :: The "in" property value must be one of: ["path", "query", "header", "cookie"] (Found value: 'side')
 [PAR-3-006] {/paths[/par-3-006/{id}]/parameters[0]} :: The "required" property is required for "path" parameters, and must have a value of "true".
