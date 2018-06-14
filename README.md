@@ -47,12 +47,12 @@ It also means you can use the project as a dependency in your projects without w
 conflicts or dependency bloat.
 
 ## Project Status
-Currently, the data model fully supports versions 2.0 and 3.0.0 of the OpenAPI spec.  Barring oversights 
+Currently, the data model fully supports versions 2.0 and 3.0.x of the OpenAPI spec.  Barring oversights
 or bugs, the full OpenAPI document can be read and written successfully.  In addition, the visitor
 pattern has been fully implemented (along with both up and down traversing).
 
-Validation of an OpenAPI 2.0 specification exists, with almost all of the rules outlined in the 
-spec having been implemented.  Work has not yet started on validation for version 3.0.0.
+Validation of the OpenAPI specification exists, with almost all of the rules outlined in the
+spec having been implemented.
 
 Please refer to the github repository's Issues and other resources for more information on the
 current status of the project.
@@ -62,7 +62,7 @@ One of the design goals of this library is to simultaneously support multiple ve
 specification.  At the time of this writing, there are two versions of the OpenAPI specification:
 
 * [OpenAPI Version 2.0](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md)
-* [OpenAPI Version 3.0.0](https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc1/versions/3.0.md)
+* [OpenAPI Version 3.0.1](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md)
 
 Both of these versions are supported by the library.  As new versions of the specification are 
 released, the library will be updated to include support for them.
@@ -181,7 +181,7 @@ yarn publish ./dist
 If everything went well, you have now built, tested, packaged, and released a new version of
 the library into npmjs.com for other projects to use.  The final step is to tag the source
 code with the version that was just released.  For example, if you have just published version
-3.7.8 of the library, you would tag it in the repository with these commands:
+0.2.4 of the library, you would tag it in the repository with these commands:
 
 ```
 git tag -a -m 'Release 0.2.4' 0.2.4
