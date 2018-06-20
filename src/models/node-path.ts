@@ -189,7 +189,7 @@ export class OasNodePathSegment {
     }
 
     public resolve(node: OasNode): OasNode {
-        if (node === null) {
+        if (node === null || node === undefined) {
             return null;
         }
         let childNode: any = null;
