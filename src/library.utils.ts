@@ -30,6 +30,7 @@ import {
 } from "./validation/validation.visitor";
 import {OasNodePath} from "./models/node-path";
 import {Oas20NodePathVisitor, Oas30NodePathVisitor} from "./visitors/path.visitor";
+import {DefaultValidationSeverityRegistry, IOasValidationSeverityRegistry} from "./validation/validation";
 
 /**
  * Represents the global OAS library entry point.  This is used, for example, when
@@ -116,9 +117,15 @@ export class OasLibraryUtils {
      * Validates the given OAS model.
      * @param node
      * @param recursive
+     * @param severityRegistry
      * @return {any}
      */
-    public validate(node: OasNode, recursive: boolean = true): OasValidationProblem[] {
+    public validate(node: OasNode, recursive: boolean = true, severityRegistry?: IOasValidationSeverityRegistry): OasValidationProblem[] {
+        // Default the severity registry if one is not provided.
+        if (!severityRegistry) {
+            severityRegistry = new DefaultValidationSeverityRegistry();
+        }
+
         // Reset all problems first
         let resetter: OasResetValidationProblemsVisitor = new OasResetValidationProblemsVisitor();
         OasVisitorUtil.visitTree(node, resetter);

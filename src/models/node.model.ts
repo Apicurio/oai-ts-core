@@ -18,6 +18,7 @@
 import {OasDocument} from "./document.model";
 import {IOasNodeVisitor} from "../visitors/visitor.iface";
 import {OasNodePath} from "./node-path";
+import {OasValidationProblemSeverity} from "../validation/validation";
 
 var __modelIdCounter = 0;
 
@@ -101,8 +102,9 @@ export abstract class OasNode {
         return this._validationProblems[code];
     }
 
-    public addValidationProblem(errorCode: string, nodePath: OasNodePath, message: string): OasValidationProblem {
-        let problem: OasValidationProblem = new OasValidationProblem(errorCode, nodePath, message);
+    public addValidationProblem(errorCode: string, nodePath: OasNodePath, message: string,
+                                severity: OasValidationProblemSeverity): OasValidationProblem {
+        let problem: OasValidationProblem = new OasValidationProblem(errorCode, nodePath, message, severity);
         problem._ownerDocument = this._ownerDocument;
         problem._parent = this;
         this._validationProblems[errorCode] = problem;
@@ -122,18 +124,21 @@ export class OasValidationProblem extends OasNode {
     public errorCode: string;
     public nodePath: OasNodePath;
     public message: string;
+    public severity: OasValidationProblemSeverity;
 
     /**
      * Constructor.
-     * @param {string} errorCode
-     * @param {OasNodePath} nodePath
-     * @param {string} message
+     * @param errorCode
+     * @param nodePath
+     * @param message
+     * @param severity
      */
-    constructor(errorCode: string, nodePath: OasNodePath, message: string) {
+    constructor(errorCode: string, nodePath: OasNodePath, message: string, severity: OasValidationProblemSeverity) {
         super();
         this.errorCode = errorCode;
         this.nodePath = nodePath;
         this.message = message;
+        this.severity = severity;
     }
 
     public accept(visitor: IOasNodeVisitor): void {

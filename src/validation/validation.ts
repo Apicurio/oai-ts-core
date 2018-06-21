@@ -20,6 +20,9 @@ import {Oas20Schema} from "../models/2.0/schema.model";
 import {Oas20Items} from "../models/2.0/items.model";
 import {Oas30Schema} from "../models/3.0/schema.model";
 
+export enum OasValidationProblemSeverity {
+    ignore, low, medium, high
+}
 
 /**
  * Interface used by validation rules to report errors.
@@ -27,6 +30,20 @@ import {Oas30Schema} from "../models/3.0/schema.model";
 export interface IOasValidationProblemReporter {
 
     report(code: string, node: OasNode, message: string): void;
+
+}
+
+export interface IOasValidationSeverityRegistry {
+
+    lookupSeverity(ruleCode: string): OasValidationProblemSeverity;
+
+}
+
+export class DefaultValidationSeverityRegistry implements IOasValidationSeverityRegistry {
+
+    public lookupSeverity(ruleCode: string): OasValidationProblemSeverity {
+        return OasValidationProblemSeverity.medium;
+    }
 
 }
 

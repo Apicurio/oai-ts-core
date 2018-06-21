@@ -16,7 +16,12 @@
  */
 
 import {Oas20CompositeVisitor, Oas30CompositeVisitor, OasAllNodeVisitor} from "../visitors/visitor.base";
-import {IOasValidationProblemReporter} from "./validation";
+import {
+    DefaultValidationSeverityRegistry,
+    IOasValidationProblemReporter,
+    IOasValidationSeverityRegistry,
+    OasValidationProblemSeverity
+} from "./validation";
 import {OasNode, OasValidationProblem} from "../models/node.model";
 import {Oas20RequiredPropertyValidationRule} from "./2.0/required-property.rule";
 import {Oas20NodePathVisitor, Oas30NodePathVisitor} from "../visitors/path.visitor";
@@ -58,6 +63,7 @@ export class OasResetValidationProblemsVisitor extends OasAllNodeVisitor {
 export class Oas20ValidationVisitor extends Oas20CompositeVisitor implements IOasValidationProblemReporter {
 
     private errors: OasValidationProblem[] = [];
+    private severityRegistry: IOasValidationSeverityRegistry = new DefaultValidationSeverityRegistry();
 
     constructor() {
         super();
@@ -75,6 +81,14 @@ export class Oas20ValidationVisitor extends Oas20CompositeVisitor implements IOa
     }
 
     /**
+     * Sets the severity registry.
+     * @param {IOasValidationSeverityRegistry} severityRegistry
+     */
+    public setSeverityRegistry(severityRegistry: IOasValidationSeverityRegistry): void {
+        this.severityRegistry = severityRegistry;
+    }
+
+    /**
      * Returns the array of validation errors found by the visitor.
      * @return {OasValidationProblem[]}
      */
@@ -89,15 +103,23 @@ export class Oas20ValidationVisitor extends Oas20CompositeVisitor implements IOa
      * @param message
      */
     public report(code: string, node: OasNode, message: string): void {
+        let severity: OasValidationProblemSeverity = this.lookupSeverity(code);
+        if (severity === OasValidationProblemSeverity.ignore) {
+            return;
+        }
+
         let viz: Oas20NodePathVisitor = new Oas20NodePathVisitor();
         OasVisitorUtil.visitTree(node, viz, OasTraverserDirection.up);
         let path: OasNodePath = viz.path();
-        let error: OasValidationProblem = node.addValidationProblem(code, path, message);
+        let error: OasValidationProblem = node.addValidationProblem(code, path, message, severity);
 
         // Include the error in the list of errors found by this visitor.
         this.errors.push(error);
     }
 
+    private lookupSeverity(code: string) {
+        return this.severityRegistry.lookupSeverity(code);
+    }
 }
 
 
@@ -109,6 +131,7 @@ export class Oas20ValidationVisitor extends Oas20CompositeVisitor implements IOa
 export class Oas30ValidationVisitor extends Oas30CompositeVisitor implements IOasValidationProblemReporter {
 
     private errors: OasValidationProblem[] = [];
+    private severityRegistry: IOasValidationSeverityRegistry = new DefaultValidationSeverityRegistry();
 
     constructor() {
         super();
@@ -127,6 +150,14 @@ export class Oas30ValidationVisitor extends Oas30CompositeVisitor implements IOa
     }
 
     /**
+     * Sets the severity registry.
+     * @param {IOasValidationSeverityRegistry} severityRegistry
+     */
+    public setSeverityRegistry(severityRegistry: IOasValidationSeverityRegistry): void {
+        this.severityRegistry = severityRegistry;
+    }
+
+    /**
      * Returns the array of validation errors found by the visitor.
      * @return {OasValidationProblem[]}
      */
@@ -141,13 +172,21 @@ export class Oas30ValidationVisitor extends Oas30CompositeVisitor implements IOa
      * @param message
      */
     public report(code: string, node: OasNode, message: string): void {
+        let severity: OasValidationProblemSeverity = this.lookupSeverity(code);
+        if (severity === OasValidationProblemSeverity.ignore) {
+            return;
+        }
+
         let viz: Oas30NodePathVisitor = new Oas30NodePathVisitor();
         OasVisitorUtil.visitTree(node, viz, OasTraverserDirection.up);
         let path: OasNodePath = viz.path();
-        let error: OasValidationProblem = node.addValidationProblem(code, path, message);
+        let error: OasValidationProblem = node.addValidationProblem(code, path, message, severity);
 
         // Include the error in the list of errors found by this visitor.
         this.errors.push(error);
     }
 
+    private lookupSeverity(code: string) {
+        return this.severityRegistry.lookupSeverity(code);
+    }
 }
