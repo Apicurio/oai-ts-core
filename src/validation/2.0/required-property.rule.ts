@@ -46,7 +46,7 @@ export class Oas20RequiredPropertyValidationRule extends Oas20ValidationRule {
     private requireProperty(code: string, node: OasNode, propertyName: string): void {
         let propertyValue: any = node[propertyName];
         if (!this.isDefined(propertyValue)) {
-            this.report(code, node, "Property \"" + propertyName + "\" is required.");
+            this.report(code, node, propertyName, `Property "${propertyName}" is required.`);
         }
     }
 
@@ -60,7 +60,8 @@ export class Oas20RequiredPropertyValidationRule extends Oas20ValidationRule {
     private requirePropertyWhen(code: string, node: OasNode, propertyName: string, dependentProperty: string, dependentValue: string): void {
         let propertyValue: any = node[propertyName];
         if (!this.isDefined(propertyValue)) {
-            this.report(code, node, "Property \"" + propertyName + "\" is required when \"" + dependentProperty + "\" property is '" + dependentValue + "'.");
+            this.report(code, node, propertyName,
+                `Property "${propertyName}" is required when "${dependentProperty}" property is '${dependentValue}'.`);
         }
     }
 
@@ -96,7 +97,8 @@ export class Oas20RequiredPropertyValidationRule extends Oas20ValidationRule {
         this.requireProperty("PAR-002", node, "in");
 
         if (node.in === "path" && node.required !== true) {
-            this.report("PAR-003", node, "Property \"required\" is required when \"in\" property is 'path' (and value must be 'true').");
+            this.report("PAR-003", node, "required",
+                `Property "required" is required when "in" property is 'path' (and value must be 'true').`);
         }
 
         if (node.in === "body") {
@@ -104,11 +106,13 @@ export class Oas20RequiredPropertyValidationRule extends Oas20ValidationRule {
         }
 
         if (node.in !== "body" && !this.isDefined(node.type)) {
-            this.report("PAR-005", node, "Property \"type\" is required when \"in\" property is NOT 'body'.");
+            this.report("PAR-005", node, "type", 
+                `Property "type" is required when "in" property is NOT 'body'.`);
         }
 
         if (node.in !== "body" && node.type === "array" && !this.isDefined(node.items)) {
-            this.report("PAR-006", node, "Property \"items\" is required when \"in\" property is NOT 'body' AND \"type\" property is 'array'.");
+            this.report("PAR-006", node, "items",
+                `Property "items" is required when "in" property is NOT 'body' AND "type" property is 'array'.`);
         }
     }
 
@@ -146,10 +150,12 @@ export class Oas20RequiredPropertyValidationRule extends Oas20ValidationRule {
         if (node.type === "oauth2") {
             this.requirePropertyWhen("SS-004", node, "flow", "type", "oauth2");
             if ((node.flow === "implicit" || node.flow === "accessCode") && !this.isDefined(node.authorizationUrl)) {
-                this.report("SS-005", node, "Property \"authorizationUrl\" is is required when \"type\" property is 'oauth2' AND \"flow\" property is 'implicit|accessCode'.");
+                this.report("SS-005", node, "authorizationUrl", 
+                    `Property "authorizationUrl" is is required when "type" property is 'oauth2' AND "flow" property is 'implicit|accessCode'.`);
             }
             if ((node.flow === "password" || node.flow === "application" || node.flow === "accessCode") && !this.isDefined(node.tokenUrl)) {
-                this.report("SS-006", node, "Property \"tokenUrl\" is is required when \"type\" property is 'oauth2' AND \"flow\" property is 'password|application|accessCode'.");
+                this.report("SS-006", node, "tokenUrl",
+                    `Property "tokenUrl" is is required when "type" property is 'oauth2' AND "flow" property is 'password|application|accessCode'.`);
             }
             this.requirePropertyWhen("SS-007", node, "scopes", "type", "oauth2");
         }

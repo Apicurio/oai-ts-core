@@ -102,9 +102,9 @@ export abstract class OasNode {
         return this._validationProblems[code];
     }
 
-    public addValidationProblem(errorCode: string, nodePath: OasNodePath, message: string,
+    public addValidationProblem(errorCode: string, nodePath: OasNodePath, property: string, message: string,
                                 severity: OasValidationProblemSeverity): OasValidationProblem {
-        let problem: OasValidationProblem = new OasValidationProblem(errorCode, nodePath, message, severity);
+        let problem: OasValidationProblem = new OasValidationProblem(errorCode, nodePath, property, message, severity);
         problem._ownerDocument = this._ownerDocument;
         problem._parent = this;
         this._validationProblems[errorCode] = problem;
@@ -123,6 +123,7 @@ export class OasValidationProblem extends OasNode {
 
     public errorCode: string;
     public nodePath: OasNodePath;
+    public property: string;
     public message: string;
     public severity: OasValidationProblemSeverity;
 
@@ -130,13 +131,15 @@ export class OasValidationProblem extends OasNode {
      * Constructor.
      * @param errorCode
      * @param nodePath
+     * @param property
      * @param message
      * @param severity
      */
-    constructor(errorCode: string, nodePath: OasNodePath, message: string, severity: OasValidationProblemSeverity) {
+    constructor(errorCode: string, nodePath: OasNodePath, property: string, message: string, severity: OasValidationProblemSeverity) {
         super();
         this.errorCode = errorCode;
         this.nodePath = nodePath;
+        this.property = property;
         this.message = message;
         this.severity = severity;
     }

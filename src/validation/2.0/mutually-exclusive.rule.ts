@@ -16,7 +16,6 @@
  */
 
 import {Oas20ValidationRule} from "./common.rule";
-import {OasNode} from "../../models/node.model";
 import {Oas20PathItem} from "../../models/2.0/path-item.model";
 import {Oas20Operation} from "../../models/2.0/operation.model";
 
@@ -27,19 +26,6 @@ import {Oas20Operation} from "../../models/2.0/operation.model";
  * with each other.
  */
 export class Oas20MutuallyExclusiveValidationRule extends Oas20ValidationRule {
-
-    /**
-     * Reports a validation error if the property is not valid.
-     * @param code
-     * @param isValid
-     * @param node
-     * @param message
-     */
-    private reportIfInvalid(code: string, isValid: boolean, node: OasNode, message: string): void {
-        if (!isValid) {
-            this.report(code, node, message);
-        }
-    }
 
     public visitOperation(node: Oas20Operation): void {
         if (this.hasValue(node.parameters)) {
@@ -53,8 +39,8 @@ export class Oas20MutuallyExclusiveValidationRule extends Oas20ValidationRule {
                     hasFormDataParam = true;
                 }
             });
-            this.reportIfInvalid("PATH-001", !(hasBodyParam && hasFormDataParam), node,
-                "An operation may not have both a \"body\" and a \"formData\" parameter.");
+            this.reportIfInvalid("PATH-001", !(hasBodyParam && hasFormDataParam), node, "body",
+                `An operation may not have both a "body" and a "formData" parameter.`);
         }
     }
 
@@ -70,8 +56,8 @@ export class Oas20MutuallyExclusiveValidationRule extends Oas20ValidationRule {
                     hasFormDataParam = true;
                 }
             });
-            this.reportIfInvalid("PATH-001", !(hasBodyParam && hasFormDataParam), node,
-                "An operation may not have both a \"body\" and a \"formData\" parameter.");
+            this.reportIfInvalid("PATH-001", !(hasBodyParam && hasFormDataParam), node, "body",
+                `An operation may not have both a "body" and a "formData" parameter.`);
         }
     }
 

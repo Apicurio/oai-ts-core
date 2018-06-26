@@ -16,7 +16,6 @@
  */
 
 import {Oas20ValidationRule} from "./common.rule";
-import {OasNode} from "../../models/node.model";
 import {Oas20Parameter} from "../../models/2.0/parameter.model";
 import {Oas20SecurityScheme} from "../../models/2.0/security-scheme.model";
 import {Oas20SecurityRequirement} from "../../models/2.0/security-requirement.model";
@@ -39,19 +38,6 @@ import {OasValidationRuleUtil} from "../validation";
  * invalid.
  */
 export class Oas20InvalidPropertyValueValidationRule extends Oas20ValidationRule {
-
-    /**
-     * Reports a validation error if the property is not valid.
-     * @param code
-     * @param isValid
-     * @param node
-     * @param message
-     */
-    private reportIfInvalid(code: string, isValid: boolean, node: OasNode, message: string): void {
-        if (!isValid) {
-            this.report(code, node, message);
-        }
-    }
 
     /**
      * Returns true if the given value is a valid operationId.
@@ -114,29 +100,33 @@ export class Oas20InvalidPropertyValueValidationRule extends Oas20ValidationRule
     public visitDocument(node: Oas20Document): void {
         if (this.hasValue(node.schemes)) {
             node.schemes.forEach(scheme => {
-                this.reportIfInvalid("R-006", OasValidationRuleUtil.isValidEnumItem(scheme, ["http", "https", "ws", "wss"]), node,
-                    "Invalid property value.  Each \"schemes\" property value must be one of: http, https, ws, wss (Invalid value found: '" + scheme + "')");
+                this.reportIfInvalid("R-006", OasValidationRuleUtil.isValidEnumItem(scheme, ["http", "https", "ws", "wss"]), node, "schemes",
+                    `Invalid property value.  Each "schemes" property value must be one of: http, https, ws, wss (Invalid value found: '${scheme}')`);
             });
         }
         if (this.hasValue(node.consumes)) {
-            this.reportIfInvalid("R-007", OasValidationRuleUtil.isValidMimeType(node.consumes), node, "Invalid property value.  The \"consumes\" property value must be a valid mime-type.");
+            this.reportIfInvalid("R-007", OasValidationRuleUtil.isValidMimeType(node.consumes), node, "consumes", 
+                `Invalid property value.  The "consumes" property value must be a valid mime-type.`);
         }
         if (this.hasValue(node.produces)) {
-            this.reportIfInvalid("R-008", OasValidationRuleUtil.isValidMimeType(node.produces), node, "Invalid property value.  The \"produces\" property value must be a valid mime-type.");
+            this.reportIfInvalid("R-008", OasValidationRuleUtil.isValidMimeType(node.produces), node, "produces",
+                `Invalid property value.  The "produces" property value must be a valid mime-type.`);
         }
     }
 
     public visitOperation(node: Oas20Operation): void {
         if (this.hasValue(node.summary)) {
-            this.reportIfInvalid("OP-001", node.summary.length < 120, node, "The \"summary\" property value should be less than 120 characters long.");
+            this.reportIfInvalid("OP-001", node.summary.length < 120, node, "summary",
+                `The "summary" property value should be less than 120 characters long.`);
         }
         if (this.hasValue(node.operationId)) {
-            this.reportIfInvalid("OP-004", this.isValidOperationId(node.operationId), node, "The \"operationId\" property value is invalid - it should be simple *camelCase* format.");
+            this.reportIfInvalid("OP-004", this.isValidOperationId(node.operationId), node, "operationId", 
+                `The "operationId" property value is invalid - it should be simple *camelCase* format.`);
         }
         if (this.hasValue(node.schemes)) {
             node.schemes.forEach( scheme => {
-                this.reportIfInvalid("OP-010", OasValidationRuleUtil.isValidEnumItem(scheme, ["http", "https", "ws", "wss"]), node,
-                    "Invalid property value.  Each \"schemes\" property value must be one of: http, https, ws, wss (Invalid value found: '" + scheme + "')");
+                this.reportIfInvalid("OP-010", OasValidationRuleUtil.isValidEnumItem(scheme, ["http", "https", "ws", "wss"]), node, "schemes",
+                    `Invalid property value.  Each "schemes" property value must be one of: http, https, ws, wss (Invalid value found: '${scheme}')`);
             });
         }
     }
@@ -152,8 +142,8 @@ export class Oas20InvalidPropertyValueValidationRule extends Oas20ValidationRule
             }
             let path: string = pathItem.path();
             let pathVars: string[] = this.parsePathTemplate(path);
-            this.reportIfInvalid("PAR-007", OasValidationRuleUtil.isValidEnumItem(node.name, pathVars), node,
-                "The \"name\" property value for a 'path' style parameter must match one of the items in the path template.  Invalid path property name found: " + node.name);
+            this.reportIfInvalid("PAR-007", OasValidationRuleUtil.isValidEnumItem(node.name, pathVars), node, "name",
+                `The "name" property value for a 'path' style parameter must match one of the items in the path template.  Invalid path property name found: ${node.name}`);
         }
 
         if (node.in === "formData") {
@@ -168,117 +158,118 @@ export class Oas20InvalidPropertyValueValidationRule extends Oas20ValidationRule
                 consumes = [];
             }
             let valid: boolean = consumes.indexOf("application/x-www-form-urlencoded") >= 0 || consumes.indexOf("multipart/form-data") >= 0;
-            this.reportIfInvalid("PAR-008", valid, node, "A parameter located in \"formData\" may only be used when the operation @consumes 'application/x-www-form-urlencoded' or 'multipart/form-data' data.");
+            this.reportIfInvalid("PAR-008", valid, node, "consumes",
+                `A parameter located in "formData" may only be used when the operation @consumes 'application/x-www-form-urlencoded' or 'multipart/form-data' data.`);
         }
 
         if (this.hasValue(node.in)) {
-            this.reportIfInvalid("PAR-009", OasValidationRuleUtil.isValidEnumItem(node.in, [ "query", "header", "path", "formData", "body" ]), node,
-                "Invalid property value.  The \"in\" property value must be one of: query, header, path, formData, body (Found value: '" + node.in + "')");
+            this.reportIfInvalid("PAR-009", OasValidationRuleUtil.isValidEnumItem(node.in, [ "query", "header", "path", "formData", "body" ]), node, "in",
+                `Invalid property value.  The "in" property value must be one of: query, header, path, formData, body (Found value: '${node.in}')`);
         }
 
         if (this.hasValue(node.type)) {
-            this.reportIfInvalid("PAR-011", OasValidationRuleUtil.isValidEnumItem(node.type, [ "string", "number", "integer", "boolean", "array", "file" ]), node,
-                "Invalid property value.  The \"type\" property value must be one of: string, number, integer, boolean, array, file (Found value: '" + node.type + "')");
+            this.reportIfInvalid("PAR-011", OasValidationRuleUtil.isValidEnumItem(node.type, [ "string", "number", "integer", "boolean", "array", "file" ]), node, "type",
+                `Invalid property value.  The "type" property value must be one of: string, number, integer, boolean, array, file (Found value: '${node.type}')`);
         }
 
         if (this.hasValue(node.format)) {
-            this.reportIfInvalid("PAR-012", OasValidationRuleUtil.isValidEnumItem(node.format, [ "int32", "int64", "float", "double", "byte", "binary", "date", "date-time", "password" ]), node,
-                "Invalid property value.  The \"format\" property value must be one of: int32, int64, float, double, byte, binary, date, date-time, password (Found value: '" + node.format + "')");
+            this.reportIfInvalid("PAR-012", OasValidationRuleUtil.isValidEnumItem(node.format, [ "int32", "int64", "float", "double", "byte", "binary", "date", "date-time", "password" ]), node, "format",
+                `Invalid property value.  The "format" property value must be one of: int32, int64, float, double, byte, binary, date, date-time, password (Found value: '${node.format}')`);
         }
 
         if (this.hasValue(node.allowEmptyValue)) {
-            this.reportIfInvalid("PAR-013", OasValidationRuleUtil.isValidEnumItem(node.in, [ "query", "formData" ]), node,
-                "The \"allowEmptyValue\" property is only allowed for 'query' or 'formData' parameters.");
+            this.reportIfInvalid("PAR-013", OasValidationRuleUtil.isValidEnumItem(node.in, [ "query", "formData" ]), node, "allowEmptyValue",
+                `The "allowEmptyValue" property is only allowed for 'query' or 'formData' parameters.`);
         }
 
         if (this.hasValue(node.collectionFormat)) {
-            this.reportIfInvalid("PAR-014", node.type === "array", node,
-                "The \"collectionFormat\" property is only allowed for 'array' type parameters.");
+            this.reportIfInvalid("PAR-014", node.type === "array", node, "collectionFormat",
+                `The "collectionFormat" property is only allowed for 'array' type parameters.`);
         }
 
         if (this.hasValue(node.collectionFormat)) {
-            this.reportIfInvalid("PAR-015", OasValidationRuleUtil.isValidEnumItem(node.collectionFormat, [ "csv", "ssv", "tsv", "pipes", "multi" ]), node,
-                "Invalid property value.  The \"collectionFormat\" property value must be one of: csv, ssv, tsv, pipes, multi (Found value: '" + node.collectionFormat + "')");
+            this.reportIfInvalid("PAR-015", OasValidationRuleUtil.isValidEnumItem(node.collectionFormat, [ "csv", "ssv", "tsv", "pipes", "multi" ]), node, "collectionFormat",
+                `Invalid property value.  The "collectionFormat" property value must be one of: csv, ssv, tsv, pipes, multi (Found value: '${node.collectionFormat}')`);
         }
 
         if (node.collectionFormat === "multi") {
-            this.reportIfInvalid("PAR-016", OasValidationRuleUtil.isValidEnumItem(node.in, [ "query", "formData" ]), node,
-                "Invalid property value.  The \"collectionFormat\" property value can only be 'multi' for 'query' or 'formData' parameters.");
+            this.reportIfInvalid("PAR-016", OasValidationRuleUtil.isValidEnumItem(node.in, [ "query", "formData" ]), node, "collectionFormat",
+                `Invalid property value.  The "collectionFormat" property value can only be 'multi' for 'query' or 'formData' parameters.`);
         }
 
         if (this.hasValue(node.default)) {
-            this.reportIfInvalid("PAR-017", node.required === undefined || node.required === null || node.required === false, node,
-                "Invalid property value.  The \"default\" property is not valid when the parameter is required.");
+            this.reportIfInvalid("PAR-017", node.required === undefined || node.required === null || node.required === false, node, "default",
+                `Invalid property value.  The "default" property is not valid when the parameter is required.`);
         }
 
     }
 
     public visitItems(node: Oas20Items): void {
         if (this.hasValue(node.type)) {
-            this.reportIfInvalid("IT-003", OasValidationRuleUtil.isValidEnumItem(node.type, [ "string", "number", "integer", "boolean", "array" ]), node,
-                "Invalid property value.  The \"type\" property value must be one of: string, number, integer, boolean, array (Found value: '" + node.type + "')");
+            this.reportIfInvalid("IT-003", OasValidationRuleUtil.isValidEnumItem(node.type, [ "string", "number", "integer", "boolean", "array" ]), node, "type",
+                `Invalid property value.  The "type" property value must be one of: string, number, integer, boolean, array (Found value: '${node.type}')`);
         }
 
         if (this.hasValue(node.format)) {
-            this.reportIfInvalid("IT-004", OasValidationRuleUtil.isValidEnumItem(node.format, [ "int32", "int64", "float", "double", "byte", "binary", "date", "date-time", "password" ]), node,
-                "Invalid property value.  The \"format\" property value must be one of: int32, int64, float, double, byte, binary, date, date-time, password (Found value: '" + node.format + "')");
+            this.reportIfInvalid("IT-004", OasValidationRuleUtil.isValidEnumItem(node.format, [ "int32", "int64", "float", "double", "byte", "binary", "date", "date-time", "password" ]), node, "format",
+                `Invalid property value.  The "format" property value must be one of: int32, int64, float, double, byte, binary, date, date-time, password (Found value: '${node.format}')`);
         }
 
         if (this.hasValue(node.collectionFormat)) {
-            this.reportIfInvalid("IT-005", OasValidationRuleUtil.isValidEnumItem(node.collectionFormat, [ "csv", "ssv", "tsv", "pipes" ]), node,
-                "Invalid property value.  The \"collectionFormat\" property value must be one of: csv, ssv, tsv, pipes (Found value: '" + node.collectionFormat + "')");
+            this.reportIfInvalid("IT-005", OasValidationRuleUtil.isValidEnumItem(node.collectionFormat, [ "csv", "ssv", "tsv", "pipes" ]), node, "collectionFormat",
+                `Invalid property value.  The "collectionFormat" property value must be one of: csv, ssv, tsv, pipes (Found value: '${node.collectionFormat}')`);
         }
 
         if (this.hasValue(node.collectionFormat)) {
-            this.reportIfInvalid("IT-006", node.type === "array", node,
-                "The \"collectionFormat\" property is only allowed for 'array' type parameters.");
+            this.reportIfInvalid("IT-006", node.type === "array", node, "collectionFormat",
+                `The "collectionFormat" property is only allowed for 'array' type parameters.`);
         }
 
     }
 
     public visitHeader(node: Oas20Header): void {
         if (this.hasValue(node.type)) {
-            this.reportIfInvalid("HEAD-003", OasValidationRuleUtil.isValidEnumItem(node.type, [ "string", "number", "integer", "boolean", "array" ]), node,
-                "Invalid property value.  The \"type\" property value must be one of: string, number, integer, boolean, array (Found value: '" + node.type + "')");
+            this.reportIfInvalid("HEAD-003", OasValidationRuleUtil.isValidEnumItem(node.type, [ "string", "number", "integer", "boolean", "array" ]), node, "type",
+                `Invalid property value.  The "type" property value must be one of: string, number, integer, boolean, array (Found value: '${node.type}')`);
         }
 
         if (this.hasValue(node.format)) {
-            this.reportIfInvalid("HEAD-004", OasValidationRuleUtil.isValidEnumItem(node.format, [ "int32", "int64", "float", "double", "byte", "binary", "date", "date-time", "password" ]), node,
-                "Invalid property value.  The \"format\" property value must be one of: int32, int64, float, double, byte, binary, date, date-time, password (Found value: '" + node.format + "')");
+            this.reportIfInvalid("HEAD-004", OasValidationRuleUtil.isValidEnumItem(node.format, [ "int32", "int64", "float", "double", "byte", "binary", "date", "date-time", "password" ]), node, "format",
+                `Invalid property value.  The "format" property value must be one of: int32, int64, float, double, byte, binary, date, date-time, password (Found value: '${node.format}')`);
         }
 
         if (this.hasValue(node.collectionFormat)) {
-            this.reportIfInvalid("HEAD-006", node.type === "array", node,
-                "The \"collectionFormat\" property is only allowed for 'array' type headers.");
+            this.reportIfInvalid("HEAD-006", node.type === "array", node, "collectionFormat",
+                `The "collectionFormat" property is only allowed for 'array' type headers.`);
         }
 
         if (this.hasValue(node.collectionFormat)) {
-            this.reportIfInvalid("HEAD-007", OasValidationRuleUtil.isValidEnumItem(node.collectionFormat, [ "csv", "ssv", "tsv", "pipes" ]), node,
-                "Invalid property value.  The \"collectionFormat\" property value must be one of: csv, ssv, tsv, pipes (Found value: '" + node.collectionFormat + "')");
+            this.reportIfInvalid("HEAD-007", OasValidationRuleUtil.isValidEnumItem(node.collectionFormat, [ "csv", "ssv", "tsv", "pipes" ]), node, "collectionFormat",
+                `Invalid property value.  The "collectionFormat" property value must be one of: csv, ssv, tsv, pipes (Found value: '${node.collectionFormat}')`);
         }
     }
 
     public visitXML(node: Oas20XML): void {
         if (this.hasValue(node.wrapped)) {
-            this.reportIfInvalid("XML-002", this.isWrappedOK(node), node,
-                "The \"wrapped\" property is only valid for 'array' types.");
+            this.reportIfInvalid("XML-002", this.isWrappedOK(node), node, "wrapped",
+                `The "wrapped" property is only valid for 'array' types.`);
         }
     }
 
     public visitSecurityScheme(node: Oas20SecurityScheme): void {
         if (this.hasValue(node.type)) {
-            this.reportIfInvalid("SS-008", OasValidationRuleUtil.isValidEnumItem(node.type, [ "apiKey", "basic", "oauth2" ]), node,
-                "Invalid property value.  The \"type\" property value must be one of: basic, apiKey, oauth2 (Found value: '" + node.type + "')");
+            this.reportIfInvalid("SS-008", OasValidationRuleUtil.isValidEnumItem(node.type, [ "apiKey", "basic", "oauth2" ]), node, "type",
+                `Invalid property value.  The "type" property value must be one of: basic, apiKey, oauth2 (Found value: '${node.type}')`);
         }
 
         if (this.hasValue(node.in)) {
-            this.reportIfInvalid("SS-009", OasValidationRuleUtil.isValidEnumItem(node.in, [ "query", "header" ]), node,
-                "Invalid property value.  The \"in\" property value must be one of: query, header (Found value: '" + node.in + "')");
+            this.reportIfInvalid("SS-009", OasValidationRuleUtil.isValidEnumItem(node.in, [ "query", "header" ]), node, "in",
+                `Invalid property value.  The "in" property value must be one of: query, header (Found value: '${node.in}')`);
         }
 
         if (this.hasValue(node.flow)) {
-            this.reportIfInvalid("SS-010", OasValidationRuleUtil.isValidEnumItem(node.flow, [ "implicit", "password", "application", "accessCode" ]), node,
-                "Invalid property value.  The \"flow\" property value must be one of: implicit, password, application, accessCode (Found value: '" + node.flow + "')");
+            this.reportIfInvalid("SS-010", OasValidationRuleUtil.isValidEnumItem(node.flow, [ "implicit", "password", "application", "accessCode" ]), node, "flow",
+                `Invalid property value.  The "flow" property value must be one of: implicit, password, application, accessCode (Found value: '${node.flow}')`);
         }
     }
 
@@ -291,13 +282,13 @@ export class Oas20InvalidPropertyValueValidationRule extends Oas20ValidationRule
                 if (this.hasValue(scheme)) {
                     if (scheme.type !== "oauth2") {
                         let scopes: string[] = node.scopes(sname);
-                        this.reportIfInvalid("SREQ-002", this.hasValue(scopes) && scopes.length === 0, node,
-                            "Security Requirement '" + sname + "' field value must be an empty array because the referenced Security Definition \"type\" is not 'oauth2'.");
+                        this.reportIfInvalid("SREQ-002", this.hasValue(scopes) && scopes.length === 0, node, null,
+                            `Security Requirement '${sname}' field value must be an empty array because the referenced Security Definition "type" is not 'oauth2'.`);
                     } else {
                         let definedScopes: Oas20Scopes = scheme.scopes;
                         let requiredScopes: string[] = node.scopes(sname);
-                        this.reportIfInvalid("SREQ-003", this.isValidScopes(requiredScopes, definedScopes), node,
-                            "Security Requirement '" + sname + "' field value must be an array of scopes from the possible scopes defined by the referenced Security Definition.");
+                        this.reportIfInvalid("SREQ-003", this.isValidScopes(requiredScopes, definedScopes), node, null,
+                            `Security Requirement '${sname}' field value must be an array of scopes from the possible scopes defined by the referenced Security Definition.`);
                     }
                 }
             }

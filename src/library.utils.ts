@@ -133,6 +133,7 @@ export class OasLibraryUtils {
         // Now validate the data model.
         if (node.ownerDocument().is2xDocument()) {
             let visitor: Oas20ValidationVisitor = new Oas20ValidationVisitor();
+            visitor.setSeverityRegistry(severityRegistry);
             if (recursive) {
                 OasVisitorUtil.visitTree(node, visitor);
             } else {
@@ -141,6 +142,7 @@ export class OasLibraryUtils {
             return visitor.getValidationErrors();
         } else if (node.ownerDocument().is3xDocument()) {
             let visitor: Oas30ValidationVisitor = new Oas30ValidationVisitor();
+            visitor.setSeverityRegistry(severityRegistry);
             if (recursive) {
                 OasVisitorUtil.visitTree(node, visitor);
             } else {

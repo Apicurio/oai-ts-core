@@ -100,9 +100,10 @@ export class Oas20ValidationVisitor extends Oas20CompositeVisitor implements IOa
      * Called by validation rules when an error is detected.
      * @param code
      * @param node
+     * @param property
      * @param message
      */
-    public report(code: string, node: OasNode, message: string): void {
+    public report(code: string, node: OasNode, property: string, message: string): void {
         let severity: OasValidationProblemSeverity = this.lookupSeverity(code);
         if (severity === OasValidationProblemSeverity.ignore) {
             return;
@@ -111,7 +112,7 @@ export class Oas20ValidationVisitor extends Oas20CompositeVisitor implements IOa
         let viz: Oas20NodePathVisitor = new Oas20NodePathVisitor();
         OasVisitorUtil.visitTree(node, viz, OasTraverserDirection.up);
         let path: OasNodePath = viz.path();
-        let error: OasValidationProblem = node.addValidationProblem(code, path, message, severity);
+        let error: OasValidationProblem = node.addValidationProblem(code, path, property, message, severity);
 
         // Include the error in the list of errors found by this visitor.
         this.errors.push(error);
@@ -169,9 +170,10 @@ export class Oas30ValidationVisitor extends Oas30CompositeVisitor implements IOa
      * Called by validation rules when an error is detected.
      * @param code
      * @param node
+     * @param property
      * @param message
      */
-    public report(code: string, node: OasNode, message: string): void {
+    public report(code: string, node: OasNode, property: string, message: string): void {
         let severity: OasValidationProblemSeverity = this.lookupSeverity(code);
         if (severity === OasValidationProblemSeverity.ignore) {
             return;
@@ -180,7 +182,7 @@ export class Oas30ValidationVisitor extends Oas30CompositeVisitor implements IOa
         let viz: Oas30NodePathVisitor = new Oas30NodePathVisitor();
         OasVisitorUtil.visitTree(node, viz, OasTraverserDirection.up);
         let path: OasNodePath = viz.path();
-        let error: OasValidationProblem = node.addValidationProblem(code, path, message, severity);
+        let error: OasValidationProblem = node.addValidationProblem(code, path, property, message, severity);
 
         // Include the error in the list of errors found by this visitor.
         this.errors.push(error);

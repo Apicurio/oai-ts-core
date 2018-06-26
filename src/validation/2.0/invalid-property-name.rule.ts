@@ -16,7 +16,6 @@
  */
 
 import {Oas20ValidationRule} from "./common.rule";
-import {OasNode} from "../../models/node.model";
 import {Oas20ParameterDefinition} from "../../models/2.0/parameter.model";
 import {Oas20Response, Oas20ResponseDefinition} from "../../models/2.0/response.model";
 import {Oas20SecurityScheme} from "../../models/2.0/security-scheme.model";
@@ -34,19 +33,6 @@ import {OasValidationRuleUtil} from "../validation";
  * format defined by the specification.
  */
 export class Oas20InvalidPropertyNameValidationRule extends Oas20ValidationRule {
-
-    /**
-     * Reports a validation error if the property is not valid.
-     * @param code
-     * @param isValid
-     * @param node
-     * @param message
-     */
-    private reportIfInvalid(code: string, isValid: boolean, node: OasNode, message: string): void {
-        if (!isValid) {
-            this.report(code, node, message);
-        }
-    }
 
     /**
      * Returns true if the definition name is valid.
@@ -68,14 +54,14 @@ export class Oas20InvalidPropertyNameValidationRule extends Oas20ValidationRule 
     }
 
     public visitPathItem(node: Oas20PathItem): void {
-        this.reportIfInvalid("PATH-005", node.path().indexOf("/") === 0, node, "The path must start with a '/' character.");
+        this.reportIfInvalid("PATH-005", node.path().indexOf("/") === 0, node, null, `The path must start with a '/' character.`);
     }
 
     public visitResponse(node: Oas20Response): void {
         // The "default" response will have a statusCode of "null"
         if (this.hasValue(node.statusCode())) {
-            this.reportIfInvalid("RES-003", OasValidationRuleUtil.isValidHttpCode(node.statusCode()), node,
-                "Response status code is not a valid HTTP response status code: " + node.statusCode());
+            this.reportIfInvalid("RES-003", OasValidationRuleUtil.isValidHttpCode(node.statusCode()), node, "statusCode",
+                `Response status code is not a valid HTTP response status code: ${node.statusCode()}`);
         }
     }
 
@@ -91,32 +77,32 @@ export class Oas20InvalidPropertyNameValidationRule extends Oas20ValidationRule 
 
         let ctypes: string[] = node.exampleContentTypes();
         ctypes.forEach( ct => {
-            this.reportIfInvalid("EX-001", produces.indexOf(ct) != -1, node,
-                "Example for type '" + ct + "' does not match any of the \"produces\" mime-types expected by the operation.");
+            this.reportIfInvalid("EX-001", produces.indexOf(ct) != -1, node, "produces",
+                `Example for type '${ct}' does not match any of the "produces" mime-types expected by the operation.`);
         });
     }
 
     public visitSchemaDefinition(node: Oas20SchemaDefinition): void {
-        this.reportIfInvalid("SDEF-001", this.isValidDefinitionName(node.definitionName()), node, "Definition name does not conform to requirements (invalid format).");
+        this.reportIfInvalid("SDEF-001", this.isValidDefinitionName(node.definitionName()), node, "definitionName", `Definition name does not conform to requirements (invalid format).`);
     }
 
     public visitParameterDefinition(node: Oas20ParameterDefinition): void {
-        this.reportIfInvalid("PDEF-001", this.isValidDefinitionName(node.parameterName()), node, "Definition name does not conform to requirements (invalid format).");
+        this.reportIfInvalid("PDEF-001", this.isValidDefinitionName(node.parameterName()), node, "parameterName", `Definition name does not conform to requirements (invalid format).`);
     }
 
     public visitResponseDefinition(node: Oas20ResponseDefinition): void {
-        this.reportIfInvalid("RDEF-001", this.isValidDefinitionName(node.name()), node, "Definition name does not conform to requirements (invalid format).");
+        this.reportIfInvalid("RDEF-001", this.isValidDefinitionName(node.name()), node, "name", `Definition name does not conform to requirements (invalid format).`);
     }
 
     public visitScopes(node: Oas20Scopes): void {
         node.scopes().forEach( scope => {
-            this.reportIfInvalid("SCPS-001", this.isValidScopeName(scope), node, "Invalid scope name: " + scope);
+            this.reportIfInvalid("SCPS-001", this.isValidScopeName(scope), node, "scopes", `Invalid scope name '${scope}'`);
         })
     }
 
     public visitSecurityScheme(node: Oas20SecurityScheme): void {
-        this.reportIfInvalid("SS-013", this.isValidDefinitionName(node.schemeName()), node,
-            "Security scheme definition name does not conform to requirements (invalid format).");
+        this.reportIfInvalid("SS-013", this.isValidDefinitionName(node.schemeName()), node, "schemeName",
+            `Security scheme definition name does not conform to requirements (invalid format).`);
     }
 
 }

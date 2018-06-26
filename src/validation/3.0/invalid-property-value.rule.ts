@@ -35,7 +35,6 @@ import {Oas30SecurityRequirement} from "../../models/3.0/security-requirement.mo
 import {Oas30Discriminator} from "../../models/3.0/discriminator.model";
 import {Oas30ServerVariable} from "../../models/3.0/server-variable.model";
 import {Oas30Server} from "../../models/3.0/server.model";
-import {OasLibraryUtils} from "../../library.utils";
 
 
 /**
@@ -165,36 +164,36 @@ export class Oas30InvalidPropertyValueValidationRule extends Oas30ValidationRule
     public visitEncoding(node: Oas30Encoding): void {
         if (node.getHeaders().length > 0) {
             let mediaType: Oas30MediaType = node.parent() as Oas30MediaType;
-            this.reportIfInvalid("ENC-3-001", mediaType.name().indexOf("multipart") === 0, node,
+            this.reportIfInvalid("ENC-3-001", mediaType.name().indexOf("multipart") === 0, node, "headers",
                 `The "headers" property is only allowed for "multipart" request body media type encodings.  Found media type "${mediaType.name()}" instead.`);
         }
         if (this.hasValue(node.style)) {
             let mediaType: Oas30MediaType = node.parent() as Oas30MediaType;
-            this.reportIfInvalid("ENC-3-002", mediaType.name().indexOf("application/x-www-form-urlencoded") === 0, node,
+            this.reportIfInvalid("ENC-3-002", mediaType.name().indexOf("application/x-www-form-urlencoded") === 0, node, "style",
                 `The "style" property is only allowed for "application/x-www-form-urlencoded" request body media type encodings.  Found media type "${mediaType.name()}" instead.`);
 
-            this.reportIfInvalid("ENC-3-005", OasValidationRuleUtil.isValidEnumItem(node.style, ["form", "spaceDelimited", "pipeDelimited", "deepObject"]), node,
+            this.reportIfInvalid("ENC-3-005", OasValidationRuleUtil.isValidEnumItem(node.style, ["form", "spaceDelimited", "pipeDelimited", "deepObject"]), node, "style",
                 `The "style" property value must be one of: ["form", "spaceDelimited", "pipeDelimited", "deepObject"]  Found value "${node.style}".`);
         }
         if (this.hasValue(node.explode)) {
             let mediaType: Oas30MediaType = node.parent() as Oas30MediaType;
-            this.reportIf("ENC-3-003", mediaType.name() != "application/x-www-form-urlencoded", node,
+            this.reportIf("ENC-3-003", mediaType.name() != "application/x-www-form-urlencoded", node, "explode",
                 `The "explode" property is only allowed for "application/x-www-form-urlencoded" request body media type encodings.`);
         }
         if (this.hasValue(node.allowReserved)) {
             let mediaType: Oas30MediaType = node.parent() as Oas30MediaType;
-            this.reportIf("ENC-3-004", mediaType.name() != "application/x-www-form-urlencoded", node,
+            this.reportIf("ENC-3-004", mediaType.name() != "application/x-www-form-urlencoded", node, "allowReserved",
                 `The "allowReserved" property is only allowed for "application/x-www-form-urlencoded" request body media type encodings.`);
         }
     }
 
     public visitHeader(node: Oas30Header): void {
         if (this.hasValue(node.style)) {
-            this.reportIfInvalid("HEAD-3-003", OasValidationRuleUtil.isValidEnumItem(node.style, ["simple"]), node,
+            this.reportIfInvalid("HEAD-3-003", OasValidationRuleUtil.isValidEnumItem(node.style, ["simple"]), node, "style",
                 `The "style" property value must be "simple".  Found value "${node.style}".`);
         }
 
-        this.reportIfInvalid("HEAD-3-004", node.getMediaTypes().length < 2, node,
+        this.reportIfInvalid("HEAD-3-004", node.getMediaTypes().length < 2, node, "content",
             `The "content" property must contain at most one entry.`);
     }
     public visitHeaderDefinition(node: Oas30HeaderDefinition): void {
@@ -205,7 +204,7 @@ export class Oas30InvalidPropertyValueValidationRule extends Oas30ValidationRule
         if (this.hasValue(node.operationId)) {
             let opFinder: Oas30OperationFinder = new Oas30OperationFinder(node.operationId);
             OasVisitorUtil.visitTree(node.ownerDocument(), opFinder);
-            this.reportIfInvalid("LINK-3-002", opFinder.isFound(), node,
+            this.reportIfInvalid("LINK-3-002", opFinder.isFound(), node, "operationId",
                 `The "operationId" property must refer to an existing Operation.  Cannot find operation with ID "${node.operationId}".`);
         }
     }
@@ -215,50 +214,50 @@ export class Oas30InvalidPropertyValueValidationRule extends Oas30ValidationRule
 
     public visitMediaType(node: Oas30MediaType): void {
         if (node.getEncodings().length > 0) {
-            this.reportIfInvalid("MT-3-003", this.isValidMultipartType(node.name()), node,
+            this.reportIfInvalid("MT-3-003", this.isValidMultipartType(node.name()), node, "encoding",
                 `The "encoding" property is only allowed for "multipart" and "application/x-www-form-urlencoded" request body media types.  Found "${node.name()}" instead.`);
         }
     }
 
     public visitOperation(node: Oas30Operation): void {
         if (this.hasValue(node.requestBody)) {
-            this.reportIfInvalid("OP-3-003", this.isValidRequestBodyOperation(node), node,
+            this.reportIfInvalid("OP-3-003", this.isValidRequestBodyOperation(node), node, "requestBody",
                 `The "requestBody" property is only supported for POST, PUT, PATCH, and OPTIONS operations.`);
         }
     }
 
     public visitResponses(node: Oas30Responses): void {
-        this.reportIfInvalid("OP-3-005", node.responses().length > 0, node.parent(),
+        this.reportIfInvalid("OP-3-005", node.responses().length > 0, node.parent(), null,
             `There must be at least one Response documented.`);
     }
 
     public visitParameter(node: Oas30Parameter): void {
         if (this.hasValue(node.in)) {
-            this.reportIfInvalid("PAR-3-002", OasValidationRuleUtil.isValidEnumItem(node.in, ["query", "header", "path", "cookie"]), node,
+            this.reportIfInvalid("PAR-3-002", OasValidationRuleUtil.isValidEnumItem(node.in, ["query", "header", "path", "cookie"]), node, "in",
                 `The "in" property value must be one of: ["path", "query", "header", "cookie"] (Found value: '${node.in}')`);
         }
 
         if (this.hasValue(node.allowEmptyValue)) {
-            this.reportIfInvalid("PAR-3-007", OasValidationRuleUtil.isValidEnumItem(node.in, ["query"]), node,
+            this.reportIfInvalid("PAR-3-007", OasValidationRuleUtil.isValidEnumItem(node.in, ["query"]), node, "allowEmptyValue",
                 `The "allowEmptyValue" property is only allowed for "query" parameters.`);
         }
 
         if (this.hasValue(node.style)) {
-            this.reportIfInvalid("PAR-3-009", OasValidationRuleUtil.isValidEnumItem(node.style, ["matrix", "label", "form", "simple", "spaceDelimited", "pipeDelimited", "deepObject"]), node,
+            this.reportIfInvalid("PAR-3-009", OasValidationRuleUtil.isValidEnumItem(node.style, ["matrix", "label", "form", "simple", "spaceDelimited", "pipeDelimited", "deepObject"]), node, "style",
                 `The "style" property value must be one of: ["matrix", "label", "form", "simple", "spaceDelimited", "pipeDelimited", "deepObject"] (Found value "${node.style}").`);
 
             if (node.in === "query") {
-                this.reportIfInvalid("PAR-3-011", OasValidationRuleUtil.isValidEnumItem(node.style, ["form", "spaceDelimited", "pipeDelimited", "deepObject"]), node,
+                this.reportIfInvalid("PAR-3-011", OasValidationRuleUtil.isValidEnumItem(node.style, ["form", "spaceDelimited", "pipeDelimited", "deepObject"]), node, "style",
                     `For "query" parameters, the "style" property value must be one of: ["form", "spaceDelimited", "pipeDelimited", "deepObject"] (Found value "${node.style}").`);
             }
 
             if (node.in === "cookie") {
-                this.reportIfInvalid("PAR-3-012", OasValidationRuleUtil.isValidEnumItem(node.style, ["form"]), node,
+                this.reportIfInvalid("PAR-3-012", OasValidationRuleUtil.isValidEnumItem(node.style, ["form"]), node, "style",
                     `For "cookie" parameters, the "style" property value must be "form". (Found value "${node.style}")`);
             }
 
             if (node.in === "header") {
-                this.reportIfInvalid("PAR-3-013", OasValidationRuleUtil.isValidEnumItem(node.style, ["simple"]), node,
+                this.reportIfInvalid("PAR-3-013", OasValidationRuleUtil.isValidEnumItem(node.style, ["simple"]), node, "style",
                     `For "header" parameters, the "style" property value must be "simple". (Found value "${node.style}").`);
             }
         }
@@ -272,31 +271,31 @@ export class Oas30InvalidPropertyValueValidationRule extends Oas30ValidationRule
             }
             let path: string = pathItem.path();
             let pathVars: string[] = this.parsePathTemplate(path);
-            this.reportIfInvalid("PAR-3-018", OasValidationRuleUtil.isValidEnumItem(node.name, pathVars), node,
+            this.reportIfInvalid("PAR-3-018", OasValidationRuleUtil.isValidEnumItem(node.name, pathVars), node, "name",
                 `The "name" property value for a 'path' style parameter must match one of the items in the path template.  Invalid path property name found: "${node.name}"`);
 
-            this.reportIfInvalid("PAR-3-006", node.required === true, node,
+            this.reportIfInvalid("PAR-3-006", node.required === true, node, "required",
                 `The "required" property is required for "path" parameters, and must have a value of "true".`);
 
             if (this.hasValue(node.style)) {
-                this.reportIfInvalid("PAR-3-010", OasValidationRuleUtil.isValidEnumItem(node.style, ["matrix", "label", "simple"]), node,
+                this.reportIfInvalid("PAR-3-010", OasValidationRuleUtil.isValidEnumItem(node.style, ["matrix", "label", "simple"]), node, "style",
                     `For "path" parameters, the "style" property value must be one of: ["matrix", "label", "simple"]  (Found value "${node.style}").`);
             }
         }
 
         if (node.in === "header" && this.hasValue(node.name)) {
             let hname: string = node.name.toLowerCase();
-            this.reportIf("PAR-3-019", hname === "accept" || hname === "content-type" || hname === "authorization", node,
+            this.reportIf("PAR-3-019", hname === "accept" || hname === "content-type" || hname === "authorization", node, null,
                 `Header parameters "Accept", "Content-Type", and "Authorization" are ignored.`);
         }
 
         if (this.hasValue(node.allowReserved)) {
-            this.reportIfInvalid("PAR-3-014", node.in === "query", node,
+            this.reportIfInvalid("PAR-3-014", node.in === "query", node, "allowReserved",
                 `The "allowReserved" property is only allowed for "query" parameters.`);
         }
 
         if (this.hasValue(node.content)) {
-            this.reportIfInvalid("PAR-3-016", node.getMediaTypes().length < 2, node,
+            this.reportIfInvalid("PAR-3-016", node.getMediaTypes().length < 2, node, "content",
                 `The "content" property must contain at most one entry.`);
         }
     }
@@ -306,35 +305,35 @@ export class Oas30InvalidPropertyValueValidationRule extends Oas30ValidationRule
 
     public visitXML(node: Oas30XML): void {
         if (this.hasValue(node.wrapped)) {
-            this.reportIfInvalid("XML-3-002", this.isWrappedOK(node), node,
+            this.reportIfInvalid("XML-3-002", this.isWrappedOK(node), node, "wrapped",
                 `The "wrapped" property is only valid for 'array' types.`);
         }
     }
 
     public visitDiscriminator(node: Oas30Discriminator): void {
         let schema: Oas30Schema = node.parent() as Oas30Schema;
-        this.reportIfInvalid("SCH-3-001", this.hasValue(schema.oneOf) || this.hasValue(schema.anyOf) || this.hasValue(schema.allOf), node,
+        this.reportIfInvalid("SCH-3-001", this.hasValue(schema.oneOf) || this.hasValue(schema.anyOf) || this.hasValue(schema.allOf), node, "discriminator",
             `The "discriminator" property is only valid when using one of: ["oneOf", "anyOf", "allOf"]`);
     }
 
     public visitSecurityScheme(node: Oas30SecurityScheme): void {
         if (this.hasValue(node.type)) {
-            this.reportIfInvalid("SS-3-008", OasValidationRuleUtil.isValidEnumItem(node.type, ["apiKey", "http", "oauth2", "openIdConnect"]), node,
+            this.reportIfInvalid("SS-3-008", OasValidationRuleUtil.isValidEnumItem(node.type, ["apiKey", "http", "oauth2", "openIdConnect"]), node, "type",
                 `The "type" property value must be one of: ["apiKey", "http", "oauth2", "openIdConnect"] (Found value: '${node.type}')`);
         }
 
         if (this.hasValue(node.in)) {
-            this.reportIfInvalid("SS-3-010", OasValidationRuleUtil.isValidEnumItem(node.in, [ "query", "header", "cookie" ]), node,
+            this.reportIfInvalid("SS-3-010", OasValidationRuleUtil.isValidEnumItem(node.in, [ "query", "header", "cookie" ]), node, "in",
                 `The "in" property value must be one of: ["query", "header", "cookie"] (Found value: '${node.in}')`);
         }
 
         if (this.hasValue(node.scheme)) {
-            this.reportIfInvalid("SS-3-013", OasValidationRuleUtil.isValidEnumItem(node.scheme, ["basic", "bearer", "digest", "hoba", "mutual", "negotiate", "oauth", "vapid", "scram-sha-1", "scram-sha-256"]), node,
+            this.reportIfInvalid("SS-3-013", OasValidationRuleUtil.isValidEnumItem(node.scheme, ["basic", "bearer", "digest", "hoba", "mutual", "negotiate", "oauth", "vapid", "scram-sha-1", "scram-sha-256"]), node, "scheme",
                 `The "scheme" property value must be one of: ["basic", "bearer", "digest", "hoba", "mutual", "negotiate", "oauth", "vapid", "scram-sha-1", "scram-sha-256"] (Found value: '${node.scheme}')`);
         }
 
         if (this.hasValue(node.bearerFormat)) {
-            this.reportIfInvalid("SS-3-011", node.type === "http" && node.scheme === "bearer", node,
+            this.reportIfInvalid("SS-3-011", node.type === "http" && node.scheme === "bearer", node, "bearerFormat",
                 `The "bearerFormat" property is only valid for "http" security schemes of type "bearer".`);
         }
     }
@@ -343,14 +342,14 @@ export class Oas30InvalidPropertyValueValidationRule extends Oas30ValidationRule
         let snames: string[] = node.securityRequirementNames();
         snames.forEach( sname => {
             let scopes: string[] = node.scopes(sname);
-            this.reportIfInvalid("SREQ-3-003", this.hasValue(scopes) && Array.isArray(scopes), node,
+            this.reportIfInvalid("SREQ-3-003", this.hasValue(scopes) && Array.isArray(scopes), node, sname,
                 `The value for security requirement "${sname}" must be an array.`);
 
             // If the security requirement contains some scopes, then it must be pointing to an oauth2 or openIdConnect security scheme!
             if (this.hasValue(scopes) && scopes.length > 0) {
                 let scheme: Oas30SecurityScheme = (node.ownerDocument() as Oas30Document).components.getSecurityScheme(sname);
                 if (this.hasValue(scheme)) {
-                    this.reportIfInvalid("SREQ-3-002", this.hasValue(scheme) && (scheme.type === "oauth2" || scheme.type === "openIdConnect"), node,
+                    this.reportIfInvalid("SREQ-3-002", this.hasValue(scheme) && (scheme.type === "oauth2" || scheme.type === "openIdConnect"), node, sname,
                         `The value for security requirement "${sname}" must be an empty array (required for Security Schemes of type other than "oauth2" and "openIdConnect").`);
                 }
             }
@@ -362,7 +361,7 @@ export class Oas30InvalidPropertyValueValidationRule extends Oas30ValidationRule
         let server: Oas30Server = node.parent() as Oas30Server;
         let vars: string[] = this.parseServerTemplate(server.url);
 
-        this.reportIfInvalid("SVAR-3-003", OasValidationRuleUtil.isValidEnumItem(varName, vars), node,
+        this.reportIfInvalid("SVAR-3-003", OasValidationRuleUtil.isValidEnumItem(varName, vars), node, null,
             `The server variable "${varName}" is not found in the server url template.`);
     }
 

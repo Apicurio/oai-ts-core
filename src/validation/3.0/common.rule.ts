@@ -36,11 +36,12 @@ export abstract class Oas30ValidationRule extends Oas30NodeVisitorAdapter {
      * @param code
      * @param condition
      * @param node
+     * @param property
      * @param message
      */
-    protected reportIf(code: string, condition: boolean, node: OasNode, message: string): void {
+    protected reportIf(code: string, condition: boolean, node: OasNode, property: string, message: string): void {
         if (condition) {
-            this.report(code, node, message);
+            this.report(code, node, property, message);
         }
     }
 
@@ -49,10 +50,11 @@ export abstract class Oas30ValidationRule extends Oas30NodeVisitorAdapter {
      * @param code
      * @param isValid
      * @param node
+     * @param property
      * @param message
      */
-    protected reportIfInvalid(code: string, isValid: boolean, node: OasNode, message: string): void {
-        this.reportIf(code, !isValid, node, message);
+    protected reportIfInvalid(code: string, isValid: boolean, node: OasNode, property: string, message: string): void {
+        this.reportIf(code, !isValid, node, property, message);
     }
 
     /**
@@ -86,10 +88,11 @@ export abstract class Oas30ValidationRule extends Oas30NodeVisitorAdapter {
      * Called by validation rules to report an error.
      * @param code
      * @param node
+     * @param property
      * @param message
      */
-    public report(code: string, node: OasNode, message: string): void {
-        this._reporter.report(code, node, message);
+    public report(code: string, node: OasNode, property: string, message: string): void {
+        this._reporter.report(code, node, property, message);
     }
 
 }

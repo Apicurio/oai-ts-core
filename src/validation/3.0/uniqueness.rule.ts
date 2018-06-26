@@ -37,7 +37,7 @@ export class Oas30UniquenessValidationRule extends Oas30ValidationRule {
         let tcount: number = tags.filter( tag => {
             return tag.name === node.name;
         }).length;
-        this.reportIfInvalid("TAG-3-003", tcount === 1, node,
+        this.reportIfInvalid("TAG-3-003", tcount === 1, node, node.name,
             `Duplicate tag "${node.name}" found (every tag must have a unique name).`);
     }
 
@@ -45,9 +45,9 @@ export class Oas30UniquenessValidationRule extends Oas30ValidationRule {
         if (this.hasValue(node.operationId)) {
             let dupes: Oas30Operation[] = this.indexedOperations[node.operationId]
             if (this.hasValue(dupes)) {
-                this.reportIfInvalid("OP-3-002", dupes.length > 1, dupes[0],
+                this.reportIfInvalid("OP-3-002", dupes.length > 1, dupes[0], "operationId",
                     `The "operationId" property value '${node.operationId}' must be unique across ALL operations.`);
-                this.report("OP-3-002", node,
+                this.report("OP-3-002", node, "operationId",
                     `The "operationId" property value '${node.operationId}' must be unique across ALL operations.`);
                 dupes.push(node);
             } else {
@@ -60,7 +60,8 @@ export class Oas30UniquenessValidationRule extends Oas30ValidationRule {
         let params: OasParameterBase[] = (<any>node.parent() as IOasParameterParent).parameters;
         this.reportIfInvalid("PAR-3-001", params.filter(param => {
                 return param.in === node.in && param.name === node.name;
-            }).length === 1, node, `Duplicate '${node.in}' parameter named '${node.name}' found (parameters must be unique by name and location).`);
+            }).length === 1, node, "in",
+            `Duplicate '${node.in}' parameter named '${node.name}' found (parameters must be unique by name and location).`);
     }
 
 }

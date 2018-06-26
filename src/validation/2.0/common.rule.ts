@@ -53,10 +53,24 @@ export abstract class Oas20ValidationRule extends Oas20NodeVisitorAdapter {
      * Called by validation rules to report an error.
      * @param code
      * @param node
+     * @param property
      * @param message
      */
-    public report(code: string, node: OasNode, message: string): void {
-        this._reporter.report(code, node, message);
+    public report(code: string, node: OasNode, property: string, message: string): void {
+        this._reporter.report(code, node, property, message);
+    }
+
+    /**
+     * Reports a validation error if the property is not valid.
+     * @param code
+     * @param isValid
+     * @param node
+     * @param message
+     */
+    protected reportIfInvalid(code: string, isValid: boolean, node: OasNode, property: string, message: string): void {
+        if (!isValid) {
+            this.report(code, node, property, message);
+        }
     }
 
 }

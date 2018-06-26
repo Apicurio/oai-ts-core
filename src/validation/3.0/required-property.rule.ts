@@ -56,7 +56,7 @@ export class Oas30RequiredPropertyValidationRule extends Oas30ValidationRule {
         }
         let propertyValue: any = node[propertyName];
         if (!this.isDefined(propertyValue)) {
-            this.report(code, node, `Property "${propertyName}" is required.`);
+            this.report(code, node, propertyName, `Property "${propertyName}" is required.`);
         }
     }
 
@@ -73,7 +73,8 @@ export class Oas30RequiredPropertyValidationRule extends Oas30ValidationRule {
         if (dependentValueMatches) {
             let propertyValue: any = node[propertyName];
             if (!this.hasValue(propertyValue)) {
-                this.report(code, node, `Property "${propertyName}" is required when "${dependentProperty}" property is "${dependentValue}".`);
+                this.report(code, node, propertyName,
+                    `Property "${propertyName}" is required when "${dependentProperty}" property is "${dependentValue}".`);
             }
         }
     }

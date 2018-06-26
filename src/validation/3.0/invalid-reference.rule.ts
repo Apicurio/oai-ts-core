@@ -33,7 +33,8 @@ import {
     Oas30NotSchema,
     Oas30OneOfSchema,
     Oas30PropertySchema,
-    Oas30Schema, Oas30SchemaDefinition
+    Oas30Schema,
+    Oas30SchemaDefinition
 } from "../../models/3.0/schema.model";
 
 /**
@@ -56,7 +57,7 @@ export class Oas30InvalidReferenceValidationRule extends Oas30ValidationRule {
 
     public visitCallback(node: Oas30Callback): void {
         if (this.hasValue(node.$ref)) {
-            this.reportIfInvalid("CALL-3-001", OasValidationRuleUtil.canResolveRef(node.$ref, node), node,
+            this.reportIfInvalid("CALL-3-001", OasValidationRuleUtil.canResolveRef(node.$ref, node), node, "$ref",
                 `The "$ref" property value "${node.$ref}" must reference a valid Callback.`);
         }
     }
@@ -64,7 +65,7 @@ export class Oas30InvalidReferenceValidationRule extends Oas30ValidationRule {
 
     public visitExample(node: Oas30Example): void {
         if (this.hasValue(node.$ref)) {
-            this.reportIfInvalid("EX-3-003", OasValidationRuleUtil.canResolveRef(node.$ref, node), node,
+            this.reportIfInvalid("EX-3-003", OasValidationRuleUtil.canResolveRef(node.$ref, node), node, "$ref",
                 `The "$ref" property value "${node.$ref}" must reference a valid Example.`);
         }
     }
@@ -72,7 +73,7 @@ export class Oas30InvalidReferenceValidationRule extends Oas30ValidationRule {
 
     public visitHeader(node: Oas30Header): void {
         if (this.hasValue(node.$ref)) {
-            this.reportIfInvalid("HEAD-3-005", OasValidationRuleUtil.canResolveRef(node.$ref, node), node,
+            this.reportIfInvalid("HEAD-3-005", OasValidationRuleUtil.canResolveRef(node.$ref, node), node, "$ref",
                 `The "$ref" property value "${node.$ref}" must reference a valid Header.`);
         }
     }
@@ -80,11 +81,11 @@ export class Oas30InvalidReferenceValidationRule extends Oas30ValidationRule {
 
     public visitLink(node: Oas30Link): void {
         if (this.hasValue(node.$ref)) {
-            this.reportIfInvalid("LINK-3-005", OasValidationRuleUtil.canResolveRef(node.$ref, node), node,
+            this.reportIfInvalid("LINK-3-005", OasValidationRuleUtil.canResolveRef(node.$ref, node), node, "$ref",
                 `The "$ref" property value "${node.$ref}" must reference a valid Link.`);
         }
         if (this.hasValue(node.operationRef)) {
-            this.reportIfInvalid("LINK-3-003", OasValidationRuleUtil.canResolveRef(node.operationRef, node), node,
+            this.reportIfInvalid("LINK-3-003", OasValidationRuleUtil.canResolveRef(node.operationRef, node), node, "operationRef",
                 `The "operationRef" property value "${node.$ref}" must reference a valid Link.`);
         }
     }
@@ -92,7 +93,7 @@ export class Oas30InvalidReferenceValidationRule extends Oas30ValidationRule {
 
     public visitParameter(node: Oas30Parameter): void {
         if (this.hasValue(node.$ref)) {
-            this.reportIfInvalid("PAR-3-017", OasValidationRuleUtil.canResolveRef(node.$ref, node), node,
+            this.reportIfInvalid("PAR-3-017", OasValidationRuleUtil.canResolveRef(node.$ref, node), node, "$ref",
                 `The "$ref" property value "${node.$ref}" must reference a valid Parameter.`);
         }
     }
@@ -100,7 +101,7 @@ export class Oas30InvalidReferenceValidationRule extends Oas30ValidationRule {
 
     public visitRequestBody(node: Oas30RequestBody): void {
         if (this.hasValue(node.$ref)) {
-            this.reportIfInvalid("RB-3-003", OasValidationRuleUtil.canResolveRef(node.$ref, node), node,
+            this.reportIfInvalid("RB-3-003", OasValidationRuleUtil.canResolveRef(node.$ref, node), node, "$ref",
                 `The "$ref" property value "${node.$ref}" must reference a valid Request Body.`);
         }
     }
@@ -108,7 +109,7 @@ export class Oas30InvalidReferenceValidationRule extends Oas30ValidationRule {
 
     private visitResponseBase(node: Oas30ResponseBase): void {
         if (this.hasValue(node.$ref)) {
-            this.reportIfInvalid("RES-3-004", OasValidationRuleUtil.canResolveRef(node.$ref, node), node,
+            this.reportIfInvalid("RES-3-004", OasValidationRuleUtil.canResolveRef(node.$ref, node), node, "$ref",
                 `The "$ref" property value "${node.$ref}" must reference a valid Response.`);
         }
     }
@@ -117,14 +118,14 @@ export class Oas30InvalidReferenceValidationRule extends Oas30ValidationRule {
 
     public visitSecurityScheme(node: Oas30SecurityScheme): void {
         if (this.hasValue(node.$ref)) {
-            this.reportIfInvalid("SS-3-012", OasValidationRuleUtil.canResolveRef(node.$ref, node), node,
+            this.reportIfInvalid("SS-3-012", OasValidationRuleUtil.canResolveRef(node.$ref, node), node, "$ref",
                 `The "$ref" property value "${node.$ref}" must reference a valid Security Scheme.`);
         }
     }
 
     public visitSchema(node: Oas30Schema): void {
         if (this.hasValue(node.$ref)) {
-            this.reportIfInvalid("SCH-3-002", OasValidationRuleUtil.canResolveRef(node.$ref, node), node,
+            this.reportIfInvalid("SCH-3-002", OasValidationRuleUtil.canResolveRef(node.$ref, node), node, "$ref",
                 `The "$ref" property value "${node.$ref}" must reference a valid Schema.`);
         }
     }

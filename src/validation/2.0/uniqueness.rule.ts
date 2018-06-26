@@ -16,7 +16,6 @@
  */
 
 import {Oas20ValidationRule} from "./common.rule";
-import {OasNode} from "../../models/node.model";
 import {Oas20Parameter} from "../../models/2.0/parameter.model";
 import {Oas20Operation} from "../../models/2.0/operation.model";
 import {Oas20Tag} from "../../models/2.0/tag.model";
@@ -32,34 +31,23 @@ export class Oas20UniquenessValidationRule extends Oas20ValidationRule {
 
     private indexedOperations: any = {};
 
-    /**
-     * Reports a validation error if the property is not valid.
-     * @param code
-     * @param isValid
-     * @param node
-     * @param message
-     */
-    private reportIfInvalid(code: string, isValid: boolean, node: OasNode, message: string): void {
-        if (!isValid) {
-            this.report(code, node, message);
-        }
-    }
-
     public visitTag(node: Oas20Tag): void {
         let tags = (<Oas20Document>node.ownerDocument()).tags;
         let tcount: number = tags.filter( tag => {
             return tag.name === node.name;
         }).length;
-        this.reportIfInvalid("TAG-003", tcount === 1, node,
-            "Duplicate tag '" + node.name + "' found (every tag must have a unique name).");
+        this.reportIfInvalid("TAG-003", tcount === 1, node, node.name,
+            `Duplicate tag '${node.name}' found (every tag must have a unique name).`);
     }
 
     public visitOperation(node: Oas20Operation): void {
         if (this.hasValue(node.operationId)) {
             let dupes: Oas20Operation[] = this.indexedOperations[node.operationId]
             if (this.hasValue(dupes)) {
-                this.reportIfInvalid("OP-003", dupes.length > 1, dupes[0], "The \"operationId\" property value '" + node.operationId + "' must be unique across ALL operations.");
-                this.reportIfInvalid("OP-003", false, node, "The \"operationId\" property value '" + node.operationId + "' must be unique across ALL operations.");
+                this.reportIfInvalid("OP-003", dupes.length > 1, dupes[0], "operationId",
+                    `The "operationId" property value '${node.operationId}' must be unique across ALL operations.`);
+                this.reportIfInvalid("OP-003", false, node, "operationId",
+                    `The "operationId" property value '${node.operationId}' must be unique across ALL operations.`);
                 dupes.push(node);
             } else {
                 this.indexedOperations[node.operationId] = [ node ];
@@ -72,13 +60,15 @@ export class Oas20UniquenessValidationRule extends Oas20ValidationRule {
         if (node.in !== "body") {
             this.reportIfInvalid("PAR-019", params.filter(param => {
                     return param.in === node.in && param.name === node.name;
-                }).length === 1, node, "Duplicate '" + node.in + "' parameter named '" + node.name + "' found (parameters must be unique by name and location).");
+                }).length === 1, node, "in",
+                `Duplicate '${node.in}' parameter named '${node.name}' found (parameters must be unique by name and location).`);
         }
 
         if (node.in === "body") {
             this.reportIfInvalid("PAR-020", params.filter( param => {
                     return param.in === "body";
-                }).length === 1, node, "An operation may have at most one \"body\" parameter.");
+                }).length === 1, node, "in",
+                `An operation may have at most one "body" parameter.`);
 
         }
     }

@@ -29,7 +29,7 @@ export enum OasValidationProblemSeverity {
  */
 export interface IOasValidationProblemReporter {
 
-    report(code: string, node: OasNode, message: string): void;
+    report(code: string, node: OasNode, property: string, message: string): void;
 
 }
 
