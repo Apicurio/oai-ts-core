@@ -84,8 +84,19 @@ export abstract class OasNode {
 
     public validationProblems(): OasValidationProblem[] {
         let problems: OasValidationProblem[] = [];
-        for (let problem of this._validationProblems) {
-            problems.push(problem);
+        for (let code in this._validationProblems) {
+            problems.push(this._validationProblems[code]);
+        }
+        return problems;
+    }
+
+    public validationProblemsFor(propertyName: string): OasValidationProblem[] {
+        let problems: OasValidationProblem[] = [];
+        for (let code in this._validationProblems) {
+            let problem: OasValidationProblem = this._validationProblems[code];
+            if (propertyName === problem.property) {
+                problems.push(problem);
+            }
         }
         return problems;
     }

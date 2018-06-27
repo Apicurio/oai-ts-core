@@ -375,7 +375,6 @@ describe("Validation (3.0)", () => {
 [SS-3-013] |2| {/components/securitySchemes[ss-3-013]->scheme} :: The "scheme" property value must be one of: ["basic", "bearer", "digest", "hoba", "mutual", "negotiate", "oauth", "vapid", "scram-sha-1", "scram-sha-256"] (Found value: 'leveraged')`;
 
         assertValidationOutput(actual, expected);
-        //assertValidationOutput(actual, expected);
     });
 
     it("Invalid Reference", () => {
@@ -536,5 +535,35 @@ describe("Validation (3.0)", () => {
         }
 
     }
+
+    it("Validation Problem List", () => {
+        let json: any = readJSON('tests/fixtures/validation/3.0/invalid-property-value.json');
+        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+
+        let node: OasNode = document;
+        library.validate(node);
+
+        let enode: OasNode = document.paths.pathItem("/par-3-009").parameters[0];
+        let errors: OasValidationProblem[] = enode.validationProblems();
+
+        let actual: string = errorsAsString(errors);
+        let expected: string =
+`[PAR-3-009] |2| {/paths[/par-3-009]/parameters[0]->style} :: The "style" property value must be one of: ["matrix", "label", "form", "simple", "spaceDelimited", "pipeDelimited", "deepObject"] (Found value "shallowObject").
+[PAR-3-011] |2| {/paths[/par-3-009]/parameters[0]->style} :: For "query" parameters, the "style" property value must be one of: ["form", "spaceDelimited", "pipeDelimited", "deepObject"] (Found value "shallowObject").`;
+        assertValidationOutput(actual, expected);
+
+        let codes: string[] = enode.validationProblemCodes();
+        expect(codes).toEqual([ "PAR-3-009", "PAR-3-011" ]);
+
+        errors = enode.validationProblemsFor("style");
+        actual = errorsAsString(errors);
+        expected =
+`[PAR-3-009] |2| {/paths[/par-3-009]/parameters[0]->style} :: The "style" property value must be one of: ["matrix", "label", "form", "simple", "spaceDelimited", "pipeDelimited", "deepObject"] (Found value "shallowObject").
+[PAR-3-011] |2| {/paths[/par-3-009]/parameters[0]->style} :: For "query" parameters, the "style" property value must be one of: ["form", "spaceDelimited", "pipeDelimited", "deepObject"] (Found value "shallowObject").`;
+        assertValidationOutput(actual, expected);
+
+        errors = enode.validationProblemsFor("in");
+        expect(errors).toEqual([]);
+    });
 
 });

@@ -322,7 +322,7 @@ export abstract class OasTraverser implements IOasNodeVisitor, IOasTraverser {
      * @param {OasValidationProblem} node
      */
     public visitValidationProblem(node: OasValidationProblem): void {
-        node.accept(this);
+        node.accept(this.visitor);
         // Don't traverse the validation problem's validation problems. :)
     }
 
