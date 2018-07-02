@@ -128,7 +128,7 @@ export abstract class OasNode {
 }
 
 /**
- * Represents a single validation error.
+ * Represents a single validation ERROR.
  */
 export class OasValidationProblem extends OasNode {
 

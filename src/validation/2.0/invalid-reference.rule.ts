@@ -51,28 +51,28 @@ export class Oas20InvalidReferenceValidationRule extends Oas20ValidationRule {
     public visitParameter(node: Oas20Parameter): void {
         if (this.hasValue(node.$ref)) {
             this.reportIfInvalid("PAR-018", OasValidationRuleUtil.canResolveRef(node.$ref, node), node, "$ref",
-                `The "$ref" property must reference a valid Parameter Definition: ${node.$ref}`);
+                `Parameter Reference must refer to a valid Parameter Definition.`);
         }
     }
 
     public visitPathItem(node: Oas20PathItem): void {
         if (this.hasValue(node.$ref)) {
             this.reportIfInvalid("PATH-001", OasValidationRuleUtil.canResolveRef(node.$ref, node), node, "$ref",
-                `Reference to external path is either invalid or not found: ${node.$ref}`);
+                `Path Item Reference must refer to a valid Path Item Definition.`);
         }
     }
 
     public visitResponse(node: Oas20Response): void {
         if (this.hasValue(node.$ref)) {
             this.reportIfInvalid("RES-002", OasValidationRuleUtil.canResolveRef(node.$ref, node), node, "$ref",
-                `The "$ref" property must reference a valid Response Definition: ${node.$ref}`);
+                `Response Reference must refer to a valid Response Definition.`);
         }
     }
 
     public visitSchema(node: Oas20Schema): void {
         if (this.hasValue(node.$ref)) {
             this.reportIfInvalid("SCH-001", OasValidationRuleUtil.canResolveRef(node.$ref, node), node, "$ref",
-                `The "$ref" property must reference a valid Definition: ${node.$ref}`);
+                `Schema Reference must refer to a valid Schema Definition.`);
         }
     }
 
@@ -95,7 +95,7 @@ export class Oas20InvalidReferenceValidationRule extends Oas20ValidationRule {
     public visitSecurityRequirement(node: Oas20SecurityRequirement): void {
         node.securityRequirementNames().forEach( name => {
             this.reportIfInvalid("SREQ-001", this.isValidSecurityRequirementName(name, <Oas20Document>node.ownerDocument()), node, null,
-                `Security Requirement name '${name}' does not match an item declared in the Security Definitions.`);
+                `Security Requirement '${name}' must refer to a valid Security Definition.`);
         });
     }
 

@@ -64,14 +64,14 @@ export class Oas30InvalidPropertyNameValidationRule extends Oas30ValidationRule 
 
     public visitPathItem(node: Oas30PathItem): void {
         this.reportIfInvalid("PATH-3-004", node.path().indexOf("/") === 0, node, null,
-            `The path must start with a '/' character.`);
+            `Paths must start with a '/' character.`);
     }
 
     public visitResponse(node: Oas30Response): void {
         // The "default" response will have a statusCode of "null"
         if (this.hasValue(node.statusCode())) {
             this.reportIfInvalid("RES-3-001", OasValidationRuleUtil.isValidHttpCode(node.statusCode()), node, null,
-                `Response status code "${node.statusCode()}" is not a valid HTTP response status code.`);
+                `"${node.statusCode()}" is not a valid HTTP response status code.`);
         }
     }
 
@@ -81,53 +81,53 @@ export class Oas30InvalidPropertyNameValidationRule extends Oas30ValidationRule 
             let doc: Oas30Document = node.ownerDocument() as Oas30Document;
             let scheme = doc.components.getSecurityScheme(name);
             this.reportIfInvalid("SREQ-3-001", !(scheme === undefined || scheme === null), node, null,
-                `Security Requirement "${name}" does not correspond to a declared Security Scheme.`);
+                `"${name}" does not match a declared Security Scheme.`);
         });
     }
 
     public visitSchemaDefinition(node: Oas30SchemaDefinition): void {
         this.reportIfInvalid("COMP-3-001", Oas30InvalidPropertyNameValidationRule.isValidDefinitionName(node.name()), node, "name",
-            `The Schema Definition name must match the regular expression: ^[a-zA-Z0-9\\.\\-_]+$`);
+            `Schema Definition Name is not valid.`);
     }
 
     public visitParameterDefinition(node: Oas30ParameterDefinition): void {
         this.reportIfInvalid("COMP-3-002", Oas30InvalidPropertyNameValidationRule.isValidDefinitionName(node.parameterName()), node, "parameterName",
-            `The Parameter Definition name must match the regular expression: ^[a-zA-Z0-9\\.\\-_]+$`);
+            `Parameter Definition Name is not valid.`);
     }
 
     public visitResponseDefinition(node: Oas30ResponseDefinition): void {
         this.reportIfInvalid("COMP-3-003", Oas30InvalidPropertyNameValidationRule.isValidDefinitionName(node.name()), node, "name",
-            `The Response Definition name must match the regular expression: ^[a-zA-Z0-9\\.\\-_]+$`);
+            `Response Definition Name is not valid.`);
     }
 
     public visitSecurityScheme(node: Oas30SecurityScheme): void {
         this.reportIfInvalid("COMP-3-004", Oas30InvalidPropertyNameValidationRule.isValidDefinitionName(node.schemeName()), node, "schemeName",
-            `The Security Scheme name must match the regular expression: ^[a-zA-Z0-9\\.\\-_]+$`);
+                `The Security Scheme Name is not valid.`);
     }
 
     public visitExampleDefinition(node: Oas30ExampleDefinition): void {
         this.reportIfInvalid("COMP-3-005", Oas30InvalidPropertyNameValidationRule.isValidDefinitionName(node.name()), node, "name",
-            `The Example Definition name must match the regular expression: ^[a-zA-Z0-9\\.\\-_]+$`);
+            `The Example Definition Name is not valid.`);
     }
 
     public visitRequestBodyDefinition(node: Oas30RequestBodyDefinition): void {
         this.reportIfInvalid("COMP-3-006", Oas30InvalidPropertyNameValidationRule.isValidDefinitionName(node.name()), node, "name",
-            `The Request Body Definition name must match the regular expression: ^[a-zA-Z0-9\\.\\-_]+$`);
+            `The Request Body Definition Name is not valid.`);
     }
 
     public visitHeaderDefinition(node: Oas30HeaderDefinition): void {
         this.reportIfInvalid("COMP-3-007", Oas30InvalidPropertyNameValidationRule.isValidDefinitionName(node.name()), node, "name",
-            `The Header Definition name must match the regular expression: ^[a-zA-Z0-9\\.\\-_]+$`);
+            `The Header Definition Name is not valid.`);
     }
 
     public visitLinkDefinition(node: Oas30LinkDefinition): void {
         this.reportIfInvalid("COMP-3-008", Oas30InvalidPropertyNameValidationRule.isValidDefinitionName(node.name()), node, "name",
-            `The Link Definition name must match the regular expression: ^[a-zA-Z0-9\\.\\-_]+$`);
+            `The Link Definition Name is not valid.`);
     }
 
     public visitCallbackDefinition(node: Oas30CallbackDefinition): void {
         this.reportIfInvalid("COMP-3-009", Oas30InvalidPropertyNameValidationRule.isValidDefinitionName(node.name()), node, "name",
-            `The Callback Definition name must match the regular expression: ^[a-zA-Z0-9\\.\\-_]+$`);
+            `The Callback Definition Name is not valid.`);
     }
 
     public visitEncoding(node: Oas30Encoding): void {
@@ -135,7 +135,7 @@ export class Oas30InvalidPropertyNameValidationRule extends Oas30ValidationRule 
         let schema: Oas30Schema = (node.parent() as Oas30MediaType).schema;
 
         this.reportIfInvalid("ENC-3-006", this.isValidSchemaProperty(schema, name), node, name,
-            `The encoding property "${name}" cannot be found in the associated schema.`);
+            `Encoding Property "${name}" not found in the associated schema.`);
     }
 
 }

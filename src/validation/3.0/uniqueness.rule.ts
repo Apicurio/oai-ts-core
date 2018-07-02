@@ -46,9 +46,9 @@ export class Oas30UniquenessValidationRule extends Oas30ValidationRule {
             let dupes: Oas30Operation[] = this.indexedOperations[node.operationId]
             if (this.hasValue(dupes)) {
                 this.reportIfInvalid("OP-3-002", dupes.length > 1, dupes[0], "operationId",
-                    `The "operationId" property value '${node.operationId}' must be unique across ALL operations.`);
+                    `Operation IDs must be unique across all operations.`);
                 this.report("OP-3-002", node, "operationId",
-                    `The "operationId" property value '${node.operationId}' must be unique across ALL operations.`);
+                    `Operation IDs must be unique across all operations.`);
                 dupes.push(node);
             } else {
                 this.indexedOperations[node.operationId] = [ node ];
@@ -61,7 +61,7 @@ export class Oas30UniquenessValidationRule extends Oas30ValidationRule {
         this.reportIfInvalid("PAR-3-001", params.filter(param => {
                 return param.in === node.in && param.name === node.name;
             }).length === 1, node, "in",
-            `Duplicate '${node.in}' parameter named '${node.name}' found (parameters must be unique by name and location).`);
+            `Duplicate parameter named '${node.name}' found (parameters must be unique by name and location).`);
     }
 
 }

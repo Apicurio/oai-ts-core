@@ -36,7 +36,7 @@ export class Oas30MutuallyExclusiveValidationRule extends Oas30ValidationRule {
 
     public visitExample(node: Oas30Example): void {
         this.reportIf("EX-3-002", this.hasValue(node.value) && this.hasValue(node.externalValue), node, "value",
-            `The "value" and "externalValue" properties are mutually exclusive.`);
+            `"Value" and "External Value" are mutually exclusive.`);
     }
     public visitExampleDefinition(node: Oas30ExampleDefinition): void { this.visitExample(node); }
 
@@ -45,26 +45,26 @@ export class Oas30MutuallyExclusiveValidationRule extends Oas30ValidationRule {
         // this.reportIf("HEAD-3-006", this.hasValue(node.schema) && this.hasContent(node), node,
         //     `The "schema" and "content" properties are mutually exclusive.`);
         this.reportIf("HEAD-3-007", this.hasValue(node.example) && this.hasValue(node.examples), node, "example",
-            `The "example" and "examples" properties are mutually exclusive.`);
+            `"Example" and "Examples" are mutually exclusive.`);
     }
     public visitHeaderDefinition(node: Oas30HeaderDefinition): void { this.visitHeader(node); }
 
     public visitLink(node: Oas30Link): void {
         this.reportIf("LINK-3-001", this.hasValue(node.operationRef) && this.hasValue(node.operationId), node, "operationId",
-            `The "operationRef" and "operationId" properties are mutually exclusive.`);
+            `Operation Reference and Operation cannot both be used.`);
     }
     public visitLinkDefinition(node: Oas30LinkDefinition): void { this.visitLink(node); }
 
     public visitMediaType(node: Oas30MediaType): void {
         this.reportIf("MT-3-001", this.hasValue(node.example) && this.hasValue(node.examples), node, "example",
-            `The "example" and "examples" properties are mutually exclusive.`);
+            `"Example" and "Examples" are mutually exclusive.`);
     }
 
     private visitParameterBase(node: Oas30ParameterBase): void {
         this.reportIf("PAR-3-008", this.hasValue(node.schema) && this.hasContent(node), node, "schema",
-            `The "schema" and "content" properties are mutually exclusive.`);
+            `Parameter cannot have both a Schema and Content.`);
         this.reportIf("PAR-3-015", this.hasValue(node.example) && this.hasValue(node.examples), node, "example",
-            `The "example" and "examples" properties are mutually exclusive.`);
+            `"Example" and "Examples" are mutually exclusive.`);
     }
     public visitParameter(node: Oas30Parameter): void { this.visitParameterBase(node); }
     public visitParameterDefinition(node: Oas30ParameterDefinition): void { this.visitParameterBase(node); }

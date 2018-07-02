@@ -52,18 +52,18 @@ export class Oas30InvalidPropertyFormatValidationRule extends Oas30ValidationRul
     public visitInfo(node: Oas30Info): void {
         if (this.hasValue(node.description)) {
             this.reportIfInvalid("INF-3-003", OasValidationRuleUtil.isValidCommonMark(node.description), node, "description",
-                `The "description" property must be valid CommonMark syntax (or plain text).`);
+                `API description is an incorrect format.`);
         }
         if (this.hasValue(node.termsOfService)) {
             this.reportIfInvalid("CTC-3-004", OasValidationRuleUtil.isValidUrl(node.termsOfService), node, "termsOfService",
-                `The "termsOfService" property must be a valid URL.`);
+                `Terms of Service URL is an incorrect format.`);
         }
     }
 
     protected visitResponseBase(node: Oas30ResponseBase): void {
         if (this.hasValue(node.description)) {
             this.reportIfInvalid("RES-3-002", OasValidationRuleUtil.isValidCommonMark(node.description), node, "description",
-                `The "description" property must be valid CommonMark syntax (or plain text).`);
+                `Response description is an incorrect format.`);
         }
     }
     public visitResponse(node: Oas30Response): void {
@@ -76,18 +76,18 @@ export class Oas30InvalidPropertyFormatValidationRule extends Oas30ValidationRul
     public visitContact(node: Oas30Contact): void {
         if (this.hasValue(node.url)) {
             this.reportIfInvalid("CTC-3-001", OasValidationRuleUtil.isValidUrl(node.url), node, "url",
-                `The "url" property must be a valid URL.`);
+                `Contact URL is an incorrect format.`);
         }
         if (this.hasValue(node.email)) {
             this.reportIfInvalid("CTC-3-002", OasValidationRuleUtil.isValidEmailAddress(node.email), node, "email",
-                `The "email" property must be a valid email address.`);
+                `Contact email is an incorrect format.`);
         }
     }
 
     public visitExample(node: Oas30Example): void {
         if (this.hasValue(node.description)) {
             this.reportIfInvalid("EX-3-001", OasValidationRuleUtil.isValidCommonMark(node.description), node, "description",
-                `The "description" property must be valid CommonMark syntax (or plain text).`);
+                `Example Description is an incorrect format.`);
         }
     }
     public visitExampleDefinition(node: Oas30ExampleDefinition): void {
@@ -97,7 +97,7 @@ export class Oas30InvalidPropertyFormatValidationRule extends Oas30ValidationRul
     public visitLink(node: Oas30Link): void {
         if (this.hasValue(node.description)) {
             this.reportIfInvalid("LINK-3-004", OasValidationRuleUtil.isValidCommonMark(node.description), node, "description",
-                `The "description" property must be valid CommonMark syntax (or plain text).`);
+                `Link Description is an incorrect format.`);
         }
     }
     public visitLinkDefinition(node: Oas30LinkDefinition): void {
@@ -107,15 +107,15 @@ export class Oas30InvalidPropertyFormatValidationRule extends Oas30ValidationRul
     protected visitFlow(node: Oas30OAuthFlow): void {
         if (this.hasValue(node.authorizationUrl)) {
             this.reportIfInvalid("FLOW-3-003", OasValidationRuleUtil.isValidUrl(node.authorizationUrl), node, "authorizationUrl",
-                `The "authorizationUrl" property must be a valid URL.`);
+                `OAuth Authorization URL is an incorrect format.`);
         }
         if (this.hasValue(node.tokenUrl)) {
             this.reportIfInvalid("FLOW-3-004", OasValidationRuleUtil.isValidUrl(node.tokenUrl), node, "tokenUrl",
-                `The "tokenUrl" property must be a valid URL.`);
+                `OAuth Token URL is an incorrect format.`);
         }
         if (this.hasValue(node.refreshUrl)) {
             this.reportIfInvalid("FLOW-3-005", OasValidationRuleUtil.isValidUrl(node.refreshUrl), node, "refreshUrl",
-                `The "refreshUrl" property must be a valid URL.`);
+                `OAuth Refresh URL is an incorrect format.`);
         }
     }
     public visitImplicitOAuthFlow(node: Oas30ImplicitOAuthFlow): void {
@@ -134,14 +134,14 @@ export class Oas30InvalidPropertyFormatValidationRule extends Oas30ValidationRul
     public visitPathItem(node: Oas30PathItem): void {
         if (this.hasValue(node.description)) {
             this.reportIfInvalid("PATH-3-003", OasValidationRuleUtil.isValidCommonMark(node.description), node, "description",
-                `The "description" property must be valid CommonMark syntax (or plain text).`);
+                `Path Item Description is an incorrect format.`);
         }
     }
 
     public visitRequestBody(node: Oas30RequestBody): void {
         if (this.hasValue(node.description)) {
             this.reportIfInvalid("RB-3-001", OasValidationRuleUtil.isValidCommonMark(node.description), node, "description",
-                `The "description" property must be valid CommonMark syntax (or plain text).`);
+                `Request Body Description is an incorrect format.`);
         }
     }
     public visitRequestBodyDefinition(node: Oas30RequestBodyDefinition): void {
@@ -151,32 +151,32 @@ export class Oas30InvalidPropertyFormatValidationRule extends Oas30ValidationRul
     public visitLicense(node: Oas30License): void {
         if (this.hasValue(node.url)) {
             this.reportIfInvalid("LIC-3-002", OasValidationRuleUtil.isValidUrl(node.url), node, "url",
-                `The "url" property must be a valid URL.`);
+                `License URL is an incorrect format.`);
         }
     }
 
     public visitOperation(node: Oas30Operation): void {
         if (this.hasValue(node.description)) {
             this.reportIfInvalid("OP-3-001", OasValidationRuleUtil.isValidCommonMark(node.description), node, "description",
-                `The "description" property must be valid CommonMark syntax (or plain text).`);
+                `Operation Description is an incorrect format.`);
         }
     }
 
     public visitExternalDocumentation(node: Oas30ExternalDocumentation): void {
         if (this.hasValue(node.description)) {
             this.reportIfInvalid("ED-3-001", OasValidationRuleUtil.isValidCommonMark(node.description), node, "description",
-                `The "description" property must be valid CommonMark syntax (or plain text).`);
+                `External Documentation Description is an incorrect format.`);
         }
         if (this.hasValue(node.url)) {
             this.reportIfInvalid("ED-3-003", OasValidationRuleUtil.isValidUrl(node.url), node, "url",
-                `The "url" property must be a valid URL.`);
+                `External Documentation URL is an incorrect format.`);
         }
     }
 
     public visitParameter(node: Oas30Parameter): void {
         if (this.hasValue(node.description)) {
             this.reportIfInvalid("PAR-3-005", OasValidationRuleUtil.isValidCommonMark(node.description), node, "description",
-                `The "description" property must be valid CommonMark syntax (or plain text).`);
+                `Parameter Description is an incorrect format.`);
         }
     }
     public visitParameterDefinition(node: Oas30ParameterDefinition): void {
@@ -186,7 +186,7 @@ export class Oas30InvalidPropertyFormatValidationRule extends Oas30ValidationRul
     public visitHeader(node: Oas30Header): void {
         if (this.hasValue(node.description)) {
             this.reportIfInvalid("HEAD-3-002", OasValidationRuleUtil.isValidCommonMark(node.description), node, "description",
-                `The "description" property must be valid CommonMark syntax (or plain text).`);
+                `Header Description is an incorrect format.`);
         }
     }
     public visitHeaderDefinition(node: Oas30HeaderDefinition): void {
@@ -196,43 +196,43 @@ export class Oas30InvalidPropertyFormatValidationRule extends Oas30ValidationRul
     public visitTag(node: Oas30Tag): void {
         if (this.hasValue(node.description)) {
             this.reportIfInvalid("TAG-3-002", OasValidationRuleUtil.isValidCommonMark(node.description), node, "description",
-                `The "description" property must be valid CommonMark syntax (or plain text).`);
+                `Tag Description is an incorrect format.`);
         }
     }
 
     public visitSecurityScheme(node: Oas30SecurityScheme): void {
         if (this.hasValue(node.openIdConnectUrl)) {
             this.reportIfInvalid("SS-3-007", OasValidationRuleUtil.isValidUrl(node.openIdConnectUrl), node, "openIdConnectUrl",
-                `The "openIdConnectUrl" property must be a valid URL.`);
+                `OpenID Connect URL is an incorrect format.`);
         }
         if (this.hasValue(node.description)) {
             this.reportIfInvalid("SS-3-009", OasValidationRuleUtil.isValidCommonMark(node.description), node, "description",
-                `The "description" property must be valid CommonMark syntax (or plain text).`);
+                `Security Scheme Description is an incorrect format.`);
         }
     }
 
     public visitServer(node: Oas30Server): void {
         if (this.hasValue(node.description)) {
             this.reportIfInvalid("SRV-3-003", OasValidationRuleUtil.isValidCommonMark(node.description), node, "description",
-                `The "description" property must be valid CommonMark syntax (or plain text).`);
+                `Server Description is an incorrect format.`);
         }
         if (this.hasValue(node.url)) {
             this.reportIfInvalid("SRV-3-002", OasValidationRuleUtil.isValidUrlTemplate(node.url), node, "url",
-                `The "url" property must be a valid URL.`);
+                `Server URL is an incorrect format.`);
         }
     }
 
     public visitServerVariable(node: Oas30ServerVariable): void {
         if (this.hasValue(node.description)) {
             this.reportIfInvalid("SVAR-3-002", OasValidationRuleUtil.isValidCommonMark(node.description), node, "description",
-                `The "description" property must be valid CommonMark syntax (or plain text).`);
+                `Server Variable Description is an incorrect format.`);
         }
     }
 
     public visitXML(node: Oas30XML): void {
         if (this.hasValue(node.namespace)) {
             this.reportIfInvalid("XML-3-002", OasValidationRuleUtil.isValidUrl(node.namespace), node, "namespace",
-                `The "namespace" property must be a valid URL.`);
+                `XML Namespace URL is an incorrect format.`);
         }
     }
 

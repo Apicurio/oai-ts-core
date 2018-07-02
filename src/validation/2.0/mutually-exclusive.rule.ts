@@ -40,7 +40,7 @@ export class Oas20MutuallyExclusiveValidationRule extends Oas20ValidationRule {
                 }
             });
             this.reportIfInvalid("PATH-001", !(hasBodyParam && hasFormDataParam), node, "body",
-                `An operation may not have both a "body" and a "formData" parameter.`);
+                `Operation may not have both Body and Form Data parameters.`);
         }
     }
 
@@ -57,7 +57,7 @@ export class Oas20MutuallyExclusiveValidationRule extends Oas20ValidationRule {
                 }
             });
             this.reportIfInvalid("PATH-001", !(hasBodyParam && hasFormDataParam), node, "body",
-                `An operation may not have both a "body" and a "formData" parameter.`);
+                `Operation may not have both Body and Form Data parameters.`);
         }
     }
 

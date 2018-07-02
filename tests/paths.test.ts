@@ -512,7 +512,7 @@ describe("Node Path (Resolve 3.0)", () => {
 
         let resolvedProblem: OasValidationProblem = resolvedNode as OasValidationProblem;
         expect(resolvedProblem.errorCode).toEqual("INF-3-001");
-        expect(resolvedProblem.message).toEqual(`Property "title" is required.`);
+        expect(resolvedProblem.message).toEqual(`The API is missing a title.`);
     });
 
 });
