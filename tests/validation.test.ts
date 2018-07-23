@@ -370,7 +370,7 @@ describe("Validation (3.0)", () => {
 [PAR-3-013] |2| {/paths[/par-3-013]/parameters[0]->style} :: Header Parameter Style must be "simple". (Found "label").
 [PAR-3-014] |2| {/paths[/par-3-014]/parameters[0]->allowReserved} :: Allow Reserved is only allowed for Query Parameters.
 [PAR-3-016] |2| {/paths[/par-3-016]/parameters[0]->content} :: Parameter content cannot have multiple media types.
-[PAR-3-018] |2| {/paths[/par-3-018/{id}/{sub}]/parameters[1]->name} :: Path Parameter not found in path template."
+[PAR-3-018] |2| {/paths[/par-3-018/{id}/{sub}]/parameters[1]->name} :: Path Parameter not found in path template.
 [PAR-3-019] |2| {/paths[/par-3-019]/parameters[0]->null} :: Header Parameters "Accept", "Content-Type", and "Authorization" are ignored.
 [SCH-3-001] |2| {/paths[/sch-3-001]/get/responses[200]/content[application/json]/schema/discriminator->discriminator} :: Schema Discriminator is only allowed when using one of: ["oneOf", "anyOf", "allOf"]
 [SREQ-3-002] |2| {/paths[/sreq-3-002]/get/security[0]->api_key} :: Value for Security Requirement "api_key" must be an empty array.
@@ -437,7 +437,7 @@ describe("Validation (3.0)", () => {
 [INF-3-002] |2| {/info->version} :: The API is missing a version.
 [LIC-3-001] |2| {/info/license->name} :: License must have a name.
 [SRV-3-001] |2| {/servers[0]->url} :: Server is missing a template URL.
-[SVAR-3-001] |2| {/servers[1]/variables[username]->default} :: Server Variable is missing a default value.
+[SVAR-3-001] |2| {/servers[1]/variables[username]->default} :: Server Variable "username" is missing a default value.
 [OP-3-004] |2| {/paths[/op-3-004]/get->responses} :: Operation must have at least one response.
 [PAR-3-003] |2| {/paths[/par-3-003]/parameters[0]->name} :: Parameter is missing a name.
 [PAR-3-004] |2| {/paths[/par-3-004]/parameters[0]->in} :: Parameter location is missing.
