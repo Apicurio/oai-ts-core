@@ -272,7 +272,7 @@ export class Oas30InvalidPropertyValueValidationRule extends Oas30ValidationRule
             let path: string = pathItem.path();
             let pathVars: string[] = this.parsePathTemplate(path);
             this.reportIfInvalid("PAR-3-018", OasValidationRuleUtil.isValidEnumItem(node.name, pathVars), node, "name",
-                `Path Parameter not found in path template."`);
+                `Path Parameter not found in path template.`);
 
             this.reportIfInvalid("PAR-3-006", node.required === true, node, "required",
                 `Path Parameters must be marked as "required".`);

@@ -173,7 +173,7 @@ export class Oas30RequiredPropertyValidationRule extends Oas30ValidationRule {
     }
 
     public visitServerVariable(node: Oas30ServerVariable): void {
-        this.requireProperty("SVAR-3-001", node, "default", "Server Variable is missing a default value.");
+        this.requireProperty("SVAR-3-001", node, "default", `Server Variable "${node.name()}" is missing a default value.`);
     }
 
     public visitTag(node: Oas30Tag): void {
