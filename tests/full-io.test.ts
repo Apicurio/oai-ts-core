@@ -53,6 +53,7 @@ function sortObj(original: any): any {
 describe("Full I/O (2.0)", () => {
 
     let TESTS: TestSpec[] = [
+        { name: "Numeric Spec Version (2.0)",           test: "tests/fixtures/full-io/2.0/numeric-version.json" },
         { name: "Simple (Easy 2.0 spec)",               test: "tests/fixtures/full-io/2.0/simple/simplest.json" },
         { name: "Simple (Info)",                        test: "tests/fixtures/full-io/2.0/simple/simple-info.json" },
         { name: "Simple (Info + extensions)",           test: "tests/fixtures/full-io/2.0/simple/simple-info-extensions.json" },
@@ -115,6 +116,11 @@ describe("Full I/O (2.0)", () => {
         expect(() => { library.createDocument(json); }).toThrowError("Unsupported OAS version: 1.1");
     });
 
+    // it("Numeric spec version", () => {
+    //     let json: any = readJSON('tests/fixtures/full-io/2.0/numeric-version.json');
+    //     expect(() => { library.createDocument(json); }).toThrowError("Unsupported OAS version: 1.1");
+    // });
+
     // All tests in the list above.
     TESTS.forEach( spec => {
         it(spec.name, () => {
@@ -141,6 +147,7 @@ describe("Full I/O (2.0)", () => {
 describe("Full I/O (3.0)", () => {
 
     let TESTS: TestSpec[] = [
+        { name: "Numeric Spec Version",                 test: "tests/fixtures/full-io/3.0/numeric-version.json" },
         { name: "Simple (Easy 3.0 spec)",               test: "tests/fixtures/full-io/3.0/simple/simplest.json" },
         { name: "Simple (Info)",                        test: "tests/fixtures/full-io/3.0/simple/simple-info.json" },
         { name: "Simple (Info + extensions)",           test: "tests/fixtures/full-io/3.0/simple/simple-info-extensions.json" },

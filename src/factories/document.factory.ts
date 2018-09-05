@@ -32,6 +32,10 @@ export class OasDocumentFactory {
      * @return {OasDocument}
      */
     public createEmpty(oasVersion: string): OasDocument {
+        if (oasVersion === "2") { oasVersion = "2.0"; }
+        if (oasVersion === "3") { oasVersion = "3.0.0"; }
+        if (oasVersion === "3.0") { oasVersion = "3.0.0"; }
+
         if (oasVersion === "2.0") {
             return new Oas20Document();
         }
@@ -48,6 +52,13 @@ export class OasDocumentFactory {
      * @return {Oas20Document}
      */
     public createFromObject(oasObject: any): OasDocument {
+        if (oasObject.swagger && oasObject.swagger === 2) {
+            oasObject.swagger = "2.0";
+        }
+        if (oasObject.openapi && (oasObject.openapi === 3 || oasObject.openapi === 3.0 || oasObject.openapi === "3.0")) {
+            oasObject.openapi = "3.0.0";
+        }
+
         if (oasObject.swagger && oasObject.swagger === "2.0") {
             let reader: Oas20JS2ModelReader = new Oas20JS2ModelReader();
             return reader.read(oasObject);
