@@ -525,7 +525,7 @@ export abstract class OasJS2ModelReader {
         }
         if (this.isDefined(example)) { schemaModel.example = example; }
 
-        this.readExtensions(items, schemaModel);
+        this.readExtensions(schema, schemaModel);
     }
 
     /**
