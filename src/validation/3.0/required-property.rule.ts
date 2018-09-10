@@ -34,6 +34,7 @@ import {Oas30Server} from "../../models/3.0/server.model";
 import {Oas30Tag} from "../../models/3.0/tag.model";
 import {Oas30SecurityScheme} from "../../models/3.0/security-scheme.model";
 import {Oas30ServerVariable} from "../../models/3.0/server-variable.model";
+import {Oas30Response} from "../../models/3.0/response.model";
 
 /**
  * Implements the required property validation rule.  Various model properties are either
@@ -180,4 +181,7 @@ export class Oas30RequiredPropertyValidationRule extends Oas30ValidationRule {
         this.requireProperty("TAG-3-001", node, "name", "Tag is missing a name.");
     }
 
+    public visitResponse(node: Oas30Response): void {
+        this.requireProperty("RES-3-003", node, "description", `Response (code ${ node.statusCode() }) is missing a description.`);
+    }
 }

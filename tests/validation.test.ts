@@ -441,6 +441,7 @@ describe("Validation (3.0)", () => {
 [OP-3-004] |2| {/paths[/op-3-004]/get->responses} :: Operation must have at least one response.
 [PAR-3-003] |2| {/paths[/par-3-003]/parameters[0]->name} :: Parameter is missing a name.
 [PAR-3-004] |2| {/paths[/par-3-004]/parameters[0]->in} :: Parameter location is missing.
+[RES-3-003] |2| {/paths[/res-3-003]/get/responses[200]->description} :: Response (code 200) is missing a description.
 [DISC-3-001] |2| {/components/schemas[disc-3-001]/discriminator->propertyName} :: Discriminator must indicate a property (by name).
 [ED-3-002] |2| {/components/schemas[ed-3-002]/externalDocs->url} :: External Documentation is missing a URL.
 [FLOW-3-001] |2| {/components/securitySchemes[flow-3-001]/flows/implicit->authorizationUrl} :: Implicit OAuth Flow is missing an Authorization URL.

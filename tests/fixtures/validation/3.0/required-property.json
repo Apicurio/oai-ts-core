@@ -56,6 +56,21 @@
           }
         }
       ]
+    },
+    "/res-3-003": {
+      "get": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/disc-3-001"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {

@@ -45,7 +45,7 @@ export class Oas30Header extends OasHeader {
     public schema: Oas30Schema;
     public example: any;
     public examples: Oas30ExampleItems;
-    public content: Oas30ParameterContent = new Oas30ParameterContent();
+    public content: Oas30HeaderContent = new Oas30HeaderContent();
 
     /**
      * Constructor.
@@ -218,4 +218,9 @@ export class Oas30HeaderDefinition extends Oas30Header {
         return this.headerName();
     }
 
+}
+
+
+export class Oas30HeaderContent {
+    [key: string]: Oas30MediaType;
 }
