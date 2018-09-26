@@ -119,12 +119,12 @@ export class Oas20RequiredPropertyValidationRule extends Oas20ValidationRule {
 
         if (node.in !== "body" && !this.isDefined(node.type)) {
             this.report("PAR-005", node, "type", 
-                `Parameter is missing a type.`);
+                `Parameter '${node.name}' is missing a type.`);
         }
 
         if (node.in !== "body" && node.type === "array" && !this.isDefined(node.items)) {
             this.report("PAR-006", node, "items",
-                `Parameter marked as array but no array type provided..`);
+                `Parameter '${node.name}' marked as array but no array type provided..`);
         }
     }
 
