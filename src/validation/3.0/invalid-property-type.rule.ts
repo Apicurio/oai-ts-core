@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2017 Red Hat
+ * Copyright 2018 Red Hat
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import { OasValidationRuleUtil } from "../validation";
 import { Oas30Schema, Oas30SchemaDefinition, Oas30ItemsSchema, Oas30PropertySchema, Oas30AllOfSchema, Oas30AnyOfSchema, Oas30OneOfSchema, Oas30NotSchema, Oas30AdditionalPropertiesSchema } from "../../models/3.0/schema.model";
 
 const allowedTypes = ["string", "number", "integer", "boolean", "array", "object"]
+
 /**
  * Implements the Invalid Property Type validation rule.  This rule is responsible
  * for reporting whenever the **type** and **items** of a property fails to conform to the required
@@ -52,11 +53,11 @@ export class Oas30InvalidPropertyTypeValidationRule extends Oas30ValidationRule 
     }
 
     public visitSchema(node: Oas30Schema) {
-        this.reportIfInvalid("PT-3-001", this.isValidType(node.type), node, "type",
-            `Schema Definition type must be one of: ${allowedTypes.join(", ")}`);
+        this.reportIfInvalid("SCH-3-003", this.isValidType(node.type), node, "type",
+            `Schema type value of "${ node.type }" is not allowed.  Must be one of: [${allowedTypes.join(", ")}]`);
 
-        this.reportIfInvalid("PA-3-001", this.isValidItems(node), node, "items",
-            `Schema Definition items must be present if and only if type is of array`);
+        this.reportIfInvalid("SCH-3-004", this.isValidItems(node), node, "items",
+            `Schema items must be present only for schemas of type 'array'.`);
     }
 
     public visitAllOfSchema(node: Oas30AllOfSchema): void { this.visitSchema(node); }

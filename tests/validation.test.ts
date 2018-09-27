@@ -319,11 +319,11 @@ describe("Validation (3.0)", () => {
         let errors: OasValidationProblem[] = library.validate(node);
 
         let actual: string = errorsAsString(errors);
-        let expected: string =[
-            '[PA-3-001] |2| {/paths[/pets]/get/responses[200]/content[application/json]/schema->items} :: Schema Definition items must be present if and only if type is of array',
-            '[PT-3-001] |2| {/components/schemas[NewPet]/properties[name]->type} :: Schema Definition type must be one of: string, number, integer, boolean, array, object',
-            '[PA-3-001] |2| {/components/schemas[NewPet]/properties[tags]->items} :: Schema Definition items must be present if and only if type is of array',
-            '[PT-3-001] |2| {/components/schemas[NewPet]/properties[nickNames]/items->type} :: Schema Definition type must be one of: string, number, integer, boolean, array, object'
+        let expected: string = [
+            `[SCH-3-004] |2| {/paths[/pets]/get/responses[200]/content[application/json]/schema->items} :: Schema items must be present only for schemas of type 'array'.`,
+            `[SCH-3-003] |2| {/components/schemas[NewPet]/properties[name]->type} :: Schema type value of "invalid" is not allowed.  Must be one of: [string, number, integer, boolean, array, object]`,
+            `[SCH-3-004] |2| {/components/schemas[NewPet]/properties[tags]->items} :: Schema items must be present only for schemas of type 'array'.`,
+            `[SCH-3-003] |2| {/components/schemas[NewPet]/properties[nickNames]/items->type} :: Schema type value of "invalid" is not allowed.  Must be one of: [string, number, integer, boolean, array, object]`
         ].join('\n')
 
         assertValidationOutput(actual, expected);
