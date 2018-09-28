@@ -311,6 +311,24 @@ describe("Validation (3.0)", () => {
         assertValidationOutput(actual, expected);
     });
 
+    it("Invalid Property Type", () => {
+        let json: any = readJSON('tests/fixtures/validation/3.0/invalid-property-type.json'); 
+        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+
+        let node: OasNode = document;
+        let errors: OasValidationProblem[] = library.validate(node);
+
+        let actual: string = errorsAsString(errors);
+        let expected: string = [
+            `[SCH-3-004] |2| {/paths[/pets]/get/responses[200]/content[application/json]/schema->items} :: Schema items must be present only for schemas of type 'array'.`,
+            `[SCH-3-003] |2| {/components/schemas[NewPet]/properties[name]->type} :: Schema type value of "invalid" is not allowed.  Must be one of: [string, number, integer, boolean, array, object]`,
+            `[SCH-3-004] |2| {/components/schemas[NewPet]/properties[tags]->items} :: Schema items must be present only for schemas of type 'array'.`,
+            `[SCH-3-003] |2| {/components/schemas[NewPet]/properties[nickNames]/items->type} :: Schema type value of "invalid" is not allowed.  Must be one of: [string, number, integer, boolean, array, object]`
+        ].join('\n')
+
+        assertValidationOutput(actual, expected);
+    });
+
     it("Invalid Property Name", () => {
         let json: any = readJSON('tests/fixtures/validation/3.0/invalid-property-name.json');
         let document: Oas30Document = <Oas30Document> library.createDocument(json);

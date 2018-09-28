@@ -37,7 +37,7 @@ document.info.version = "1.7";
 document.info.description = "Made some changes to the OpenAPI document!";
 
 // Validate that your changes are OK.
-let errors: OasValidationError[] = library.validate(document);
+let problems: OasValidationProblem[] = library.validate(document);
 
 // And now write the node back out as a JSON string
 let modifiedOpenApiData: string = JSON.stringify(library.writeNode(document));
@@ -54,7 +54,7 @@ var document = library.createDocument(openApiData);
 document.info.version = "1.1";
 document.info.description = "Made some changes to the OpenAPI document!";
 
-var errors = library.validate(document);
+var problems = library.validate(document);
 
 var modifiedOpenApiData = JSON.stringify(library.writeNode(document));
 ```
@@ -90,27 +90,41 @@ full OpenAPI JS object will be returned.  If, for example, you pass in only the
 data model will be returned.
 
 #### Validate
-`OasLibraryUtils::validate(OasNode, boolean): OasValidationError[]`
+`OasLibraryUtils::validate(OasNode, boolean[, IOasValidationSeverityRegistry]): OasValidationProblem[]`
 
 Use this method to validate a document (or subsection of the document).  The
 library includes all validation rules defined by the OpenAPI specification.
 You can use this method to apply the appropriate rules to any section of the
-data model.  The return result is an array of validation errors, or an empty
+data model.  The return result is an array of validation problems, or an empty
 array if the document is fully valid.
 
-Note that in addition to returning an array of errors, the errors will also
+Note that in addition to returning an array of problems, the problems will also
 be stored on the model itself.  Any node that violates a validation rule
-will have the error object added to an array of errors stored as a "node
-attribute" with a key of "validation-errors".  You can check if an individual
-node has any validation errors:
+will have the problem object added to a collection of problems stored directly
+on the node itself.  Thus, you can check if an individual node has any 
+validation problems:
 
 ```Typescript
 let node: OasNode = ...;
-let errors: OasValidationError[] = node.n_attribute("validation-errors");
-if (errors && errors.length > 0) {
+let problems: OasValidationProblem[] = node.validationProblems();
+if (problems && problems.length > 0) {
     // The node failed validation!
 }
 ````
+
+Additionally, convenience methods exist on the node to get a more granular
+list of problems, in the case where you are only interested problems for a
+specific property of the node (e.g. you might only be interested in problems
+for the `description` property):
+
+```Typescript
+let node: OasNode = ...;
+let problems: OasValidationProblem[] = node.validationProblemsFor('description');
+if (problems && problems.length > 0) {
+    // The node failed validation!
+}
+````
+
 
 #### Create a Node Path
 `OasLibraryUtils::createNodePath(OasNode): OasNodePath`

@@ -41,6 +41,7 @@ import {Oas30InvalidReferenceValidationRule} from "./3.0/invalid-reference.rule"
 import {Oas30MutuallyExclusiveValidationRule} from "./3.0/mutually-exclusive.rule";
 import {Oas30RequiredPropertyValidationRule} from "./3.0/required-property.rule";
 import {Oas30UniquenessValidationRule} from "./3.0/uniqueness.rule";
+import { Oas30InvalidPropertyTypeValidationRule } from "./3.0/invalid-property-type.rule";
 
 /**
  * Visitor used to clear validation problems.  This is typically done just before
@@ -141,6 +142,7 @@ export class Oas30ValidationVisitor extends Oas30CompositeVisitor implements IOa
         this.addVisitors([
             new Oas30InvalidPropertyFormatValidationRule(this),
             new Oas30IgnoredPropertyNameValidationRule(this),
+            new Oas30InvalidPropertyTypeValidationRule(this),
             new Oas30InvalidPropertyNameValidationRule(this),
             new Oas30InvalidPropertyValueValidationRule(this),
             new Oas30InvalidReferenceValidationRule(this),

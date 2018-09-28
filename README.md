@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/Apicurio/oai-ts-core.svg?style=svg)](https://circleci.com/gh/Apicurio/oai-ts-core)
+
 # OpenAPI Core Library (Typescript)
 
 ## What is it?
