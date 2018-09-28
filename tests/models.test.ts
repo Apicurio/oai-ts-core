@@ -35,7 +35,7 @@ describe("Models (2.0)", () => {
 
     it("Info", () => {
         let json: any = readJSON('tests/fixtures/full-io/2.0/complete/pet-store.json');
-        let document: Oas20Document = <Oas20Document>library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         expect(library.writeNode(document.info)).toEqual({
             "description":"This is a sample server Petstore server via JSON.",

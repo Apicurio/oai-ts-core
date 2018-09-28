@@ -34,7 +34,7 @@ describe("Schema Factory (2.0)", () => {
     beforeEach(() => {
         library = new OasLibraryUtils();
         schemaFactory = new OasSchemaFactory();
-        document = <Oas20Document>library.createDocument("2.0");
+        document = library.createDocument("2.0") as Oas20Document;
     });
 
     it("Schema From Example (empty)", () => {
@@ -207,7 +207,7 @@ describe("Schema Factory (2.0)", () => {
             }
         }) as Oas20SchemaDefinition;
 
-        //console.info(JSON.stringify(library.writeNode(schema), null, 3));
+        // console.info(JSON.stringify(library.writeNode(schema), null, 3));
 
         expect(library.writeNode(schema)).toEqual({
             "title": "Root Type for ComplexObject",

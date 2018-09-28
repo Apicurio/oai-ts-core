@@ -129,7 +129,7 @@ describe("Full I/O (2.0)", () => {
                 console.info("*******  Running test: " + spec.name);
             }
             let json: any = readJSON(spec.test);
-            let document: Oas20Document = <Oas20Document>library.createDocument(json);
+            let document: Oas20Document = library.createDocument(json) as Oas20Document;
             let jsObj: any = library.writeNode(document);
             if (spec.debug) {
                 console.info("------- INPUT --------\n " + JSON.stringify(json, null, 2) + "\n-------------------");
@@ -202,7 +202,7 @@ describe("Full I/O (3.0)", () => {
                 console.info("*******  Running test: " + spec.name);
             }
             let json: any = readJSON(spec.test);
-            let document: Oas30Document = <Oas30Document>library.createDocument(json);
+            let document: Oas30Document = library.createDocument(json) as Oas30Document;
             let jsObj: any = library.writeNode(document);
             if (spec.debug) {
                 console.info("------- INPUT --------\n " + JSON.stringify(json, null, 2) + "\n-------------------");

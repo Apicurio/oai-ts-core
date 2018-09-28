@@ -81,12 +81,12 @@ export class OasLibraryUtils {
         }
         if (node.ownerDocument().is2xDocument()) {
             let reader: Oas20JS2ModelReader = new Oas20JS2ModelReader();
-            let dispatcher: Oas20JS2ModelReaderVisitor = new Oas20JS2ModelReaderVisitor(reader, <any>source);
+            let dispatcher: Oas20JS2ModelReaderVisitor = new Oas20JS2ModelReaderVisitor(reader, source as any);
             node.accept(dispatcher);
             return node;
         } else if (node.ownerDocument().is3xDocument()) {
             let reader: Oas30JS2ModelReader = new Oas30JS2ModelReader();
-            let dispatcher: Oas30JS2ModelReaderVisitor = new Oas30JS2ModelReaderVisitor(reader, <any>source);
+            let dispatcher: Oas30JS2ModelReaderVisitor = new Oas30JS2ModelReaderVisitor(reader, source as any);
             node.accept(dispatcher);
             return node;
         } else {

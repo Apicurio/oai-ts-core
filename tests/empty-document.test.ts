@@ -27,7 +27,7 @@ describe("Empty Document Test (2.0)", () => {
 
     beforeEach(() => {
         library = new OasLibraryUtils();
-        document = <Oas20Document> library.createDocument("2.0");
+        document = library.createDocument("2.0") as Oas20Document;
     });
 
     it("Document not null", () => {

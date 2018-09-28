@@ -65,7 +65,7 @@ describe("Validation (2.0)", () => {
 
     it("Valid Pet Store Document", () => {
         let json: any = readJSON('tests/fixtures/validation/2.0/valid-pet-store.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let node: OasNode = document;
         let errors: OasValidationProblem[] = library.validate(node);
@@ -75,7 +75,7 @@ describe("Validation (2.0)", () => {
 
     it("Document (Required Properties)", () => {
         let json: any = readJSON('tests/fixtures/validation/2.0/document-required-properties.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let node: OasNode = document;
         let errors: OasValidationProblem[] = library.validate(node);
@@ -90,7 +90,7 @@ describe("Validation (2.0)", () => {
 
     it("Document (Invalid Property Format)", () => {
         let json: any = readJSON('tests/fixtures/validation/2.0/document-invalid-property-format.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let node: OasNode = document;
         let errors: OasValidationProblem[] = library.validate(node);
@@ -105,7 +105,7 @@ describe("Validation (2.0)", () => {
 
     it("Info (Required Properties)", () => {
         let json: any = readJSON('tests/fixtures/validation/2.0/info-required-properties.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let node: OasNode = document;
         let errors: OasValidationProblem[] = library.validate(node);
@@ -120,7 +120,7 @@ describe("Validation (2.0)", () => {
 
     it("Info (Invalid Property Value)", () => {
         let json: any = readJSON('tests/fixtures/validation/2.0/info-invalid-property-format.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let node: OasNode = document;
         let errors: OasValidationProblem[] = library.validate(node);
@@ -135,7 +135,7 @@ describe("Validation (2.0)", () => {
 
     it("Security Scheme (Required Properties)", () => {
         let json: any = readJSON('tests/fixtures/validation/2.0/security-scheme-required-properties.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let node: OasNode = document;
         let errors: OasValidationProblem[] = library.validate(node);
@@ -167,7 +167,7 @@ describe("Validation (2.0)", () => {
 
     it("Security Scheme (Invalid Property Format)", () => {
         let json: any = readJSON('tests/fixtures/validation/2.0/security-scheme-invalid-property-format.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let node: OasNode = document;
         let errors: OasValidationProblem[] = library.validate(node);
@@ -183,7 +183,7 @@ describe("Validation (2.0)", () => {
 
     it("Invalid Property Name (All)", () => {
         let json: any = readJSON('tests/fixtures/validation/2.0/invalid-property-name.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let node: OasNode = document;
         let errors: OasValidationProblem[] = library.validate(node);
@@ -201,7 +201,7 @@ describe("Validation (2.0)", () => {
 
     it("Uniqueness (All)", () => {
         let json: any = readJSON('tests/fixtures/validation/2.0/uniqueness.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let node: OasNode = document;
         let errors: OasValidationProblem[] = library.validate(node);
@@ -228,7 +228,7 @@ describe("Validation (2.0)", () => {
 
     it("Mutually Exclusive (All)", () => {
         let json: any = readJSON('tests/fixtures/validation/2.0/mutually-exclusive.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let node: OasNode = document;
         let errors: OasValidationProblem[] = library.validate(node);
@@ -241,7 +241,7 @@ describe("Validation (2.0)", () => {
 
     it("Invalid Reference (All)", () => {
         let json: any = readJSON('tests/fixtures/validation/2.0/invalid-reference.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let node: OasNode = document;
         let errors: OasValidationProblem[] = library.validate(node);
@@ -272,7 +272,7 @@ describe("Validation (3.0)", () => {
 
     it("Valid Pet Store Document", () => {
         let json: any = readJSON('tests/fixtures/validation/3.0/valid-pet-store.json');
-        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
 
         let node: OasNode = document;
         let errors: OasValidationProblem[] = library.validate(node);
@@ -282,7 +282,7 @@ describe("Validation (3.0)", () => {
 
     it("Invalid Property Format", () => {
         let json: any = readJSON('tests/fixtures/validation/3.0/invalid-property-format.json');
-        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
 
         let node: OasNode = document;
         let errors: OasValidationProblem[] = library.validate(node);
@@ -299,7 +299,7 @@ describe("Validation (3.0)", () => {
 
     it("Ignored Property Name", () => {
         let json: any = readJSON('tests/fixtures/validation/3.0/ignored-property-name.json');
-        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
 
         let node: OasNode = document;
         let errors: OasValidationProblem[] = library.validate(node);
@@ -313,7 +313,7 @@ describe("Validation (3.0)", () => {
 
     it("Invalid Property Type", () => {
         let json: any = readJSON('tests/fixtures/validation/3.0/invalid-property-type.json'); 
-        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
 
         let node: OasNode = document;
         let errors: OasValidationProblem[] = library.validate(node);
@@ -331,7 +331,7 @@ describe("Validation (3.0)", () => {
 
     it("Invalid Property Name", () => {
         let json: any = readJSON('tests/fixtures/validation/3.0/invalid-property-name.json');
-        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
 
         let node: OasNode = document;
         let errors: OasValidationProblem[] = library.validate(node);
@@ -357,7 +357,7 @@ describe("Validation (3.0)", () => {
 
     it("Invalid Property Value", () => {
         let json: any = readJSON('tests/fixtures/validation/3.0/invalid-property-value.json');
-        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
 
         let node: OasNode = document;
         let errors: OasValidationProblem[] = library.validate(node);
@@ -403,7 +403,7 @@ describe("Validation (3.0)", () => {
 
     it("Invalid Reference", () => {
         let json: any = readJSON('tests/fixtures/validation/3.0/invalid-reference.json');
-        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
 
         let node: OasNode = document;
         let errors: OasValidationProblem[] = library.validate(node);
@@ -426,7 +426,7 @@ describe("Validation (3.0)", () => {
 
     it("Mutually Exclusive", () => {
         let json: any = readJSON('tests/fixtures/validation/3.0/mutually-exclusive.json');
-        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
 
         let node: OasNode = document;
         let errors: OasValidationProblem[] = library.validate(node);
@@ -444,7 +444,7 @@ describe("Validation (3.0)", () => {
 
     it("Required Property", () => {
         let json: any = readJSON('tests/fixtures/validation/3.0/required-property.json');
-        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
 
         let node: OasNode = document;
         let errors: OasValidationProblem[] = library.validate(node);
@@ -488,7 +488,7 @@ describe("Validation (3.0)", () => {
 
     it("Required Property (Root)", () => {
         let json: any = readJSON('tests/fixtures/validation/3.0/required-property-root.json');
-        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
 
         let node: OasNode = document;
         let errors: OasValidationProblem[] = library.validate(node);
@@ -502,7 +502,7 @@ describe("Validation (3.0)", () => {
 
     it("Uniqueness", () => {
         let json: any = readJSON('tests/fixtures/validation/3.0/uniqueness.json');
-        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
 
         let node: OasNode = document;
         let errors: OasValidationProblem[] = library.validate(node);
@@ -518,7 +518,7 @@ describe("Validation (3.0)", () => {
 
     it("Uniqueness (Re-Validate)", () => {
         let json: any = readJSON('tests/fixtures/validation/3.0/uniqueness.json');
-        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
 
         let node: OasNode = document;
         let errors1: OasValidationProblem[] = library.validate(node);
@@ -538,7 +538,7 @@ describe("Validation (3.0)", () => {
 
     it("Custom Severities", () => {
         let json: any = readJSON('tests/fixtures/validation/3.0/mutually-exclusive.json');
-        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
 
         let node: OasNode = document;
         let errors: OasValidationProblem[] = library.validate(node, true, new CustomSeverities(OasValidationProblemSeverity.low));
@@ -573,7 +573,7 @@ describe("Validation (3.0)", () => {
 
     it("Validation Problem List", () => {
         let json: any = readJSON('tests/fixtures/validation/3.0/invalid-property-value.json');
-        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
 
         let node: OasNode = document;
         library.validate(node);

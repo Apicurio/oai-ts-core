@@ -87,7 +87,7 @@ describe("Node Path (Create 2.0)", () => {
 
     it("Info", () => {
         let json: any = readJSON('tests/fixtures/paths/2.0/pet-store.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let node: OasNode = document.info;
         let path: OasNodePath = library.createNodePath(node);
@@ -100,7 +100,7 @@ describe("Node Path (Create 2.0)", () => {
 
     it("Tag External Documentation", () => {
         let json: any = readJSON('tests/fixtures/paths/2.0/pet-store.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let node: OasNode = document.tags[0].externalDocs;
         let path: OasNodePath = library.createNodePath(node);
@@ -113,7 +113,7 @@ describe("Node Path (Create 2.0)", () => {
 
     it("Path Item", () => {
         let json: any = readJSON('tests/fixtures/paths/2.0/pet-store.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let node: OasNode = document.paths.pathItem("/pet");
         let path: OasNodePath = library.createNodePath(node);
@@ -126,7 +126,7 @@ describe("Node Path (Create 2.0)", () => {
 
     it("Path Response", () => {
         let json: any = readJSON('tests/fixtures/paths/2.0/pet-store.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let node: OasNode = document.paths.pathItem("/pet/{petId}").get.responses.response("200");
         let path: OasNodePath = library.createNodePath(node);
@@ -139,7 +139,7 @@ describe("Node Path (Create 2.0)", () => {
 
     it("Path Parameter Schema", () => {
         let json: any = readJSON('tests/fixtures/paths/2.0/pet-store.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let node: OasNode = document.paths.pathItem("/user/{username}").put.parameters[1].schema;
         let path: OasNodePath = library.createNodePath(node);
@@ -152,7 +152,7 @@ describe("Node Path (Create 2.0)", () => {
 
     it("Definition", () => {
         let json: any = readJSON('tests/fixtures/paths/2.0/pet-store.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let node: OasNode = document.definitions.definition("Order");
         let path: OasNodePath = library.createNodePath(node);
@@ -165,7 +165,7 @@ describe("Node Path (Create 2.0)", () => {
 
     it("Definition Schema Property XML", () => {
         let json: any = readJSON('tests/fixtures/paths/2.0/pet-store.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let node: OasNode = document.definitions.definition("Pet").properties["photoUrls"].xml;
         let path: OasNodePath = library.createNodePath(node);
@@ -178,7 +178,7 @@ describe("Node Path (Create 2.0)", () => {
 
     it("Security Scheme", () => {
         let json: any = readJSON('tests/fixtures/paths/2.0/pet-store.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let node: OasNode = document.securityDefinitions.securityScheme("petstore_auth");
         let path: OasNodePath = library.createNodePath(node);
@@ -191,7 +191,7 @@ describe("Node Path (Create 2.0)", () => {
 
     it("Parameter Definition", () => {
         let json: any = readJSON('tests/fixtures/paths/2.0/pet-store.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let node: OasNode = document.parameters.parameter("limitParam");
         let path: OasNodePath = library.createNodePath(node);
@@ -204,7 +204,7 @@ describe("Node Path (Create 2.0)", () => {
 
     it("Default Response", () => {
         let json: any = readJSON('tests/fixtures/paths/2.0/pet-store.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let node: OasNode = document.paths.pathItem("/user").post.responses.default;
         let path: OasNodePath = library.createNodePath(node);
@@ -228,7 +228,7 @@ describe("Node Path (Resolve 2.0)", () => {
 
     it("Root", () => {
         let json: any = readJSON('tests/fixtures/paths/2.0/pet-store.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let path: OasNodePath = new OasNodePath("/");
         let resolvedNode: OasNode = path.resolve(document);
@@ -240,7 +240,7 @@ describe("Node Path (Resolve 2.0)", () => {
 
     it("Info", () => {
         let json: any = readJSON('tests/fixtures/paths/2.0/pet-store.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let path: OasNodePath = new OasNodePath("/info");
         let resolvedNode: OasNode = path.resolve(document);
@@ -252,7 +252,7 @@ describe("Node Path (Resolve 2.0)", () => {
 
     it("Definition Schema Property XML", () => {
         let json: any = readJSON('tests/fixtures/paths/2.0/pet-store.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let path: OasNodePath = new OasNodePath("/definitions[Pet]/properties[photoUrls]/xml");
         let resolvedNode: OasNode = path.resolve(document);
@@ -264,7 +264,7 @@ describe("Node Path (Resolve 2.0)", () => {
 
     it("Definition", () => {
         let json: any = readJSON('tests/fixtures/paths/2.0/pet-store.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let path: OasNodePath = new OasNodePath("/definitions[Order]");
         let resolvedNode: OasNode = path.resolve(document);
@@ -276,7 +276,7 @@ describe("Node Path (Resolve 2.0)", () => {
 
     it("Path Response", () => {
         let json: any = readJSON('tests/fixtures/paths/2.0/pet-store.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let path: OasNodePath = new OasNodePath("/paths[/pet/{petId}]/get/responses[200]");
         let resolvedNode: OasNode = path.resolve(document);
@@ -288,7 +288,7 @@ describe("Node Path (Resolve 2.0)", () => {
 
     it("Tag External Documentation", () => {
         let json: any = readJSON('tests/fixtures/paths/2.0/pet-store.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let path: OasNodePath = new OasNodePath("/tags[0]/externalDocs");
         let resolvedNode: OasNode = path.resolve(document);
@@ -300,7 +300,7 @@ describe("Node Path (Resolve 2.0)", () => {
 
     it("Security Scheme", () => {
         let json: any = readJSON('tests/fixtures/paths/2.0/pet-store.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let path: OasNodePath = new OasNodePath("/securityDefinitions[petstore_auth]");
         let resolvedNode: OasNode = path.resolve(document);
@@ -312,7 +312,7 @@ describe("Node Path (Resolve 2.0)", () => {
 
     it("Default Response", () => {
         let json: any = readJSON('tests/fixtures/paths/2.0/pet-store.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let path: OasNodePath = new OasNodePath("/paths[/user]/post/responses[default]");
         let resolvedNode: OasNode = path.resolve(document);
@@ -335,7 +335,7 @@ describe("Node Path (Create 3.0)", () => {
 
     it("Info", () => {
         let json: any = readJSON('tests/fixtures/paths/3.0/example.json');
-        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
 
         let node: OasNode = document.info;
         let path: OasNodePath = library.createNodePath(node);
@@ -348,7 +348,7 @@ describe("Node Path (Create 3.0)", () => {
 
     it("Contact", () => {
         let json: any = readJSON('tests/fixtures/paths/3.0/example.json');
-        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
 
         let node: OasNode = document.info.contact;
         let path: OasNodePath = library.createNodePath(node);
@@ -361,9 +361,9 @@ describe("Node Path (Create 3.0)", () => {
 
     it("Request Body", () => {
         let json: any = readJSON('tests/fixtures/paths/3.0/example.json');
-        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
 
-        let node: OasNode = (<Oas30Operation>(document.paths.pathItem("/foo").get)).requestBody;
+        let node: OasNode = (document.paths.pathItem("/foo").get as Oas30Operation).requestBody;
         let path: OasNodePath = library.createNodePath(node);
 
         let actual: string = path.toString();
@@ -374,9 +374,9 @@ describe("Node Path (Create 3.0)", () => {
 
     it("Request Body Example", () => {
         let json: any = readJSON('tests/fixtures/paths/3.0/example.json');
-        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
 
-        let node: OasNode = (<Oas30Operation>(document.paths.pathItem("/foo").get)).requestBody.getMediaType("application/xml").examples["user"];
+        let node: OasNode = (document.paths.pathItem("/foo").get as Oas30Operation).requestBody.getMediaType("application/xml").examples["user"];
         let path: OasNodePath = library.createNodePath(node);
 
         let actual: string = path.toString();
@@ -387,7 +387,7 @@ describe("Node Path (Create 3.0)", () => {
 
     it("Server", () => {
         let json: any = readJSON('tests/fixtures/paths/3.0/example.json');
-        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
 
         let node: OasNode = document.servers[2].getServerVariable("port");
         let path: OasNodePath = library.createNodePath(node);
@@ -400,7 +400,7 @@ describe("Node Path (Create 3.0)", () => {
 
     it("Callback", () => {
         let json: any = readJSON('tests/fixtures/paths/3.0/example.json');
-        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
 
         let node: OasNode = document.components.callbacks["Callback1"].pathItem("$request.header#/put-url").put;
         let path: OasNodePath = library.createNodePath(node);
@@ -413,7 +413,7 @@ describe("Node Path (Create 3.0)", () => {
 
     it("Parameter", () => {
         let json: any = readJSON('tests/fixtures/paths/3.0/example.json');
-        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
 
         let node: OasNode = document.paths.pathItem("/foo").get.parameters[1];
         let path: OasNodePath = library.createNodePath(node);
@@ -426,7 +426,7 @@ describe("Node Path (Create 3.0)", () => {
 
     it("Parameter Definition", () => {
         let json: any = readJSON('tests/fixtures/paths/3.0/example.json');
-        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
 
         let node: OasNode = document.components.getParameterDefinition("Param2");
         let path: OasNodePath = library.createNodePath(node);
@@ -439,7 +439,7 @@ describe("Node Path (Create 3.0)", () => {
 
     it("Validation Problem", () => {
         let json: any = readJSON('tests/fixtures/paths/3.0/validation-problem.json');
-        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
 
         library.validate(document);
 
@@ -464,7 +464,7 @@ describe("Node Path (Resolve 3.0)", () => {
 
     it("Root", () => {
         let json: any = readJSON('tests/fixtures/paths/3.0/example.json');
-        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
 
         let path: OasNodePath = new OasNodePath("/");
         let resolvedNode: OasNode = path.resolve(document);
@@ -476,7 +476,7 @@ describe("Node Path (Resolve 3.0)", () => {
 
     it("Info", () => {
         let json: any = readJSON('tests/fixtures/paths/3.0/example.json');
-        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
 
         let path: OasNodePath = new OasNodePath("/info");
         let resolvedNode: OasNode = path.resolve(document);
@@ -488,7 +488,7 @@ describe("Node Path (Resolve 3.0)", () => {
 
     it("Contact N/A", () => {
         let json: any = readJSON('tests/fixtures/paths/3.0/contact-na.json');
-        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
 
         let path: OasNodePath = new OasNodePath("/info/contact");
         let resolvedNode: OasNode = path.resolve(document);
@@ -498,7 +498,7 @@ describe("Node Path (Resolve 3.0)", () => {
 
     it("Callback Request Body", () => {
         let json: any = readJSON('tests/fixtures/paths/3.0/example.json');
-        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
 
         let path: OasNodePath = new OasNodePath("/components/callbacks[Callback2][$request.body#/url]/post/requestBody/content[application/json]");
         let resolvedNode: OasNode = path.resolve(document);
@@ -510,7 +510,7 @@ describe("Node Path (Resolve 3.0)", () => {
 
     it("Encoding Header", () => {
         let json: any = readJSON('tests/fixtures/paths/3.0/encoding-header.json');
-        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
 
         let path: OasNodePath = new OasNodePath("/paths[/encoding/header]/post/requestBody/content[multipart/form-data]/encoding[historyMetadata]/headers[X-Header-1]");
         let resolvedNode: OasNode = path.resolve(document);
@@ -519,7 +519,7 @@ describe("Node Path (Resolve 3.0)", () => {
         let actualObj: any = library.writeNode(resolvedNode);
         expect(actualObj).toEqual(expectedObj);
 
-        let header: Oas30Header = (<Oas30Operation>document.paths.pathItem("/encoding/header").post)
+        let header: Oas30Header = (document.paths.pathItem("/encoding/header").post as Oas30Operation)
             .requestBody.getMediaType("multipart/form-data").getEncoding("historyMetadata").getHeader("X-Header-1");
         let headerPath: OasNodePath = library.createNodePath(header);
         expect(headerPath.toString()).toEqual("/paths[/encoding/header]/post/requestBody/content[multipart/form-data]/encoding[historyMetadata]/headers[X-Header-1]");
@@ -527,7 +527,7 @@ describe("Node Path (Resolve 3.0)", () => {
 
     it("Validation Problem", () => {
         let json: any = readJSON('tests/fixtures/paths/3.0/validation-problem.json');
-        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
 
         // Generate validation problems in the data model.
         library.validate(document);
@@ -553,7 +553,7 @@ describe("Node Path Contains", () => {
 
     it("Root Document", () => {
         let json: any = readJSON('tests/fixtures/paths/2.0/pet-store.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let path: OasNodePath = new OasNodePath("/");
         expect(path.contains(document)).toBeTruthy();
@@ -561,7 +561,7 @@ describe("Node Path Contains", () => {
 
     it("Info", () => {
         let json: any = readJSON('tests/fixtures/paths/2.0/pet-store.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let path: OasNodePath = new OasNodePath("/info");
 
@@ -575,7 +575,7 @@ describe("Node Path Contains", () => {
 
     it("Schema Definition", () => {
         let json: any = readJSON('tests/fixtures/paths/2.0/pet-store.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let path: OasNodePath = new OasNodePath("/definitions[Order]");
         expect(path.contains(document)).toBeTruthy();
@@ -586,7 +586,7 @@ describe("Node Path Contains", () => {
 
     it("Paths", () => {
         let json: any = readJSON('tests/fixtures/paths/2.0/pet-store.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let path: OasNodePath = new OasNodePath("/paths[/pet]/post/parameters[0]");
         expect(path.contains(document)).toBeTruthy();

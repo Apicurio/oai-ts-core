@@ -34,7 +34,7 @@ describe("Partial Read (2.0)", () => {
 
     beforeEach(() => {
         library = new OasLibraryUtils();
-        document = <Oas20Document> library.createDocument("2.0");
+        document = library.createDocument("2.0") as Oas20Document;
     });
 
     it("Info", () => {
@@ -98,7 +98,7 @@ describe("Partial Read (3.0)", () => {
 
     beforeEach(() => {
         library = new OasLibraryUtils();
-        document = <Oas30Document> library.createDocument("3.0.1");
+        document = library.createDocument("3.0.1") as Oas30Document;
     });
 
     it("Info", () => {

@@ -85,6 +85,7 @@ import {Oas20Headers} from "../models/2.0/headers.model";
 import {Oas30LinkRequestBodyExpression} from "../models/3.0/link-request-body-expression.model";
 import {Oas30Discriminator} from "../models/3.0/discriminator.model";
 import {OasValidationProblem} from "../models/node.model";
+import { IOasParameterParent } from "../models/common/parameter.model"
 
 
 /**
@@ -131,7 +132,7 @@ export abstract class OasNodePathVisitor implements IOasNodeVisitor {
     }
 
     visitSecurityRequirement(node: OasSecurityRequirement): void {
-        let securityRequirements: OasSecurityRequirement[] = (<any>node.parent()).security;
+        let securityRequirements: OasSecurityRequirement[] = (node.parent() as OasOperation | OasDocument).security;
         let idx: number = 0;
         for (let securityRequirement of securityRequirements) {
             if (securityRequirement === node) {
@@ -157,7 +158,7 @@ export abstract class OasNodePathVisitor implements IOasNodeVisitor {
     }
 
     visitTag(node: OasTag): void {
-        let tags: OasTag[] = (<any>node.parent()).tags;
+        let tags: OasTag[] = (node.parent() as OasDocument).tags;
         let idx: number = 0;
         for (let tag of tags) {
             if (tag === node) {
@@ -214,7 +215,7 @@ export class Oas20NodePathVisitor extends OasNodePathVisitor implements IOas20No
     }
 
     visitParameter(node: Oas20Parameter): void {
-        let params: Oas20Parameter[] = (<any>node.parent()).parameters;
+        let params: Oas20Parameter[] = (node.parent() as any).parameters;
         let idx: number = 0;
         for (let param of params) {
             if (param === node) {
@@ -265,7 +266,7 @@ export class Oas20NodePathVisitor extends OasNodePathVisitor implements IOas20No
     }
 
     visitAllOfSchema(node: Oas20AllOfSchema): void {
-        let schemas: Oas20AllOfSchema[] = (<any>node.parent()).allOf;
+        let schemas: Oas20AllOfSchema[] = (node.parent() as any).allOf;
         let idx: number = 0;
         for (let schema of schemas) {
             if (schema === node) {
@@ -279,7 +280,7 @@ export class Oas20NodePathVisitor extends OasNodePathVisitor implements IOas20No
     }
 
     visitItemsSchema(node: Oas20ItemsSchema): void {
-        let schemas: Oas20ItemsSchema[] = (<any>node.parent()).items;
+        let schemas: Oas20ItemsSchema[] = (node.parent() as any).items;
         if (Array.isArray(schemas)) {
             let idx: number = 0;
             for (let schema of schemas) {
@@ -325,7 +326,7 @@ export class Oas20NodePathVisitor extends OasNodePathVisitor implements IOas20No
 export class Oas30NodePathVisitor extends OasNodePathVisitor implements IOas30NodeVisitor {
 
     visitParameter(node: Oas30Parameter): void {
-        let params: Oas30Parameter[] = (<any>node.parent()).parameters;
+        let params: Oas30Parameter[] = (node.parent() as any).parameters;
         let idx: number = 0;
         for (let param of params) {
             if (param === node) {
@@ -404,7 +405,7 @@ export class Oas30NodePathVisitor extends OasNodePathVisitor implements IOas30No
     }
 
     visitServer(node: Oas30Server): void {
-        let servers: any[] = (<any>node.parent()).servers;
+        let servers: any[] = (node.parent() as any).servers;
         let idx: number = 0;
         for (let server of servers) {
             if (server === node) {
@@ -423,7 +424,7 @@ export class Oas30NodePathVisitor extends OasNodePathVisitor implements IOas30No
     }
 
     visitAllOfSchema(node: Oas30AllOfSchema): void {
-        let schemas: Oas30AllOfSchema[] = (<any>node.parent()).allOf;
+        let schemas: Oas30AllOfSchema[] = (node.parent() as any).allOf;
         let idx: number = 0;
         for (let schema of schemas) {
             if (schema === node) {
@@ -437,7 +438,7 @@ export class Oas30NodePathVisitor extends OasNodePathVisitor implements IOas30No
     }
 
     visitAnyOfSchema(node: Oas30AnyOfSchema): void {
-        let schemas: Oas30AnyOfSchema[] = (<any>node.parent()).anyOf;
+        let schemas: Oas30AnyOfSchema[] = (node.parent() as any).anyOf;
         let idx: number = 0;
         for (let schema of schemas) {
             if (schema === node) {
@@ -451,7 +452,7 @@ export class Oas30NodePathVisitor extends OasNodePathVisitor implements IOas30No
     }
 
     visitOneOfSchema(node: Oas30OneOfSchema): void {
-        let schemas: Oas30OneOfSchema[] = (<any>node.parent()).oneOf;
+        let schemas: Oas30OneOfSchema[] = (node.parent() as any).oneOf;
         let idx: number = 0;
         for (let schema of schemas) {
             if (schema === node) {
@@ -474,7 +475,7 @@ export class Oas30NodePathVisitor extends OasNodePathVisitor implements IOas30No
     }
 
     visitItemsSchema(node: Oas30ItemsSchema): void {
-        let schemas: Oas30ItemsSchema[] = (<any>node.parent()).items;
+        let schemas: Oas30ItemsSchema[] = (node.parent() as any).items;
         if (Array.isArray(schemas)) {
             let idx: number = 0;
             for (let schema of schemas) {

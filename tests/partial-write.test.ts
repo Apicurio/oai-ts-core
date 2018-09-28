@@ -30,7 +30,7 @@ describe("Partial Write (2.0)", () => {
 
     it("Info", () => {
         let json: any = readJSON('tests/fixtures/partial-write/2.0/pet-store.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let expectedObj: any = json.info;
         let actualObj: any = library.writeNode(document.info);
@@ -39,7 +39,7 @@ describe("Partial Write (2.0)", () => {
 
     it("Paths", () => {
         let json: any = readJSON('tests/fixtures/partial-write/2.0/pet-store.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let expectedObj: any = json.paths;
         let actualObj: any = library.writeNode(document.paths);
@@ -48,7 +48,7 @@ describe("Partial Write (2.0)", () => {
 
     it("Path Response", () => {
         let json: any = readJSON('tests/fixtures/partial-write/2.0/pet-store.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         let expectedObj: any = json.paths["/pet/{petId}"].get.responses["200"];
         let actualObj: any = library.writeNode(document.paths.pathItem("/pet/{petId}").get.responses.response("200"));
@@ -58,7 +58,7 @@ describe("Partial Write (2.0)", () => {
     it("Deleted Path", () => {
         let json: any = readJSON('tests/fixtures/partial-write/2.0/pet-store.json');
         let expected: any = readJSON('tests/fixtures/partial-write/2.0/deleted-path.json');
-        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
 
         document.paths.removePathItem("/pet/findByTags");
 
@@ -81,7 +81,7 @@ describe("Partial Write (3.0)", () => {
 
     it("Info", () => {
         let json: any = readJSON('tests/fixtures/partial-write/3.0/example.json');
-        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
 
         let expectedObj: any = json.info;
         let actualObj: any = library.writeNode(document.info);
@@ -90,7 +90,7 @@ describe("Partial Write (3.0)", () => {
 
     it("Components", () => {
         let json: any = readJSON('tests/fixtures/partial-write/3.0/example.json');
-        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
 
         let expectedObj: any = json.components;
         let actualObj: any = library.writeNode(document.components);
@@ -99,7 +99,7 @@ describe("Partial Write (3.0)", () => {
 
     it("Callback", () => {
         let json: any = readJSON('tests/fixtures/partial-write/3.0/example.json');
-        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
 
         let expectedObj: any = json.components.callbacks["Callback1"];
         let actualObj: any = library.writeNode(document.components.callbacks["Callback1"]);
@@ -108,7 +108,7 @@ describe("Partial Write (3.0)", () => {
 
     it("Operation", () => {
         let json: any = readJSON('tests/fixtures/partial-write/3.0/example.json');
-        let document: Oas30Document = <Oas30Document> library.createDocument(json);
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
 
         let expectedObj: any = json.paths["/foo"].get;
         let actualObj: any = library.writeNode(document.paths.pathItem("/foo").get);
