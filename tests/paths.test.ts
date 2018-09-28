@@ -202,6 +202,19 @@ describe("Node Path (Create 2.0)", () => {
         expect(actual).toEqual(expected);
     });
 
+    it("Default Response", () => {
+        let json: any = readJSON('tests/fixtures/paths/2.0/pet-store.json');
+        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+
+        let node: OasNode = document.paths.pathItem("/user").post.responses.default;
+        let path: OasNodePath = library.createNodePath(node);
+
+        let actual: string = path.toString();
+        let expected: string = "/paths[/user]/post/responses[default]";
+
+        expect(actual).toEqual(expected);
+    });
+
 });
 
 
@@ -293,6 +306,18 @@ describe("Node Path (Resolve 2.0)", () => {
         let resolvedNode: OasNode = path.resolve(document);
 
         let expectedNode: OasNode = document.securityDefinitions.securityScheme("petstore_auth");
+        let actualNode: any = resolvedNode;
+        expect(actualNode).toEqual(expectedNode);
+    });
+
+    it("Default Response", () => {
+        let json: any = readJSON('tests/fixtures/paths/2.0/pet-store.json');
+        let document: Oas20Document = <Oas20Document> library.createDocument(json);
+
+        let path: OasNodePath = new OasNodePath("/paths[/user]/post/responses[default]");
+        let resolvedNode: OasNode = path.resolve(document);
+
+        let expectedNode: OasNode = document.paths.pathItem("/user").post.responses.default;
         let actualNode: any = resolvedNode;
         expect(actualNode).toEqual(expectedNode);
     });

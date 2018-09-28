@@ -309,7 +309,7 @@ export class Oas20NodePathVisitor extends OasNodePathVisitor implements IOas20No
     }
 
     visitResponse(node: Oas20Response): void {
-        this._path.prependSegment(node.statusCode(), true);
+        this._path.prependSegment(node.statusCode() == null ? "default" : node.statusCode(), true);
     }
 
     visitHeaders(node: Oas20Headers): void {

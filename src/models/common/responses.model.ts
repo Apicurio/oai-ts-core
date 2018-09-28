@@ -45,6 +45,9 @@ export abstract class OasResponses extends OasExtensibleNode implements IOasInde
      * @return {OasResponse}
      */
     public response(statusCode: string): OasResponse {
+        if (statusCode === "default") {
+            return this.default;
+        }
         if (this._responses) {
             return this._responses[statusCode];
         } else {
@@ -73,6 +76,11 @@ export abstract class OasResponses extends OasExtensibleNode implements IOasInde
      * @param response
      */
     public addResponse(statusCode: string, response: OasResponse): OasResponse {
+        if (statusCode === null || statusCode === "default") {
+            this.default = response;
+            return response;
+        }
+
         if (this._responses == null) {
             this._responses = new OasResponseItems();
         }
@@ -85,6 +93,10 @@ export abstract class OasResponses extends OasExtensibleNode implements IOasInde
      * @param statusCode
      */
     public removeResponse(statusCode: string): OasResponse {
+        if (statusCode === null || statusCode === "default") {
+            this.default = null;
+            return;
+        }
         let rval: OasResponse = this._responses[statusCode];
         if (this._responses && rval) {
             delete this._responses[statusCode];
