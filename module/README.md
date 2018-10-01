@@ -15,6 +15,13 @@ The next section (Quickstart) explains, in a nutshell, how to use the library
 for standard/basic tasks.  The API section below contains more information,
 necessary to fully leverage the capabilities of the library.
 
+## See It In Action!
+
+If you want to quickly see what this library can do, you can check out 
+[this simple demo](https://oai-ts-core-demo.stackblitz.io), or go all out and
+[give Apicurio a try](https://www.apicur.io/) (this library is used by the 
+Apicurio editor when editing an OpenAPI definition).
+
 ## Quickstart
 
 The easiest way to get started is to use the library utility:
