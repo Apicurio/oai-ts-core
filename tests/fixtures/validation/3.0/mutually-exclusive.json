@@ -45,8 +45,9 @@
         "example": "Some example",
         "examples": {
           "application/json": {
-            "name": "Puma",
-            "breed": "Mixed"
+            "summary": "Example 1",
+            "description": "An example description...",
+            "value": "[1, 2, 3, 4, 5]"
           }
         }
       }

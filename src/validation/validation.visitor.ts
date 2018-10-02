@@ -28,14 +28,20 @@ import {Oas20NodePathVisitor, Oas30NodePathVisitor} from "../visitors/path.visit
 import {OasTraverserDirection, OasVisitorUtil} from "../visitors/visitor.utils";
 import {OasNodePath} from "../models/node-path";
 import {Oas20InvalidPropertyFormatValidationRule} from "./2.0/invalid-property-format.rule";
-import {Oas20InvalidPropertyNameValidationRule} from "./2.0/invalid-property-name.rule";
+import {
+    Oas20InvalidPropertyNameValidationRule,
+    Oas20UnknownPropertyValidationRule
+} from "./2.0/invalid-property-name.rule";
 import {Oas20InvalidPropertyValueValidationRule} from "./2.0/invalid-property-value.rule";
 import {Oas20UniquenessValidationRule} from "./2.0/uniqueness.rule";
 import {Oas20MutuallyExclusiveValidationRule} from "./2.0/mutually-exclusive.rule";
 import {Oas20InvalidReferenceValidationRule} from "./2.0/invalid-reference.rule";
 import {Oas30InvalidPropertyFormatValidationRule} from "./3.0/invalid-property-format.rule";
 import {Oas30IgnoredPropertyNameValidationRule} from "./3.0/ignored-property-name.rule";
-import {Oas30InvalidPropertyNameValidationRule} from "./3.0/invalid-property-name.rule";
+import {
+    Oas30InvalidPropertyNameValidationRule,
+    Oas30UnknownPropertyValidationRule
+} from "./3.0/invalid-property-name.rule";
 import {Oas30InvalidPropertyValueValidationRule} from "./3.0/invalid-property-value.rule";
 import {Oas30InvalidReferenceValidationRule} from "./3.0/invalid-reference.rule";
 import {Oas30MutuallyExclusiveValidationRule} from "./3.0/mutually-exclusive.rule";
@@ -77,7 +83,8 @@ export class Oas20ValidationVisitor extends Oas20CompositeVisitor implements IOa
             new Oas20InvalidPropertyValueValidationRule(this),
             new Oas20UniquenessValidationRule(this),
             new Oas20MutuallyExclusiveValidationRule(this),
-            new Oas20InvalidReferenceValidationRule(this)
+            new Oas20InvalidReferenceValidationRule(this),
+            new Oas20UnknownPropertyValidationRule(this)
         ]);
     }
 
@@ -148,7 +155,8 @@ export class Oas30ValidationVisitor extends Oas30CompositeVisitor implements IOa
             new Oas30InvalidReferenceValidationRule(this),
             new Oas30MutuallyExclusiveValidationRule(this),
             new Oas30RequiredPropertyValidationRule(this),
-            new Oas30UniquenessValidationRule(this)
+            new Oas30UniquenessValidationRule(this),
+            new Oas30UnknownPropertyValidationRule(this)
         ]);
     }
 

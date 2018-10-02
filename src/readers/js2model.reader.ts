@@ -113,13 +113,25 @@ import {Oas30Responses} from "../models/3.0/responses.model";
 import {Oas30XML} from "../models/3.0/xml.model";
 import {Oas30LinkRequestBodyExpression} from "../models/3.0/link-request-body-expression.model";
 import {Oas30Discriminator} from "../models/3.0/discriminator.model";
-import {OasValidationProblem} from "../models/node.model";
+import {OasNode, OasValidationProblem} from "../models/node.model";
 
 
 /**
  * This class reads a javascript object and turns it into a OAS model.
  */
 export abstract class OasJS2ModelReader {
+
+    /**
+     * Consumes and returns a property found in an entity js object.  The property is read and
+     * then deleted.
+     * @param entity
+     * @param property
+     */
+    protected consume(entity: any, property: string): any {
+        let rval: any = entity[property];
+        delete entity[property];
+        return rval;
+    }
 
     /**
      * Returns true if the given thing is defined.
@@ -138,13 +150,14 @@ export abstract class OasJS2ModelReader {
      * Reads an OAS Document object from the given javascript data.
      * @param document
      * @param documentModel
+     * @param readExtras
      */
-    public readDocument(document: any, documentModel: OasDocument): void {
-        let info: any = document["info"];
-        let paths: any = document["paths"];
-        let security: any[] = document["security"];
-        let tags: any = document["tags"];
-        let externalDocs: any = document["externalDocs"];
+    public readDocument(document: any, documentModel: OasDocument, readExtras: boolean = true): void {
+        let info: any = this.consume(document, "info");
+        let paths: any = this.consume(document, "paths");
+        let security: any[] = this.consume(document, "security");
+        let tags: any = this.consume(document, "tags");
+        let externalDocs: any = this.consume(document, "externalDocs");
 
         if (this.isDefined(info)) {
             let infoModel: OasInfo = documentModel.createInfo();
@@ -181,6 +194,9 @@ export abstract class OasJS2ModelReader {
             documentModel.externalDocs = externalDocsModel;
         }
         this.readExtensions(document, documentModel);
+        if (readExtras) {
+            this.readExtraProperties(document, documentModel);
+        }
     }
 
     /**
@@ -188,13 +204,13 @@ export abstract class OasJS2ModelReader {
      * @param info
      * @param infoModel
      */
-    public readInfo(info: any, infoModel: OasInfo): void {
-        let title: string = info["title"];
-        let description: string = info["description"];
-        let termsOfService: string = info["termsOfService"];
-        let contact: any = info["contact"];
-        let license: any = info["license"];
-        let version: string = info["version"];
+    public readInfo(info: any, infoModel: OasInfo, readExtras: boolean = true): void {
+        let title: string = this.consume(info, "title");
+        let description: string = this.consume(info, "description");
+        let termsOfService: string = this.consume(info, "termsOfService");
+        let contact: any = this.consume(info, "contact");
+        let license: any = this.consume(info, "license");
+        let version: string = this.consume(info, "version");
 
         if (this.isDefined(title)) { infoModel.title = title; }
         if (this.isDefined(description)) { infoModel.description = description; }
@@ -212,6 +228,9 @@ export abstract class OasJS2ModelReader {
         if (this.isDefined(version)) { infoModel.version = version; }
 
         this.readExtensions(info, infoModel);
+        if (readExtras) {
+            this.readExtraProperties(info, infoModel);
+        }
     }
 
     /**
@@ -219,16 +238,19 @@ export abstract class OasJS2ModelReader {
      * @param contact
      * @param contactModel
      */
-    public readContact(contact: any, contactModel: OasContact): void {
-        let name: string = contact["name"];
-        let url: string = contact["url"];
-        let email: string = contact["email"];
+    public readContact(contact: any, contactModel: OasContact, readExtras: boolean = true): void {
+        let name: string = this.consume(contact, "name");
+        let url: string = this.consume(contact, "url");
+        let email: string = this.consume(contact, "email");
 
         if (this.isDefined(name)) { contactModel.name = name; }
         if (this.isDefined(url)) { contactModel.url = url; }
         if (this.isDefined(email)) { contactModel.email = email; }
 
         this.readExtensions(contact, contactModel);
+        if (readExtras) {
+            this.readExtraProperties(contact, contactModel);
+        }
     }
 
     /**
@@ -236,14 +258,17 @@ export abstract class OasJS2ModelReader {
      * @param license
      * @param licenseModel
      */
-    public readLicense(license: any, licenseModel: OasLicense): void {
-        let name: string = license["name"];
-        let url: string = license["url"];
+    public readLicense(license: any, licenseModel: OasLicense, readExtras: boolean = true): void {
+        let name: string = this.consume(license, "name");
+        let url: string = this.consume(license, "url");
 
         if (this.isDefined(name)) { licenseModel.name = name; }
         if (this.isDefined(url)) { licenseModel.url = url; }
 
         this.readExtensions(license, licenseModel);
+        if (readExtras) {
+            this.readExtraProperties(license, licenseModel);
+        }
     }
 
     /**
@@ -251,15 +276,18 @@ export abstract class OasJS2ModelReader {
      * @param paths
      * @param pathsModel
      */
-    public readPaths(paths: any, pathsModel: OasPaths): void {
+    public readPaths(paths: any, pathsModel: OasPaths, readExtras: boolean = true): void {
         for (let path in paths) {
             if (path.indexOf("x-") === 0) { continue; }
-            let pathItem: any = paths[path];
+            let pathItem: any = this.consume(paths, path);
             let pathItemModel: OasPathItem = pathsModel.createPathItem(path);
             this.readPathItem(pathItem, pathItemModel);
             pathsModel.addPathItem(path, pathItemModel);
         }
         this.readExtensions(paths, pathsModel);
+        if (readExtras) {
+            this.readExtraProperties(paths, pathsModel);
+        }
     }
 
     /**
@@ -267,16 +295,16 @@ export abstract class OasJS2ModelReader {
      * @param pathItem
      * @param pathItemModel
      */
-    public readPathItem(pathItem: any, pathItemModel: OasPathItem): void {
-        let $ref: string = pathItem["$ref"];
-        let get: any = pathItem["get"];
-        let put: any = pathItem["put"];
-        let post: any = pathItem["post"];
-        let delete_: any = pathItem["delete"];
-        let options: any = pathItem["options"];
-        let head: any = pathItem["head"];
-        let patch: any = pathItem["patch"];
-        let parameters: any[] = pathItem["parameters"];
+    public readPathItem(pathItem: any, pathItemModel: OasPathItem, readExtras: boolean = true): void {
+        let $ref: string = this.consume(pathItem, "$ref");
+        let get: any = this.consume(pathItem, "get");
+        let put: any = this.consume(pathItem, "put");
+        let post: any = this.consume(pathItem, "post");
+        let delete_: any = this.consume(pathItem, "delete");
+        let options: any = this.consume(pathItem, "options");
+        let head: any = this.consume(pathItem, "head");
+        let patch: any = this.consume(pathItem, "patch");
+        let parameters: any[] = this.consume(pathItem, "parameters");
 
         if (this.isDefined($ref)) { pathItemModel.$ref = $ref; }
         if (this.isDefined(get)) {
@@ -323,6 +351,9 @@ export abstract class OasJS2ModelReader {
         }
 
         this.readExtensions(pathItem, pathItemModel);
+        if (readExtras) {
+            this.readExtraProperties(pathItem, pathItemModel);
+        }
     }
 
     /**
@@ -330,16 +361,16 @@ export abstract class OasJS2ModelReader {
      * @param operation
      * @param operationModel
      */
-    public readOperation(operation: any, operationModel: OasOperation): void {
-        let tags: string[] = operation["tags"];
-        let summary: string = operation["summary"];
-        let description: string = operation["description"];
-        let externalDocs: any = operation["externalDocs"];
-        let operationId: string = operation["operationId"];
-        let parameters: any[] = operation["parameters"];
-        let responses: any = operation["responses"];
-        let deprecated: boolean = operation["deprecated"];
-        let security: any[] = operation["security"];
+    public readOperation(operation: any, operationModel: OasOperation, readExtras: boolean = true): void {
+        let tags: string[] = this.consume(operation, "tags");
+        let summary: string = this.consume(operation, "summary");
+        let description: string = this.consume(operation, "description");
+        let externalDocs: any = this.consume(operation, "externalDocs");
+        let operationId: string = this.consume(operation, "operationId");
+        let parameters: any[] = this.consume(operation, "parameters");
+        let responses: any = this.consume(operation, "responses");
+        let deprecated: boolean = this.consume(operation, "deprecated");
+        let security: any[] = this.consume(operation, "security");
 
         if (this.isDefined(tags)) { operationModel.tags = tags; }
         if (this.isDefined(summary)) { operationModel.summary = summary; }
@@ -372,6 +403,9 @@ export abstract class OasJS2ModelReader {
         }
 
         this.readExtensions(operation, operationModel);
+        if (readExtras) {
+            this.readExtraProperties(operation, operationModel);
+        }
     }
 
     /**
@@ -386,7 +420,7 @@ export abstract class OasJS2ModelReader {
      * @param responses
      * @param responsesModel
      */
-    public readResponses(responses: any, responsesModel: OasResponses): void {
+    public readResponses(responses: any, responsesModel: OasResponses, readExtras: boolean = true): void {
         let default_: any = responses["default"];
         if (this.isDefined(default_)) {
             let defaultModel: OasResponse = responsesModel.createResponse();
@@ -402,7 +436,9 @@ export abstract class OasJS2ModelReader {
             this.readResponse(response, responseModel);
             responsesModel.addResponse(statusCode, responseModel);
         }
-        this.readExtensions(responses, responsesModel);
+        if (readExtras) {
+            this.readExtensions(responses, responsesModel);
+        }
     }
 
     /**
@@ -417,38 +453,38 @@ export abstract class OasJS2ModelReader {
      * @param schema
      * @param schemaModel
      */
-    public readSchema(schema: any, schemaModel: OasSchema): void {
-        let $ref: string = schema["$ref"];
-        let format: string = schema["format"];
-        let title: string = schema["title"];
-        let description: string = schema["description"];
-        let default_: any = schema["default"];
-        let multipleOf: number = schema["multipleOf"];
-        let maximum: number = schema["maximum"];
-        let exclusiveMaximum: boolean = schema["exclusiveMaximum"];
-        let minimum: number = schema["minimum"];
-        let exclusiveMinimum: boolean = schema["exclusiveMinimum"];
-        let maxLength: number = schema["maxLength"]; // Require: integer
-        let minLength: number = schema["minLength"]; // Require: integer
-        let pattern: string = schema["pattern"];
-        let maxItems: number = schema["maxItems"]; // Require: integer
-        let minItems: number = schema["minItems"]; // Require: integer
-        let uniqueItems: boolean = schema["uniqueItems"];
-        let maxProperties: number = schema["maxProperties"];
-        let minProperties: number = schema["minProperties"];
-        let required: string[] = schema["required"];
-        let enum_: any[] = schema["enum"];
-        let type: string = schema["type"];
+    public readSchema(schema: any, schemaModel: OasSchema, readExtras: boolean = true): void {
+        let $ref: string = this.consume(schema, "$ref");
+        let format: string = this.consume(schema, "format");
+        let title: string = this.consume(schema, "title");
+        let description: string = this.consume(schema, "description");
+        let default_: any = this.consume(schema, "default");
+        let multipleOf: number = this.consume(schema, "multipleOf");
+        let maximum: number = this.consume(schema, "maximum");
+        let exclusiveMaximum: boolean = this.consume(schema, "exclusiveMaximum");
+        let minimum: number = this.consume(schema, "minimum");
+        let exclusiveMinimum: boolean = this.consume(schema, "exclusiveMinimum");
+        let maxLength: number = this.consume(schema, "maxLength"); // Require: integer
+        let minLength: number = this.consume(schema, "minLength"); // Require: integer
+        let pattern: string = this.consume(schema, "pattern");
+        let maxItems: number = this.consume(schema, "maxItems"); // Require: integer
+        let minItems: number = this.consume(schema, "minItems"); // Require: integer
+        let uniqueItems: boolean = this.consume(schema, "uniqueItems");
+        let maxProperties: number = this.consume(schema, "maxProperties");
+        let minProperties: number = this.consume(schema, "minProperties");
+        let required: string[] = this.consume(schema, "required");
+        let enum_: any[] = this.consume(schema, "enum");
+        let type: string = this.consume(schema, "type");
 
-        let items: any[] = schema["items"];
-        let allOf: any[] = schema["allOf"];
-        let properties: any = schema["properties"];
-        let additionalProperties: boolean | Oas20Schema = schema["additionalProperties"];
+        let items: any[] = this.consume(schema, "items");
+        let allOf: any[] = this.consume(schema, "allOf");
+        let properties: any = this.consume(schema, "properties");
+        let additionalProperties: boolean | Oas20Schema = this.consume(schema, "additionalProperties");
 
-        let readOnly: boolean = schema["readOnly"];
-        let xml: Oas20XML = schema["xml"];
-        let externalDocs: any = schema["externalDocs"];
-        let example: any = schema["example"];
+        let readOnly: boolean = this.consume(schema, "readOnly");
+        let xml: Oas20XML = this.consume(schema, "xml");
+        let externalDocs: any = this.consume(schema, "externalDocs");
+        let example: any = this.consume(schema, "example");
 
         if (this.isDefined($ref)) { schemaModel.$ref = $ref; }
         if (this.isDefined(format)) { schemaModel.format = format; }
@@ -526,6 +562,9 @@ export abstract class OasJS2ModelReader {
         if (this.isDefined(example)) { schemaModel.example = example; }
 
         this.readExtensions(schema, schemaModel);
+        if (readExtras) {
+            this.readExtraProperties(schema, schemaModel);
+        }
     }
 
     /**
@@ -533,12 +572,12 @@ export abstract class OasJS2ModelReader {
      * @param xml
      * @param xmlModel
      */
-    public readXML(xml: any, xmlModel: OasXML): void {
-        let name: string = xml["name"];
-        let namespace: string = xml["namespace"];
-        let prefix: string = xml["prefix"];
-        let attribute: boolean = xml["attribute"];
-        let wrapped: boolean = xml["wrapped"];
+    public readXML(xml: any, xmlModel: OasXML, readExtras: boolean = true): void {
+        let name: string = this.consume(xml, "name");
+        let namespace: string = this.consume(xml, "namespace");
+        let prefix: string = this.consume(xml, "prefix");
+        let attribute: boolean = this.consume(xml, "attribute");
+        let wrapped: boolean = this.consume(xml, "wrapped");
 
         if (this.isDefined(name)) { xmlModel.name = name; }
         if (this.isDefined(namespace)) { xmlModel.namespace = namespace; }
@@ -547,6 +586,9 @@ export abstract class OasJS2ModelReader {
         if (this.isDefined(wrapped)) { xmlModel.wrapped = wrapped; }
 
         this.readExtensions(xml, xmlModel);
+        if (readExtras) {
+            this.readExtraProperties(xml, xmlModel);
+        }
     }
 
     /**
@@ -554,11 +596,11 @@ export abstract class OasJS2ModelReader {
      * @param scheme
      * @param schemeModel
      */
-    public readSecurityScheme(scheme: any, schemeModel: OasSecurityScheme): void {
-        let type: string = scheme["type"];
-        let description: string = scheme["description"];
-        let name: string = scheme["name"];
-        let in_: string = scheme["in"];
+    public readSecurityScheme(scheme: any, schemeModel: OasSecurityScheme, readExtras: boolean = true): void {
+        let type: string = this.consume(scheme, "type");
+        let description: string = this.consume(scheme, "description");
+        let name: string = this.consume(scheme, "name");
+        let in_: string = this.consume(scheme, "in");
 
         if (this.isDefined(type)) { schemeModel.type = type; }
         if (this.isDefined(description)) { schemeModel.description = description; }
@@ -566,6 +608,9 @@ export abstract class OasJS2ModelReader {
         if (this.isDefined(in_)) { schemeModel.in = in_; }
 
         this.readExtensions(scheme, schemeModel);
+        if (readExtras) {
+            this.readExtraProperties(scheme, schemeModel);
+        }
     }
 
     /**
@@ -584,10 +629,10 @@ export abstract class OasJS2ModelReader {
      * @param tag
      * @param tagModel
      */
-    public readTag(tag: any, tagModel: OasTag): void {
-        let name: string = tag["name"];
-        let description: string = tag["description"];
-        let externalDocs: any = tag["externalDocs"];
+    public readTag(tag: any, tagModel: OasTag, readExtras: boolean = true): void {
+        let name: string = this.consume(tag, "name");
+        let description: string = this.consume(tag, "description");
+        let externalDocs: any = this.consume(tag, "externalDocs");
 
         if (this.isDefined(name)) { tagModel.name = name; }
         if (this.isDefined(description)) { tagModel.description = description; }
@@ -598,6 +643,9 @@ export abstract class OasJS2ModelReader {
         }
 
         this.readExtensions(tag, tagModel);
+        if (readExtras) {
+            this.readExtraProperties(tag, tagModel);
+        }
     }
 
     /**
@@ -605,14 +653,17 @@ export abstract class OasJS2ModelReader {
      * @param externalDocs
      * @param externalDocsModel
      */
-    public readExternalDocumentation(externalDocs: any, externalDocsModel: OasExternalDocumentation): void {
-        let description: string = externalDocs["description"];
-        let url: any = externalDocs["url"];
+    public readExternalDocumentation(externalDocs: any, externalDocsModel: OasExternalDocumentation, readExtras: boolean = true): void {
+        let description: string = this.consume(externalDocs, "description");
+        let url: any = this.consume(externalDocs, "url");
 
         if (this.isDefined(description)) { externalDocsModel.description = description; }
         if (this.isDefined(url)) { externalDocsModel.url = url; }
 
         this.readExtensions(externalDocs, externalDocsModel);
+        if (readExtras) {
+            this.readExtraProperties(externalDocs, externalDocsModel);
+        }
     }
 
     /**
@@ -622,11 +673,25 @@ export abstract class OasJS2ModelReader {
      * @param model
      */
     public readExtensions(jsData:any, model: OasExtensibleNode): void {
-        for (let key in jsData) {
+        let keys: string[] = Object.keys(jsData);
+        keys.forEach( key => {
             if (key.indexOf("x-") === 0) {
-                let val: any = jsData[key];
+                let val: any = this.consume(jsData, key);
                 model.addExtension(key, val);
             }
+        });
+    }
+
+    /**
+     * Reads all remaining properties.  Anything left is an "extra" (or unexpected) property.
+     * @param jsData
+     * @param model
+     */
+    public readExtraProperties(jsData: any, model: OasNode): void {
+        for (let key in jsData) {
+            let val: any = jsData[key];
+            console.info(`WARN: found unexpected property "${ key }".`);
+            model.addExtraProperty(key, val);
         }
     }
 
@@ -656,22 +721,22 @@ export class Oas20JS2ModelReader extends OasJS2ModelReader {
      * @param documentModel
      */
     public readDocument(document: any, documentModel: Oas20Document): void {
-        let swagger: string = document["swagger"];
+        let swagger: string = this.consume(document, "swagger");
         if (swagger != "2.0") {
             throw Error("Unsupported specification version: " + swagger);
         }
 
-        super.readDocument(document, documentModel);
+        super.readDocument(document, documentModel, false);
 
-        let host: string = document["host"];
-        let basePath: string = document["basePath"];
-        let schemes: string[] = document["schemes"];
-        let consumes: string[] = document["consumes"];
-        let produces: string[] = document["produces"];
-        let definitions: any = document["definitions"];
-        let parameters: any = document["parameters"];
-        let responses: any = document["responses"];
-        let securityDefinitions: any[] = document["securityDefinitions"];
+        let host: string = this.consume(document, "host");
+        let basePath: string = this.consume(document, "basePath");
+        let schemes: string[] = this.consume(document, "schemes");
+        let consumes: string[] = this.consume(document, "consumes");
+        let produces: string[] = this.consume(document, "produces");
+        let definitions: any = this.consume(document, "definitions");
+        let parameters: any = this.consume(document, "parameters");
+        let responses: any = this.consume(document, "responses");
+        let securityDefinitions: any[] = this.consume(document, "securityDefinitions");
 
         if (this.isDefined(host)) { documentModel.host = host; }
         if (this.isDefined(basePath)) { documentModel.basePath = basePath; }
@@ -699,6 +764,7 @@ export class Oas20JS2ModelReader extends OasJS2ModelReader {
             this.readSecurityDefinitions(securityDefinitions, securityDefinitionsModel);
             documentModel.securityDefinitions = securityDefinitionsModel;
         }
+        this.readExtraProperties(document, documentModel);
     }
 
     /**
@@ -707,11 +773,12 @@ export class Oas20JS2ModelReader extends OasJS2ModelReader {
      * @param schemaModel
      */
     public readSchema(schema: any, schemaModel: Oas20Schema): void {
-        super.readSchema(schema, schemaModel);
+        super.readSchema(schema, schemaModel, false);
 
-        let discriminator: string = schema["discriminator"];
+        let discriminator: string = this.consume(schema, "discriminator");
         if (this.isDefined(discriminator)) { schemaModel.discriminator = discriminator; }
 
+        this.readExtraProperties(schema, schemaModel);
     }
 
     /**
@@ -734,12 +801,12 @@ export class Oas20JS2ModelReader extends OasJS2ModelReader {
      * @param schemeModel
      */
     public readSecurityScheme(scheme: any, schemeModel: Oas20SecurityScheme): void {
-        super.readSecurityScheme(scheme, schemeModel);
+        super.readSecurityScheme(scheme, schemeModel, false);
 
-        let flow: string = scheme["flow"];
-        let authorizationUrl: string = scheme["authorizationUrl"];
-        let tokenUrl: string = scheme["tokenUrl"];
-        let scopes: any = scheme["scopes"];
+        let flow: string = this.consume(scheme, "flow");
+        let authorizationUrl: string = this.consume(scheme, "authorizationUrl");
+        let tokenUrl: string = this.consume(scheme, "tokenUrl");
+        let scopes: any = this.consume(scheme, "scopes");
 
         if (this.isDefined(flow)) { schemeModel.flow = flow; }
         if (this.isDefined(authorizationUrl)) { schemeModel.authorizationUrl = authorizationUrl; }
@@ -749,6 +816,8 @@ export class Oas20JS2ModelReader extends OasJS2ModelReader {
             this.readScopes(scopes, scopesModel);
             schemeModel.scopes = scopesModel;
         }
+
+        this.readExtraProperties(scheme, schemeModel);
     }
 
     /**
@@ -759,10 +828,11 @@ export class Oas20JS2ModelReader extends OasJS2ModelReader {
     public readScopes(scopes: any, scopesModel: Oas20Scopes): void {
         for (let scope in scopes) {
             if (scope.indexOf("x-") === 0) { continue; }
-            let description: string = scopes[scope];
+            let description: string = this.consume(scopes, scope);
             scopesModel.addScope(scope, description);
         }
         this.readExtensions(scopes, scopesModel);
+        this.readExtraProperties(scopes, scopesModel);
     }
 
     /**
@@ -771,15 +841,16 @@ export class Oas20JS2ModelReader extends OasJS2ModelReader {
      * @param operationModel
      */
     public readOperation(operation: any, operationModel: Oas20Operation): void {
-        super.readOperation(operation, operationModel);
+        super.readOperation(operation, operationModel, false);
 
-        let consumes: string[] = operation["consumes"];
-        let produces: string[] = operation["produces"];
-        let schemes: string[] = operation["schemes"];
+        let consumes: string[] = this.consume(operation, "consumes");
+        let produces: string[] = this.consume(operation, "produces");
+        let schemes: string[] = this.consume(operation, "schemes");
 
         if (this.isDefined(consumes)) { operationModel.consumes = consumes; }
         if (this.isDefined(produces)) { operationModel.produces = produces; }
         if (this.isDefined(schemes)) { operationModel.schemes = schemes; }
+        this.readExtraProperties(operation, operationModel);
     }
 
     /**
@@ -788,10 +859,11 @@ export class Oas20JS2ModelReader extends OasJS2ModelReader {
      * @param paramModel
      */
     public readParameter(parameter: any, paramModel: Oas20Parameter): void {
-        let $ref: string = parameter["$ref"];
+        let $ref: string = this.consume(parameter, "$ref");
         if (this.isDefined($ref)) { paramModel.$ref = $ref; }
 
         this.readParameterBase(parameter, paramModel);
+        this.readExtraProperties(parameter, paramModel);
     }
 
     /**
@@ -801,6 +873,7 @@ export class Oas20JS2ModelReader extends OasJS2ModelReader {
      */
     public readParameterDefinition(parameterDef: any, paramDefModel: Oas20ParameterDefinition): void {
         this.readParameterBase(parameterDef, paramDefModel);
+        this.readExtraProperties(parameterDef, paramDefModel);
     }
 
     /**
@@ -809,14 +882,14 @@ export class Oas20JS2ModelReader extends OasJS2ModelReader {
      * @param paramModel
      */
     private readParameterBase(parameter: any, paramModel: Oas20ParameterBase): void {
-        this.readItems(parameter, paramModel);
+        this.readItems(parameter, paramModel, false);
 
-        let name: string = parameter["name"];
-        let in_: string = parameter["in"];
-        let description: string = parameter["description"];
-        let required: boolean = parameter["required"];
-        let schema: any = parameter["schema"];
-        let allowEmptyValue: boolean = parameter["allowEmptyValue"];
+        let name: string = this.consume(parameter, "name");
+        let in_: string = this.consume(parameter, "in");
+        let description: string = this.consume(parameter, "description");
+        let required: boolean = this.consume(parameter, "required");
+        let schema: any = this.consume(parameter, "schema");
+        let allowEmptyValue: boolean = this.consume(parameter, "allowEmptyValue");
 
         if (this.isDefined(name)) { paramModel.name = name; }
         if (this.isDefined(in_)) { paramModel.in = in_; }
@@ -837,24 +910,24 @@ export class Oas20JS2ModelReader extends OasJS2ModelReader {
      * @param items
      * @param itemsModel
      */
-    public readItems(items: any, itemsModel: Oas20Items): void {
-        let type: string = items["type"];
-        let format: string = items["format"];
-        let itemsChild: any = items["items"];
-        let collectionFormat: string = items["collectionFormat"];
-        let default_: any = items["default"];
-        let maximum: number = items["maximum"];
-        let exclusiveMaximum: boolean = items["exclusiveMaximum"];
-        let minimum: number = items["minimum"];
-        let exclusiveMinimum: boolean = items["exclusiveMinimum"];
-        let maxLength: number = items["maxLength"]; // Require: integer
-        let minLength: number = items["minLength"]; // Require: integer
-        let pattern: string = items["pattern"];
-        let maxItems: number = items["maxItems"]; // Require: integer
-        let minItems: number = items["minItems"]; // Require: integer
-        let uniqueItems: boolean = items["uniqueItems"];
-        let enum_: any[] = items["enum"];
-        let multipleOf: number = items["multipleOf"];
+    public readItems(items: any, itemsModel: Oas20Items, readExtra: boolean = true): void {
+        let type: string = this.consume(items, "type");
+        let format: string = this.consume(items, "format");
+        let itemsChild: any = this.consume(items, "items");
+        let collectionFormat: string = this.consume(items, "collectionFormat");
+        let default_: any = this.consume(items, "default");
+        let maximum: number = this.consume(items, "maximum");
+        let exclusiveMaximum: boolean = this.consume(items, "exclusiveMaximum");
+        let minimum: number = this.consume(items, "minimum");
+        let exclusiveMinimum: boolean = this.consume(items, "exclusiveMinimum");
+        let maxLength: number = this.consume(items, "maxLength"); // Require: integer
+        let minLength: number = this.consume(items, "minLength"); // Require: integer
+        let pattern: string = this.consume(items, "pattern");
+        let maxItems: number = this.consume(items, "maxItems"); // Require: integer
+        let minItems: number = this.consume(items, "minItems"); // Require: integer
+        let uniqueItems: boolean = this.consume(items, "uniqueItems");
+        let enum_: any[] = this.consume(items, "enum");
+        let multipleOf: number = this.consume(items, "multipleOf");
 
         if (this.isDefined(type)) { itemsModel.type = type; }
         if (this.isDefined(format)) { itemsModel.format = format; }
@@ -879,6 +952,9 @@ export class Oas20JS2ModelReader extends OasJS2ModelReader {
         if (this.isDefined(multipleOf)) { itemsModel.multipleOf = multipleOf; }
 
         this.readExtensions(items, itemsModel);
+        if (readExtra) {
+            this.readExtraProperties(items, itemsModel);
+        }
     }
 
     /**
@@ -887,10 +963,11 @@ export class Oas20JS2ModelReader extends OasJS2ModelReader {
      * @param responseModel
      */
     public readResponse(response: any, responseModel: Oas20Response): void {
-        let $ref: string = response["$ref"];
+        let $ref: string = this.consume(response, "$ref");
         if (this.isDefined($ref)) { responseModel.$ref = $ref; }
 
         this.readResponseBase(response, responseModel);
+        this.readExtraProperties(response, responseModel);
     }
 
     /**
@@ -900,6 +977,7 @@ export class Oas20JS2ModelReader extends OasJS2ModelReader {
      */
     public readResponseDefinition(response: any, responseDefModel: Oas20ResponseDefinition): void {
         this.readResponseBase(response, responseDefModel);
+        this.readExtraProperties(response, responseDefModel);
     }
 
     /**
@@ -908,10 +986,10 @@ export class Oas20JS2ModelReader extends OasJS2ModelReader {
      * @param responseModel
      */
     private readResponseBase(response: any, responseModel: Oas20ResponseBase): void {
-        let description: string = response["description"];
-        let schema: any = response["schema"];
-        let headers: any = response["headers"];
-        let examples: any = response["examples"];
+        let description: string = this.consume(response, "description");
+        let schema: any = this.consume(response, "schema");
+        let headers: any = this.consume(response, "headers");
+        let examples: any = this.consume(response, "examples");
 
         if (this.isDefined(description)) { responseModel.description = description; }
         if (this.isDefined(schema)) {
@@ -964,9 +1042,10 @@ export class Oas20JS2ModelReader extends OasJS2ModelReader {
      * @param headerModel
      */
     public readHeader(header: any, headerModel: Oas20Header): void {
-        let description: string = header["description"];
+        let description: string = this.consume(header, "description");
 
         if (this.isDefined(description)) { headerModel.description = description; }
+        // Note: readItems() will finalize the input, so we can't read anything after this
         this.readItems(header, headerModel);
     }
 
@@ -1420,15 +1499,15 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      * @param documentModel
      */
     public readDocument(document: any, documentModel: Oas30Document): void {
-        let openapi: string = document["openapi"];
+        let openapi: string = this.consume(document, "openapi");
         if (openapi.indexOf("3.") != 0) {
             throw Error("Unsupported specification version: " + openapi);
         }
 
-        super.readDocument(document, documentModel);
+        super.readDocument(document, documentModel, false);
 
-        let servers: any = document["servers"];
-        let components: any = document["components"];
+        let servers: any = this.consume(document, "servers");
+        let components: any = this.consume(document, "components");
 
         documentModel.openapi = openapi;
         if (Array.isArray(servers)) {
@@ -1444,6 +1523,8 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
             this.readComponents(components, componentsModel);
             documentModel.components = componentsModel;
         }
+
+        this.readExtraProperties(document, documentModel);
     }
 
     /**
@@ -1452,15 +1533,15 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      * @param componentsModel
      */
     public readComponents(components: any, componentsModel: Oas30Components): void {
-        let schemas: any = components["schemas"];
-        let responses: any = components["responses"];
-        let parameters: any = components["parameters"];
-        let examples: any = components["examples"];
-        let requestBodies: any = components["requestBodies"];
-        let headers: any = components["headers"];
-        let securitySchemes: any = components["securitySchemes"];
-        let links: any = components["links"];
-        let callbacks: any = components["callbacks"];
+        let schemas: any = this.consume(components, "schemas");
+        let responses: any = this.consume(components, "responses");
+        let parameters: any = this.consume(components, "parameters");
+        let examples: any = this.consume(components, "examples");
+        let requestBodies: any = this.consume(components, "requestBodies");
+        let headers: any = this.consume(components, "headers");
+        let securitySchemes: any = this.consume(components, "securitySchemes");
+        let links: any = this.consume(components, "links");
+        let callbacks: any = this.consume(components, "callbacks");
 
         if (this.isDefined(schemas)) {
             for (let name in schemas) {
@@ -1536,6 +1617,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         }
 
         this.readExtensions(components, componentsModel);
+        this.readExtraProperties(components, componentsModel);
     }
 
     /**
@@ -1544,13 +1626,13 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      * @param securitySchemeModel
      */
     public readSecurityScheme(securityScheme: any, securitySchemeModel: Oas30SecurityScheme): void {
-        super.readSecurityScheme(securityScheme, securitySchemeModel);
+        super.readSecurityScheme(securityScheme, securitySchemeModel, false);
 
-        let $ref: string = securityScheme["$ref"];
-        let scheme: string = securityScheme["scheme"];
-        let bearerFormat: string = securityScheme["bearerFormat"];
-        let flows: any = securityScheme["flows"];
-        let openIdConnectUrl: string = securityScheme["openIdConnectUrl"];
+        let $ref: string = this.consume(securityScheme, "$ref");
+        let scheme: string = this.consume(securityScheme, "scheme");
+        let bearerFormat: string = this.consume(securityScheme, "bearerFormat");
+        let flows: any = this.consume(securityScheme, "flows");
+        let openIdConnectUrl: string = this.consume(securityScheme, "openIdConnectUrl");
 
         if (this.isDefined($ref)) { securitySchemeModel.$ref = $ref; }
         if (this.isDefined(scheme)) { securitySchemeModel.scheme = scheme; }
@@ -1563,6 +1645,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         if (this.isDefined(openIdConnectUrl)) { securitySchemeModel.openIdConnectUrl = openIdConnectUrl; }
 
         this.readExtensions(securityScheme, securitySchemeModel);
+        this.readExtraProperties(securityScheme, securitySchemeModel);
     }
 
     /**
@@ -1571,10 +1654,10 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      * @param flowsModel
      */
     public readOAuthFlows(flows: any, flowsModel: Oas30OAuthFlows): void {
-        let implicit: any = flows["implicit"];
-        let password: any = flows["password"];
-        let clientCredentials: any = flows["clientCredentials"];
-        let authorizationCode: any = flows["authorizationCode"];
+        let implicit: any = this.consume(flows, "implicit");
+        let password: any = this.consume(flows, "password");
+        let clientCredentials: any = this.consume(flows, "clientCredentials");
+        let authorizationCode: any = this.consume(flows, "authorizationCode");
 
         if (this.isDefined(implicit)) {
             let flowModel: Oas30ImplicitOAuthFlow = flowsModel.createImplicitOAuthFlow();
@@ -1598,6 +1681,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         }
 
         this.readExtensions(flows, flowsModel);
+        this.readExtraProperties(flows, flowsModel);
     }
 
     /**
@@ -1606,10 +1690,10 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      * @param flowModel
      */
     public readOAuthFlow(flow: any, flowModel: Oas30OAuthFlow): void {
-        let authorizationUrl: string = flow["authorizationUrl"];
-        let tokenUrl: string = flow["tokenUrl"];
-        let refreshUrl: string = flow["refreshUrl"];
-        let scopes: any = flow["scopes"];
+        let authorizationUrl: string = this.consume(flow, "authorizationUrl");
+        let tokenUrl: string = this.consume(flow, "tokenUrl");
+        let refreshUrl: string = this.consume(flow, "refreshUrl");
+        let scopes: any = this.consume(flow, "scopes");
 
         if (this.isDefined(authorizationUrl)) { flowModel.authorizationUrl = authorizationUrl; }
         if (this.isDefined(tokenUrl)) { flowModel.tokenUrl = tokenUrl; }
@@ -1622,6 +1706,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         }
 
         this.readExtensions(flow, flowModel);
+        this.readExtraProperties(flow, flowModel);
     }
 
     /**
@@ -1630,12 +1715,12 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      * @param pathItemModel
      */
     public readPathItem(pathItem: any, pathItemModel: Oas30PathItem): void {
-        super.readPathItem(pathItem, pathItemModel);
+        super.readPathItem(pathItem, pathItemModel, false);
 
-        let summary: any = pathItem["summary"];
-        let description: any = pathItem["description"];
-        let trace: any = pathItem["trace"];
-        let servers: any = pathItem["servers"];
+        let summary: any = this.consume(pathItem, "summary");
+        let description: any = this.consume(pathItem, "description");
+        let trace: any = this.consume(pathItem, "trace");
+        let servers: any = this.consume(pathItem, "servers");
 
         if (this.isDefined(summary)) {
             pathItemModel.summary = summary;
@@ -1656,6 +1741,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
                 pathItemModel.servers.push(serverModel);
             }
         }
+        this.readExtraProperties(pathItem, pathItemModel);
     }
 
     /**
@@ -1664,18 +1750,18 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      * @param headerModel
      */
     public readHeader(header: any, headerModel: Oas30Header): void {
-        let $ref: string = header["$ref"];
-        let description: string = header["description"];
-        let required: boolean = header["required"];
-        let schema: any = header["schema"];
-        let allowEmptyValue: boolean = header["allowEmptyValue"];
-        let deprecated: boolean = header["deprecated"];
-        let style: string = header["style"];
-        let explode: boolean = header["explode"];
-        let allowReserved: boolean = header["allowReserved"];
-        let example: any = header["example"];
-        let examples: any = header["examples"];
-        let content: any = header["content"];
+        let $ref: string = this.consume(header, "$ref");
+        let description: string = this.consume(header, "description");
+        let required: boolean = this.consume(header, "required");
+        let schema: any = this.consume(header, "schema");
+        let allowEmptyValue: boolean = this.consume(header, "allowEmptyValue");
+        let deprecated: boolean = this.consume(header, "deprecated");
+        let style: string = this.consume(header, "style");
+        let explode: boolean = this.consume(header, "explode");
+        let allowReserved: boolean = this.consume(header, "allowReserved");
+        let example: any = this.consume(header, "example");
+        let examples: any = this.consume(header, "examples");
+        let content: any = this.consume(header, "content");
 
         if (this.isDefined($ref)) { headerModel.$ref = $ref; }
         if (this.isDefined(description)) { headerModel.description = description; }
@@ -1709,6 +1795,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         }
 
         this.readExtensions(header, headerModel);
+        this.readExtraProperties(header, headerModel);
     }
 
     /**
@@ -1717,20 +1804,20 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      * @param paramModel
      */
     public readParameterBase(parameter: any, paramModel: Oas30ParameterBase): void {
-        let $ref: string = parameter["$ref"];
-        let name: string = parameter["name"];
-        let in_: string = parameter["in"];
-        let description: string = parameter["description"];
-        let required: boolean = parameter["required"];
-        let schema: any = parameter["schema"];
-        let allowEmptyValue: boolean = parameter["allowEmptyValue"];
-        let deprecated: boolean = parameter["deprecated"];
-        let style: string = parameter["style"];
-        let explode: boolean = parameter["explode"];
-        let allowReserved: boolean = parameter["allowReserved"];
-        let example: any = parameter["example"];
-        let examples: any = parameter["examples"];
-        let content: any = parameter["content"];
+        let $ref: string = this.consume(parameter, "$ref");
+        let name: string = this.consume(parameter, "name");
+        let in_: string = this.consume(parameter, "in");
+        let description: string = this.consume(parameter, "description");
+        let required: boolean = this.consume(parameter, "required");
+        let schema: any = this.consume(parameter, "schema");
+        let allowEmptyValue: boolean = this.consume(parameter, "allowEmptyValue");
+        let deprecated: boolean = this.consume(parameter, "deprecated");
+        let style: string = this.consume(parameter, "style");
+        let explode: boolean = this.consume(parameter, "explode");
+        let allowReserved: boolean = this.consume(parameter, "allowReserved");
+        let example: any = this.consume(parameter, "example");
+        let examples: any = this.consume(parameter, "examples");
+        let content: any = this.consume(parameter, "content");
 
         if (this.isDefined($ref)) { paramModel.$ref = $ref; }
         if (this.isDefined(name)) { paramModel.name = name; }
@@ -1774,10 +1861,11 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      * @param paramModel
      */
     public readParameter(parameter: any, paramModel: Oas30Parameter): void {
-        let $ref: string = parameter["$ref"];
+        let $ref: string = this.consume(parameter, "$ref");
         if (this.isDefined($ref)) { paramModel.$ref = $ref; }
 
         this.readParameterBase(parameter, paramModel);
+        this.readExtraProperties(parameter, paramModel);
     }
 
     /**
@@ -1786,11 +1874,11 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      * @param operationModel
      */
     public readOperation(operation: any, operationModel: Oas30Operation): void {
-        super.readOperation(operation, operationModel);
+        super.readOperation(operation, operationModel, false);
 
-        let requestBody: any = operation["requestBody"];
-        let callbacks: any = operation["callbacks"];
-        let servers: Oas30Server[] = operation["servers"];
+        let requestBody: any = this.consume(operation, "requestBody");
+        let callbacks: any = this.consume(operation, "callbacks");
+        let servers: Oas30Server[] = this.consume(operation, "servers");
 
         if (this.isDefined(requestBody)) {
             let requestBodyModel: Oas30RequestBody = operationModel.createRequestBody();
@@ -1813,6 +1901,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
                 operationModel.servers.push(serverModel);
             })
         }
+        this.readExtraProperties(operation, operationModel);
     }
 
     /**
@@ -1823,15 +1912,16 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
     public readCallback(callback: any, callbackModel: Oas30Callback): void {
         for (let name in callback) {
             if (name === "$ref") {
-                callbackModel.$ref = callback[name];
-                continue;
+                callbackModel.$ref = this.consume(callback, name);
+            } else {
+                let pathItem: any = this.consume(callback, name);
+                let pathItemModel: Oas30PathItem = callbackModel.createPathItem(name);
+                this.readPathItem(pathItem, pathItemModel);
+                callbackModel.addPathItem(name, pathItemModel);
             }
-            let pathItem: any = callback[name];
-            let pathItemModel: Oas30PathItem = callbackModel.createPathItem(name);
-            this.readPathItem(pathItem, pathItemModel);
-            callbackModel.addPathItem(name, pathItemModel);
         }
         this.readExtensions(callback, callbackModel);
+        this.readExtraProperties(callback, callbackModel);
     }
 
     /**
@@ -1840,10 +1930,10 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      * @param requestBodyModel
      */
     public readRequestBody(requestBody: any, requestBodyModel: Oas30RequestBody): void {
-        let $ref: string = requestBody["$ref"];
-        let description: string = requestBody["description"];
-        let content: any = requestBody["content"];
-        let required: boolean = requestBody["required"];
+        let $ref: string = this.consume(requestBody, "$ref");
+        let description: string = this.consume(requestBody, "description");
+        let content: any = this.consume(requestBody, "content");
+        let required: boolean = this.consume(requestBody, "required");
 
         if (this.isDefined($ref)) { requestBodyModel.$ref = $ref; }
         if (this.isDefined(description)) { requestBodyModel.description = description; }
@@ -1858,6 +1948,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         if (this.isDefined(required)) { requestBodyModel.required = required; }
 
         this.readExtensions(requestBody, requestBodyModel);
+        this.readExtraProperties(requestBody, requestBodyModel);
     }
 
     /**
@@ -1866,10 +1957,10 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      * @param mediaTypeModel
      */
     public readMediaType(mediaType: any, mediaTypeModel: Oas30MediaType): void {
-        let schema: any = mediaType["schema"];
-        let example: any = mediaType["example"];
-        let examples: any = mediaType["examples"];
-        let encodings: any = mediaType["encoding"];
+        let schema: any = this.consume(mediaType, "schema");
+        let example: any = this.consume(mediaType, "example");
+        let examples: any = this.consume(mediaType, "examples");
+        let encodings: any = this.consume(mediaType, "encoding");
 
         if (this.isDefined(schema)) {
             let schemaModel: Oas30Schema = mediaTypeModel.createSchema();
@@ -1895,6 +1986,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         }
 
         this.readExtensions(mediaType, mediaTypeModel);
+        this.readExtraProperties(mediaType, mediaTypeModel);
     }
 
     /**
@@ -1903,11 +1995,11 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      * @param exampleModel
      */
     public readExample(example: any, exampleModel: Oas30Example) {
-        let $ref: string = example["$ref"];
-        let summary: string = example["summary"];
-        let description: string = example["description"];
-        let value: any = example["value"];
-        let externalValue: string = example["externalValue"];
+        let $ref: string = this.consume(example, "$ref");
+        let summary: string = this.consume(example, "summary");
+        let description: string = this.consume(example, "description");
+        let value: any = this.consume(example, "value");
+        let externalValue: string = this.consume(example, "externalValue");
 
         if (this.isDefined($ref)) { exampleModel.$ref = $ref; }
         if (this.isDefined(summary)) { exampleModel.summary = summary; }
@@ -1916,6 +2008,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         if (this.isDefined(externalValue)) { exampleModel.externalValue = externalValue; }
 
         this.readExtensions(example, exampleModel);
+        this.readExtraProperties(example, exampleModel);
     }
 
     /**
@@ -1924,11 +2017,11 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      * @param encodingModel
      */
     public readEncoding(encodingProperty: any, encodingModel: Oas30Encoding): void {
-        let contentType: string = encodingProperty["contentType"];
-        let headers: any = encodingProperty["headers"];
-        let style: string = encodingProperty["style"];
-        let explode: boolean = encodingProperty["explode"];
-        let allowReserved: boolean = encodingProperty["allowReserved"];
+        let contentType: string = this.consume(encodingProperty, "contentType");
+        let headers: any = this.consume(encodingProperty, "headers");
+        let style: string = this.consume(encodingProperty, "style");
+        let explode: boolean = this.consume(encodingProperty, "explode");
+        let allowReserved: boolean = this.consume(encodingProperty, "allowReserved");
 
         if (this.isDefined(contentType)) { encodingModel.contentType = contentType; }
         if (this.isDefined(headers)) {
@@ -1944,6 +2037,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         if (this.isDefined(allowReserved)) { encodingModel.allowReserved = allowReserved; }
 
         this.readExtensions(encodingProperty, encodingModel);
+        this.readExtraProperties(encodingProperty, encodingModel);
     }
 
     /**
@@ -1953,6 +2047,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      */
     public readResponse(response: any, responseModel: Oas30Response): void {
         this.readResponseBase(response, responseModel);
+        this.readExtraProperties(response, responseModel);
     }
     /**
      * Reads an OAS 3.0 Response object from the given JS data.
@@ -1960,11 +2055,11 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      * @param responseModel
      */
     public readResponseBase(response: any, responseModel: Oas30ResponseBase): void {
-        let $ref: string = response["$ref"];
-        let description: string = response["description"];
-        let headers: any = response["headers"];
-        let content: any = response["content"];
-        let links: any = response["links"];
+        let $ref: string = this.consume(response, "$ref");
+        let description: string = this.consume(response, "description");
+        let headers: any = this.consume(response, "headers");
+        let content: any = this.consume(response, "content");
+        let links: any = this.consume(response, "links");
 
         if (this.isDefined($ref)) { responseModel.$ref = $ref; }
         if (this.isDefined(description)) { responseModel.description = description; }
@@ -2001,13 +2096,13 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      * @param linkModel
      */
     public readLink(link: any, linkModel: Oas30Link): void {
-        let $ref: string = link["$ref"];
-        let operationRef: string = link["operationRef"];
-        let operationId: string = link["operationId"];
-        let parameters: any = link["parameters"];
-        let requestBody: any = link["requestBody"];
-        let description: string = link["description"];
-        let server: any = link["server"];
+        let $ref: string = this.consume(link, "$ref");
+        let operationRef: string = this.consume(link, "operationRef");
+        let operationId: string = this.consume(link, "operationId");
+        let parameters: any = this.consume(link, "parameters");
+        let requestBody: any = this.consume(link, "requestBody");
+        let description: string = this.consume(link, "description");
+        let server: any = this.consume(link, "server");
 
         if (this.isDefined($ref)) { linkModel.$ref = $ref; }
         if (this.isDefined(operationRef)) { linkModel.operationRef = operationRef; }
@@ -2030,6 +2125,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         }
 
         this.readExtensions(link, linkModel);
+        this.readExtraProperties(link, linkModel);
     }
 
     /**
@@ -2038,17 +2134,17 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      * @param schemaModel
      */
     public readSchema(schema: any, schemaModel: Oas30Schema): void {
-        super.readSchema(schema, schemaModel);
+        super.readSchema(schema, schemaModel, false);
 
-        let oneOf: any[] = schema["oneOf"];
-        let anyOf: any[] = schema["anyOf"];
-        let not: any = schema["not"];
+        let oneOf: any[] = this.consume(schema, "oneOf");
+        let anyOf: any[] = this.consume(schema, "anyOf");
+        let not: any = this.consume(schema, "not");
 
-        let discriminator: any = schema["discriminator"];
+        let discriminator: any = this.consume(schema, "discriminator");
 
-        let nullable: boolean = schema["nullable"];
-        let writeOnly: boolean = schema["writeOnly"];
-        let deprecated: boolean = schema["deprecated"];
+        let nullable: boolean = this.consume(schema, "nullable");
+        let writeOnly: boolean = this.consume(schema, "writeOnly");
+        let deprecated: boolean = this.consume(schema, "deprecated");
 
         if (this.isDefined(discriminator)) {
             let discriminatorModel: Oas30Discriminator = schemaModel.createDiscriminator();
@@ -2083,6 +2179,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         if (this.isDefined(writeOnly)) { schemaModel.writeOnly = writeOnly; }
         if (this.isDefined(deprecated)) { schemaModel.deprecated = deprecated; }
 
+        this.readExtraProperties(schema, schemaModel);
     }
 
     /**
@@ -2091,9 +2188,9 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      * @param serverModel
      */
     public readServer(server: any, serverModel: Oas30Server): void {
-        let url: string = server["url"];
-        let description: string = server["description"];
-        let variables: any = server["variables"];
+        let url: string = this.consume(server, "url");
+        let description: string = this.consume(server, "description");
+        let variables: any = this.consume(server, "variables");
 
         if (this.isDefined(url)) { serverModel.url = url; }
         if (this.isDefined(description)) { serverModel.description = description; }
@@ -2107,6 +2204,7 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
         }
 
         this.readExtensions(server, serverModel);
+        this.readExtraProperties(server, serverModel);
     }
 
     /**
@@ -2115,15 +2213,16 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      * @param serverVariableModel
      */
     public readServerVariable(serverVariable: any, serverVariableModel: Oas30ServerVariable): void {
-        let _enum: string[] = serverVariable["enum"];
-        let _default: string = serverVariable["default"];
-        let description: any = serverVariable["description"];
+        let _enum: string[] = this.consume(serverVariable, "enum");
+        let _default: string = this.consume(serverVariable, "default");
+        let description: any = this.consume(serverVariable, "description");
 
         if (Array.isArray(_enum)) { serverVariableModel.enum = _enum; }
         if (this.isDefined(_default)) { serverVariableModel.default = _default; }
         if (this.isDefined(description)) { serverVariableModel.description = description; }
 
         this.readExtensions(serverVariable, serverVariableModel);
+        this.readExtraProperties(serverVariable, serverVariableModel);
     }
 
     /**
@@ -2132,12 +2231,14 @@ export class Oas30JS2ModelReader extends OasJS2ModelReader {
      * @param discriminatorModel
      */
     public readDiscriminator(discriminator: any, discriminatorModel: Oas30Discriminator) {
-        let propertyName: string = discriminator["propertyName"];
-        let mapping: any = discriminator["mapping"];
+        let propertyName: string = this.consume(discriminator, "propertyName");
+        let mapping: any = this.consume(discriminator, "mapping");
 
         if (this.isDefined(propertyName)) { discriminatorModel.propertyName = propertyName; }
         if (this.isDefined(mapping)) { discriminatorModel.mapping = mapping; }
 
         this.readExtensions(discriminator, discriminatorModel);
+        this.readExtraProperties(discriminator, discriminatorModel);
     }
 }
+

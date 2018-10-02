@@ -78,6 +78,9 @@ export class OasLibraryUtils {
         }
         if (typeof source === "string") {
             source = JSON.parse(source);
+        } else {
+            // If the source is an object, clone it (the reader is destructive to the input).
+            source = JSON.parse(JSON.stringify(source));
         }
         if (node.ownerDocument().is2xDocument()) {
             let reader: Oas20JS2ModelReader = new Oas20JS2ModelReader();

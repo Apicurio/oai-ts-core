@@ -118,6 +118,18 @@ export abstract class OasModelToJSVisitor implements IOasNodeVisitor {
     }
 
     /**
+     * Adds any "extra properties" found on the model onto the object.
+     * @param object
+     * @param model
+     */
+    protected addExtraProperties(object: any, model: OasNode): void {
+        model.getExtraPropertyNames().forEach( pname => {
+            let value: any = model.getExtraProperty(pname);
+            object[pname] = value;
+        });
+    }
+
+    /**
      * Returns the result that was built up during the visit of the model.
      * @return {any}
      */
@@ -233,6 +245,7 @@ export abstract class OasModelToJSVisitor implements IOasNodeVisitor {
             license: null,
             version: node.version
         };
+        this.addExtraProperties(info, node);
         parentJS.info = info;
         this.updateIndex(node, info);
     }
@@ -248,6 +261,7 @@ export abstract class OasModelToJSVisitor implements IOasNodeVisitor {
             url: node.url,
             email: node.email
         };
+        this.addExtraProperties(contact, node);
         parentJS.contact = contact;
         this.updateIndex(node, contact);
     }
@@ -262,6 +276,7 @@ export abstract class OasModelToJSVisitor implements IOasNodeVisitor {
             name: node.name,
             url: node.url,
         };
+        this.addExtraProperties(license, node);
         parentJS.license = license;
         this.updateIndex(node, license);
     }
@@ -272,6 +287,7 @@ export abstract class OasModelToJSVisitor implements IOasNodeVisitor {
      */
     public visitPaths(node: OasPaths): void {
         let paths: any = {};
+        this.addExtraProperties(paths, node);
         let parentJS: any = this.lookupParentJS(node);
         parentJS.paths = paths;
         this.updateIndex(node, paths);
@@ -286,6 +302,7 @@ export abstract class OasModelToJSVisitor implements IOasNodeVisitor {
         let responses: any = {
             default: null
         };
+        this.addExtraProperties(responses, node);
         parentJS.responses = responses;
         this.updateIndex(node, responses);
     }
@@ -303,6 +320,7 @@ export abstract class OasModelToJSVisitor implements IOasNodeVisitor {
             attribute: node.attribute,
             wrapped: node.wrapped
         };
+        this.addExtraProperties(xml, node);
         parent.xml = xml;
         this.updateIndex(node, xml);
     }
@@ -346,6 +364,7 @@ export abstract class OasModelToJSVisitor implements IOasNodeVisitor {
             description: node.description,
             externalDocs: null
         };
+        this.addExtraProperties(tag, node);
         parentJS.tags.push(tag);
         this.updateIndex(node, tag);
     }
@@ -360,6 +379,7 @@ export abstract class OasModelToJSVisitor implements IOasNodeVisitor {
             description: node.description,
             url: node.url
         }
+        this.addExtraProperties(parentJS.externalDocs, node);
         this.updateIndex(node, parentJS.externalDocs);
     }
 
@@ -419,6 +439,7 @@ export class Oas20ModelToJSVisitor extends OasModelToJSVisitor implements IOas20
             tags: null,
             externalDocs: null
         };
+        this.addExtraProperties(root, node);
         this.updateIndex(node, root);
     }
 
@@ -438,7 +459,8 @@ export class Oas20ModelToJSVisitor extends OasModelToJSVisitor implements IOas20
             head : null,
             patch : null,
             parameters : null
-        }
+        };
+        this.addExtraProperties(pathItem, node);
         parentJS[node.path()] = pathItem;
         this.updateIndex(node, pathItem);
     }
@@ -462,7 +484,8 @@ export class Oas20ModelToJSVisitor extends OasModelToJSVisitor implements IOas20
             schemes : node.schemes,
             deprecated : node.deprecated,
             security : null
-        }
+        };
+        this.addExtraProperties(operation, node);
         parentJS[node.method()] = operation;
         this.updateIndex(node, operation);
     }
@@ -481,6 +504,7 @@ export class Oas20ModelToJSVisitor extends OasModelToJSVisitor implements IOas20
             schema : null,
             allowEmptyValue : node.allowEmptyValue
         };
+        this.addExtraProperties(parameter, node);
         parameter = this.merge(parameter, items);
         return parameter;
     }
@@ -519,12 +543,14 @@ export class Oas20ModelToJSVisitor extends OasModelToJSVisitor implements IOas20
      * @param node
      */
     private createResponseObject(node: Oas20ResponseBase): any {
-        return {
+        let response: any = {
             description: node.description,
             schema: null,
             headers: null,
             examples: null
         };
+        this.addExtraProperties(response, node);
+        return response;
     }
 
     /**
@@ -721,6 +747,7 @@ export class Oas20ModelToJSVisitor extends OasModelToJSVisitor implements IOas20
             tokenUrl: node.tokenUrl,
             scopes: null
         };
+        this.addExtraProperties(scheme, node);
         parent[node.schemeName()] = scheme;
         this.updateIndex(node, scheme);
     }
@@ -786,8 +813,8 @@ export class Oas20ModelToJSVisitor extends OasModelToJSVisitor implements IOas20
      * Creates an OAS 2.0 Items javascript object.
      * @param node
      */
-    private createItemsObject(node: Oas20Items) {
-        return {
+    private createItemsObject(node: Oas20Items): any {
+        let items: any = {
             type: node.type,
             format: node.format,
             items: <any>null,
@@ -806,6 +833,8 @@ export class Oas20ModelToJSVisitor extends OasModelToJSVisitor implements IOas20
             enum: node.enum,
             multipleOf: node.multipleOf
         };
+        this.addExtraProperties(items, node);
+        return items;
     }
 
     /**
@@ -852,6 +881,7 @@ export class Oas20ModelToJSVisitor extends OasModelToJSVisitor implements IOas20
         if (typeof node.additionalProperties === "boolean") {
             schema.additionalProperties = node.additionalProperties;
         }
+        this.addExtraProperties(schema, node);
         return schema;
     }
 
@@ -880,6 +910,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
             tags: null,
             externalDocs: null
         };
+        this.addExtraProperties(root, node);
         this.updateIndex(node, root);
     }
 
@@ -904,6 +935,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
             servers: null,
             parameters : null
         }
+        this.addExtraProperties(pathItem, node);
         parentJS[node.path()] = pathItem;
         this.updateIndex(node, pathItem);
     }
@@ -928,6 +960,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
             security : null,
             servers: null
         }
+        this.addExtraProperties(operation, node);
         parentJS[node.method()] = operation;
         this.updateIndex(node, operation);
     }
@@ -965,6 +998,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
             examples : null,
             content: null
         };
+        this.addExtraProperties(header, node);
         return header;
     }
 
@@ -989,6 +1023,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
             examples : null,
             content : null
         };
+        this.addExtraProperties(parameter, node);
         return parameter;
     }
 
@@ -1011,13 +1046,15 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      * @param node
      */
     private createResponseObject(node: Oas30ResponseBase): any {
-        return {
+        let response: any = {
             $ref: node.$ref,
             description: node.description,
             headers: null,
             content: null,
             links: null
         };
+        this.addExtraProperties(response, node);
+        return response;
     }
 
     /**
@@ -1064,6 +1101,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
             description: node.description,
             server: null
         };
+        this.addExtraProperties(link, node);
         return link;
     }
 
@@ -1078,6 +1116,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
             description: node.description,
             variables: null
         };
+        this.addExtraProperties(server, node);
         parentJS.server = server;
         this.updateIndex(node, server);
     }
@@ -1126,6 +1165,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
             propertyName: node.propertyName,
             mapping: node.mapping
         };
+        this.addExtraProperties(discriminator, node);
         parentJS.discriminator = discriminator;
         this.updateIndex(node, discriminator);
     }
@@ -1250,6 +1290,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
             content: null,
             required: node.required
         };
+        this.addExtraProperties(requestBody, node);
         return requestBody;
     }
 
@@ -1265,6 +1306,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
             examples: null,
             encoding: null
         }
+        this.addExtraProperties(mediaType, node);
         if (!this.isDefined(parentJS["content"])) {
             parentJS["content"] = {};
         }
@@ -1285,6 +1327,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
             explode: node.explode,
             allowReserved: node.allowReserved
         };
+        this.addExtraProperties(encoding, node);
         if (!this.isDefined(parentJS["encoding"])) {
             parentJS["encoding"] = {};
         }
@@ -1318,6 +1361,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
             value : node.value,
             externalValue : node.externalValue
         };
+        this.addExtraProperties(example, node);
         return example;
     }
 
@@ -1327,6 +1371,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      */
     public visitCallback(node: Oas30Callback): void {
         let callback: any = {};
+        this.addExtraProperties(callback, node);
         let parentJS: any = this.lookupParentJS(node);
         if (this.isDefined(node.$ref)) {
             callback.$ref = node.$ref;
@@ -1352,6 +1397,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
      */
     public visitComponents(node: Oas30Components): void {
         let components: any = {};
+        this.addExtraProperties(components, node);
         let parentJS: any = this.lookupParentJS(node);
         parentJS.components = components;
         this.updateIndex(node, components);
@@ -1452,7 +1498,8 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
             password: null,
             clientCredentials: null,
             authorizationCode: null
-        }
+        };
+        this.addExtraProperties(oauthFlows, node);
         parentJS.flows = oauthFlows;
         this.updateIndex(node, oauthFlows);
     }
@@ -1513,6 +1560,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
             refreshUrl: node.refreshUrl,
             scopes: node.scopes
         };
+        this.addExtraProperties(flow, node);
         return flow;
     }
 
@@ -1533,6 +1581,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
             flows: null,
             openIdConnectUrl: node.openIdConnectUrl
         };
+        this.addExtraProperties(securityScheme, node);
         if (!this.isDefined(parentJS["securitySchemes"])) {
             parentJS["securitySchemes"] = {};
         }
@@ -1564,6 +1613,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
         if (this.isDefined(node.$ref)) {
             callback.$ref = node.$ref;
         }
+        this.addExtraProperties(callback, node);
         if (!this.isDefined(parentJS["callbacks"])) {
             parentJS["callbacks"] = {};
         }
@@ -1585,6 +1635,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
             description: node.description,
             variables: null
         };
+        this.addExtraProperties(server, node);
         parentJS.servers.push(server);
         this.updateIndex(node, server);
     }
@@ -1600,6 +1651,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
             default : node.default,
             description : node.description
         }
+        this.addExtraProperties(serverVariable, node);
         if (!this.isDefined(parentJS["variables"])) {
             parentJS["variables"] = {};
         }
@@ -1657,6 +1709,7 @@ export class Oas30ModelToJSVisitor extends OasModelToJSVisitor implements IOas30
         if (typeof node.additionalProperties === "boolean") {
             schema.additionalProperties = node.additionalProperties;
         }
+        this.addExtraProperties(schema, node);
         return schema;
     }
 

@@ -257,6 +257,22 @@ describe("Validation (2.0)", () => {
         assertValidationOutput(actual, expected);
     });
 
+    it("Pet Store (Extra Properties)", () => {
+        let json: any = readJSON('tests/fixtures/validation/2.0/pet-store-extra-properties.json');
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
+
+        let node: OasNode = document;
+        let errors: OasValidationProblem[] = library.validate(node);
+
+        let actual: string = errorsAsString(errors);
+        let expected: string =
+`[UNKNOWN-001] |2| {/info->extra-info-property} :: An unexpected property "extra-info-property" was found.  Extension properties should begin with "x-".
+[UNKNOWN-001] |2| {/info/license->extra-license-property-1} :: An unexpected property "extra-license-property-1" was found.  Extension properties should begin with "x-".
+[UNKNOWN-001] |2| {/info/license->extra-license-property-2} :: An unexpected property "extra-license-property-2" was found.  Extension properties should begin with "x-".`;
+
+        assertValidationOutput(actual, expected);
+    });
+
 });
 
 
@@ -599,6 +615,21 @@ describe("Validation (3.0)", () => {
 
         errors = enode.validationProblemsFor("in");
         expect(errors).toEqual([]);
+    });
+
+    it("Unknown Properties", () => {
+        let json: any = readJSON('tests/fixtures/validation/3.0/unknown-properties.json');
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
+
+        let node: OasNode = document;
+        let errors: OasValidationProblem[] = library.validate(node);
+
+        let actual: string = errorsAsString(errors);
+        let expected: string =
+`[UNKNOWN-3-001] |2| {/info/license->unknown-license-property} :: An unexpected property "unknown-license-property" was found.  Extension properties should begin with "x-".
+[UNKNOWN-3-001] |2| {/components/schemas[Error]->unexpected-property-datatype} :: An unexpected property "unexpected-property-datatype" was found.  Extension properties should begin with "x-".`;
+
+        assertValidationOutput(actual, expected);
     });
 
 });

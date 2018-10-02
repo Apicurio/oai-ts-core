@@ -59,6 +59,9 @@ export class OasDocumentFactory {
             oasObject.openapi = "3.0.0";
         }
 
+        // We side-effect the input object when reading it, so make a deep copy of it first.
+        oasObject = JSON.parse(JSON.stringify(oasObject));
+
         if (oasObject.swagger && oasObject.swagger === "2.0") {
             let reader: Oas20JS2ModelReader = new Oas20JS2ModelReader();
             return reader.read(oasObject);

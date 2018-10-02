@@ -33,6 +33,7 @@ export abstract class OasNode {
     public _parent: OasNode;
     public _modelId: number = __modelIdCounter++;
     public _attributes: OasNodeAttributes = new OasNodeAttributes();
+    public _extraProperties: any = {};
     public _validationProblems: any = {}; // Really a map of string(errorCode)->OasValidationProblem
 
     /**
@@ -125,6 +126,32 @@ export abstract class OasNode {
     public clearValidationProblems(): void {
         this._validationProblems = {};
     }
+
+    public addExtraProperty(name: string, value: any): void {
+        this._extraProperties[name] = value;
+    }
+
+    public removeExtraProperty(name: string): any {
+        if (this._extraProperties.hasOwnProperty(name)) {
+            let rval: any = this._extraProperties[name];
+            delete this._extraProperties[name];
+            return rval;
+        }
+        return undefined;
+    }
+
+    public hasExtraProperties(): boolean {
+        return Object.keys(this._extraProperties).length > 0;
+    }
+
+    public getExtraPropertyNames(): string[] {
+        return Object.keys(this._extraProperties);
+    }
+
+    public getExtraProperty(name: string): any {
+        return this._extraProperties[name];
+    }
+
 }
 
 /**
@@ -163,7 +190,5 @@ export class OasValidationProblem extends OasNode {
 
 
 export class OasNodeAttributes {
-
     [key: string]: any;
-
 }
