@@ -23,6 +23,7 @@ import {OasLibraryUtils} from "../src/library.utils";
 import {Oas20PathItem} from "../src/models/2.0/path-item.model";
 import {Oas20SchemaDefinition} from "../src/models/2.0/schema.model";
 import {OasPathItem} from "../src/models/common/path-item.model";
+import {OasExtension} from "../src/models/extension.model";
 
 
 describe("Models (2.0)", () => {
@@ -73,6 +74,25 @@ describe("Models (2.0)", () => {
         expect(definitions[2].definitionName()).toEqual("User");
         expect(definitions[4].definitionName()).toEqual("Pet");
         expect(definitions[5].definitionName()).toEqual("ApiResponse");
+    });
+
+    it("Extensions", () => {
+        let json: any = readJSON('tests/fixtures/full-io/2.0/complete/pet-store.json');
+        let document: Oas20Document = <Oas20Document>library.createDocument(json);
+
+        let ext: OasExtension = document.extension("x-custom-extension");
+        expect(ext).toBeNull();
+
+        document.addExtension("x-custom-extension", "Hello World");
+
+        ext = document.extension("x-custom-extension");
+        expect(ext).toBeTruthy();
+        expect(ext.value).toEqual("Hello World");
+
+        document.removeExtension("x-custom-extension");
+
+        ext = document.extension("x-custom-extension");
+        expect(ext).toBeNull();
     });
 
 });

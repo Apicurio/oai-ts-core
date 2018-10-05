@@ -35,6 +35,22 @@ export abstract class OasExtensibleNode extends OasNode {
     }
 
     /**
+     * Gets a single extension by name or null if not found.
+     * @param name
+     */
+    public extension(name: string): OasExtension {
+        let rval: OasExtension = null;
+        if (this._extensions) {
+            this._extensions.forEach( extension => {
+                if (extension.name === name) {
+                    rval = extension;
+                }
+            });
+        }
+        return rval;
+    }
+
+    /**
      * Creates an extension.
      * @return {OasExtension}
      */
@@ -59,6 +75,27 @@ export abstract class OasExtensibleNode extends OasNode {
         }
         this._extensions.push(ext);
         return ext;
+    }
+
+    /**
+     * Removes an extension by name.
+     * @param name
+     */
+    public removeExtension(name: string): OasExtension {
+        let rval: OasExtension = null;
+        if (this._extensions) {
+            let idx: number = -1;
+            this._extensions.forEach( (extension, index) => {
+                if (extension.name === name) {
+                    rval = extension;
+                    idx = index;
+                }
+            });
+            if (idx !== -1) {
+                this._extensions.splice(idx, 1);
+            }
+        }
+        return rval;
     }
 
 }
