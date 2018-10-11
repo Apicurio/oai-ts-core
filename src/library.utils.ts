@@ -19,13 +19,16 @@ import {OasDocument} from "./models/document.model";
 import {OasDocumentFactory} from "./factories/document.factory";
 import {OasNode, OasValidationProblem} from "./models/node.model";
 import {
-    Oas20JS2ModelReader, Oas20JS2ModelReaderVisitor, Oas30JS2ModelReader,
+    Oas20JS2ModelReader,
+    Oas20JS2ModelReaderVisitor,
+    Oas30JS2ModelReader,
     Oas30JS2ModelReaderVisitor
 } from "./readers/js2model.reader";
 import {Oas20ModelToJSVisitor, Oas30ModelToJSVisitor} from "./visitors/model2js.visitor";
-import {OasVisitorUtil, OasTraverserDirection} from "./visitors/visitor.utils";
+import {OasTraverserDirection, OasVisitorUtil} from "./visitors/visitor.utils";
 import {
-    Oas20ValidationVisitor, Oas30ValidationVisitor,
+    Oas20ValidationVisitor,
+    Oas30ValidationVisitor,
     OasResetValidationProblemsVisitor
 } from "./validation/validation.visitor";
 import {OasNodePath} from "./models/node-path";

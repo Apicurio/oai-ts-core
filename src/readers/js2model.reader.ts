@@ -1108,7 +1108,7 @@ export class Oas20JS2ModelReaderVisitor implements IOas20NodeVisitor {
     constructor(private reader: Oas20JS2ModelReader, private jsData: any) {}
 
     public visitDocument(node: Oas20Document): void {
-        // Not supported - call the reader directly if you want to read a full document.
+        this.reader.readDocument(this.jsData, node);
     }
 
     public visitInfo(node: Oas20Info): void {
@@ -1262,7 +1262,7 @@ export class Oas30JS2ModelReaderVisitor implements IOas30NodeVisitor {
     constructor(private reader: Oas30JS2ModelReader, private jsData: any) {}
 
     public visitDocument(node: Oas30Document): void {
-        // Not supported - call the reader directly if you want to read a full document.
+        this.reader.readDocument(this.jsData, node);
     }
 
     public visitInfo(node: Oas30Info): void {
