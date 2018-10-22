@@ -65,7 +65,7 @@ export class OasDocumentFactory {
         if (oasObject.swagger && oasObject.swagger === "2.0") {
             let reader: Oas20JS2ModelReader = new Oas20JS2ModelReader();
             return reader.read(oasObject);
-        } else if (oasObject.openapi && oasObject.openapi.indexOf("3.") === 0) {
+        } else if (oasObject.openapi && (typeof oasObject.openapi === "string") && oasObject.openapi.indexOf("3.") === 0) {
             let reader: Oas30JS2ModelReader = new Oas30JS2ModelReader();
             return reader.read(oasObject);
         } else {
