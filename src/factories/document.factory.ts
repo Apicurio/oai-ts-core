@@ -32,15 +32,21 @@ export class OasDocumentFactory {
      * @return {OasDocument}
      */
     public createEmpty(oasVersion: string): OasDocument {
+        if (typeof oasVersion === "number") {
+            oasVersion = "" + oasVersion;
+        }
+
         if (oasVersion === "2") { oasVersion = "2.0"; }
-        if (oasVersion === "3") { oasVersion = "3.0.0"; }
-        if (oasVersion === "3.0") { oasVersion = "3.0.0"; }
+        if (oasVersion === "3") { oasVersion = "3.0.2"; }
+        if (oasVersion === "3.0") { oasVersion = "3.0.2"; }
 
         if (oasVersion === "2.0") {
             return new Oas20Document();
         }
         if (oasVersion.indexOf("3.") === 0) {
-            return new Oas30Document();
+            let doc: Oas30Document = new Oas30Document();
+            doc.openapi = oasVersion;
+            return doc;
         }
 
         throw new Error("Unsupported OAS version: " + oasVersion);
@@ -52,27 +58,33 @@ export class OasDocumentFactory {
      * @return {Oas20Document}
      */
     public createFromObject(oasObject: any): OasDocument {
-        if (oasObject.swagger && oasObject.swagger === 2) {
-            oasObject.swagger = "2.0";
+        let ver: string = oasObject.swagger;
+        if (oasObject.openapi) {
+            ver = oasObject.openapi;
         }
-        if (oasObject.openapi && (oasObject.openapi === 3 || oasObject.openapi === 3.0 || oasObject.openapi === "3.0")) {
-            oasObject.openapi = "3.0.0";
+        if (ver && typeof ver !== "string") {
+            ver = "" + ver;
+        }
+
+        if (ver === "2") {
+            ver = "2.0";
+        }
+        if (ver === "3" ||  ver === "3.0") {
+            ver = "3.0.2";
         }
 
         // We side-effect the input object when reading it, so make a deep copy of it first.
         oasObject = JSON.parse(JSON.stringify(oasObject));
 
-        if (oasObject.swagger && oasObject.swagger === "2.0") {
+        if (ver === "2.0") {
+            oasObject.swagger = ver;
             let reader: Oas20JS2ModelReader = new Oas20JS2ModelReader();
             return reader.read(oasObject);
-        } else if (oasObject.openapi && (typeof oasObject.openapi === "string") && oasObject.openapi.indexOf("3.") === 0) {
+        } else if (ver && ver.indexOf("3.") === 0) {
+            oasObject.openapi = ver;
             let reader: Oas30JS2ModelReader = new Oas30JS2ModelReader();
             return reader.read(oasObject);
         } else {
-            let ver: string = oasObject.swagger;
-            if (!ver) {
-                ver = oasObject.openapi;
-            }
             throw new Error("Unsupported OAS version: " + ver);
         }
     }

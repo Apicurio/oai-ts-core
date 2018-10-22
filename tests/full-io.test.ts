@@ -69,7 +69,6 @@ class ExtraPropertyDetectionVisitor extends OasAllNodeVisitor {
 describe("Full I/O (2.0)", () => {
 
     let TESTS: TestSpec[] = [
-        { name: "Numeric Spec Version (2.0)",           test: "tests/fixtures/full-io/2.0/numeric-version.json",                                extraProperties: 0 },
         { name: "Simple (Easy 2.0 spec)",               test: "tests/fixtures/full-io/2.0/simple/simplest.json",                                extraProperties: 0 },
         { name: "Simple (Info)",                        test: "tests/fixtures/full-io/2.0/simple/simple-info.json",                             extraProperties: 0 },
         { name: "Simple (Info + extensions)",           test: "tests/fixtures/full-io/2.0/simple/simple-info-extensions.json",                  extraProperties: 0 },
@@ -171,7 +170,6 @@ describe("Full I/O (2.0)", () => {
 describe("Full I/O (3.0)", () => {
 
     let TESTS: TestSpec[] = [
-        { name: "Numeric Spec Version",                 test: "tests/fixtures/full-io/3.0/numeric-version.json",                            extraProperties: 0 },
         { name: "Simple (Easy 3.0 spec)",               test: "tests/fixtures/full-io/3.0/simple/simplest.json",                            extraProperties: 0 },
         { name: "Simple (Info)",                        test: "tests/fixtures/full-io/3.0/simple/simple-info.json",                         extraProperties: 0 },
         { name: "Simple (Info + extensions)",           test: "tests/fixtures/full-io/3.0/simple/simple-info-extensions.json",              extraProperties: 0 },
