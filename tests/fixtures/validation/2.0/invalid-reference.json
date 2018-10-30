@@ -979,7 +979,8 @@
         "Pet":{
             "required":[
                 "name",
-                "photoUrls"
+                "photoUrls",
+                "missingProperty"
             ],
             "properties":{
                 "id":{

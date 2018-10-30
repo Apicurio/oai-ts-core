@@ -128,6 +128,12 @@ export class Oas30InvalidReferenceValidationRule extends Oas30ValidationRule {
             this.reportIfInvalid("SCH-3-002", OasValidationRuleUtil.canResolveRef(node.$ref, node), node, "$ref",
                 `Schema Reference must refer to a valid Schema Definition.`);
         }
+        if (this.hasValue(node.required)) {
+            node.required.forEach( pname => {
+                this.reportIfInvalid("SCH-3-005", this.hasSchemaProperty(node, pname), node, "required",
+                    `Schema lists property "${ pname }" as required, but it does not exist.`);
+            });
+        }
     }
     public visitAllOfSchema(node: Oas30AllOfSchema): void { this.visitSchema(node); }
     public visitAnyOfSchema(node: Oas30AnyOfSchema): void { this.visitSchema(node); }
@@ -137,5 +143,9 @@ export class Oas30InvalidReferenceValidationRule extends Oas30ValidationRule {
     public visitItemsSchema(node: Oas30ItemsSchema): void { this.visitSchema(node); }
     public visitAdditionalPropertiesSchema(node: Oas30AdditionalPropertiesSchema): void { this.visitSchema(node); }
     public visitSchemaDefinition(node: Oas30SchemaDefinition): void { this.visitSchema(node); }
+
+    private hasSchemaProperty(schema: Oas30Schema, propertyName: string): boolean {
+        return this.hasValue(schema.properties) && this.hasValue(schema.properties[propertyName]);
+    }
 
 }

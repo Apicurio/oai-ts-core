@@ -148,7 +148,28 @@
     }
   },
   "components": {
-    "schemas": {},
+    "schemas": {
+      "sch-3-005": {
+        "required": [
+          "description",
+          "id",
+          "missingProperty"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "id": {
+            "format": "int32",
+            "type": "integer"
+          }
+        }
+      }
+    },
     "responses": {},
     "parameters": {},
     "examples": {},

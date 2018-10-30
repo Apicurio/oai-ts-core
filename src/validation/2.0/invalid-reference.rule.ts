@@ -23,7 +23,7 @@ import {
     Oas20AllOfSchema,
     Oas20ItemsSchema,
     Oas20PropertySchema,
-    Oas20Schema
+    Oas20Schema, Oas20SchemaDefinition
 } from "../../models/2.0/schema.model";
 import {Oas20PathItem} from "../../models/2.0/path-item.model";
 import {Oas20SecurityRequirement} from "../../models/2.0/security-requirement.model";
@@ -74,6 +74,12 @@ export class Oas20InvalidReferenceValidationRule extends Oas20ValidationRule {
             this.reportIfInvalid("SCH-001", OasValidationRuleUtil.canResolveRef(node.$ref, node), node, "$ref",
                 `Schema Reference must refer to a valid Schema Definition.`);
         }
+        if (this.hasValue(node.required)) {
+            node.required.forEach( pname => {
+                this.reportIfInvalid("SCH-002", this.hasSchemaProperty(node, pname), node, "required",
+                    `Schema lists property "${ pname }" as required, but it does not exist.`);
+            });
+        }
     }
 
     public visitPropertySchema(node: Oas20PropertySchema): void {
@@ -92,11 +98,20 @@ export class Oas20InvalidReferenceValidationRule extends Oas20ValidationRule {
         this.visitSchema(node);
     }
 
+    public visitSchemaDefinition(node: Oas20SchemaDefinition): void {
+        this.visitSchema(node);
+    }
+
+
     public visitSecurityRequirement(node: Oas20SecurityRequirement): void {
         node.securityRequirementNames().forEach( name => {
             this.reportIfInvalid("SREQ-001", this.isValidSecurityRequirementName(name, <Oas20Document>node.ownerDocument()), node, null,
                 `Security Requirement '${name}' must refer to a valid Security Definition.`);
         });
+    }
+
+    private hasSchemaProperty(schema: Oas20Schema, propertyName: string): boolean {
+        return this.hasValue(schema.properties) && this.hasValue(schema.properties[propertyName]);
     }
 
 }
