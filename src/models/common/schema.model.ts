@@ -107,6 +107,9 @@ export abstract class OasSchema extends OasExtensibleNode {
      * @return {string[]}
      */
     public propertyNames(): string[] {
+        if (!this.properties) {
+            return [];
+        }
         let rval: string[] = [];
         for (let name in this.properties) {
             rval.push(name);
