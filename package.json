@@ -1,6 +1,6 @@
 {
   "name": "oai-ts-core",
-  "version": "0.2.27",
+  "version": "0.2.28",
   "description": "A library to read and write OpenAPI documents.",
   "license": "Apache-2.0",
   "repository": {
