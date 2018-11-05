@@ -56,14 +56,12 @@ describe("Transformation", () => {
         {
             name: "Simple (Server)",
             input: "tests/fixtures/transformation/simple/simple-server.input.json",
-            expected: "tests/fixtures/transformation/simple/simple-server.expected.json",
-            debug: true
+            expected: "tests/fixtures/transformation/simple/simple-server.expected.json"
         },
         {
             name: "Simple (Server+Schemes)",
             input: "tests/fixtures/transformation/simple/simple-server-with-schemes.input.json",
-            expected: "tests/fixtures/transformation/simple/simple-server-with-schemes.expected.json",
-            debug: true
+            expected: "tests/fixtures/transformation/simple/simple-server-with-schemes.expected.json"
         },
         /** Paths Tests **/
         /** *********** **/
