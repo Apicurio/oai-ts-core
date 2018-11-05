@@ -107,4 +107,6 @@ export * from "./visitors/traverser";
 export * from "./validation/validation";
 export * from "./validation/validation.visitor";
 
+export * from "./transformation/transformation.visitor";
+
 export * from "./factories/schema.factory";

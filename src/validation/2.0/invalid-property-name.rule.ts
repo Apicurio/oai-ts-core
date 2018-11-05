@@ -20,8 +20,11 @@ import {Oas20Parameter, Oas20ParameterDefinition} from "../../models/2.0/paramet
 import {Oas20Response, Oas20ResponseDefinition} from "../../models/2.0/response.model";
 import {Oas20SecurityScheme} from "../../models/2.0/security-scheme.model";
 import {
-    Oas20AdditionalPropertiesSchema, Oas20AllOfSchema, Oas20ItemsSchema,
-    Oas20PropertySchema, Oas20Schema,
+    Oas20AdditionalPropertiesSchema,
+    Oas20AllOfSchema,
+    Oas20ItemsSchema,
+    Oas20PropertySchema,
+    Oas20Schema,
     Oas20SchemaDefinition
 } from "../../models/2.0/schema.model";
 import {Oas20PathItem} from "../../models/2.0/path-item.model";
@@ -36,21 +39,6 @@ import {Oas20SecurityDefinitions} from "../../models/2.0/security-definitions.mo
 import {Oas20Definitions} from "../../models/2.0/definitions.model";
 import {Oas20ParametersDefinitions} from "../../models/2.0/parameters-definitions.model";
 import {Oas20ResponsesDefinitions} from "../../models/2.0/responses-definitions.model";
-import {OasDocument} from "../../models/document.model";
-import {OasInfo} from "../../models/common/info.model";
-import {OasContact} from "../../models/common/contact.model";
-import {OasLicense} from "../../models/common/license.model";
-import {OasPaths} from "../../models/common/paths.model";
-import {OasPathItem} from "../../models/common/path-item.model";
-import {OasResponses} from "../../models/common/responses.model";
-import {OasSchema} from "../../models/common/schema.model";
-import {OasHeader} from "../../models/common/header.model";
-import {OasOperation} from "../../models/common/operation.model";
-import {OasXML} from "../../models/common/xml.model";
-import {OasSecurityScheme} from "../../models/common/security-scheme.model";
-import {OasSecurityRequirement} from "../../models/common/security-requirement.model";
-import {OasTag} from "../../models/common/tag.model";
-import {OasExternalDocumentation} from "../../models/common/external-documentation.model";
 import {OasExtension} from "../../models/extension.model";
 import {OasNode, OasValidationProblem} from "../../models/node.model";
 import {Oas20Info} from "../../models/2.0/info.model";

@@ -34,6 +34,9 @@ import {
 import {OasNodePath} from "./models/node-path";
 import {Oas20NodePathVisitor, Oas30NodePathVisitor} from "./visitors/path.visitor";
 import {DefaultValidationSeverityRegistry, IOasValidationSeverityRegistry} from "./validation/validation";
+import {Oas20Document} from "./models/2.0/document.model";
+import {Oas30Document} from "./models/3.0/document.model";
+import {Oas20to30TransformationVisitor} from "./transformation/transformation.visitor";
 
 /**
  * Represents the global OAS library entry point.  This is used, for example, when
@@ -66,6 +69,16 @@ export class OasLibraryUtils {
             }
         }
         throw new Error("Invalid input (must be either a string or object).");
+    }
+
+    /**
+     * Transforms from a 2.0 document into a 3.0 document.
+     * @param source
+     */
+    public transformDocument(source: Oas20Document): Oas30Document {
+        let transformer: Oas20to30TransformationVisitor = new Oas20to30TransformationVisitor();
+        OasVisitorUtil.visitTree(source, transformer);
+        return transformer.getResult();
     }
 
     /**

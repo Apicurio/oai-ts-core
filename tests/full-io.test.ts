@@ -187,6 +187,7 @@ describe("Full I/O (3.0)", () => {
         { name: "Paths (Parameters)",                   test: "tests/fixtures/full-io/3.0/paths/paths-parameters.json",                     extraProperties: 0 },
         { name: "Paths (GET+Servers)",                  test: "tests/fixtures/full-io/3.0/paths/paths-get-servers.json",                    extraProperties: 0 },
         { name: "Paths (GET+Security)",                 test: "tests/fixtures/full-io/3.0/paths/paths-get-security.json",                   extraProperties: 0 },
+        { name: "Paths (GET+AnonSecurity)",             test: "tests/fixtures/full-io/3.0/paths/paths-get-security-anon.json",              extraProperties: 0 },
         { name: "Paths (GET+Parameters)",               test: "tests/fixtures/full-io/3.0/paths/paths-get-parameters.json",                 extraProperties: 0 },
         { name: "Paths (GET+RequestBody)",              test: "tests/fixtures/full-io/3.0/paths/paths-get-requestBody.json",                extraProperties: 0 },
         { name: "Paths (GET+RequestBody+Content)",      test: "tests/fixtures/full-io/3.0/paths/paths-get-requestBody-content.json",        extraProperties: 0 },
@@ -208,7 +209,7 @@ describe("Full I/O (3.0)", () => {
         { name: "Components (Links)",                   test: "tests/fixtures/full-io/3.0/components/components-links.json",                extraProperties: 0 },
         { name: "Components (Callbacks)",               test: "tests/fixtures/full-io/3.0/components/components-callbacks.json",            extraProperties: 0 },
         { name: "Schemas (Discriminator)",              test: "tests/fixtures/full-io/3.0/schemas/discriminator.json",                      extraProperties: 0 },
-        { name: "Extra Properties",                     test: "tests/fixtures/full-io/3.0/extra-properties/extra-properties.json",          extraProperties: 3 }
+        { name: "Extra Properties",                     test: "tests/fixtures/full-io/3.0/extra-properties/extra-properties.json",          extraProperties: 3 },
     ];
 
     let library: OasLibraryUtils;
