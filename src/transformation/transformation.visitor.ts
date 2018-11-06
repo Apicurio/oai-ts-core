@@ -84,6 +84,7 @@ import {Oas30MediaType} from "../models/3.0/media-type.model";
 import {Oas30RequestBody, Oas30RequestBodyDefinition} from "../models/3.0/request-body.model";
 import {Oas30Server} from "../models/3.0/server.model";
 import {Oas30ServerVariable} from "../models/3.0/server-variable.model";
+import {ReferenceUtil} from "../util";
 
 /**
  * A visitor used to transform an OpenAPI 2.0 document into an OpenAPI 3.0.x document.
@@ -171,7 +172,7 @@ export class Oas20to30TransformationVisitor implements IOas20NodeVisitor {
         let pathItem30: Oas30PathItem = paths30.createPathItem(node.path());
         paths30.addPathItem(node.path(), pathItem30);
 
-        pathItem30.$ref = node.$ref;
+        pathItem30.$ref = this.updateRef(node.$ref);
 
         this.mapNode(node, pathItem30);
     }
@@ -211,8 +212,6 @@ export class Oas20to30TransformationVisitor implements IOas20NodeVisitor {
     }
 
     public visitParameter(node: Oas20Parameter): void {
-        // TODO handle a $ref to a formData parameter found in the definitions
-
         if (node.in === "body") {
             let operation30: Oas30Operation = this.lookup(this.findParentOperation(node)) as Oas30Operation;
             if (operation30) {
@@ -267,12 +266,42 @@ export class Oas20to30TransformationVisitor implements IOas20NodeVisitor {
                         schema30.addProperty(node.name, property30);
                         property30.description = node.description;
                         this.toSchema(node, property30, false);
+
+                        this.mapNode(node, schema30);
                     }
-                })
+                });
             }
         } else {
-            // TODO handle a $ref to a body parameter found in the definitions
+            if (this.isRef(node)) {
+                let paramDef: Oas20ParameterDefinition = ReferenceUtil.resolveRef(node.$ref, node) as Oas20ParameterDefinition;
 
+                // Handle the case where there is a parameter $ref to a "body" param.  All body params become
+                // Request Bodies.  So a reference to a "body" param should become a reference to a request body.
+                if (paramDef && paramDef.in === "body") {
+                    let parent30: Oas30Operation = this.lookup(this.findParentOperation(node)) as Oas30Operation;
+                    if (parent30) {
+                        let body30: Oas30RequestBody = parent30.createRequestBody();
+                        parent30.requestBody = body30;
+
+                        body30.$ref = "#/components/requestBodies/" + paramDef.parameterName();
+
+                        this.mapNode(node, body30);
+                        return;
+                    }
+                }
+
+                // Handle the case where the parameter is a $ref to a formData param.  In this case we want to
+                // treat the param as though it is inlined (which will result in a requestBody model).
+                if (paramDef && paramDef.in === "formData") {
+                    // Inline the parameter definition and then re-visit it.
+                    this._library.readNode(this._library.writeNode(paramDef), node);
+                    node.$ref = null;
+                    this.visitParameter(node);
+                    return;
+                }
+            }
+
+            // Now we have normal handling of a parameter, examples include path params, query params, header params, etc.
             let parent30: IOasParameterParent = this.lookup(node.parent()) as any;
             let param30: Oas30Parameter = parent30.createParameter() as Oas30Parameter;
             parent30.addParameter(param30);
@@ -282,7 +311,7 @@ export class Oas20to30TransformationVisitor implements IOas20NodeVisitor {
     }
 
     private transformParam(node: Oas20ParameterBase, param30: Oas30Parameter): Oas30Parameter {
-        param30.$ref = node["$ref"];
+        param30.$ref = this.updateRef(node["$ref"]);
         if (param30.$ref) {
             return param30;
         }
@@ -367,7 +396,7 @@ export class Oas20to30TransformationVisitor implements IOas20NodeVisitor {
         let response30: Oas30Response = parent30.createResponse(node.statusCode());
         parent30.addResponse(node.statusCode(), response30);
 
-        response30.$ref = node.$ref;
+        response30.$ref = this.updateRef(node.$ref);
         this.transformResponse(node, response30);
 
         this.mapNode(node, response30);
@@ -664,7 +693,7 @@ export class Oas20to30TransformationVisitor implements IOas20NodeVisitor {
 
         if (isSchema) {
             let schema20: Oas20Schema = from as Oas20Schema;
-            schema30.$ref = schema20.$ref;
+            schema30.$ref = this.updateRef(schema20.$ref);
             if (typeof schema20.additionalProperties === "boolean") {
                 schema30.additionalProperties = schema20.additionalProperties as boolean;
             }
@@ -751,6 +780,26 @@ export class Oas20to30TransformationVisitor implements IOas20NodeVisitor {
         return false;
     }
 
+    private isRef(node: Oas20Schema | Oas20Response | Oas20Parameter): boolean {
+        return node.$ref && node.$ref.length > 0;
+    }
+
+    private updateRef($ref: string): string {
+        if (!$ref || $ref.length === 0) {
+            return $ref;
+        }
+        let split: string[] = $ref.split("/");
+        if (split[0] === "#") {
+            if (split[1] === "definitions") {
+                split.splice(1, 1, "components", "schemas");
+            } else if (split[1] === "parameters") {
+                split.splice(1, 1, "components", "parameters");
+            } else if (split[1] === "responses") {
+                split.splice(1, 1, "components", "responses");
+            }
+        }
+        return split.join("/");
+    }
 
 }
 

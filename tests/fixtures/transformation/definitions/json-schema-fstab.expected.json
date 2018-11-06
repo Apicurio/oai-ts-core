@@ -90,16 +90,16 @@
             "type": "object",
             "allOf": [
               {
-                "$ref": "#/definitions/diskDevice"
+                "$ref": "#/components/schemas/diskDevice"
               },
               {
-                "$ref": "#/definitions/diskUUID"
+                "$ref": "#/components/schemas/diskUUID"
               },
               {
-                "$ref": "#/definitions/nfs"
+                "$ref": "#/components/schemas/nfs"
               },
               {
-                "$ref": "#/definitions/tmpfs"
+                "$ref": "#/components/schemas/tmpfs"
               }
             ]
           },

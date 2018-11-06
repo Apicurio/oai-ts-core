@@ -9,7 +9,7 @@
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/VeryComplexType"
+                "$ref": "#/components/schemas/VeryComplexType"
               }
             }
           }

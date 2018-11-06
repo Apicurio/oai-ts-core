@@ -8,7 +8,7 @@
         "operationId": "listPets",
         "responses": {
           "200": {
-            "$ref": "#/responses/Common200"
+            "$ref": "#/components/responses/Common200"
           }
         }
       }

@@ -116,11 +116,6 @@ describe("Transformation", () => {
             expected: "tests/fixtures/transformation/paths/paths-response-with-headers.expected.json"
         },
         {
-            name: "Paths (Response+Ref)",
-            input: "tests/fixtures/transformation/paths/paths-response-with-ref.input.json",
-            expected: "tests/fixtures/transformation/paths/paths-response-with-ref.expected.json"
-        },
-        {
             name: "Paths (Response+Schema)",
             input: "tests/fixtures/transformation/paths/paths-response-with-schema.input.json",
             expected: "tests/fixtures/transformation/paths/paths-response-with-schema.expected.json"
@@ -273,6 +268,33 @@ describe("Transformation", () => {
             input: "tests/fixtures/transformation/security/security-allSchemes.input.json",
             expected: "tests/fixtures/transformation/security/security-allSchemes.expected.json"
         },
+        /** Reference Tests **/
+        /** *************** **/
+        {
+            name: "References (Schema)",
+            input: "tests/fixtures/transformation/references/schema-reference.input.json",
+            expected: "tests/fixtures/transformation/references/schema-reference.expected.json"
+        },
+        {
+            name: "References (Response)",
+            input: "tests/fixtures/transformation/references/response-reference.input.json",
+            expected: "tests/fixtures/transformation/references/response-reference.expected.json"
+        },
+        {
+            name: "References (Parameter)",
+            input: "tests/fixtures/transformation/references/parameter-reference.input.json",
+            expected: "tests/fixtures/transformation/references/parameter-reference.expected.json"
+        },
+        {
+            name: "References (Body Parameter)",
+            input: "tests/fixtures/transformation/references/bodyParam-reference.input.json",
+            expected: "tests/fixtures/transformation/references/bodyParam-reference.expected.json",
+        },
+        {
+            name: "References (Form Data Parameter)",
+            input: "tests/fixtures/transformation/references/formDataParam-reference.input.json",
+            expected: "tests/fixtures/transformation/references/formDataParam-reference.expected.json"
+        },
 
     ];
 
@@ -286,10 +308,17 @@ describe("Transformation", () => {
     TESTS.forEach( spec => {
         it(spec.name, () => {
             if (spec.debug) {
-                console.info("*******  Running input: " + spec.name);
+                console.info("*******  Running input: " + spec.input);
             }
             let inputJso: any = readJSON(spec.input);
             let expectedJso: any = readJSON(spec.expected);
+
+            if (!inputJso && spec.debug) {
+                console.error("Failed to load input: " + spec.input);
+            }
+            if (!expectedJso && spec.debug) {
+                console.error("Failed to load expected: " + spec.expected);
+            }
 
             expect(inputJso).toBeTruthy();
             expect(expectedJso).toBeTruthy();

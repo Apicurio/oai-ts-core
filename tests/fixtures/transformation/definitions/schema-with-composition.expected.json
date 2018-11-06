@@ -22,7 +22,7 @@
       "ExtendedErrorModel": {
         "allOf": [
           {
-            "$ref": "#/definitions/ErrorModel"
+            "$ref": "#/components/schemas/ErrorModel"
           },
           {
             "type": "object",

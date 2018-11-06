@@ -13,7 +13,7 @@
         "content": {
           "*/*": {
             "schema": {
-              "$ref": "#/definitions/GeneralError"
+              "$ref": "#/components/schemas/GeneralError"
             }
           }
         }

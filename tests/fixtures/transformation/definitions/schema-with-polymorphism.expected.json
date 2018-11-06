@@ -24,7 +24,7 @@
         "description": "A representation of a cat",
         "allOf": [
           {
-            "$ref": "#/definitions/Pet"
+            "$ref": "#/components/schemas/Pet"
           },
           {
             "type": "object",
@@ -51,7 +51,7 @@
         "description": "A representation of a dog",
         "allOf": [
           {
-            "$ref": "#/definitions/Pet"
+            "$ref": "#/components/schemas/Pet"
           },
           {
             "type": "object",

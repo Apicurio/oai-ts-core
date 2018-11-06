@@ -12,7 +12,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/definitions/String"
+                  "$ref": "#/components/schemas/String"
                 },
                 "example": {
                   "name": "Puma",
@@ -29,7 +29,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/definitions/ErrorModel"
+                  "$ref": "#/components/schemas/ErrorModel"
                 }
               }
             }

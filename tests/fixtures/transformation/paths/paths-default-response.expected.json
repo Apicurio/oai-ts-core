@@ -12,7 +12,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/definitions/ErrorModel"
+                  "$ref": "#/components/schemas/ErrorModel"
                 }
               }
             }

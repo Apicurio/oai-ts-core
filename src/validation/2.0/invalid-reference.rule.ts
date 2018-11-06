@@ -23,12 +23,13 @@ import {
     Oas20AllOfSchema,
     Oas20ItemsSchema,
     Oas20PropertySchema,
-    Oas20Schema, Oas20SchemaDefinition
+    Oas20Schema,
+    Oas20SchemaDefinition
 } from "../../models/2.0/schema.model";
 import {Oas20PathItem} from "../../models/2.0/path-item.model";
 import {Oas20SecurityRequirement} from "../../models/2.0/security-requirement.model";
 import {Oas20Document} from "../../models/2.0/document.model";
-import {OasValidationRuleUtil} from "../validation";
+import {ReferenceUtil} from "../../util";
 
 /**
  * Implements the Invalid Reference validation rule.  This rule is responsible
@@ -50,28 +51,28 @@ export class Oas20InvalidReferenceValidationRule extends Oas20ValidationRule {
 
     public visitParameter(node: Oas20Parameter): void {
         if (this.hasValue(node.$ref)) {
-            this.reportIfInvalid("PAR-018", OasValidationRuleUtil.canResolveRef(node.$ref, node), node, "$ref",
+            this.reportIfInvalid("PAR-018", ReferenceUtil.canResolveRef(node.$ref, node), node, "$ref",
                 `Parameter Reference must refer to a valid Parameter Definition.`);
         }
     }
 
     public visitPathItem(node: Oas20PathItem): void {
         if (this.hasValue(node.$ref)) {
-            this.reportIfInvalid("PATH-001", OasValidationRuleUtil.canResolveRef(node.$ref, node), node, "$ref",
+            this.reportIfInvalid("PATH-001", ReferenceUtil.canResolveRef(node.$ref, node), node, "$ref",
                 `Path Item Reference must refer to a valid Path Item Definition.`);
         }
     }
 
     public visitResponse(node: Oas20Response): void {
         if (this.hasValue(node.$ref)) {
-            this.reportIfInvalid("RES-002", OasValidationRuleUtil.canResolveRef(node.$ref, node), node, "$ref",
+            this.reportIfInvalid("RES-002", ReferenceUtil.canResolveRef(node.$ref, node), node, "$ref",
                 `Response Reference must refer to a valid Response Definition.`);
         }
     }
 
     public visitSchema(node: Oas20Schema): void {
         if (this.hasValue(node.$ref)) {
-            this.reportIfInvalid("SCH-001", OasValidationRuleUtil.canResolveRef(node.$ref, node), node, "$ref",
+            this.reportIfInvalid("SCH-001", ReferenceUtil.canResolveRef(node.$ref, node), node, "$ref",
                 `Schema Reference must refer to a valid Schema Definition.`);
         }
         if (this.hasValue(node.required)) {

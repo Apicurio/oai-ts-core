@@ -168,47 +168,6 @@ export class OasValidationRuleUtil {
         return items.indexOf(value) != -1;
     }
 
-
-    /**
-     * Resolves a reference from a relative position in the data model.
-     * @param $ref
-     * @param from
-     */
-    public static resolveRef($ref: string, from: OasNode): OasNode {
-        // TODO implement a proper reference resolver including external file resolution: https://github.com/EricWittmann/oai-ts-core/issues/8
-        let split: string[] = $ref.split("/");
-        let cnode: OasNode = null;
-        split.forEach( seg => {
-            if (seg === "#") {
-                cnode = from.ownerDocument();
-            } else if (this.hasValue(cnode)) {
-                if (cnode["__instanceof_IOasIndexedNode"]) {
-                    cnode = cnode["getItem"](seg);
-                } else {
-                    cnode = cnode[seg];
-                }
-            }
-        });
-        return cnode;
-    }
-
-    /**
-     * Returns true only if the given reference can be resolved relative to the given document.  Examples
-     * of $ref values include:
-     *
-     * #/definitions/ExampleDefinition
-     * #/parameters/fooId
-     * #/responses/NotFoundResponse
-     *
-     * @param $ref
-     * @param oasDocument
-     */
-    public static canResolveRef($ref: string, from: OasNode): boolean {
-        // Don't try to resolve e.g. external references.
-        if ($ref.indexOf('#/') !== 0) { return true; }
-        return this.hasValue(OasValidationRuleUtil.resolveRef($ref, from));
-    }
-
     /**
      * Returns true only if the given value is a valid host.
      * @param propertyValue

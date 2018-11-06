@@ -76,9 +76,18 @@ export class OasLibraryUtils {
      * @param source
      */
     public transformDocument(source: Oas20Document): Oas30Document {
+        let clone: Oas20Document = this.cloneDocument(source) as Oas20Document;
         let transformer: Oas20to30TransformationVisitor = new Oas20to30TransformationVisitor();
-        OasVisitorUtil.visitTree(source, transformer);
+        OasVisitorUtil.visitTree(clone, transformer);
         return transformer.getResult();
+    }
+
+    /**
+     * Clones the given document by serializing it to a JS object, and then re-parsing it.
+     * @param source
+     */
+    public cloneDocument(source: OasDocument): OasDocument {
+        return this.createDocument(this.writeNode(source));
     }
 
     /**

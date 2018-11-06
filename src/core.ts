@@ -97,6 +97,8 @@ export * from "./models/3.0/server-variable.model";
 export * from "./models/3.0/tag.model";
 export * from "./models/3.0/xml.model";
 
+export * from "./util";
+
 export * from "./library.utils";
 
 export * from "./visitors/visitor.base";

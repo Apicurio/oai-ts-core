@@ -32,7 +32,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/definitions/String"
+                  "$ref": "#/components/schemas/String"
                 }
               }
             }
@@ -42,7 +42,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/definitions/ErrorModel"
+                  "$ref": "#/components/schemas/ErrorModel"
                 }
               }
             }

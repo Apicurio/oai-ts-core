@@ -36,7 +36,7 @@
             }
           },
           {
-            "$ref": "#/parameters/qinfo"
+            "$ref": "#/components/parameters/qinfo"
           }
         ],
         "requestBody": {
@@ -45,7 +45,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/definitions/User"
+                "$ref": "#/components/schemas/User"
               }
             }
           }
