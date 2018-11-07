@@ -75,12 +75,12 @@ export class Oas20InvalidReferenceValidationRule extends Oas20ValidationRule {
             this.reportIfInvalid("SCH-001", ReferenceUtil.canResolveRef(node.$ref, node), node, "$ref",
                 `Schema Reference must refer to a valid Schema Definition.`);
         }
-        if (this.hasValue(node.required)) {
-            node.required.forEach( pname => {
-                this.reportIfInvalid("SCH-002", this.hasSchemaProperty(node, pname), node, "required",
-                    `Schema lists property "${ pname }" as required, but it does not exist.`);
-            });
-        }
+        // if (this.hasValue(node.required)) {
+        //     node.required.forEach( pname => {
+        //         this.reportIfInvalid("SCH-002", this.hasSchemaProperty(node, pname), node, "required",
+        //             `Schema lists property "${ pname }" as required, but it does not exist.`);
+        //     });
+        // }
     }
 
     public visitPropertySchema(node: Oas20PropertySchema): void {

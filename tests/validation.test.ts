@@ -252,8 +252,7 @@ describe("Validation (2.0)", () => {
 [SCH-001] |2| {/paths[/pet]/post/parameters[0]/schema->$ref} :: Schema Reference must refer to a valid Schema Definition.
 [SCH-001] |2| {/paths[/pet/findByStatus]/get/responses[200]/schema/items->$ref} :: Schema Reference must refer to a valid Schema Definition.
 [SREQ-001] |2| {/paths[/pet/findByStatus]/get/security[0]->null} :: Security Requirement 'petstore_auth_notfound' must refer to a valid Security Definition.
-[RES-002] |2| {/paths[/pet/findByTags]/get/responses[404]->$ref} :: Response Reference must refer to a valid Response Definition.
-[SCH-002] |2| {/definitions[Pet]->required} :: Schema lists property "missingProperty" as required, but it does not exist.`;
+[RES-002] |2| {/paths[/pet/findByTags]/get/responses[404]->$ref} :: Response Reference must refer to a valid Response Definition.`;
 
         assertValidationOutput(actual, expected);
     });
@@ -436,7 +435,6 @@ describe("Validation (3.0)", () => {
 [RB-3-003] |2| {/paths[/rb-3-003]/post/requestBody->$ref} :: Request Body Reference must refer to a valid Request Body Definition.
 [RES-3-004] |2| {/paths[/res-3-004]/get/responses[200]->$ref} :: Response Reference must refer to a valid Response Definition.
 [SCH-3-002] |2| {/paths[/sch-3-002]/parameters[0]/schema->$ref} :: Schema Reference must refer to a valid Schema Definition.
-[SCH-3-005] |2| {/components/schemas[sch-3-005]->required} :: Schema lists property "missingProperty" as required, but it does not exist.
 [SS-3-012] |2| {/components/securitySchemes[BASIC]->$ref} :: Security Scheme Reference must refer to a valid Security Scheme Definition.`;
 
         assertValidationOutput(actual, expected);
