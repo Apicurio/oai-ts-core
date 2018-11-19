@@ -36,7 +36,7 @@ export class OasDocumentFactory {
      * @return {OasDocument}
      */
     public createEmpty(oasVersion: string): OasDocument {
-        const ver = oasVersion;
+        const ver: string | number = oasVersion;
         oasVersion = this.parseVersion(oasVersion);
 
         if (oasVersion && oasVersion === "2.0") {
@@ -103,7 +103,7 @@ export class OasDocumentFactory {
      * @return {string | undefined}
      */
     private parseVersion(ver: any) {
-        let version;
+        let version: string | undefined;
         if (ver) {
             if (typeof ver !== "string") {
                 ver = "" + ver;
