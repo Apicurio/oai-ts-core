@@ -294,6 +294,11 @@ describe("Document Factory", () => {
         documentFactory = new OasDocumentFactory();
     });
 
+    it("From Version (undefined)", () => {
+        expect(() => {
+            documentFactory.createEmpty(undefined as any);
+        }).toThrow();
+    });
 
     it("From Version (2)", () => {
         let doc: Oas20Document = documentFactory.createEmpty(2 as any) as Oas20Document;
@@ -307,21 +312,98 @@ describe("Document Factory", () => {
         expect(doc.swagger).toEqual("2.0");
     });
 
+    it("From Version ('2')", () => {
+        let doc: Oas20Document = documentFactory.createEmpty("2") as Oas20Document;
+        expect(doc).toBeTruthy();
+        expect(doc.swagger).toEqual("2.0");
+    });
+
     it("From Version ('2.0')", () => {
         let doc: Oas20Document = documentFactory.createEmpty("2.0") as Oas20Document;
         expect(doc).toBeTruthy();
         expect(doc.swagger).toEqual("2.0");
     });
 
-    it("From Version (2.1)", () => {
+    it("From Version ('2.0.1')", () => {
+        let doc: Oas20Document = documentFactory.createEmpty("2.0.1") as Oas20Document;
+        expect(doc).toBeTruthy();
+        expect(doc.swagger).toEqual("2.0");
+    });
+
+    it("From Document (undefined)", () => {
+        expect(() => {
+            documentFactory.createFromObject({ swagger: undefined });
+        }).toThrow();
+    });
+
+    it("From Document (2)", () => {
+        let doc: Oas20Document = documentFactory.createFromObject({ swagger: 2 }) as Oas20Document;
+        expect(doc).toBeTruthy();
+        expect(doc.swagger).toEqual("2.0");
+    });
+
+    it("From Document (2.0)", () => {
+        let doc: Oas20Document = documentFactory.createFromObject({ swagger: 2.0 }) as Oas20Document;
+        expect(doc).toBeTruthy();
+        expect(doc.swagger).toEqual("2.0");
+    });
+
+    it("From Document (2.1)", () => {
         expect(() => {
             documentFactory.createFromObject({ swagger: 2.1 });
         }).toThrow();
     });
 
+    it("From Document ('2')", () => {
+        let doc: Oas20Document = documentFactory.createFromObject({ swagger: "2" }) as Oas20Document;
+        expect(doc).toBeTruthy();
+        expect(doc.swagger).toEqual("2.0");
+    });
+
+    it("From Document ('2.0')", () => {
+        let doc: Oas20Document = documentFactory.createFromObject({ swagger: "2.0" }) as Oas20Document;
+        expect(doc).toBeTruthy();
+        expect(doc.swagger).toEqual("2.0");
+    });
+
+    it("From Document ('2.0.1')", () => {
+        let doc: Oas20Document = documentFactory.createFromObject({ swagger: "2.0.1" }) as Oas20Document;
+        expect(doc).toBeTruthy();
+        expect(doc.swagger).toEqual("2.0");
+    });
+
+    it("From Document ('2.1')", () => {
+        expect(() => {
+            documentFactory.createFromObject({ swagger: "2.1" });
+        }).toThrow();
+    });
 
     it("From Version (3)", () => {
+        let doc: Oas30Document = documentFactory.createEmpty(3 as any) as Oas30Document;
+        expect(doc).toBeTruthy();
+        expect(doc.openapi).toEqual("3.0.2");
+    });
+
+    it("From Version (3.0)", () => {
         let doc: Oas30Document = documentFactory.createEmpty(3.0 as any) as Oas30Document;
+        expect(doc).toBeTruthy();
+        expect(doc.openapi).toEqual("3.0.2");
+    });
+
+    it("From Version (3.1)", () => {
+        expect(() => {
+            documentFactory.createEmpty(3.1 as any);
+        }).toThrow();
+    });
+
+    it("From Version (4)", () => {
+        expect(() => {
+            documentFactory.createEmpty(4 as any);
+        }).toThrow();
+    });
+
+    it("From Version ('3')", () => {
+        let doc: Oas30Document = documentFactory.createEmpty("3") as Oas30Document;
         expect(doc).toBeTruthy();
         expect(doc.openapi).toEqual("3.0.2");
     });
@@ -348,6 +430,48 @@ describe("Document Factory", () => {
         let doc: Oas30Document = documentFactory.createEmpty("3.0.2") as Oas30Document;
         expect(doc).toBeTruthy();
         expect(doc.openapi).toEqual("3.0.2");
+    });
+
+    it("From Version ('3.0.3')", () => {
+        let doc: Oas30Document = documentFactory.createEmpty("3.0.3") as Oas30Document;
+        expect(doc).toBeTruthy();
+        expect(doc.openapi).toEqual("3.0.3");
+    });
+
+    it("From Version ('3.0.2.1.2')", () => {
+        let doc: Oas30Document = documentFactory.createEmpty("3.0.2.1.2") as Oas30Document;
+        expect(doc).toBeTruthy();
+        expect(doc.openapi).toEqual("3.0.2");
+    });
+
+    it("From Version ('3.0.2-rc1')", () => {
+        let doc: Oas30Document = documentFactory.createEmpty("3.0.2-rc1") as Oas30Document;
+        expect(doc).toBeTruthy();
+        expect(doc.openapi).toEqual("3.0.2");
+    });
+
+    it("From Version ('3.1')", () => {
+        expect(() => {
+            documentFactory.createEmpty("3.1");
+        }).toThrow();
+    });
+
+    it("From Version ('3.1.0')", () => {
+        expect(() => {
+            documentFactory.createEmpty("3.1.0");
+        }).toThrow();
+    });
+
+    it("From Version ('4.0.1')", () => {
+        expect(() => {
+            documentFactory.createEmpty("4.0.1");
+        }).toThrow();
+    });
+
+    it("From Document (undefined)", () => {
+        expect(() => {
+            documentFactory.createFromObject({ openapi: undefined });
+        }).toThrow();
     });
 
     it("From Document (3)", () => {
