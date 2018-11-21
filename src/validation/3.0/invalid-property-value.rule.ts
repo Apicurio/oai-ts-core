@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {Oas30ValidationRule} from "./common.rule";
+import {Oas30PathValidationRule, PathSegment} from "./common.rule";
 import {OasValidationRuleUtil} from "../validation";
 import {Oas30XML} from "../../models/3.0/xml.model";
 import {Oas30Schema} from "../../models/3.0/schema.model";
@@ -65,10 +65,10 @@ export class Oas30OperationFinder extends Oas30NodeVisitorAdapter {
  * Implements the Invalid Property Value validation rule.  This rule is responsible
  * for reporting whenever the **value** of a property fails to conform to requirements
  * outlined by the specification.  This is typically things like enums, where the
- * *format* of the value is fine (e.g. correct data-type) but the valid is somehow
+ * *format* of the value is fine (e.g. correct data-type) but the value is somehow
  * invalid.
  */
-export class Oas30InvalidPropertyValueValidationRule extends Oas30ValidationRule {
+export class Oas30InvalidPropertyValueValidationRule extends Oas30PathValidationRule {
 
     /**
      * Returns true if the given value is a valid operationId.
@@ -77,28 +77,6 @@ export class Oas30InvalidPropertyValueValidationRule extends Oas30ValidationRule
     private isValidOperationId(id: string): boolean {
         // TODO implement a regex for this? should be something like camelCase
         return true;
-    }
-
-    /**
-     * Parses the given path template for segments.  For example, a path template might be
-     *
-     * /foo/{fooId}/resources/{resourceId}
-     *
-     * In this case, this method will return [ "fooId", "resourceId" ]
-     *
-     * @param pathTemplate
-     * @return {Array}
-     */
-    private parsePathTemplate(pathTemplate: string): string[] {
-        let segments: string[] = [];
-        let split: string[] = pathTemplate.split('/');
-        split.forEach( seg => {
-            if (seg.indexOf('{') === 0) {
-                let segment: string = seg.substring(1, seg.lastIndexOf('}')).trim();
-                segments.push(segment);
-            }
-        });
-        return segments;
     }
 
     /**
@@ -270,9 +248,9 @@ export class Oas30InvalidPropertyValueValidationRule extends Oas30ValidationRule
                 pathItem = <Oas30PathItem>(node.parent().parent());
             }
             let path: string = pathItem.path();
-            let pathVars: string[] = this.parsePathTemplate(path);
-            this.reportIfInvalid("PAR-3-018", OasValidationRuleUtil.isValidEnumItem(node.name, pathVars), node, "name",
-                `Path Parameter not found in path template.`);
+            let pathSegs: PathSegment[] = this.getPathSegments(path);
+            this.reportIfInvalid("PAR-3-018", pathSegs.filter(pathSeg => pathSeg.formalName === node.name).length > 0, node, "name",
+            `Path Parameter not found in path template.`);
 
             this.reportIfInvalid("PAR-3-006", node.required === true, node, "required",
                 `Path Parameters must be marked as "required".`);

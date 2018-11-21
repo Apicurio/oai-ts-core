@@ -348,15 +348,31 @@ describe("Validation (3.0)", () => {
     it("Invalid Property Name", () => {
         let json: any = readJSON('tests/fixtures/validation/3.0/invalid-property-name.json');
         let document: Oas30Document = library.createDocument(json) as Oas30Document;
-
+    
         let node: OasNode = document;
         let errors: OasValidationProblem[] = library.validate(node);
-
+    
         let actual: string = errorsAsString(errors);
         let expected: string =
 `[ENC-3-006] |2| {/paths[/enc-3-006]/post/requestBody/content[multipart/mixed]/encoding[missingProperty]->missingProperty} :: Encoding Property "missingProperty" not found in the associated schema.
 [RES-3-001] |2| {/paths[/pets]/get/responses[Success]->null} :: "Success" is not a valid HTTP response status code.
-[PATH-3-004] |2| {/paths[pets/{id}]->null} :: Paths must start with a '/' character.
+[PATH-3-004] |2| {/paths[pets/{id}]->null} :: Paths template is invalid. Path templates must be of the form '/abc', '/{def}/', '/abc/g{def}'.
+[PATH-3-005] |2| {/paths[//pathstest11]->null} :: Path templates must not contain empty segments between forward slashes. Path templates must be of the form '/abc', '/{def}/', '/abc/g{def}'.
+[PATH-3-004] |2| {/paths[pathstest12]->null} :: Paths template is invalid. Path templates must be of the form '/abc', '/{def}/', '/abc/g{def}'.
+[PATH-3-004] |2| {/paths[{pathstest13}]->null} :: Paths template is invalid. Path templates must be of the form '/abc', '/{def}/', '/abc/g{def}'.
+[PATH-3-004] |2| {/paths[/{{pathstest14}}]->null} :: Paths template is invalid. Path templates must be of the form '/abc', '/{def}/', '/abc/g{def}'.
+[PATH-3-004] |2| {/paths[/pathstest15/{var1}{var2}]->null} :: Paths template is invalid. Path templates must be of the form '/abc', '/{def}/', '/abc/g{def}'.
+[PATH-3-004] |2| {/paths[/pathstest16/{var]->null} :: Paths template is invalid. Path templates must be of the form '/abc', '/{def}/', '/abc/g{def}'.
+[PATH-3-004] |2| {/paths[/pathstest17/var}]->null} :: Paths template is invalid. Path templates must be of the form '/abc', '/{def}/', '/abc/g{def}'.
+[PATH-3-004] |2| {/paths[/pathstest19/{1var}]->null} :: Paths template is invalid. Path templates must be of the form '/abc', '/{def}/', '/abc/g{def}'.
+[PATH-3-006] |2| {/paths[/pathstest22/{var}/{var}]->null} :: Path template contains duplicate variables (var).
+[PATH-3-006] |2| {/paths[/pathstest23/{var1}/{var2}/a{var2}/{var1}]->null} :: Path template contains duplicate variables (var1, var2).
+[PATH-3-007] |2| {/paths[/pathstest25/]->null} :: Path semantically identical to other paths.
+[PATH-3-007] |2| {/paths[/pathstest25]->null} :: Path semantically identical to other paths.
+[PATH-3-007] |2| {/paths[/pathstest26/{var}/]->null} :: Path semantically identical to other paths.
+[PATH-3-007] |2| {/paths[/pathstest26/{var}]->null} :: Path semantically identical to other paths.
+[PATH-3-007] |2| {/paths[/pathstest27/{var2}/]->null} :: Path semantically identical to other paths.
+[PATH-3-007] |2| {/paths[/pathstest27/{var1}]->null} :: Path semantically identical to other paths.
 [COMP-3-001] |2| {/components/schemas[Pet+Foo]->name} :: Schema Definition Name is not valid.
 [COMP-3-003] |2| {/components/responses[The Response]->name} :: Response Definition Name is not valid.
 [COMP-3-002] |2| {/components/parameters[Some$Parameter]->parameterName} :: Parameter Definition Name is not valid.
@@ -367,10 +383,10 @@ describe("Validation (3.0)", () => {
 [COMP-3-008] |2| {/components/links[Link*Twelve]->name} :: The Link Definition Name is not valid.
 [COMP-3-009] |2| {/components/callbacks[Invalid Callback Name]->name} :: The Callback Definition Name is not valid.
 [SREQ-3-001] |2| {/security[1]->null} :: "MissingAuth" does not match a declared Security Scheme.`;
-
+    
         assertValidationOutput(actual, expected);
     });
-
+    
     it("Invalid Property Value", () => {
         let json: any = readJSON('tests/fixtures/validation/3.0/invalid-property-value.json');
         let document: Oas30Document = library.createDocument(json) as Oas30Document;

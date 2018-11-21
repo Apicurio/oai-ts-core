@@ -96,3 +96,89 @@ export abstract class Oas30ValidationRule extends Oas30NodeVisitorAdapter {
     }
 
 }
+
+/**
+ * Type encapsulating information about a path segment.
+ * Consumers of this type should not rely on normalizedName property which is only provided to weed out duplicates.
+ */
+export type PathSegment = {
+    segId: number;
+    prefix: string;
+    formalName?: string;
+    normalizedName?: string;
+};
+
+/**
+ * Base class for all 3.0 validation rules that have to work with paths.
+ */
+export abstract class Oas30PathValidationRule extends Oas30ValidationRule {
+
+    /**
+     * Regular expression to match path - accepts '/', '/1', /abc', '/abc/', /{var}', '/{var}/', '/abc/prefix{var}'
+     * Path expressions must not start with numerics.
+     */
+    private pathMatchEx = new RegExp(/^(\/[^{}\/]*(\{[a-zA-Z_][0-9a-zA-Z_]*\})?)+$/);
+
+    /**
+     * Regular expression to match path segments.
+     */
+    private segMatchEx =  new RegExp(/\/([^{}\/]*)(\{([a-zA-Z_][0-9a-zA-Z_]*)\})?/g);
+
+    /**
+     * Checks the path template against the regular expression and returns match result.
+     *
+     * @param pathTemplate
+     * @return {boolean}
+     */
+    protected isPathWellFormed(pathTemplate: string): boolean {
+        return this.pathMatchEx.test(pathTemplate);
+    }
+
+    /**
+     * Finds all occurences of path segment patterns in a path template.
+     *
+     * @param pathTemplate
+     * @return {PathSegment[]}
+     */
+    protected getPathSegments(pathTemplate: string): PathSegment[] {
+        const pathSegments: PathSegment[] = [];
+        // If path is root '/', simply return empty segments
+        if (pathTemplate === "/") {
+            return pathSegments;
+        }
+        let normalizedPath: string = pathTemplate;
+        // Remove the trailing slash if the path ends with slash
+        if (pathTemplate.lastIndexOf("/") === pathTemplate.length - 1) {
+            normalizedPath = pathTemplate.substring(0, pathTemplate.length - 1);
+        }
+        // Look for all occurence of string like {param1}
+        let match: RegExpExecArray;
+        let segId = 0;
+        while ((match = this.segMatchEx.exec(normalizedPath))) {
+            const pathSegment: PathSegment = {
+                segId,
+                prefix: match[1],
+            };
+            // parameter name is inside the curly braces (group 3)
+            if (match[3] !== undefined) {
+                pathSegment.formalName = match[3];
+                pathSegment.normalizedName = `__param__${segId}`;
+            }
+            pathSegments.push(pathSegment);
+            segId = segId + 1;
+        }
+        return pathSegments;
+    }
+
+    /**
+     * Utility function to report path related errors.
+     * @param code
+     * @param node
+     * @param message
+     * @param includeExample
+     */
+    protected reportPathError(code: string, node: OasNode, message: string, includeExample: boolean = true) {
+        this.report(code, node, null, `${message}${includeExample === true ? " Path templates must be of the form '/abc', '/{def}/', '/abc/g{def}'." : ""}`);
+    }
+
+}
