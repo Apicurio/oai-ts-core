@@ -109,7 +109,7 @@ export class Oas20RequiredPropertyValidationRule extends Oas20ValidationRule {
 
         if (node.in === "path" && node.required !== true) {
             this.report("PAR-003", node, "required",
-                `Path Properties must be marked as required.`);
+                `Path Parameter "${node.name}" must be marked as required.`);
         }
 
         if (node.in === "body") {

@@ -135,8 +135,6 @@ export class Oas30RequiredPropertyValidationRule extends Oas30ValidationRule {
     public visitParameter(node: Oas30Parameter): void {
         this.requireProperty("PAR-3-003", node, "name", "Parameter is missing a name.");
         this.requireProperty("PAR-3-004", node, "in", "Parameter location is missing.");
-        this.requirePropertyWhen("PAR-3-020", node, "required", "in", "path",
-            `Path Parameter must be marked as "required".`);
     }
     public visitParameterDefinition(node: Oas30ParameterDefinition): void {
         this.visitParameter(node);

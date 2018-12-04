@@ -393,8 +393,7 @@ describe("Validation (3.0)", () => {
 [OP-3-003] |2| {/paths[/op-3-003]/get->requestBody} :: Request Body is not supported for GET operations.
 [OP-3-005] |2| {/paths[/op-3-005]/get->null} :: Operation must have at least one Response.
 [PAR-3-002] |2| {/paths[/par-3-002]/parameters[0]->in} :: Parameters must be "in" one of: ["path", "query", "header", "cookie"] (Found: 'side')
-[PAR-3-006] |2| {/paths[/par-3-006/{id}]/parameters[0]->required} :: Path Parameters must be marked as "required".
-[PAR-3-020] |2| {/paths[/par-3-006/{id}]/parameters[0]->required} :: Path Parameter must be marked as "required".
+[PAR-3-006] |2| {/paths[/par-3-006/{id}]/parameters[0]->required} :: Path Parameter "id" must be marked as "required".
 [PAR-3-007] |2| {/paths[/par-3-007/{id}]/parameters[0]->allowEmptyValue} :: Allow Empty Value is not allowed (only for Query Params).
 [PAR-3-009] |2| {/paths[/par-3-009]/parameters[0]->style} :: Parameter Style must be one of: ["matrix", "label", "form", "simple", "spaceDelimited", "pipeDelimited", "deepObject"] (Found "shallowObject").
 [PAR-3-011] |2| {/paths[/par-3-009]/parameters[0]->style} :: Query Parameter Style must be one of: ["form", "spaceDelimited", "pipeDelimited", "deepObject"] (Found "shallowObject").
@@ -404,7 +403,7 @@ describe("Validation (3.0)", () => {
 [PAR-3-013] |2| {/paths[/par-3-013]/parameters[0]->style} :: Header Parameter Style must be "simple". (Found "label").
 [PAR-3-014] |2| {/paths[/par-3-014]/parameters[0]->allowReserved} :: Allow Reserved is only allowed for Query Parameters.
 [PAR-3-016] |2| {/paths[/par-3-016]/parameters[0]->content} :: Parameter content cannot have multiple media types.
-[PAR-3-018] |2| {/paths[/par-3-018/{id}/{sub}]/parameters[1]->name} :: Path Parameter not found in path template.
+[PAR-3-018] |2| {/paths[/par-3-018/{id}/{sub}]/parameters[1]->name} :: Path Parameter "missing" not found in path template.
 [PAR-3-019] |2| {/paths[/par-3-019]/parameters[0]->null} :: Header Parameters "Accept", "Content-Type", and "Authorization" are ignored.
 [SCH-3-001] |2| {/paths[/sch-3-001]/get/responses[200]/content[application/json]/schema/discriminator->discriminator} :: Schema Discriminator is only allowed when using one of: ["oneOf", "anyOf", "allOf"]
 [SREQ-3-002] |2| {/paths[/sreq-3-002]/get/security[0]->api_key} :: Value for Security Requirement "api_key" must be an empty array.

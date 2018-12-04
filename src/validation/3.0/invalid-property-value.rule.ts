@@ -90,15 +90,12 @@ export class Oas30InvalidPropertyValueValidationRule extends Oas30ValidationRule
      * @return {Array}
      */
     private parsePathTemplate(pathTemplate: string): string[] {
-        let segments: string[] = [];
-        let split: string[] = pathTemplate.split('/');
-        split.forEach( seg => {
-            if (seg.indexOf('{') === 0) {
-                let segment: string = seg.substring(1, seg.lastIndexOf('}')).trim();
-                segments.push(segment);
-            }
+        let segments: string[] = pathTemplate.split("{");
+        return segments.filter( (segment, idx) => {
+            return idx > 0 && segment.indexOf("}") != -1;
+        }).map( segment => {
+            return segment.substring(0, segment.indexOf("}")).trim();
         });
-        return segments;
     }
 
     /**
@@ -272,10 +269,10 @@ export class Oas30InvalidPropertyValueValidationRule extends Oas30ValidationRule
             let path: string = pathItem.path();
             let pathVars: string[] = this.parsePathTemplate(path);
             this.reportIfInvalid("PAR-3-018", OasValidationRuleUtil.isValidEnumItem(node.name, pathVars), node, "name",
-                `Path Parameter not found in path template.`);
+                `Path Parameter "${node.name}" not found in path template.`);
 
             this.reportIfInvalid("PAR-3-006", node.required === true, node, "required",
-                `Path Parameters must be marked as "required".`);
+                `Path Parameter "${node.name}" must be marked as "required".`);
 
             if (this.hasValue(node.style)) {
                 this.reportIfInvalid("PAR-3-010", OasValidationRuleUtil.isValidEnumItem(node.style, ["matrix", "label", "simple"]), node, "style",
