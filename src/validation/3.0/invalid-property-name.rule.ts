@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-import {Oas30ValidationRule} from "./common.rule";
-import {OasValidationRuleUtil} from "../validation";
+import {Oas30ValidationRule, Oas30PathValidationRule} from "./common.rule";
+import { OasValidationRuleUtil, PathSegment } from "../validation"
 import {Oas30Link, Oas30LinkDefinition} from "../../models/3.0/link.model";
 import {Oas30Callback, Oas30CallbackDefinition} from "../../models/3.0/callback.model";
 import {Oas30Example, Oas30ExampleDefinition} from "../../models/3.0/example.model";
@@ -66,12 +66,22 @@ import {Oas30XML} from "../../models/3.0/xml.model";
 import {Oas30Tag} from "../../models/3.0/tag.model";
 import {Oas30ExternalDocumentation} from "../../models/3.0/external-documentation.model";
 
+
+type IdenticalPathRecord = {
+    identicalReported: boolean,
+    pathSegments: PathSegment[],
+    node: Oas30PathItem,
+};
+
+
 /**
  * Implements the Invalid Property Name validation rule.  This rule is responsible
  * for reporting whenever the **name** of a property fails to conform to the required
  * format defined by the specification.
  */
-export class Oas30InvalidPropertyNameValidationRule extends Oas30ValidationRule {
+export class Oas30InvalidPropertyNameValidationRule extends Oas30PathValidationRule {
+
+    private indexedPathSegments: any = {};
 
     /**
      * Returns true if the definition name is valid.
@@ -96,9 +106,138 @@ export class Oas30InvalidPropertyNameValidationRule extends Oas30ValidationRule 
         return !this.isNullOrUndefined(schema.property(propertyName));
     }
 
+    /**
+     * Finds all occurences of path segments that are empty.
+     * i.e. they neither have a prefix nor a path variable within curly braces.
+     *
+     * @param pathSegments
+     * @return {PathSegment[]}
+     */
+    private findEmptySegmentsInPath(pathSegments: PathSegment[]) {
+        return pathSegments.filter(pathSegment => {
+            return pathSegment.prefix === "" && pathSegment.formalName === undefined;
+        });
+    }
+    
+    /**
+     * Finds path segments that are duplicates i.e. they have the same formal name used across multiple segments.
+     * For example, in a path like /prefix/{var1}/{var1}, var1 is used in multiple segments.
+     *
+     * @param pathSegments
+     * @return {PathSegment[]}
+     */
+    private findDuplicateParametersInPath(pathSegments: PathSegment[]) {
+        const uniq = pathSegments
+            .filter(pathSegment => {
+                return pathSegment.formalName !== undefined;
+            })
+            .map(pathSegment => {
+                return { parameter: pathSegment.formalName, count: 1 };
+            })
+            .reduce((parameterCounts, segmentEntry) => {
+                parameterCounts[segmentEntry.parameter] = (parameterCounts[segmentEntry.parameter] || 0) + segmentEntry.count;
+                return parameterCounts;
+            }, {});
+        return Object.keys(uniq).filter(a => uniq[a] > 1);
+    }
+
+    /**
+     * Utility function to find other paths that are semantically similar to the path that is being checked against.
+     * Two paths the differ only in formal parameter name are considered identical.
+     * For example, paths /test/{var1} and /test/{var2} are identical.
+     * See OAS 3 Specification's Path Templates section for more details.
+     *
+     * @param segment1
+     * @param segment2
+     * @return {boolean}
+     */
+    private findIdenticalPaths(pathToCheck: string, pathToSegmentsMap: any): string[] {
+        const identicalPaths: string[] = [];
+        const pathSegments: PathSegment[] = pathToSegmentsMap[pathToCheck].pathSegments;
+        Object.keys(pathToSegmentsMap)
+        .filter(checkAgainst => checkAgainst !== pathToCheck)
+        .forEach(checkAgainst => {
+            let segmentsIdential: boolean = true;
+            const pathSegmentsToCheckAgainst: PathSegment[] = pathToSegmentsMap[checkAgainst].pathSegments;
+            if (pathSegments.length !== pathSegmentsToCheckAgainst.length) {
+                segmentsIdential = false;
+            } else {
+                pathSegments.forEach((pathSegment, index) => {
+                    segmentsIdential =
+                    segmentsIdential && this.isSegmentIdentical(pathSegment, pathSegmentsToCheckAgainst[index]);
+                });
+            }
+            if (segmentsIdential === true) {
+                identicalPaths.push(checkAgainst);
+            }
+        });
+        return identicalPaths;
+    }
+
+    /**
+     * Utility function to test the equality of two path segments.
+     * Segments are considered equal if they have same prefixes (if any) and same "normalized name".
+     *
+     * @param segment1
+     * @param segment2
+     * @return {boolean}
+     */
+    private isSegmentIdentical(segment1: PathSegment, segment2: PathSegment): boolean {
+        if (segment1.prefix === segment2.prefix) {
+            if (segment1.normalizedName === undefined && segment2.normalizedName === undefined) {
+                return true;
+            }
+            if (
+                (segment1.normalizedName === undefined && segment2.normalizedName !== undefined) ||
+                (segment1.normalizedName !== undefined && segment2.normalizedName === undefined)
+            ) {
+                return false;
+            }
+            return segment1.normalizedName === segment2.normalizedName;
+        }
+        return false;
+    }
+
     public visitPathItem(node: Oas30PathItem): void {
-        this.reportIfInvalid("PATH-3-004", node.path().indexOf("/") === 0, node, null,
-            `Paths must start with a '/' character.`);
+        const pathTemplate: string = node.path();
+        let hasTemplateErrors = false;
+        let pathSegments: PathSegment[];
+        if (this.isPathWellFormed(pathTemplate) === true) {
+            pathSegments = this.getPathSegments(pathTemplate);
+            const emptySegments = this.findEmptySegmentsInPath(pathSegments);
+            if (emptySegments.length > 0) {
+                this.reportPathError("PATH-3-005", node, `Path template "${node.path()}" contains one or more empty segment.`);
+                hasTemplateErrors = hasTemplateErrors || true;
+            }
+            const duplicateParameters = this.findDuplicateParametersInPath(pathSegments);
+            if (duplicateParameters.length > 0) {
+                this.reportPathError("PATH-3-006", node, `Path template "${node.path()}" contains duplicate variable names (${duplicateParameters.join(", ")}).`);
+                hasTemplateErrors = hasTemplateErrors || true;
+            }
+        } else {
+            this.reportPathError("PATH-3-004", node, `Path template "${node.path()}" is not valid.`);
+            hasTemplateErrors = hasTemplateErrors || true;
+        }
+        if (hasTemplateErrors === false) {
+            const currentPathRecord: IdenticalPathRecord = {
+                identicalReported: false,
+                pathSegments,
+                node,
+            };
+            this.indexedPathSegments[pathTemplate] = currentPathRecord;
+            const identicalPaths = this.findIdenticalPaths(pathTemplate, this.indexedPathSegments);
+            if (identicalPaths.length > 0) {
+                this.reportPathError("PATH-3-007", node, `Path template "${node.path()}" is semantically identical to at least one other path.`);
+                currentPathRecord.identicalReported = true;
+                identicalPaths.forEach(path => {
+                    const identicalPathRecord: IdenticalPathRecord = this.indexedPathSegments[path];
+                    if (identicalPathRecord.identicalReported === false) {
+                        this.reportPathError("PATH-3-007", identicalPathRecord.node, `Path template "${node.path()}" is semantically identical to at least one other path.`);
+                        identicalPathRecord.identicalReported = true;
+                    }
+                });
+            }
+        }
     }
 
     public visitResponse(node: Oas30Response): void {

@@ -15,26 +15,26 @@
  * limitations under the License.
  */
 
-import {Oas30ValidationRule} from "./common.rule";
-import {OasValidationRuleUtil} from "../validation";
-import {Oas30XML} from "../../models/3.0/xml.model";
-import {Oas30Schema} from "../../models/3.0/schema.model";
-import {Oas30Encoding} from "../../models/3.0/encoding.model";
-import {Oas30MediaType} from "../../models/3.0/media-type.model";
-import {Oas30Header, Oas30HeaderDefinition} from "../../models/3.0/header.model";
-import {Oas30Link, Oas30LinkDefinition} from "../../models/3.0/link.model";
-import {OasVisitorUtil} from "../../visitors/visitor.utils";
-import {Oas30NodeVisitorAdapter} from "../../visitors/visitor.base";
-import {Oas30Operation} from "../../models/3.0/operation.model";
-import {Oas30Parameter, Oas30ParameterDefinition} from "../../models/3.0/parameter.model";
-import {Oas30PathItem} from "../../models/3.0/path-item.model";
-import {Oas30Document} from "../../models/3.0/document.model";
-import {Oas30SecurityScheme} from "../../models/3.0/security-scheme.model";
-import {Oas30Responses} from "../../models/3.0/responses.model";
-import {Oas30SecurityRequirement} from "../../models/3.0/security-requirement.model";
-import {Oas30Discriminator} from "../../models/3.0/discriminator.model";
-import {Oas30ServerVariable} from "../../models/3.0/server-variable.model";
-import {Oas30Server} from "../../models/3.0/server.model";
+import { Oas30PathValidationRule } from "./common.rule"
+import { OasValidationRuleUtil, PathSegment } from "../validation"
+import { Oas30XML } from "../../models/3.0/xml.model"
+import { Oas30Schema } from "../../models/3.0/schema.model"
+import { Oas30Encoding } from "../../models/3.0/encoding.model"
+import { Oas30MediaType } from "../../models/3.0/media-type.model"
+import { Oas30Header, Oas30HeaderDefinition } from "../../models/3.0/header.model"
+import { Oas30Link, Oas30LinkDefinition } from "../../models/3.0/link.model"
+import { OasVisitorUtil } from "../../visitors/visitor.utils"
+import { Oas30NodeVisitorAdapter } from "../../visitors/visitor.base"
+import { Oas30Operation } from "../../models/3.0/operation.model"
+import { Oas30Parameter, Oas30ParameterDefinition } from "../../models/3.0/parameter.model"
+import { Oas30PathItem } from "../../models/3.0/path-item.model"
+import { Oas30Document } from "../../models/3.0/document.model"
+import { Oas30SecurityScheme } from "../../models/3.0/security-scheme.model"
+import { Oas30Responses } from "../../models/3.0/responses.model"
+import { Oas30SecurityRequirement } from "../../models/3.0/security-requirement.model"
+import { Oas30Discriminator } from "../../models/3.0/discriminator.model"
+import { Oas30ServerVariable } from "../../models/3.0/server-variable.model"
+import { Oas30Server } from "../../models/3.0/server.model"
 
 
 /**
@@ -65,10 +65,10 @@ export class Oas30OperationFinder extends Oas30NodeVisitorAdapter {
  * Implements the Invalid Property Value validation rule.  This rule is responsible
  * for reporting whenever the **value** of a property fails to conform to requirements
  * outlined by the specification.  This is typically things like enums, where the
- * *format* of the value is fine (e.g. correct data-type) but the valid is somehow
+ * *format* of the value is fine (e.g. correct data-type) but the value is somehow
  * invalid.
  */
-export class Oas30InvalidPropertyValueValidationRule extends Oas30ValidationRule {
+export class Oas30InvalidPropertyValueValidationRule extends Oas30PathValidationRule {
 
     /**
      * Returns true if the given value is a valid operationId.
@@ -77,25 +77,6 @@ export class Oas30InvalidPropertyValueValidationRule extends Oas30ValidationRule
     private isValidOperationId(id: string): boolean {
         // TODO implement a regex for this? should be something like camelCase
         return true;
-    }
-
-    /**
-     * Parses the given path template for segments.  For example, a path template might be
-     *
-     * /foo/{fooId}/resources/{resourceId}
-     *
-     * In this case, this method will return [ "fooId", "resourceId" ]
-     *
-     * @param pathTemplate
-     * @return {Array}
-     */
-    private parsePathTemplate(pathTemplate: string): string[] {
-        let segments: string[] = pathTemplate.split("{");
-        return segments.filter( (segment, idx) => {
-            return idx > 0 && segment.indexOf("}") != -1;
-        }).map( segment => {
-            return segment.substring(0, segment.indexOf("}")).trim();
-        });
     }
 
     /**
@@ -115,9 +96,9 @@ export class Oas30InvalidPropertyValueValidationRule extends Oas30ValidationRule
         let vars: string[] = [];
         let startIdx: number = serverTemplate.indexOf('{');
         let endIdx: number = -1;
-        while (startIdx != -1) {
+        while (startIdx !== -1) {
             endIdx = serverTemplate.indexOf('}', startIdx);
-            if (endIdx != -1) {
+            if (endIdx !== -1) {
                 vars.push(serverTemplate.substring(startIdx + 1, endIdx));
                 startIdx = serverTemplate.indexOf('{', endIdx);
             } else {
@@ -134,7 +115,7 @@ export class Oas30InvalidPropertyValueValidationRule extends Oas30ValidationRule
      * @return {boolean}
      */
     private isWrappedOK(xml: Oas30XML): boolean {
-        let schema: Oas30Schema = <Oas30Schema>xml.parent();
+        let schema: Oas30Schema = xml.parent() as Oas30Schema;
         return schema.type === "array";
     }
 
@@ -144,7 +125,7 @@ export class Oas30InvalidPropertyValueValidationRule extends Oas30ValidationRule
      * @return {boolean}
      */
     private isValidMultipartType(typeName: string): boolean {
-        return typeName === "application/x-www-form-urlencoded" || typeName.indexOf("multipart") == 0;
+        return typeName === "application/x-www-form-urlencoded" || typeName.indexOf("multipart") === 0;
     }
 
     /**
@@ -174,12 +155,12 @@ export class Oas30InvalidPropertyValueValidationRule extends Oas30ValidationRule
         }
         if (this.hasValue(node.explode)) {
             let mediaType: Oas30MediaType = node.parent() as Oas30MediaType;
-            this.reportIf("ENC-3-003", mediaType.name() != "application/x-www-form-urlencoded", node, "explode",
+            this.reportIf("ENC-3-003", mediaType.name() !== "application/x-www-form-urlencoded", node, "explode",
                 `"Explode" is not allowed for "${mediaType.name()}" media types.`);
         }
         if (this.hasValue(node.allowReserved)) {
             let mediaType: Oas30MediaType = node.parent() as Oas30MediaType;
-            this.reportIf("ENC-3-004", mediaType.name() != "application/x-www-form-urlencoded", node, "allowReserved",
+            this.reportIf("ENC-3-004", mediaType.name() !== "application/x-www-form-urlencoded", node, "allowReserved",
                 `"Allow Reserved" is not allowed for "${mediaType.name()}" media types.`);
         }
     }
@@ -262,13 +243,13 @@ export class Oas30InvalidPropertyValueValidationRule extends Oas30ValidationRule
         if (node.in === "path") {
             let pathItem: Oas30PathItem;
             if (node.parent()["_path"]) {
-                pathItem = <Oas30PathItem>(node.parent());
+                pathItem = node.parent() as Oas30PathItem;
             } else {
-                pathItem = <Oas30PathItem>(node.parent().parent());
+                pathItem = node.parent().parent() as Oas30PathItem;
             }
             let path: string = pathItem.path();
-            let pathVars: string[] = this.parsePathTemplate(path);
-            this.reportIfInvalid("PAR-3-018", OasValidationRuleUtil.isValidEnumItem(node.name, pathVars), node, "name",
+            let pathSegs: PathSegment[] = this.getPathSegments(path);
+            this.reportIfInvalid("PAR-3-018", pathSegs.filter(pathSeg => pathSeg.formalName === node.name).length > 0, node, "name",
                 `Path Parameter "${node.name}" not found in path template.`);
 
             this.reportIfInvalid("PAR-3-006", node.required === true, node, "required",

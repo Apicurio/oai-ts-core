@@ -49,6 +49,31 @@ export class DefaultValidationSeverityRegistry implements IOasValidationSeverity
 
 
 /**
+ * Regular expression to match path - accepts '/', '/1', /abc', '/abc/', /{var}', '/{var}/', '/abc/prefix{var}'
+ * Path expressions must not start with numerics.
+ */
+export const PATH_MATCH_REGEX = /^(\/[^{}\/]*(\{[a-zA-Z_][0-9a-zA-Z_]*\})?)+$/;
+export const pathMatchEx: RegExp = new RegExp(PATH_MATCH_REGEX);
+
+/**
+ * Regular expression to match path segments.
+ */
+export const SEG_MATCH_REGEX = /\/([^{}\/]*)(\{([a-zA-Z_][0-9a-zA-Z_]*)\})?/g;
+
+
+/**
+ * Type encapsulating information about a path segment.
+ * Consumers of this type should not rely on normalizedName property which is only provided to weed out duplicates.
+ */
+export type PathSegment = {
+    segId: number;
+    prefix: string;
+    formalName?: string;
+    normalizedName?: string;
+};
+
+
+/**
  * Base class for all validation rules.
  */
 export class OasValidationRuleUtil {
@@ -165,7 +190,7 @@ export class OasValidationRuleUtil {
      * @param items
      */
     public static isValidEnumItem(value: string, items: string[]): boolean {
-        return items.indexOf(value) != -1;
+        return items.indexOf(value) !== -1;
     }
 
     /**
@@ -197,7 +222,57 @@ export class OasValidationRuleUtil {
      * @return {boolean}
      */
     public static isValidHttpCode(statusCode: string): boolean {
-        return OasValidationRuleUtil.HTTP_STATUS_CODES.indexOf(statusCode) != -1;
+        return OasValidationRuleUtil.HTTP_STATUS_CODES.indexOf(statusCode) !== -1;
+    }
+
+    /**
+     * Checks the path template against the regular expression and returns match result.
+     *
+     * @param pathTemplate
+     * @return {boolean}
+     */
+    public static isPathWellFormed(pathTemplate: string): boolean {
+        return pathMatchEx.test(pathTemplate);
+    }
+
+    /**
+     * Finds all occurrences of path segment patterns in a path template.
+     *
+     * @param pathTemplate
+     * @return {PathSegment[]}
+     */
+    public static getPathSegments(pathTemplate: string): PathSegment[] {
+        const pathSegments: PathSegment[] = [];
+        // If path is root '/', simply return empty segments
+        if (pathTemplate === "/") {
+            return pathSegments;
+        }
+        let normalizedPath: string = pathTemplate;
+        // Remove the trailing slash if the path ends with slash
+        if (pathTemplate.lastIndexOf("/") === pathTemplate.length - 1) {
+            normalizedPath = pathTemplate.substring(0, pathTemplate.length - 1);
+        }
+        // Look for all occurrence of string like {param1}
+        let match: RegExpExecArray;
+        let segId = 0;
+
+        let segMatchEx: RegExp = new RegExp(SEG_MATCH_REGEX);
+        match = segMatchEx.exec(normalizedPath);
+        while (match) {
+            const pathSegment: PathSegment = {
+                segId,
+                prefix: match[1],
+            };
+            // parameter name is inside the curly braces (group 3)
+            if (match[3] !== undefined) {
+                pathSegment.formalName = match[3];
+                pathSegment.normalizedName = `__param__${segId}`;
+            }
+            pathSegments.push(pathSegment);
+            segId = segId + 1;
+            match = segMatchEx.exec(normalizedPath);
+        }
+        return pathSegments;
     }
 
 }

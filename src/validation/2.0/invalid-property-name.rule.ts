@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {Oas20ValidationRule} from "./common.rule";
+import { Oas20PathValidationRule, Oas20ValidationRule } from "./common.rule"
 import {Oas20Parameter, Oas20ParameterDefinition} from "../../models/2.0/parameter.model";
 import {Oas20Response, Oas20ResponseDefinition} from "../../models/2.0/response.model";
 import {Oas20SecurityScheme} from "../../models/2.0/security-scheme.model";
@@ -32,7 +32,7 @@ import {Oas20Example} from "../../models/2.0/example.model";
 import {Oas20Scopes} from "../../models/2.0/scopes.model";
 import {Oas20Document} from "../../models/2.0/document.model";
 import {Oas20Operation} from "../../models/2.0/operation.model";
-import {OasValidationRuleUtil} from "../validation";
+import { OasValidationRuleUtil, PathSegment } from "../validation"
 import {Oas20Headers} from "../../models/2.0/headers.model";
 import {Oas20Items} from "../../models/2.0/items.model";
 import {Oas20SecurityDefinitions} from "../../models/2.0/security-definitions.model";
@@ -57,7 +57,7 @@ import {Oas20ExternalDocumentation} from "../../models/2.0/external-documentatio
  * for reporting whenever the **name** of a property fails to conform to the required
  * format defined by the specification.
  */
-export class Oas20InvalidPropertyNameValidationRule extends Oas20ValidationRule {
+export class Oas20InvalidPropertyNameValidationRule extends Oas20PathValidationRule {
 
     /**
      * Returns true if the definition name is valid.
@@ -66,7 +66,7 @@ export class Oas20InvalidPropertyNameValidationRule extends Oas20ValidationRule 
      */
     private isValidDefinitionName(name: string): boolean {
         // TODO implement some reasonable rules for this
-        return name.indexOf("/") == -1;
+        return name.indexOf("/") === -1;
     }
 
     /**
@@ -78,9 +78,57 @@ export class Oas20InvalidPropertyNameValidationRule extends Oas20ValidationRule 
         return true;
     }
 
+    /**
+     * Finds all occurences of path segments that are empty.
+     * i.e. they neither have a prefix nor a path variable within curly braces.
+     *
+     * @param pathSegments
+     * @return {PathSegment[]}
+     */
+    private findEmptySegmentsInPath(pathSegments: PathSegment[]): PathSegment[] {
+        return pathSegments.filter(pathSegment => {
+            return pathSegment.prefix === "" && pathSegment.formalName === undefined;
+        });
+    }
+
+    /**
+     * Finds path segments that are duplicates i.e. they have the same formal name used across multiple segments.
+     * For example, in a path like /prefix/{var1}/{var1}, var1 is used in multiple segments.
+     *
+     * @param pathSegments
+     * @return {PathSegment[]}
+     */
+    private findDuplicateParametersInPath(pathSegments: PathSegment[]): string[] {
+        const uniq: any = pathSegments
+            .filter(pathSegment => {
+                return pathSegment.formalName !== undefined;
+            })
+            .map(pathSegment => {
+                return { parameter: pathSegment.formalName, count: 1 };
+            })
+            .reduce((parameterCounts, segmentEntry) => {
+                parameterCounts[segmentEntry.parameter] = (parameterCounts[segmentEntry.parameter] || 0) + segmentEntry.count;
+                return parameterCounts;
+            }, {});
+        return Object.keys(uniq).filter(a => uniq[a] > 1);
+    }
+
     public visitPathItem(node: Oas20PathItem): void {
-        this.reportIfInvalid("PATH-005", node.path().indexOf("/") === 0, node, null,
-            `Paths must start with a '/' character.`);
+        const pathTemplate: string = node.path();
+        let pathSegments: PathSegment[];
+        if (this.isPathWellFormed(pathTemplate) === true) {
+            pathSegments = this.getPathSegments(pathTemplate);
+            const emptySegments = this.findEmptySegmentsInPath(pathSegments);
+            if (emptySegments.length > 0) {
+                this.reportPathError("PATH-006", node, `Path template "${node.path()}" contains one or more empty segment.`);
+            }
+            const duplicateParameters: string[] = this.findDuplicateParametersInPath(pathSegments);
+            if (duplicateParameters.length > 0) {
+                this.reportPathError("PATH-007", node, `Path template "${node.path()}" contains duplicate variable names (${duplicateParameters.join(", ")}).`);
+            }
+        } else {
+            this.reportPathError("PATH-005", node, `Path template "${node.path()}" is not valid.`);
+        }
     }
 
     public visitResponse(node: Oas20Response): void {
@@ -92,8 +140,8 @@ export class Oas20InvalidPropertyNameValidationRule extends Oas20ValidationRule 
     }
 
     public visitExample(node: Oas20Example): void {
-        let produces: string[] = (<Oas20Document>(node.ownerDocument())).produces;
-        let operation: Oas20Operation = <Oas20Operation>(node.parent().parent().parent());
+        let produces: string[] = (node.ownerDocument() as Oas20Document).produces;
+        let operation: Oas20Operation = node.parent().parent().parent() as Oas20Operation;
         if (this.hasValue(operation.produces)) {
             produces = operation.produces;
         }
@@ -103,7 +151,7 @@ export class Oas20InvalidPropertyNameValidationRule extends Oas20ValidationRule 
 
         let ctypes: string[] = node.exampleContentTypes();
         ctypes.forEach( ct => {
-            this.reportIfInvalid("EX-001", produces.indexOf(ct) != -1, node, "produces",
+            this.reportIfInvalid("EX-001", produces.indexOf(ct) !== -1, node, "produces",
                 `Example '${ct}' must match one of the "produces" mime-types.`);
         });
     }
