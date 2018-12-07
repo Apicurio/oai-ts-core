@@ -43,7 +43,7 @@ export class Oas30UniquenessValidationRule extends Oas30ValidationRule {
 
     public visitOperation(node: Oas30Operation): void {
         if (this.hasValue(node.operationId)) {
-            let dupes: Oas30Operation[] = this.indexedOperations[node.operationId]
+            let dupes: Oas30Operation[] = this.indexedOperations[node.operationId];
             if (this.hasValue(dupes)) {
                 this.reportIfInvalid("OP-3-002", dupes.length > 1, dupes[0], "operationId",
                     `Operation IDs must be unique across all operations.`);

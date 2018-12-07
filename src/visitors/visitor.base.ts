@@ -91,23 +91,23 @@ import {Oas30Discriminator} from "../models/3.0/discriminator.model";
  * the subset of methods desired.
  */
 export abstract class OasNodeVisitorAdapter implements IOasNodeVisitor {
-    public visitDocument(node: OasDocument) {}
-    public visitInfo(node: OasInfo): void {}
-    public visitContact(node: OasContact): void {}
-    public visitLicense(node: OasLicense): void {}
-    public visitPaths(node: OasPaths): void {}
-    public visitPathItem(node: OasPathItem): void {}
-    public visitResponses(node: OasResponses): void {}
-    public visitSchema(node: OasSchema): void {}
-    public visitHeader(node: OasHeader): void {}
-    public visitOperation(node: OasOperation): void {}
-    public visitXML(node: OasXML): void {}
-    public visitSecurityScheme(node: OasSecurityScheme): void {}
-    public visitSecurityRequirement(node: OasSecurityRequirement): void {}
-    public visitTag(node: OasTag): void {}
-    public visitExternalDocumentation(node: OasExternalDocumentation): void {}
-    public visitExtension(node: OasExtension): void {}
-    public visitValidationProblem(node: OasValidationProblem): void {}
+    public visitDocument(node: OasDocument) { /* Empty */ }
+    public visitInfo(node: OasInfo): void { /* Empty */ }
+    public visitContact(node: OasContact): void { /* Empty */ }
+    public visitLicense(node: OasLicense): void { /* Empty */ }
+    public visitPaths(node: OasPaths): void { /* Empty */ }
+    public visitPathItem(node: OasPathItem): void { /* Empty */ }
+    public visitResponses(node: OasResponses): void { /* Empty */ }
+    public visitSchema(node: OasSchema): void { /* Empty */ }
+    public visitHeader(node: OasHeader): void { /* Empty */ }
+    public visitOperation(node: OasOperation): void { /* Empty */ }
+    public visitXML(node: OasXML): void { /* Empty */ }
+    public visitSecurityScheme(node: OasSecurityScheme): void { /* Empty */ }
+    public visitSecurityRequirement(node: OasSecurityRequirement): void { /* Empty */ }
+    public visitTag(node: OasTag): void { /* Empty */ }
+    public visitExternalDocumentation(node: OasExternalDocumentation): void { /* Empty */ }
+    public visitExtension(node: OasExtension): void { /* Empty */ }
+    public visitValidationProblem(node: OasValidationProblem): void { /* Empty */ }
 }
 
 
@@ -117,24 +117,24 @@ export abstract class OasNodeVisitorAdapter implements IOasNodeVisitor {
  * the subset of methods desired.
  */
 export class Oas20NodeVisitorAdapter extends OasNodeVisitorAdapter implements IOas20NodeVisitor {
-    public visitParameter(node: Oas20Parameter): void {}
-    public visitParameterDefinition(node: Oas20ParameterDefinition): void {}
-    public visitResponse(node: Oas20Response): void {}
-    public visitHeaders(node: Oas20Headers): void {}
-    public visitResponseDefinition(node: Oas20ResponseDefinition): void {}
-    public visitExample(node: Oas20Example): void {}
-    public visitItems(node: Oas20Items): void {}
-    public visitSecurityDefinitions(node: Oas20SecurityDefinitions): void {}
-    public visitSecurityScheme(node: Oas20SecurityScheme): void {}
-    public visitScopes(node: Oas20Scopes): void {}
-    public visitPropertySchema(node: Oas20PropertySchema): void {}
-    public visitAdditionalPropertiesSchema(node: Oas20AdditionalPropertiesSchema): void {}
-    public visitItemsSchema(node: Oas20ItemsSchema): void {}
-    public visitAllOfSchema(node: Oas20AllOfSchema): void {}
-    public visitSchemaDefinition(node: Oas20SchemaDefinition): void {}
-    public visitDefinitions(node: Oas20Definitions): void {}
-    public visitParametersDefinitions(node: Oas20ParametersDefinitions): void {}
-    public visitResponsesDefinitions(node: Oas20ResponsesDefinitions): void {}
+    public visitParameter(node: Oas20Parameter): void { /* Empty */ }
+    public visitParameterDefinition(node: Oas20ParameterDefinition): void { /* Empty */ }
+    public visitResponse(node: Oas20Response): void { /* Empty */ }
+    public visitHeaders(node: Oas20Headers): void { /* Empty */ }
+    public visitResponseDefinition(node: Oas20ResponseDefinition): void { /* Empty */ }
+    public visitExample(node: Oas20Example): void { /* Empty */ }
+    public visitItems(node: Oas20Items): void { /* Empty */ }
+    public visitSecurityDefinitions(node: Oas20SecurityDefinitions): void { /* Empty */ }
+    public visitSecurityScheme(node: Oas20SecurityScheme): void { /* Empty */ }
+    public visitScopes(node: Oas20Scopes): void { /* Empty */ }
+    public visitPropertySchema(node: Oas20PropertySchema): void { /* Empty */ }
+    public visitAdditionalPropertiesSchema(node: Oas20AdditionalPropertiesSchema): void { /* Empty */ }
+    public visitItemsSchema(node: Oas20ItemsSchema): void { /* Empty */ }
+    public visitAllOfSchema(node: Oas20AllOfSchema): void { /* Empty */ }
+    public visitSchemaDefinition(node: Oas20SchemaDefinition): void { /* Empty */ }
+    public visitDefinitions(node: Oas20Definitions): void { /* Empty */ }
+    public visitParametersDefinitions(node: Oas20ParametersDefinitions): void { /* Empty */ }
+    public visitResponsesDefinitions(node: Oas20ResponsesDefinitions): void { /* Empty */ }
 }
 
 
@@ -144,42 +144,42 @@ export class Oas20NodeVisitorAdapter extends OasNodeVisitorAdapter implements IO
  * the subset of methods desired.
  */
 export class Oas30NodeVisitorAdapter extends OasNodeVisitorAdapter implements IOas30NodeVisitor {
-    public visitParameter(node: Oas30Parameter): void {}
-    public visitParameterDefinition(node: Oas30ParameterDefinition): void {}
-    public visitResponse(node: Oas30Response): void {}
-    public visitLink(node: Oas30Link): void {}
-    public visitLinkParameterExpression(node: Oas30LinkParameterExpression): void {}
-    public visitLinkRequestBodyExpression(node: Oas30LinkRequestBodyExpression): void {}
-    public visitLinkServer(node: Oas30LinkServer): void {}
-    public visitResponseDefinition(node: Oas30ResponseDefinition): void {}
-    public visitRequestBody(node: Oas30RequestBody): void {}
-    public visitMediaType(node: Oas30MediaType): void {}
-    public visitExample(node: Oas30Example): void {}
-    public visitEncoding(node: Oas30Encoding): void {}
-    public visitCallback(node: Oas30Callback): void {}
-    public visitCallbackPathItem(node: Oas30CallbackPathItem): void {}
-    public visitAllOfSchema(node: Oas30AllOfSchema): void {}
-    public visitAnyOfSchema(node: Oas30AnyOfSchema): void {}
-    public visitOneOfSchema(node: Oas30OneOfSchema): void {}
-    public visitNotSchema(node: Oas30NotSchema): void {}
-    public visitPropertySchema(node: Oas30PropertySchema): void {}
-    public visitItemsSchema(node: Oas30ItemsSchema): void {}
-    public visitAdditionalPropertiesSchema(node: Oas30AdditionalPropertiesSchema): void {}
-    public visitComponents(node: Oas30Components): void {}
-    public visitExampleDefinition(node: Oas30ExampleDefinition): void {}
-    public visitRequestBodyDefinition(node: Oas30RequestBodyDefinition): void {}
-    public visitHeaderDefinition(node: Oas30HeaderDefinition): void {}
-    public visitOAuthFlows(node: Oas30OAuthFlows): void {}
-    public visitImplicitOAuthFlow(node: Oas30ImplicitOAuthFlow): void {}
-    public visitPasswordOAuthFlow(node: Oas30PasswordOAuthFlow): void {}
-    public visitClientCredentialsOAuthFlow(node: Oas30ClientCredentialsOAuthFlow): void {}
-    public visitAuthorizationCodeOAuthFlow(node: Oas30AuthorizationCodeOAuthFlow): void {}
-    public visitLinkDefinition(node: Oas30LinkDefinition): void {}
-    public visitCallbackDefinition(node: Oas30CallbackDefinition): void {}
-    public visitSchemaDefinition(node: Oas30SchemaDefinition): void {}
-    public visitServer(node: Oas30Server): void {}
-    public visitServerVariable(node: Oas30ServerVariable): void {}
-    public visitDiscriminator(node: Oas30Discriminator): void {}
+    public visitParameter(node: Oas30Parameter): void { /* Empty */ }
+    public visitParameterDefinition(node: Oas30ParameterDefinition): void { /* Empty */ }
+    public visitResponse(node: Oas30Response): void { /* Empty */ }
+    public visitLink(node: Oas30Link): void { /* Empty */ }
+    public visitLinkParameterExpression(node: Oas30LinkParameterExpression): void { /* Empty */ }
+    public visitLinkRequestBodyExpression(node: Oas30LinkRequestBodyExpression): void { /* Empty */ }
+    public visitLinkServer(node: Oas30LinkServer): void { /* Empty */ }
+    public visitResponseDefinition(node: Oas30ResponseDefinition): void { /* Empty */ }
+    public visitRequestBody(node: Oas30RequestBody): void { /* Empty */ }
+    public visitMediaType(node: Oas30MediaType): void { /* Empty */ }
+    public visitExample(node: Oas30Example): void { /* Empty */ }
+    public visitEncoding(node: Oas30Encoding): void { /* Empty */ }
+    public visitCallback(node: Oas30Callback): void { /* Empty */ }
+    public visitCallbackPathItem(node: Oas30CallbackPathItem): void { /* Empty */ }
+    public visitAllOfSchema(node: Oas30AllOfSchema): void { /* Empty */ }
+    public visitAnyOfSchema(node: Oas30AnyOfSchema): void { /* Empty */ }
+    public visitOneOfSchema(node: Oas30OneOfSchema): void { /* Empty */ }
+    public visitNotSchema(node: Oas30NotSchema): void { /* Empty */ }
+    public visitPropertySchema(node: Oas30PropertySchema): void { /* Empty */ }
+    public visitItemsSchema(node: Oas30ItemsSchema): void { /* Empty */ }
+    public visitAdditionalPropertiesSchema(node: Oas30AdditionalPropertiesSchema): void { /* Empty */ }
+    public visitComponents(node: Oas30Components): void { /* Empty */ }
+    public visitExampleDefinition(node: Oas30ExampleDefinition): void { /* Empty */ }
+    public visitRequestBodyDefinition(node: Oas30RequestBodyDefinition): void { /* Empty */ }
+    public visitHeaderDefinition(node: Oas30HeaderDefinition): void { /* Empty */ }
+    public visitOAuthFlows(node: Oas30OAuthFlows): void { /* Empty */ }
+    public visitImplicitOAuthFlow(node: Oas30ImplicitOAuthFlow): void { /* Empty */ }
+    public visitPasswordOAuthFlow(node: Oas30PasswordOAuthFlow): void { /* Empty */ }
+    public visitClientCredentialsOAuthFlow(node: Oas30ClientCredentialsOAuthFlow): void { /* Empty */ }
+    public visitAuthorizationCodeOAuthFlow(node: Oas30AuthorizationCodeOAuthFlow): void { /* Empty */ }
+    public visitLinkDefinition(node: Oas30LinkDefinition): void { /* Empty */ }
+    public visitCallbackDefinition(node: Oas30CallbackDefinition): void { /* Empty */ }
+    public visitSchemaDefinition(node: Oas30SchemaDefinition): void { /* Empty */ }
+    public visitServer(node: Oas30Server): void { /* Empty */ }
+    public visitServerVariable(node: Oas30ServerVariable): void { /* Empty */ }
+    public visitDiscriminator(node: Oas30Discriminator): void { /* Empty */ }
 }
 
 
@@ -341,66 +341,66 @@ export class Oas30CompositeVisitor extends OasCompositeVisitor implements IOas30
 
 
 export class OasCombinedVisitorAdapter implements IOas20NodeVisitor, IOas30NodeVisitor {
-    visitDocument(node: OasDocument): void {}
-    visitInfo(node: OasInfo): void {}
-    visitContact(node: OasContact): void {}
-    visitLicense(node: OasLicense): void {}
-    visitPaths(node: OasPaths): void {}
-    visitPathItem(node: OasPathItem): void {}
-    visitOperation(node: OasOperation): void {}
-    visitParameter(node: Oas20Parameter | Oas30Parameter): void {}
-    visitParameterDefinition(node: Oas20ParameterDefinition | Oas30ParameterDefinition): void {}
-    visitExternalDocumentation(node: OasExternalDocumentation): void {}
-    visitSecurityRequirement(node: OasSecurityRequirement): void {}
-    visitResponses(node: OasResponses): void {}
-    visitResponse(node: Oas20Response | Oas30Response): void {}
-    visitResponseDefinition(node: Oas20ResponseDefinition | Oas30ResponseDefinition): void {}
-    visitSchema(node: OasSchema): void {}
-    visitHeaders(node: Oas20Headers): void {}
-    visitHeader(node: OasHeader): void {}
-    visitExample(node: Oas20Example | Oas30Example): void {}
-    visitItems(node: Oas20Items): void {}
-    visitTag(node: OasTag): void {}
-    visitSecurityDefinitions(node: Oas20SecurityDefinitions): void {}
-    visitSecurityScheme(node: OasSecurityScheme): void {}
-    visitScopes(node: Oas20Scopes): void {}
-    visitXML(node: OasXML): void {}
-    visitSchemaDefinition(node: Oas20SchemaDefinition | Oas30SchemaDefinition): void {}
-    visitPropertySchema(node: Oas20PropertySchema | Oas30PropertySchema): void {}
-    visitAdditionalPropertiesSchema(node: Oas20AdditionalPropertiesSchema | Oas30AdditionalPropertiesSchema): void {}
-    visitAllOfSchema(node: Oas20AllOfSchema | Oas30AllOfSchema): void {}
-    visitItemsSchema(node: Oas20ItemsSchema | Oas30ItemsSchema): void {}
-    visitDefinitions(node: Oas20Definitions): void {}
-    visitParametersDefinitions(node: Oas20ParametersDefinitions): void {}
-    visitResponsesDefinitions(node: Oas20ResponsesDefinitions): void {}
-    visitExtension(node: OasExtension): void {}
-    visitMediaType(node: Oas30MediaType): void {}
-    visitEncoding(node: Oas30Encoding): void {}
-    visitLink(node: Oas30Link): void {}
-    visitLinkParameterExpression(node: Oas30LinkParameterExpression): void {}
-    visitLinkRequestBodyExpression(node: Oas30LinkRequestBodyExpression): void {}
-    visitLinkServer(node: Oas30LinkServer): void {}
-    visitRequestBody(node: Oas30RequestBody): void {}
-    visitCallback(node: Oas30Callback): void {}
-    visitCallbackPathItem(node: Oas30CallbackPathItem): void {}
-    visitServer(node: Oas30Server): void {}
-    visitServerVariable(node: Oas30ServerVariable): void {}
-    visitAnyOfSchema(node: Oas30AnyOfSchema): void {}
-    visitOneOfSchema(node: Oas30OneOfSchema): void {}
-    visitNotSchema(node: Oas30NotSchema): void {}
-    visitComponents(node: Oas30Components): void {}
-    visitExampleDefinition(node: Oas30ExampleDefinition): void {}
-    visitRequestBodyDefinition(node: Oas30RequestBodyDefinition): void {}
-    visitHeaderDefinition(node: Oas30HeaderDefinition): void {}
-    visitOAuthFlows(node: Oas30OAuthFlows): void {}
-    visitImplicitOAuthFlow(node: Oas30ImplicitOAuthFlow): void {}
-    visitPasswordOAuthFlow(node: Oas30PasswordOAuthFlow): void {}
-    visitClientCredentialsOAuthFlow(node: Oas30ClientCredentialsOAuthFlow): void {}
-    visitAuthorizationCodeOAuthFlow(node: Oas30AuthorizationCodeOAuthFlow): void {}
-    visitLinkDefinition(node: Oas30LinkDefinition): void {}
-    visitCallbackDefinition(node: Oas30CallbackDefinition): void {}
-    visitDiscriminator(node: Oas30Discriminator): void {}
-    visitValidationProblem(node: OasValidationProblem): void {}
+    visitDocument(node: OasDocument): void { /* Empty */ }
+    visitInfo(node: OasInfo): void { /* Empty */ }
+    visitContact(node: OasContact): void { /* Empty */ }
+    visitLicense(node: OasLicense): void { /* Empty */ }
+    visitPaths(node: OasPaths): void { /* Empty */ }
+    visitPathItem(node: OasPathItem): void { /* Empty */ }
+    visitOperation(node: OasOperation): void { /* Empty */ }
+    visitParameter(node: Oas20Parameter | Oas30Parameter): void { /* Empty */ }
+    visitParameterDefinition(node: Oas20ParameterDefinition | Oas30ParameterDefinition): void { /* Empty */ }
+    visitExternalDocumentation(node: OasExternalDocumentation): void { /* Empty */ }
+    visitSecurityRequirement(node: OasSecurityRequirement): void { /* Empty */ }
+    visitResponses(node: OasResponses): void { /* Empty */ }
+    visitResponse(node: Oas20Response | Oas30Response): void { /* Empty */ }
+    visitResponseDefinition(node: Oas20ResponseDefinition | Oas30ResponseDefinition): void { /* Empty */ }
+    visitSchema(node: OasSchema): void { /* Empty */ }
+    visitHeaders(node: Oas20Headers): void { /* Empty */ }
+    visitHeader(node: OasHeader): void { /* Empty */ }
+    visitExample(node: Oas20Example | Oas30Example): void { /* Empty */ }
+    visitItems(node: Oas20Items): void { /* Empty */ }
+    visitTag(node: OasTag): void { /* Empty */ }
+    visitSecurityDefinitions(node: Oas20SecurityDefinitions): void { /* Empty */ }
+    visitSecurityScheme(node: OasSecurityScheme): void { /* Empty */ }
+    visitScopes(node: Oas20Scopes): void { /* Empty */ }
+    visitXML(node: OasXML): void { /* Empty */ }
+    visitSchemaDefinition(node: Oas20SchemaDefinition | Oas30SchemaDefinition): void { /* Empty */ }
+    visitPropertySchema(node: Oas20PropertySchema | Oas30PropertySchema): void { /* Empty */ }
+    visitAdditionalPropertiesSchema(node: Oas20AdditionalPropertiesSchema | Oas30AdditionalPropertiesSchema): void { /* Empty */ }
+    visitAllOfSchema(node: Oas20AllOfSchema | Oas30AllOfSchema): void { /* Empty */ }
+    visitItemsSchema(node: Oas20ItemsSchema | Oas30ItemsSchema): void { /* Empty */ }
+    visitDefinitions(node: Oas20Definitions): void { /* Empty */ }
+    visitParametersDefinitions(node: Oas20ParametersDefinitions): void { /* Empty */ }
+    visitResponsesDefinitions(node: Oas20ResponsesDefinitions): void { /* Empty */ }
+    visitExtension(node: OasExtension): void { /* Empty */ }
+    visitMediaType(node: Oas30MediaType): void { /* Empty */ }
+    visitEncoding(node: Oas30Encoding): void { /* Empty */ }
+    visitLink(node: Oas30Link): void { /* Empty */ }
+    visitLinkParameterExpression(node: Oas30LinkParameterExpression): void { /* Empty */ }
+    visitLinkRequestBodyExpression(node: Oas30LinkRequestBodyExpression): void { /* Empty */ }
+    visitLinkServer(node: Oas30LinkServer): void { /* Empty */ }
+    visitRequestBody(node: Oas30RequestBody): void { /* Empty */ }
+    visitCallback(node: Oas30Callback): void { /* Empty */ }
+    visitCallbackPathItem(node: Oas30CallbackPathItem): void { /* Empty */ }
+    visitServer(node: Oas30Server): void { /* Empty */ }
+    visitServerVariable(node: Oas30ServerVariable): void { /* Empty */ }
+    visitAnyOfSchema(node: Oas30AnyOfSchema): void { /* Empty */ }
+    visitOneOfSchema(node: Oas30OneOfSchema): void { /* Empty */ }
+    visitNotSchema(node: Oas30NotSchema): void { /* Empty */ }
+    visitComponents(node: Oas30Components): void { /* Empty */ }
+    visitExampleDefinition(node: Oas30ExampleDefinition): void { /* Empty */ }
+    visitRequestBodyDefinition(node: Oas30RequestBodyDefinition): void { /* Empty */ }
+    visitHeaderDefinition(node: Oas30HeaderDefinition): void { /* Empty */ }
+    visitOAuthFlows(node: Oas30OAuthFlows): void { /* Empty */ }
+    visitImplicitOAuthFlow(node: Oas30ImplicitOAuthFlow): void { /* Empty */ }
+    visitPasswordOAuthFlow(node: Oas30PasswordOAuthFlow): void { /* Empty */ }
+    visitClientCredentialsOAuthFlow(node: Oas30ClientCredentialsOAuthFlow): void { /* Empty */ }
+    visitAuthorizationCodeOAuthFlow(node: Oas30AuthorizationCodeOAuthFlow): void { /* Empty */ }
+    visitLinkDefinition(node: Oas30LinkDefinition): void { /* Empty */ }
+    visitCallbackDefinition(node: Oas30CallbackDefinition): void { /* Empty */ }
+    visitDiscriminator(node: Oas30Discriminator): void { /* Empty */ }
+    visitValidationProblem(node: OasValidationProblem): void { /* Empty */ }
 }
 
 

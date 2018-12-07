@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {Oas20ValidationRule} from "./common.rule";
+import { Oas20PathValidationRule, Oas20ValidationRule } from "./common.rule"
 import {Oas20Parameter} from "../../models/2.0/parameter.model";
 import {Oas20SecurityScheme} from "../../models/2.0/security-scheme.model";
 import {Oas20SecurityRequirement} from "../../models/2.0/security-requirement.model";
@@ -28,7 +28,7 @@ import {Oas20PathItem} from "../../models/2.0/path-item.model";
 import {Oas20Schema} from "../../models/2.0/schema.model";
 import {Oas20SecurityDefinitions} from "../../models/2.0/security-definitions.model";
 import {Oas20Scopes} from "../../models/2.0/scopes.model";
-import {OasValidationRuleUtil} from "../validation";
+import { OasValidationRuleUtil, PathSegment } from "../validation"
 
 /**
  * Implements the Invalid Property Value validation rule.  This rule is responsible
@@ -37,7 +37,7 @@ import {OasValidationRuleUtil} from "../validation";
  * *format* of the value is fine (e.g. correct data-type) but the valid is somehow
  * invalid.
  */
-export class Oas20InvalidPropertyValueValidationRule extends Oas20ValidationRule {
+export class Oas20InvalidPropertyValueValidationRule extends Oas20PathValidationRule {
 
     /**
      * Returns true if the given value is a valid operationId.
@@ -59,15 +59,12 @@ export class Oas20InvalidPropertyValueValidationRule extends Oas20ValidationRule
      * @return {Array}
      */
     private parsePathTemplate(pathTemplate: string): string[] {
-        let segments: string[] = [];
-        let split: string[] = pathTemplate.split('/');
-        split.forEach( seg => {
-            if (seg.indexOf('{') === 0) {
-                let segment: string = seg.substring(1, seg.lastIndexOf('}')).trim();
-                segments.push(segment);
-            }
+        let segments: string[] = pathTemplate.split("{");
+        return segments.filter( (segment, idx) => {
+            return idx > 0 && segment.indexOf("}") !== -1;
+        }).map( segment => {
+            return segment.substring(0, segment.indexOf("}")).trim();
         });
-        return segments;
     }
 
     /**
@@ -77,7 +74,7 @@ export class Oas20InvalidPropertyValueValidationRule extends Oas20ValidationRule
      * @return {boolean}
      */
     private isWrappedOK(xml: Oas20XML): boolean {
-        let schema: Oas20Schema = <Oas20Schema>xml.parent();
+        let schema: Oas20Schema = xml.parent() as Oas20Schema;
         return schema.type === "array";
     }
 
@@ -136,20 +133,20 @@ export class Oas20InvalidPropertyValueValidationRule extends Oas20ValidationRule
         if (node.in === "path") {
             let pathItem: Oas20PathItem;
             if (node.parent()["_path"]) {
-                pathItem = <Oas20PathItem>(node.parent());
+                pathItem = node.parent() as Oas20PathItem;
             } else {
-                pathItem = <Oas20PathItem>(node.parent().parent());
+                pathItem = node.parent().parent() as Oas20PathItem;
             }
             let path: string = pathItem.path();
-            let pathVars: string[] = this.parsePathTemplate(path);
-            this.reportIfInvalid("PAR-007", OasValidationRuleUtil.isValidEnumItem(node.name, pathVars), node, "name",
-                `Path Parameter name "${node.name}" must match a variable in the Path Template.`);
+            let pathSegs: PathSegment[] = this.getPathSegments(path);
+            this.reportIfInvalid("PAR-007", pathSegs.filter(pathSeg => pathSeg.formalName === node.name).length > 0, node, "name",
+                `Path Parameter "${node.name}" not found in path template.`);
         }
 
         if (node.in === "formData") {
-            let consumes: string[] = (<Oas20Document>(node.ownerDocument())).consumes;
+            let consumes: string[] = (node.ownerDocument() as Oas20Document).consumes;
             if (!node.parent()["_path"]) {
-                let operation: Oas20Operation = <Oas20Operation>(node.parent());
+                let operation: Oas20Operation = (node.parent() as Oas20Operation);
                 if (this.hasValue(operation.consumes)) {
                     consumes = operation.consumes;
                 }
@@ -276,9 +273,9 @@ export class Oas20InvalidPropertyValueValidationRule extends Oas20ValidationRule
     public visitSecurityRequirement(node: Oas20SecurityRequirement): void {
         let snames: string[] = node.securityRequirementNames();
         snames.forEach( sname => {
-            let sdefs: Oas20SecurityDefinitions = (<Oas20Document>node.ownerDocument()).securityDefinitions;
+            let sdefs: Oas20SecurityDefinitions = (node.ownerDocument() as Oas20Document).securityDefinitions;
             if (this.hasValue(sdefs)) {
-                let scheme: Oas20SecurityScheme = (<Oas20Document>node.ownerDocument()).securityDefinitions.securityScheme(sname);
+                let scheme: Oas20SecurityScheme = (node.ownerDocument() as Oas20Document).securityDefinitions.securityScheme(sname);
                 if (this.hasValue(scheme)) {
                     if (scheme.type !== "oauth2") {
                         let scopes: string[] = node.scopes(sname);

@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-import {Oas30NodeVisitorAdapter} from "../../visitors/visitor.base";
-import {OasNode} from "../../models/node.model";
-import {IOasValidationProblemReporter, OasValidationRuleUtil} from "../validation";
+import { Oas30NodeVisitorAdapter } from "../../visitors/visitor.base"
+import { OasNode } from "../../models/node.model"
+import { IOasValidationProblemReporter, OasValidationRuleUtil, PathSegment } from "../validation"
 
 /**
  * Base class for all 3.0 validation rules.
@@ -93,6 +93,44 @@ export abstract class Oas30ValidationRule extends Oas30NodeVisitorAdapter {
      */
     public report(code: string, node: OasNode, property: string, message: string): void {
         this._reporter.report(code, node, property, message);
+    }
+
+}
+
+
+/**
+ * Base class for all 3.0 validation rules that have to work with paths.
+ */
+export abstract class Oas30PathValidationRule extends Oas30ValidationRule {
+
+    /**
+     * Checks the path template against the regular expression and returns match result.
+     *
+     * @param pathTemplate
+     * @return {boolean}
+     */
+    protected isPathWellFormed(pathTemplate: string): boolean {
+        return OasValidationRuleUtil.isPathWellFormed(pathTemplate);
+    }
+
+    /**
+     * Finds all occurences of path segment patterns in a path template.
+     *
+     * @param pathTemplate
+     * @return {PathSegment[]}
+     */
+    protected getPathSegments(pathTemplate: string): PathSegment[] {
+        return OasValidationRuleUtil.getPathSegments(pathTemplate);
+    }
+
+    /**
+     * Utility function to report path related errors.
+     * @param code
+     * @param node
+     * @param message
+     */
+    protected reportPathError(code: string, node: OasNode, message: string) {
+        this.report(code, node, null, message);
     }
 
 }

@@ -190,11 +190,21 @@ describe("Validation (2.0)", () => {
 
         let actual: string = errorsAsString(errors);
         let expected: string =
-`[PATH-005] |2| {/paths[pet]->null} :: Paths must start with a '/' character.
-[PATH-005] |2| {/paths[pet/findByStatus]->null} :: Paths must start with a '/' character.
+`[PATH-005] |2| {/paths[pet]->null} :: Path template "pet" is not valid.
+[PATH-005] |2| {/paths[pet/findByStatus]->null} :: Path template "pet/findByStatus" is not valid.
 [RES-003] |2| {/paths[/pet/findByTags]/get/responses[487]->statusCode} :: "487" is not a valid HTTP response status code.
 [RES-003] |2| {/paths[/pet/findByTags]/get/responses[822]->statusCode} :: "822" is not a valid HTTP response status code.
-[EX-001] |2| {/paths[/pet/findByTags]/get/responses[822]/examples->produces} :: Example 'text/plain' must match one of the "produces" mime-types.`;
+[EX-001] |2| {/paths[/pet/findByTags]/get/responses[822]/examples->produces} :: Example 'text/plain' must match one of the "produces" mime-types.
+[PATH-006] |2| {/paths[//pathstest11]->null} :: Path template "//pathstest11" contains one or more empty segment.
+[PATH-005] |2| {/paths[pathstest12]->null} :: Path template "pathstest12" is not valid.
+[PATH-005] |2| {/paths[{pathstest13}]->null} :: Path template "{pathstest13}" is not valid.
+[PATH-005] |2| {/paths[/{{pathstest14}}]->null} :: Path template "/{{pathstest14}}" is not valid.
+[PATH-005] |2| {/paths[/pathstest15/{var1}{var2}]->null} :: Path template "/pathstest15/{var1}{var2}" is not valid.
+[PATH-005] |2| {/paths[/pathstest16/{var]->null} :: Path template "/pathstest16/{var" is not valid.
+[PATH-005] |2| {/paths[/pathstest17/var}]->null} :: Path template "/pathstest17/var}" is not valid.
+[PATH-005] |2| {/paths[/pathstest19/{1var}]->null} :: Path template "/pathstest19/{1var}" is not valid.
+[PATH-007] |2| {/paths[/pathstest22/{var}/{var}]->null} :: Path template "/pathstest22/{var}/{var}" contains duplicate variable names (var).
+[PATH-007] |2| {/paths[/pathstest23/{var1}/{var2}/a{var2}/{var1}]->null} :: Path template "/pathstest23/{var1}/{var2}/a{var2}/{var1}" contains duplicate variable names (var1, var2).`;
 
         assertValidationOutput(actual, expected);
     });
@@ -348,15 +358,31 @@ describe("Validation (3.0)", () => {
     it("Invalid Property Name", () => {
         let json: any = readJSON('tests/fixtures/validation/3.0/invalid-property-name.json');
         let document: Oas30Document = library.createDocument(json) as Oas30Document;
-
+    
         let node: OasNode = document;
         let errors: OasValidationProblem[] = library.validate(node);
-
+    
         let actual: string = errorsAsString(errors);
         let expected: string =
 `[ENC-3-006] |2| {/paths[/enc-3-006]/post/requestBody/content[multipart/mixed]/encoding[missingProperty]->missingProperty} :: Encoding Property "missingProperty" not found in the associated schema.
 [RES-3-001] |2| {/paths[/pets]/get/responses[Success]->null} :: "Success" is not a valid HTTP response status code.
-[PATH-3-004] |2| {/paths[pets/{id}]->null} :: Paths must start with a '/' character.
+[PATH-3-004] |2| {/paths[pets/{id}]->null} :: Path template "pets/{id}" is not valid.
+[PATH-3-005] |2| {/paths[//pathstest11]->null} :: Path template "//pathstest11" contains one or more empty segment.
+[PATH-3-004] |2| {/paths[pathstest12]->null} :: Path template "pathstest12" is not valid.
+[PATH-3-004] |2| {/paths[{pathstest13}]->null} :: Path template "{pathstest13}" is not valid.
+[PATH-3-004] |2| {/paths[/{{pathstest14}}]->null} :: Path template "/{{pathstest14}}" is not valid.
+[PATH-3-004] |2| {/paths[/pathstest15/{var1}{var2}]->null} :: Path template "/pathstest15/{var1}{var2}" is not valid.
+[PATH-3-004] |2| {/paths[/pathstest16/{var]->null} :: Path template "/pathstest16/{var" is not valid.
+[PATH-3-004] |2| {/paths[/pathstest17/var}]->null} :: Path template "/pathstest17/var}" is not valid.
+[PATH-3-004] |2| {/paths[/pathstest19/{1var}]->null} :: Path template "/pathstest19/{1var}" is not valid.
+[PATH-3-006] |2| {/paths[/pathstest22/{var}/{var}]->null} :: Path template "/pathstest22/{var}/{var}" contains duplicate variable names (var).
+[PATH-3-006] |2| {/paths[/pathstest23/{var1}/{var2}/a{var2}/{var1}]->null} :: Path template "/pathstest23/{var1}/{var2}/a{var2}/{var1}" contains duplicate variable names (var1, var2).
+[PATH-3-007] |2| {/paths[/pathstest25/]->null} :: Path template "/pathstest25/" is semantically identical to at least one other path.
+[PATH-3-007] |2| {/paths[/pathstest25]->null} :: Path template "/pathstest25/" is semantically identical to at least one other path.
+[PATH-3-007] |2| {/paths[/pathstest26/{var}/]->null} :: Path template "/pathstest26/{var}/" is semantically identical to at least one other path.
+[PATH-3-007] |2| {/paths[/pathstest26/{var}]->null} :: Path template "/pathstest26/{var}/" is semantically identical to at least one other path.
+[PATH-3-007] |2| {/paths[/pathstest27/{var2}/]->null} :: Path template "/pathstest27/{var2}/" is semantically identical to at least one other path.
+[PATH-3-007] |2| {/paths[/pathstest27/{var1}]->null} :: Path template "/pathstest27/{var2}/" is semantically identical to at least one other path.
 [COMP-3-001] |2| {/components/schemas[Pet+Foo]->name} :: Schema Definition Name is not valid.
 [COMP-3-003] |2| {/components/responses[The Response]->name} :: Response Definition Name is not valid.
 [COMP-3-002] |2| {/components/parameters[Some$Parameter]->parameterName} :: Parameter Definition Name is not valid.
@@ -370,7 +396,7 @@ describe("Validation (3.0)", () => {
 
         assertValidationOutput(actual, expected);
     });
-
+    
     it("Invalid Property Value", () => {
         let json: any = readJSON('tests/fixtures/validation/3.0/invalid-property-value.json');
         let document: Oas30Document = library.createDocument(json) as Oas30Document;
