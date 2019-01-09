@@ -42,7 +42,7 @@
     "mkdirp": "0.5.1",
     "rimraf": "2.6.1",
     "rollup": "0.41.6",
-    "rollup-plugin-commonjs": "8.0.2",
+    "rollup-plugin-commonjs": "8.4.1",
     "tslint": "^5.11.0",
     "tslint-config-prettier": "^1.15.0",
     "tslint-config-standard": "^8.0.1",
