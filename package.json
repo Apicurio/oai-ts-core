@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@types/diff": "3.2.2",
-    "@types/jasmine": "2.5.47",
+    "@types/jasmine": "3.3.5",
     "cpx": "1.5.0",
     "diff": "3.5.0",
     "jasmine-core": "2.6.1",

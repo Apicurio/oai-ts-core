@@ -7,10 +7,10 @@
   resolved "https://registry.yarnpkg.com/@types/diff/-/diff-3.2.2.tgz#4d6f45537322a7a420d353a0939513c7e96d14a6"
   integrity sha512-q3zfJvaTroV5BjAAR+peTHEGAAhGrPX0z2EzCzpt2mwFA+qzUn2nigJLqSekXRtdULKmT8am7zjvTMZSapIgHw==
 
-"@types/jasmine@2.5.47":
-  version "2.5.47"
-  resolved "https://registry.yarnpkg.com/@types/jasmine/-/jasmine-2.5.47.tgz#bbba9bcf0e95e7890c6f4a47394e8bacaa960eb6"
-  integrity sha1-u7qbzw6V54kMb0pHOU6LrKqWDrY=
+"@types/jasmine@3.3.5":
+  version "3.3.5"
+  resolved "https://registry.yarnpkg.com/@types/jasmine/-/jasmine-3.3.5.tgz#3738ffbf34dffae9ecaac4503d7d969744f0e1d7"
+  integrity sha512-LJtc52O1PNUffMvH6Q3fS0BOhQWYlkh3SVu/Jc4GoPgJkUytk5Y6YPbw+6lZK2mWWvG62BtVyOFw0ih7r8STsw==
 
 abbrev@1, abbrev@1.0.x:
   version "1.0.9"
