@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@types/diff@3.2.2":
-  version "3.2.2"
-  resolved "https://registry.yarnpkg.com/@types/diff/-/diff-3.2.2.tgz#4d6f45537322a7a420d353a0939513c7e96d14a6"
-  integrity sha512-q3zfJvaTroV5BjAAR+peTHEGAAhGrPX0z2EzCzpt2mwFA+qzUn2nigJLqSekXRtdULKmT8am7zjvTMZSapIgHw==
+"@types/diff@3.5.2":
+  version "3.5.2"
+  resolved "https://registry.yarnpkg.com/@types/diff/-/diff-3.5.2.tgz#bd92300d32675bbe9f7853480730250aa859a90a"
+  integrity sha512-T1y8ed2DipuUGqgzWzBDUMlJM1bD1CG73ETOi08VURsGArjRfC4nqfeC5owrV7SFvgbeKDbonI/Es4vQgJ2IKA==
 
 "@types/jasmine@3.3.5":
   version "3.3.5"
