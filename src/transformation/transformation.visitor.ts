@@ -670,9 +670,9 @@ export class Oas20to30TransformationVisitor implements IOas20NodeVisitor {
                      schema30: Oas30Schema, isSchema: boolean): Oas30Schema {
         schema30.type = from.type;
         schema30.format = from.format;
-        if (from.items && typeof from.items !== "array") {
+        if (from.items && !Array.isArray(from.items)) {
             (from.items as OasNode).n_attribute("_transformation_items-parent", schema30);
-        } else if (from.items && typeof from.items === "array") {
+        } else if (from.items && Array.isArray(from.items)) {
             // TODO handle the case where "items" is an array of items!!
         }
         // Note: Not sure what to do with the "collectionFormat" of a schema.  Dropping it for now.
