@@ -31,7 +31,7 @@
     "cpx": "1.5.0",
     "diff": "4.0.1",
     "mkdirp": "0.5.1",
-    "rimraf": "2.6.1",
+    "rimraf": "2.6.3",
     "jasmine-core": "3.3.0",
     "karma": "1.7.1",
     "karma-chrome-launcher": "2.1.1",
