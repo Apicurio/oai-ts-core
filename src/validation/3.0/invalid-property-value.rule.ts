@@ -35,6 +35,7 @@ import { Oas30SecurityRequirement } from "../../models/3.0/security-requirement.
 import { Oas30Discriminator } from "../../models/3.0/discriminator.model"
 import { Oas30ServerVariable } from "../../models/3.0/server-variable.model"
 import { Oas30Server } from "../../models/3.0/server.model"
+import {ReferenceUtil} from "../../util";
 
 
 /**
@@ -69,6 +70,11 @@ export class Oas30OperationFinder extends Oas30NodeVisitorAdapter {
  * invalid.
  */
 export class Oas30InvalidPropertyValueValidationRule extends Oas30PathValidationRule {
+
+    /**
+     * Holds paths with either invalid pattern or with duplicate parameters.
+     */
+    private pathItemsWithError: string[] = [];
 
     /**
      * Returns true if the given value is a valid operationId.
@@ -138,6 +144,85 @@ export class Oas30InvalidPropertyValueValidationRule extends Oas30PathValidation
         return method === "put" || method === "post" || method === "options" || method === "patch";
     }
 
+    /**
+     * Validates that all parameter name and "in" combinations are unique
+     * @param {Oas30Parameter[]} - List of parameters to check
+     * @return {boolean} - true if unique, false otherwise
+     */
+    private ensureUnique(params: Oas30Parameter[]): boolean {
+        if (this.hasValue(params) === false) {
+            return true;
+        }
+        const resolvedParams: Oas30Parameter[] = [];
+        params.forEach(param => {
+            const resolutionResult = ReferenceUtil.resolveReferenceRecursive<Oas30Parameter>(param);
+            if (typeof resolutionResult === 'string') {
+                // No need to report this error - already taken care of by reference checks elsewhere.
+                // this.reportIf("PAR-3-019", true, param, "$ref", `Parameter reference ${param.$ref} points to non-existant reference.`);
+                return false;
+            }
+            resolvedParams.push(resolutionResult);
+        });
+        const paramsKey = {};
+        resolvedParams.forEach(param => {
+            const key = `${param.in}-${param.name}`;
+            if (paramsKey[key] === undefined) {
+                paramsKey[key] = {
+                    count: 1,
+                    in: param.in,
+                    name: param.name
+                };
+            }
+            else {
+                paramsKey[key].count = paramsKey[key].count + 1;
+            }
+        });
+        let success: boolean = true;
+        for(let key in paramsKey) {
+            if (paramsKey[key].count > 1) {
+                resolvedParams.filter(param => {
+                    return param.in === paramsKey[key].in && param.name === paramsKey[key].name;
+                })
+                .forEach(param => {
+                    this.reportIf("PAR-3-001", true, param, "in", `Duplicate parameter named '${paramsKey[key].name}' and in '${paramsKey[key].in}' found (parameters must be unique by name and location).`);
+                    success = success && false;
+                });
+            }
+        }
+        return success;
+    }
+
+    /**
+     * Merges all parameters applicable for an operation - those defined within the operation and those defined at the pathItem level.
+     * Resolves parameters that are not defined inline but are referenced from the components/parameters section.
+     * @param {Oas30Operation} - Operation for which to merge parameters.
+     * @return {Oas30Parameter[]} - array of merged paramters.
+     */
+    private mergeParameters(node: Oas30Operation): Oas30Parameter[] {
+        const paramsKey = {};
+        const parentNode = <Oas30PathItem>node.parent();
+        // Get the parameters from pathItem
+        if (this.hasValue(parentNode.parameters)) {
+            parentNode.parameters.forEach(param => {
+                const resolutionResult = <Oas30Parameter>ReferenceUtil.resolveReferenceRecursive<Oas30Parameter>(<Oas30Parameter>param);
+                const key = `${resolutionResult.in}-${resolutionResult.name}`;
+                paramsKey[key] = resolutionResult;
+            });
+        }
+        // Overwrite parameters from parent
+        if (this.hasValue(node.parameters)) {
+            node.parameters.forEach(param => {
+                const resolutionResult = <Oas30Parameter>ReferenceUtil.resolveReferenceRecursive<Oas30Parameter>(<Oas30Parameter>param);
+                const key = `${resolutionResult.in}-${resolutionResult.name}`;
+                paramsKey[key] = resolutionResult;
+            });
+        }
+        const mergedParameters:Oas30Parameter[] = []
+        for(let key in paramsKey) {
+            mergedParameters.push(paramsKey[key]);
+        }
+        return mergedParameters;
+    }
 
     public visitEncoding(node: Oas30Encoding): void {
         if (node.getHeaders().length > 0) {
@@ -197,11 +282,60 @@ export class Oas30InvalidPropertyValueValidationRule extends Oas30PathValidation
         }
     }
 
+    public visitPathItem(node: Oas30PathItem): void {
+        let params: Oas30Parameter[] = <Oas30Parameter[]>node.parameters;
+        if (this.isPathWellFormed(node.path()) === false || this.ensureUnique(params) === false) {
+            this.pathItemsWithError.push(node.path());
+        }
+    }
+
     public visitOperation(node: Oas30Operation): void {
         if (this.hasValue(node.requestBody)) {
             this.reportIfInvalid("OP-3-003", this.isValidRequestBodyOperation(node), node, "requestBody",
                 `Request Body is not supported for ${node.method().toUpperCase()} operations.`);
         }
+
+        // Perform operation level checks only if there are no issues at the pathItem level.
+        if (this.pathItemsWithError.indexOf((<Oas30PathItem>node.parent()).path()) !== -1) {
+            return;
+        }
+        // Check parameters are unique within operation
+        let params: Oas30Parameter[] = <Oas30Parameter[]>node.parameters;
+        if (this.ensureUnique(params) === false) {
+            return;
+        }
+        const mergedParameters = this.mergeParameters(node);
+        let pathItem: Oas30PathItem = node.parent() as Oas30PathItem;
+        let path: string = pathItem.path();
+        let pathSegs: PathSegment[] = this.getPathSegments(path);
+        // Report all the path segments that don't have an associated parameter definition
+        pathSegs
+        .filter(pathSeg => {
+            return pathSeg.formalName !== undefined;
+        })
+        .forEach(pathSeg => {
+            this.reportIfInvalid(
+                "OP-3-006",
+                mergedParameters.filter((param) => { return pathSeg.formalName === param.name && param.in === 'path'; }).length > 0,
+                node,
+                null,
+                `No definition found for path variable "${pathSeg.formalName}" for path '${path}' and method '${node.method()}'.`
+            );
+        });
+        // Report all path parameter definitions that don't have an associated path segment
+        mergedParameters
+        .filter(param => {
+            return param.in === 'path';
+        })
+        .forEach(param => {
+            this.reportIfInvalid(
+                "PAR-3-018",
+                pathSegs.filter(pathSeg => { return pathSeg.formalName !== undefined && pathSeg.formalName === param.name; }).length > 0,
+                param,
+                "name",
+                `Path Parameter "${param.name}" not found in path template ${path}.`
+            );
+        });
     }
 
     public visitResponses(node: Oas30Responses): void {
@@ -241,17 +375,6 @@ export class Oas30InvalidPropertyValueValidationRule extends Oas30PathValidation
         }
 
         if (node.in === "path") {
-            let pathItem: Oas30PathItem;
-            if (node.parent()["_path"]) {
-                pathItem = node.parent() as Oas30PathItem;
-            } else {
-                pathItem = node.parent().parent() as Oas30PathItem;
-            }
-            let path: string = pathItem.path();
-            let pathSegs: PathSegment[] = this.getPathSegments(path);
-            this.reportIfInvalid("PAR-3-018", pathSegs.filter(pathSeg => pathSeg.formalName === node.name).length > 0, node, "name",
-                `Path Parameter "${node.name}" not found in path template.`);
-
             this.reportIfInvalid("PAR-3-006", node.required === true, node, "required",
                 `Path Parameter "${node.name}" must be marked as "required".`);
 

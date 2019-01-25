@@ -610,19 +610,316 @@
         }
       ]
     },
-    "/par-3-018/{id}/{sub}": {
+    "/sameNameDifferentInWithinPathItem": {
+      "get": {
+        "description": "Parameters with same name and different locations defined inline within operation - valid",
+        "responses": {
+          "default": {
+            "description": "..."
+          }
+        }
+      },
       "parameters": [
         {
-          "name": "id",
-          "in": "path",
-          "required": true
+          "name":"status",
+          "in":"query",
+          "description":"Status param in query",
+          "required":false,
+          "schema": {
+            "type":"string"
+          }
         },
+        {
+          "name":"status",
+          "in":"header",
+          "description":"Status param in header",
+          "required":false,
+          "schema": {
+            "type":"string"
+          }
+        }
+      ]
+    },
+    "/dupesWithinPathItemInlined": {
+      "get": {
+        "description": "Duplicate parameters (name & in combination) defined inline within path item - invalid",
+        "responses": {
+          "default": {
+            "description": "..."
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name":"status",
+          "in":"query",
+          "description":"Status param in query",
+          "required":false,
+          "schema": {
+            "type":"string"
+          }
+        },
+        {
+          "name":"status",
+          "in":"query",
+          "description":"Status param in query",
+          "required":false,
+          "schema": {
+            "type":"string"
+          }
+        }
+      ]
+    },
+    "/dupesWithinPathItemInlineAndRefCombo": {
+      "get": {
+        "description": "Duplicate parameters (name & in combination) one defined inline within operation and other referenced - invalid",
+        "responses": {
+          "default": {
+            "description": "..."
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name":"status",
+          "in":"query",
+          "description":"Status param in query",
+          "required":false,
+          "schema": {
+            "type":"string"
+          }
+        },
+        {
+          "$ref": "#/components/parameters/statusParam"
+        }
+      ]
+    },
+    "/dupesWithinPathItemIndirectReference": {
+      "get": {
+        "description": "Duplicate parameters (name & in combination) one defined inline within operation and other indirectly referenced - invalid",
+        "responses": {
+          "default": {
+            "description": "..."
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name":"status",
+          "in":"query",
+          "description":"Status param in query",
+          "required":false,
+          "schema": {
+            "type":"string"
+          }
+        },
+        {
+          "$ref": "#/components/parameters/indirectRef"
+        }
+      ]
+    },
+    "/incorrectReferenceWithinPathItem": {
+      "get": {
+        "description": "Parameters (name & in combination) pointing to non-existent reference - invalid",
+        "responses": {
+          "default": {
+            "description": "..."
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name":"status",
+          "in":"query",
+          "description":"Status param in query",
+          "required":false,
+          "schema": {
+            "type":"string"
+          }
+        },
+        {
+          "$ref": "#/components/parameters/missing"
+        }
+      ]
+    },
+    "/sameNameDifferentInWithinOperation": {
+      "get": {
+        "description": "Parameters with same name and different locations defined inline within operation - valid",
+        "parameters": [
+          {
+            "name":"status",
+            "in":"query",
+            "description":"Status param in query",
+            "required":false,
+            "schema": {
+              "type":"string"
+            }
+          },
+          {
+            "name":"status",
+            "in":"header",
+            "description":"Status param in header",
+            "required":false,
+            "schema": {
+              "type":"string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "..."
+          }
+        }
+      }
+    },
+    "/dupesWithinOpInlined": {
+      "get": {
+        "description": "Duplicate parameters (name & in combination) defined inline within operation - invalid",
+        "parameters": [
+          {
+            "name":"status",
+            "in":"query",
+            "description":"Status param in query",
+            "required":false,
+            "schema": {
+              "type":"string"
+            }
+          },
+          {
+            "name":"status",
+            "in":"query",
+            "description":"Status param in query",
+            "required":false,
+            "schema": {
+              "type":"string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "..."
+          }
+        }
+      }
+    },
+    "/dupesWithinOpInlineAndRefCombo": {
+      "get": {
+        "description": "Duplicate parameters (name & in combination) one defined inline within operation and other referenced - invalid",
+        "parameters": [
+          {
+            "name":"status",
+            "in":"query",
+            "description":"Status param in query",
+            "required":false,
+            "schema": {
+              "type":"string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/statusParam"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "..."
+          }
+        }
+      }
+    },
+    "/parameterOverridingPathItemDefinitionInlined": {
+      "get": {
+        "description": "Parameter defined inline at operation level overriding the one defined inline within pathItem - valid",
+        "parameters": [
+          {
+            "name":"status",
+            "in":"query",
+            "description":"Status param in query (string)",
+            "required":false,
+            "schema": {
+              "type":"string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "..."
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name":"status",
+          "in":"query",
+          "description":"Status param in query (number)",
+          "required":false,
+          "schema": {
+            "type":"number"
+          }
+        }
+      ]
+    },
+    "/par-3-018/operation/{id}": {
+      "get": {
+        "description": "Parameter defined inline at operation level but not in path template - invalid",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "missing",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "..."
+          }
+        }
+      }
+    },
+    "/par-3-018/pathItem/{id}": {
+      "get": {
+        "description": "Parameter defined inline at pathItem level but not in path template - invalid",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "..."
+          }
+        }
+      },
+      "parameters": [
         {
           "name": "missing",
           "in": "path",
           "required": true
         }
       ]
+    },
+    "/op-3-006/{id}/{sub}": {
+      "get": {
+        "description": "Path parameter defined in template but no matching parameter defined - invalid",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "..."
+          }
+        }
+      }
     },
     "/par-3-019": {
       "parameters": [
@@ -675,7 +972,21 @@
     }
   },
   "components": {
-    "schemas": {
+    "parameters": {
+      "statusParam": {
+        "name":"status",
+        "in":"query",
+        "description":"Status param in query",
+        "required":false,
+        "schema": {
+          "type":"string"
+        }
+      },
+      "indirectRef": {
+        "$ref": "#/components/parameters/statusParam"
+      }
+  },
+  "schemas": {
       "xml-3-002": {
         "type": "object",
         "properties": {

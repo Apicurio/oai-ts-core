@@ -20,6 +20,24 @@ import {OasNode} from "./models/node.model";
 export class ReferenceUtil {
 
     /**
+     * Recurses through references and returns a resolved OASNode object if successful or the address of the last reference which could not be resolved
+     * (e.g. when the pointer is to a non-existent value within the components).
+     * @param node - Generic node for which the value must be resolved
+     * @return {T | string} - Returns (recursively) resolved object or a string with invalid ref.
+     */
+    public static resolveReferenceRecursive<T extends OasNode>(node: T): T | string {
+        let resolvedNode: T = node;
+        while (resolvedNode['$ref'] !== undefined) {
+            const referencedNode = <T>ReferenceUtil.resolveRef(resolvedNode['$ref'], node.ownerDocument());
+            if (referencedNode === undefined || referencedNode === null) {
+                return resolvedNode['$ref'];
+            }
+            resolvedNode = referencedNode;
+        }
+        return resolvedNode;
+    }
+
+    /**
      * Resolves a reference from a relative position in the data model.  Returns null if the
      * $ref is null or cannot be resolved.
      * @param $ref
