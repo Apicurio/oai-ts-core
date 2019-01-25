@@ -17,25 +17,15 @@
 
 import {OasNode} from "./models/node.model";
 
-export class ReferenceUtil {
 
-    /**
-     * Recurses through references and returns a resolved OASNode object if successful or the address of the last reference which could not be resolved
-     * (e.g. when the pointer is to a non-existent value within the components).
-     * @param node - Generic node for which the value must be resolved
-     * @return {T | string} - Returns (recursively) resolved object or a string with invalid ref.
-     */
-    public static resolveReferenceRecursive<T extends OasNode>(node: T): T | string {
-        let resolvedNode: T = node;
-        while (resolvedNode['$ref'] !== undefined) {
-            const referencedNode = <T>ReferenceUtil.resolveRef(resolvedNode['$ref'], node.ownerDocument());
-            if (referencedNode === undefined || referencedNode === null) {
-                return resolvedNode['$ref'];
-            }
-            resolvedNode = referencedNode;
-        }
-        return resolvedNode;
-    }
+/**
+ * A class to help with resolving references.  Handles recursion with loop detection.
+ */
+class ReferenceResolver {
+
+    private visitedNodes: OasNode[] = [];
+
+    constructor() {}
 
     /**
      * Resolves a reference from a relative position in the data model.  Returns null if the
@@ -43,7 +33,11 @@ export class ReferenceUtil {
      * @param $ref
      * @param from
      */
-    public static resolveRef($ref: string, from: OasNode): OasNode {
+    public resolveRef($ref: string, from: OasNode): OasNode {
+        this.visitedNodes = [];
+        return this.resolveRefInternal($ref, from);
+    }
+    private resolveRefInternal($ref: string, from: OasNode): OasNode {
         if (!$ref) {
             return null;
         }
@@ -61,7 +55,54 @@ export class ReferenceUtil {
                 }
             }
         });
-        return cnode;
+
+        // Not found?  Return null.
+        if (!cnode) {
+            return null;
+        }
+
+        // If we've already seen cnode, then we're in a loop!
+        if (this.visitedNodes.indexOf(cnode) !== -1) {
+            return null;
+        }
+        // Otherwise, add it to the nodes we've seen.
+        this.visitedNodes.push(cnode);
+
+        // If cnode itself has a $ref, then keep looking!
+        if (cnode["$ref"]) {
+            return this.resolveRefInternal(cnode["$ref"], cnode);
+        } else {
+            return cnode;
+        }
+    }
+}
+
+
+export class ReferenceUtil {
+
+    /**
+     * Resolves a node reference.  If there is no "$ref" property on the node, then the node itself is
+     * returned.  If there is a "$ref" property, then it is resolved (if possible) to another node.
+     */
+    public static resolveNodeRef(node: OasNode): OasNode {
+        if (node["$ref"]) {
+            return ReferenceUtil.resolveRef(<string>(node["$ref"]), node);
+        }
+        return node;
+    }
+
+    /**
+     * Resolves a reference from a relative position in the data model.  Returns null if the
+     * $ref is null or cannot be resolved.
+     * @param $ref
+     * @param from
+     */
+    public static resolveRef($ref: string, from: OasNode): OasNode {
+        if (!$ref) {
+            return null;
+        }
+        let resolver: ReferenceResolver = new ReferenceResolver();
+        return resolver.resolveRef($ref, from);
     }
 
     /**
@@ -86,7 +127,7 @@ export class ReferenceUtil {
      * @param propertyValue
      * @return {boolean}
      */
-    private static hasValue(value: any): boolean {
+    public static hasValue(value: any): boolean {
         if (value === undefined) {
             return false;
         }
