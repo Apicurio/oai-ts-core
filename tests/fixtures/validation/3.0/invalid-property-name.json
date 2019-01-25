@@ -286,6 +286,11 @@
     "/pathstest5/{var}": {
       "get": {
         "description": "pathstest5 - path with single non-prefixed parameterized segment (/pathstest5/{var}) - valid",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/var"
+          }
+        ],
         "responses": {
           "default": {
             "description": "..."
@@ -296,6 +301,11 @@
     "/pathstest6/{var}/": {
       "get": {
         "description": "pathstest6 - path with single non-prefixed parameterized segment with trailing slash (/pathstest6/{var}) - valid",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/var"
+          }
+        ],
         "responses": {
           "default": {
             "description": "..."
@@ -306,6 +316,11 @@
     "/pathstest7{var}": {
       "get": {
         "description": "pathstest7 - path with single prefixed parameterized segment (/pathstest7{var}) - valid",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/var"
+          }
+        ],
         "responses": {
           "default": {
             "description": "..."
@@ -316,6 +331,11 @@
     "/pathstest8{var}/": {
       "get": {
         "description": "pathstest8 - path with single prefixed parameterized segment with trailing slash (/pathstest8{var}/) - valid",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/var"
+          }
+        ],
         "responses": {
           "default": {
             "description": "..."
@@ -326,6 +346,11 @@
     "/pathstest9/{var}": {
       "get": {
         "description": "pathstest9 - path with non-parameterized segment followed by a parameterized segment (/pathstest9/{var}) - valid",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/var"
+          }
+        ],
         "responses": {
           "default": {
             "description": "..."
@@ -336,6 +361,11 @@
     "/{var}/pathstest10": {
       "get": {
         "description": "pathstest10 - path with parameterized segment followed by a non-parameterized segment (/{var}/pathstest10) - valid",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/var"
+          }
+        ],
         "responses": {
           "default": {
             "description": "..."
@@ -386,6 +416,14 @@
     "/pathstest15/{var1}{var2}": {
       "get": {
         "description": "pathstest15 - path segment with multiple parameterized properties (/pathstest15/{var1}{var2}) - invalid",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/var1"
+          },
+          {
+            "$ref": "#/components/parameters/var2"
+          }
+        ],
         "responses": {
           "default": {
             "description": "..."
@@ -416,6 +454,11 @@
     "/pathstest18/{_var}": {
       "get": {
         "description": "pathstest18 - path with parameter name starting with an underscore (/pathstest18/{_var}) - valid",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/_var"
+          }
+        ],
         "responses": {
           "default": {
             "description": "..."
@@ -436,6 +479,11 @@
     "/pathstest20/{v1ar_2}": {
       "get": {
         "description": "pathstest19 - path with parameter name containing a digit in second or later position with underscores (/pathstest20/{v1ar_2}) - valid",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/v1ar_2"
+          }
+        ],
         "responses": {
           "default": {
             "description": "..."
@@ -446,6 +494,11 @@
     "/pathstest21/var{var}": {
       "get": {
         "description": "pathstest21 - path with same name used as prefix and parameter (/pathstest21/var{var}) - valid",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/var"
+          }
+        ],
         "responses": {
           "default": {
             "description": "..."
@@ -456,6 +509,11 @@
     "/pathstest22/{var}/{var}": {
       "get": {
         "description": "pathstest22 - path with single duplicated parameter (/pathstest22/{var}/{var}) - invalid",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/var"
+          }
+        ],
         "responses": {
           "default": {
             "description": "..."
@@ -466,6 +524,14 @@
     "/pathstest23/{var1}/{var2}/a{var2}/{var1}": {
       "get": {
         "description": "pathstest23 - path with multiple duplicated parameters (/pathstest23/{var1}/{var2/a{var2}/{var1}) - invalid",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/var1"
+          },
+          {
+            "$ref": "#/components/parameters/var2"
+          }
+        ],
         "responses": {
           "default": {
             "description": "..."
@@ -486,6 +552,11 @@
     "/pathstest24/{var}": {
       "get": {
         "description": "pathstest24 - two paths with same name used as prefix in one and parameter in another (/pathstest24/{var}) - valid",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/var"
+          }
+        ],
         "responses": {
           "default": {
             "description": "..."
@@ -516,6 +587,11 @@
     "/pathstest26/{var}": {
       "get": {
         "description": "pathstest26 - parameterized paths that vary only in trailing slash (/pathstest26/{var}) - invalid",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/var"
+          }
+        ],
         "responses": {
           "default": {
             "description": "..."
@@ -526,6 +602,11 @@
     "/pathstest26/{var}/": {
       "get": {
         "description": "pathstest26 - parameterized paths that vary only in trailing slash (/pathstest26/{var}/) - invalid",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/var"
+          }
+        ],
         "responses": {
           "default": {
             "description": "..."
@@ -536,6 +617,11 @@
     "/pathstest27/{var1}": {
       "get": {
         "description": "pathstest27 - parameterized paths that vary only in formal parameter names (/pathstest27/{var1}) - See: OAS 3 - Path Template Matching - invalid",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/var1"
+          }
+        ],
         "responses": {
           "default": {
             "description": "..."
@@ -546,6 +632,11 @@
     "/pathstest27/{var2}/": {
       "get": {
         "description": "pathstest27 - parameterized paths that vary only in formal parameter names (/pathstest27/{var2}) - See: OAS 3 - Path Template Matching - invalid",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/var2"
+          }
+        ],
         "responses": {
           "default": {
             "description": "..."
@@ -610,6 +701,51 @@
       "The Response": {}
     },
     "parameters": {
+      "var": {
+        "name":"var",
+        "in":"path",
+        "description":"Param in path",
+        "required":true,
+        "schema": {
+          "type":"string"
+        }
+      },
+      "_var": {
+        "name":"_var",
+        "in":"path",
+        "description":"Param in path",
+        "required":true,
+        "schema": {
+          "type":"string"
+        }
+      },
+      "v1ar_2": {
+        "name":"v1ar_2",
+        "in":"path",
+        "description":"Param in path",
+        "required":true,
+        "schema": {
+          "type":"string"
+        }
+      },
+      "var1": {
+        "name":"var1",
+        "in":"path",
+        "description":"Param in path",
+        "required":true,
+        "schema": {
+          "type":"string"
+        }
+      },
+      "var2": {
+        "name":"var2",
+        "in":"path",
+        "description":"Param in path",
+        "required":true,
+        "schema": {
+          "type":"string"
+        }
+      },
       "Some$Parameter": {
         "$ref": "http://www.example.org/openapi.json#/components/parameters/FooParam"
       }

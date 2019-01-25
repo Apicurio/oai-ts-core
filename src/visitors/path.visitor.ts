@@ -85,7 +85,6 @@ import {Oas20Headers} from "../models/2.0/headers.model";
 import {Oas30LinkRequestBodyExpression} from "../models/3.0/link-request-body-expression.model";
 import {Oas30Discriminator} from "../models/3.0/discriminator.model";
 import {OasValidationProblem} from "../models/node.model";
-import { IOasParameterParent } from "../models/common/parameter.model"
 
 
 /**

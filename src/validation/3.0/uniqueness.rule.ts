@@ -56,12 +56,4 @@ export class Oas30UniquenessValidationRule extends Oas30ValidationRule {
         }
     }
 
-    public visitParameter(node: Oas30Parameter): void {
-        let params: OasParameterBase[] = (<any>node.parent() as IOasParameterParent).parameters;
-        this.reportIfInvalid("PAR-3-001", params.filter(param => {
-                return param.in === node.in && param.name === node.name;
-            }).length === 1, node, "in",
-            `Duplicate parameter named '${node.name}' found (parameters must be unique by name and location).`);
-    }
-
 }
