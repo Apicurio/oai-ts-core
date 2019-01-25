@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@types/diff": "3.5.2",
-    "@types/jasmine": "3.3.7",
+    "@types/jasmine": "3.3.8",
     "cpx": "1.5.0",
     "diff": "4.0.1",
     "mkdirp": "0.5.1",
