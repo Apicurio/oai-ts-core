@@ -35,7 +35,6 @@ import { Oas30SecurityRequirement } from "../../models/3.0/security-requirement.
 import { Oas30Discriminator } from "../../models/3.0/discriminator.model"
 import { Oas30ServerVariable } from "../../models/3.0/server-variable.model"
 import { Oas30Server } from "../../models/3.0/server.model"
-import {OasParameterBase, IOasParameterParent} from "../../models/common/parameter.model";
 import {ReferenceUtil} from "../../util";
 
 
@@ -146,35 +145,17 @@ export class Oas30InvalidPropertyValueValidationRule extends Oas30PathValidation
     }
 
     /**
-     * Returns resolved parameter definition or the address of the reference if parameter can not be resolved
-     * (e.g. when the pointer is to a non-existent value within the components).
-     * @param node - Parameter definition within a path item or operation
-     * @return {Oas30Parameter | string} - Returns (recursively) resolved parameter or a string with invalid ref.
-     */
-    private resolveParameter(node: Oas30Parameter): Oas30Parameter | string {
-        let resolvedParam = node;
-        while (resolvedParam.$ref !== undefined) {
-            const referencedNode = <Oas30Parameter>ReferenceUtil.resolveRef(resolvedParam.$ref, node.ownerDocument());
-            if (referencedNode === undefined || referencedNode === null) {
-                return resolvedParam.$ref;
-            }
-            resolvedParam = referencedNode;
-        }
-        return resolvedParam
-    }
-
-    /**
      * Validates that all parameter name and "in" combinations are unique
      * @param {Oas30Parameter[]} - List of parameters to check
      * @return {boolean} - true if unique, false otherwise
      */
-    private ensureUnique(params: Oas30Parameter[]) {
+    private ensureUnique(params: Oas30Parameter[]): boolean {
         if (this.hasValue(params) === false) {
             return true;
         }
         const resolvedParams: Oas30Parameter[] = [];
         params.forEach(param => {
-            const resolutionResult = this.resolveParameter(param);
+            const resolutionResult = ReferenceUtil.resolveReferenceRecursive<Oas30Parameter>(param);
             if (typeof resolutionResult === 'string') {
                 // No need to report this error - already taken care of by reference checks elsewhere.
                 // this.reportIf("PAR-3-019", true, param, "$ref", `Parameter reference ${param.$ref} points to non-existant reference.`);
@@ -193,17 +174,19 @@ export class Oas30InvalidPropertyValueValidationRule extends Oas30PathValidation
                 };
             }
             else {
-                paramsKey[key]['count'] = paramsKey[key]['count'] + 1;
+                paramsKey[key].count = paramsKey[key].count + 1;
             }
         });
         let success: boolean = true;
         for(let key in paramsKey) {
-            if (paramsKey[key]['count'] > 1) {
-                const reportableParam = params.filter(param => {
-                    return param.in === paramsKey[key]['in'] && param.name === paramsKey[key]['name'];
-                })[0];
-                this.reportIf("PAR-3-001", true, reportableParam, "in", `Duplicate parameter named '${paramsKey[key]['name']}' and in '${paramsKey[key]['in']}' found (parameters must be unique by name and location).`);
-                success = success && false;
+            if (paramsKey[key].count > 1) {
+                resolvedParams.filter(param => {
+                    return param.in === paramsKey[key].in && param.name === paramsKey[key].name;
+                })
+                .forEach(param => {
+                    this.reportIf("PAR-3-001", true, param, "in", `Duplicate parameter named '${paramsKey[key].name}' and in '${paramsKey[key].in}' found (parameters must be unique by name and location).`);
+                    success = success && false;
+                });
             }
         }
         return success;
@@ -221,7 +204,7 @@ export class Oas30InvalidPropertyValueValidationRule extends Oas30PathValidation
         // Get the parameters from pathItem
         if (this.hasValue(parentNode.parameters)) {
             parentNode.parameters.forEach(param => {
-                const resolutionResult = <Oas30Parameter>this.resolveParameter(<Oas30Parameter>param);
+                const resolutionResult = <Oas30Parameter>ReferenceUtil.resolveReferenceRecursive<Oas30Parameter>(<Oas30Parameter>param);
                 const key = `${resolutionResult.in}-${resolutionResult.name}`;
                 paramsKey[key] = resolutionResult;
             });
@@ -229,7 +212,7 @@ export class Oas30InvalidPropertyValueValidationRule extends Oas30PathValidation
         // Overwrite parameters from parent
         if (this.hasValue(node.parameters)) {
             node.parameters.forEach(param => {
-                const resolutionResult = <Oas30Parameter>this.resolveParameter(<Oas30Parameter>param);
+                const resolutionResult = <Oas30Parameter>ReferenceUtil.resolveReferenceRecursive<Oas30Parameter>(<Oas30Parameter>param);
                 const key = `${resolutionResult.in}-${resolutionResult.name}`;
                 paramsKey[key] = resolutionResult;
             });

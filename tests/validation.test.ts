@@ -430,11 +430,16 @@ describe("Validation (3.0)", () => {
 [PAR-3-014] |2| {/paths[/par-3-014]/parameters[0]->allowReserved} :: Allow Reserved is only allowed for Query Parameters.
 [PAR-3-016] |2| {/paths[/par-3-016]/parameters[0]->content} :: Parameter content cannot have multiple media types.
 [PAR-3-001] |2| {/paths[/dupesWithinPathItemInlined]/parameters[0]->in} :: Duplicate parameter named 'status' and in 'query' found (parameters must be unique by name and location).
+[PAR-3-001] |2| {/paths[/dupesWithinPathItemInlined]/parameters[1]->in} :: Duplicate parameter named 'status' and in 'query' found (parameters must be unique by name and location).
 [PAR-3-001] |2| {/paths[/dupesWithinPathItemInlineAndRefCombo]/parameters[0]->in} :: Duplicate parameter named 'status' and in 'query' found (parameters must be unique by name and location).
+[PAR-3-001] |2| {/components/parameters[statusParam]->in} :: Duplicate parameter named 'status' and in 'query' found (parameters must be unique by name and location).
 [PAR-3-001] |2| {/paths[/dupesWithinPathItemIndirectReference]/parameters[0]->in} :: Duplicate parameter named 'status' and in 'query' found (parameters must be unique by name and location).
+[PAR-3-001] |2| {/components/parameters[statusParam]->in} :: Duplicate parameter named 'status' and in 'query' found (parameters must be unique by name and location).
 [PAR-3-017] |2| {/paths[/incorrectReferenceWithinPathItem]/parameters[1]->$ref} :: Parameter Reference must refer to a valid Parameter Definition.
 [PAR-3-001] |2| {/paths[/dupesWithinOpInlined]/get/parameters[0]->in} :: Duplicate parameter named 'status' and in 'query' found (parameters must be unique by name and location).
+[PAR-3-001] |2| {/paths[/dupesWithinOpInlined]/get/parameters[1]->in} :: Duplicate parameter named 'status' and in 'query' found (parameters must be unique by name and location).
 [PAR-3-001] |2| {/paths[/dupesWithinOpInlineAndRefCombo]/get/parameters[0]->in} :: Duplicate parameter named 'status' and in 'query' found (parameters must be unique by name and location).
+[PAR-3-001] |2| {/components/parameters[statusParam]->in} :: Duplicate parameter named 'status' and in 'query' found (parameters must be unique by name and location).
 [PAR-3-018] |2| {/paths[/par-3-018/operation/{id}]/get/parameters[1]->name} :: Path Parameter "missing" not found in path template /par-3-018/operation/{id}.
 [PAR-3-018] |2| {/paths[/par-3-018/pathItem/{id}]/parameters[0]->name} :: Path Parameter "missing" not found in path template /par-3-018/pathItem/{id}.
 [OP-3-006] |2| {/paths[/op-3-006/{id}/{sub}]/get->null} :: No definition found for path variable "sub" for path '/op-3-006/{id}/{sub}' and method 'get'.
