@@ -208,6 +208,7 @@ describe("Full I/O (3.0)", () => {
         { name: "Components (Security Schemes)",        test: "tests/fixtures/full-io/3.0/components/components-securitySchemes.json",      extraProperties: 0 },
         { name: "Components (Links)",                   test: "tests/fixtures/full-io/3.0/components/components-links.json",                extraProperties: 0 },
         { name: "Components (Callbacks)",               test: "tests/fixtures/full-io/3.0/components/components-callbacks.json",            extraProperties: 0 },
+        { name: "Components ($ref loops)",              test: "tests/fixtures/full-io/3.0/components/components-ref-loops.json",            extraProperties: 0 },
         { name: "Schemas (Discriminator)",              test: "tests/fixtures/full-io/3.0/schemas/discriminator.json",                      extraProperties: 0 },
         { name: "Extra Properties",                     test: "tests/fixtures/full-io/3.0/extra-properties/extra-properties.json",          extraProperties: 3 },
     ];

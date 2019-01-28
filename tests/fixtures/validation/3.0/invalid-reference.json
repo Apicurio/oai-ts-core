@@ -145,6 +145,32 @@
           }
         }
       ]
+    },
+    "/ref-loop": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "query",
+          "description": "ID of the object to fetch",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/SchemaRef1"
+          }
+        }
+      ]
+    },
+    "/missing-indirect-ref": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "query",
+          "description": "ID of the object to fetch",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/MissingIndirectSchemaRef"
+          }
+        }
+      ]
     }
   },
   "components": {
@@ -168,6 +194,15 @@
             "type": "integer"
           }
         }
+      },
+      "SchemaRef1": {
+        "$ref": "#/components/SchemaRef1"
+      },
+      "SchemaRef2": {
+        "$ref": "#/components/SchemaRef2"
+      },
+      "MissingIndirectSchemaRef": {
+        "$ref": "#/components/MissingSchemaRef"
       }
     },
     "responses": {},

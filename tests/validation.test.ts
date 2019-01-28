@@ -473,6 +473,11 @@ describe("Validation (3.0)", () => {
 [RB-3-003] |2| {/paths[/rb-3-003]/post/requestBody->$ref} :: Request Body Reference must refer to a valid Request Body Definition.
 [RES-3-004] |2| {/paths[/res-3-004]/get/responses[200]->$ref} :: Response Reference must refer to a valid Response Definition.
 [SCH-3-002] |2| {/paths[/sch-3-002]/parameters[0]/schema->$ref} :: Schema Reference must refer to a valid Schema Definition.
+[SCH-3-002] |2| {/paths[/ref-loop]/parameters[0]/schema->$ref} :: Schema Reference must refer to a valid Schema Definition.
+[SCH-3-002] |2| {/paths[/missing-indirect-ref]/parameters[0]/schema->$ref} :: Schema Reference must refer to a valid Schema Definition.
+[SCH-3-002] |2| {/components/schemas[SchemaRef1]->$ref} :: Schema Reference must refer to a valid Schema Definition.
+[SCH-3-002] |2| {/components/schemas[SchemaRef2]->$ref} :: Schema Reference must refer to a valid Schema Definition.
+[SCH-3-002] |2| {/components/schemas[MissingIndirectSchemaRef]->$ref} :: Schema Reference must refer to a valid Schema Definition.
 [SS-3-012] |2| {/components/securitySchemes[BASIC]->$ref} :: Security Scheme Reference must refer to a valid Security Scheme Definition.`;
 
         assertValidationOutput(actual, expected);
