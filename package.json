@@ -33,19 +33,19 @@
     "mkdirp": "0.5.1",
     "rimraf": "2.6.3",
     "jasmine-core": "3.3.0",
-    "karma": "2.0.5",
+    "karma": "3.1.4",
     "karma-chrome-launcher": "2.2.0",
     "karma-cli": "2.0.0",
     "karma-jasmine": "2.0.1",
     "karma-phantomjs-launcher": "1.0.4",
     "karma-read-json": "1.1.0",
-    "karma-summary-reporter": "1.5.2",
+    "karma-summary-reporter": "1.6.0",
     "karma-typescript": "4.0.0",
     "rollup": "0.68.2",
     "rollup-plugin-commonjs": "8.4.1",
     "tslint": "^5.11.0",
     "tslint-config-prettier": "^1.15.0",
     "tslint-config-standard": "^8.0.1",
-    "typescript": "2.9.2"
+    "typescript": "3.3.3"
   }
 }

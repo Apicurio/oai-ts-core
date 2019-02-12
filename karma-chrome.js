@@ -17,9 +17,9 @@ module.exports = function(config) {
     files: [
         "src/**/*.ts",
         "tests/**/*.ts",
-        "node_modules/karma-read-json/karma-read-json.js",
         "node_modules/diff/dist/diff.js",
-        { pattern: "tests/fixtures/**/*.json", included: false }
+        "node_modules/karma-read-json/karma-read-json.js",
+        { pattern: "tests/fixtures/**/*.*", included: false }
     ],
 
 
