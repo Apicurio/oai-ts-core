@@ -41,7 +41,19 @@ export interface IOasValidationSeverityRegistry {
 
 export class DefaultValidationSeverityRegistry implements IOasValidationSeverityRegistry {
 
+    /**
+     * By default validation some rules are provided but they do not reflect the requirements in the OpenAPI specification
+     */
+    public static IGNORED_BY_DEFAULT = [
+        "OP-008", // operationId required
+        "OP-3-007" // operationId required
+    ];
+
     public lookupSeverity(ruleCode: string): OasValidationProblemSeverity {
+        if (DefaultValidationSeverityRegistry.IGNORED_BY_DEFAULT.indexOf(ruleCode) >= 0) {
+            return OasValidationProblemSeverity.ignore;
+        }
+
         return OasValidationProblemSeverity.medium;
     }
 
