@@ -130,6 +130,7 @@ export class Oas30RequiredPropertyValidationRule extends Oas30ValidationRule {
 
     public visitOperation(node: Oas30Operation): void {
         this.requireProperty("OP-3-004", node, "responses", "Operation must have at least one response.");
+        this.requireProperty("OP-3-007", node, "operationId", "Operation is missing a operation id.");
     }
 
     public visitParameter(node: Oas30Parameter): void {

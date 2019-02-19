@@ -25,6 +25,16 @@ import {Oas30Document} from "../src/models/3.0/document.model";
 import * as JsDiff from "diff";
 import {IOasValidationSeverityRegistry, OasValidationProblemSeverity} from "../src/validation/validation";
 
+class CustomSeverities implements IOasValidationSeverityRegistry {
+
+    constructor(private severity: OasValidationProblemSeverity) {}
+
+    public lookupSeverity(ruleCode: string): OasValidationProblemSeverity {
+        return this.severity;
+    }
+
+}
+
 
 function errorsAsString(errors: OasValidationProblem[]): string {
     let es: string[] = [];
@@ -283,6 +293,18 @@ describe("Validation (2.0)", () => {
         assertValidationOutput(actual, expected);
     });
 
+    it("Required operationId if un-ignored", () => {
+        let json: any = readJSON('tests/fixtures/validation/2.0/operation-id.json');
+        let document: Oas20Document = library.createDocument(json) as Oas20Document;
+
+        let node: OasNode = document;
+        let errors: OasValidationProblem[] = library.validate(node, true, new CustomSeverities(OasValidationProblemSeverity.high));
+
+        let actual: string = errorsAsString(errors);
+        let expected: string = `[OP-008] |3| {/paths[/path]/post->operationId} :: Operation is missing a operation id.`;
+
+        assertValidationOutput(actual, expected);
+    });
 });
 
 
@@ -620,16 +642,6 @@ describe("Validation (3.0)", () => {
 
     });
 
-    class CustomSeverities implements IOasValidationSeverityRegistry {
-
-        constructor(private severity: OasValidationProblemSeverity) {}
-
-        public lookupSeverity(ruleCode: string): OasValidationProblemSeverity {
-            return this.severity;
-        }
-
-    }
-
     it("Validation Problem List", () => {
         let json: any = readJSON('tests/fixtures/validation/3.0/invalid-property-value.json');
         let document: Oas30Document = library.createDocument(json) as Oas30Document;
@@ -675,4 +687,16 @@ describe("Validation (3.0)", () => {
         assertValidationOutput(actual, expected);
     });
 
+    it("Required operationId if un-ignored", () => {
+        let json: any = readJSON('tests/fixtures/validation/3.0/operation-id.json');
+        let document: Oas30Document = library.createDocument(json) as Oas30Document;
+
+        let node: OasNode = document;
+        let errors: OasValidationProblem[] = library.validate(node, true, new CustomSeverities(OasValidationProblemSeverity.high));
+
+        let actual: string = errorsAsString(errors);
+        let expected: string = `[OP-3-007] |3| {/paths[/path]/post->operationId} :: Operation is missing a operation id.`;
+
+        assertValidationOutput(actual, expected);
+    });
 });
