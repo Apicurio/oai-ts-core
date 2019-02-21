@@ -59,6 +59,18 @@ export class OasSecurityRequirement extends OasNode {
     }
 
     /**
+     * Removes a single security requirement item (reference to an existing security scheme)
+     * by scheme name and returns the array of scopes previously mapped to the scheme name.
+     * @param name
+     */
+    public removeSecurityRequirementItem(name: string): string[] {
+        let scopes: string[] = this._items[name];
+        this._items[name] = undefined;
+        delete this._items[name];
+        return scopes;
+    }
+
+    /**
      * Accepts the given OAS node visitor and calls the appropriate method on it to visit this node.
      * @param visitor
      */
