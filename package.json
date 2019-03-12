@@ -5,7 +5,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/EricWittmann/oai-ts-core"
+    "url": "https://github.com/Apicurio/oai-ts-core"
   },
   "main": "bundles/OAI.umd.js",
   "module": "index.js",

@@ -79,11 +79,11 @@ writing, the versions of node, npm. and yarn used were:
 
 ```
 $ node -v
-v5.6.0
+v8.11.4
 $ npm -v
-3.6.0
+5.6.0
 $ yarn --version
-0.20.3
+1.13.0
 ```
 
 Make sure you download and install node/npm/yarn of at least the above versions.
