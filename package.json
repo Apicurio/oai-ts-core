@@ -37,7 +37,6 @@
     "karma-chrome-launcher": "2.2.0",
     "karma-cli": "2.0.0",
     "karma-jasmine": "2.0.1",
-    "karma-phantomjs-launcher": "1.0.4",
     "karma-read-json": "1.1.0",
     "karma-summary-reporter": "1.6.0",
     "karma-typescript": "4.0.0",

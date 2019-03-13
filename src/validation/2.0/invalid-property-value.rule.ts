@@ -85,7 +85,10 @@ export class Oas20InvalidPropertyValueValidationRule extends Oas20PathValidation
      */
     private isValidScopes(requiredScopes: string[], definedScopes: Oas20Scopes) {
         let rval: boolean = true;
-        let dscopes: string[] = definedScopes.scopes();
+        let dscopes: string[] = [];
+        if (definedScopes) {
+            dscopes = definedScopes.scopes();
+        }
         requiredScopes.forEach( requiredScope => {
             if (dscopes.indexOf(requiredScope) === -1) {
                 rval = false;
