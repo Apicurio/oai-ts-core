@@ -5,7 +5,7 @@
     "title": "Invalid Reference Test"
   },
   "paths": {
-    "/call-3-001": {
+    "/call-001": {
       "get": {
         "callbacks": {
           "myRefCallback": {
@@ -19,7 +19,7 @@
         }
       }
     },
-    "/ex-3-003": {
+    "/ex-003": {
       "put": {
         "requestBody": {
           "content": {
@@ -48,7 +48,7 @@
         }
       }
     },
-    "/head-3-005": {
+    "/head-005": {
       "get": {
         "responses": {
           "200": {
@@ -68,7 +68,7 @@
         }
       }
     },
-    "/link-3-003": {
+    "/link-003": {
       "get": {
         "responses": {
           "200": {
@@ -82,7 +82,7 @@
         }
       }
     },
-    "/link-3-005": {
+    "/link-005": {
       "get": {
         "responses": {
           "200": {
@@ -96,7 +96,7 @@
         }
       }
     },
-    "/par-3-017": {
+    "/par-018": {
       "parameters": [
         {
           "name": "id",
@@ -112,7 +112,7 @@
         }
       ]
     },
-    "/rb-3-003": {
+    "/rb-003": {
       "post": {
         "requestBody": {
           "$ref": "#/components/requestBodies/MissingRequestBody"
@@ -124,7 +124,7 @@
         }
       }
     },
-    "/res-3-004": {
+    "/res-002": {
       "get": {
         "responses": {
           "200": {
@@ -133,7 +133,7 @@
         }
       }
     },
-    "/sch-3-002": {
+    "/sch-001": {
       "parameters": [
         {
           "name": "id",
@@ -175,7 +175,7 @@
   },
   "components": {
     "schemas": {
-      "sch-3-005": {
+      "sch-005": {
         "required": [
           "description",
           "id",

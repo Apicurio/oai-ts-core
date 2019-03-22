@@ -24,12 +24,14 @@ import {OasNode, OasValidationProblem} from "../src/models/node.model";
 import {Oas30Document} from "../src/models/3.0/document.model";
 import * as JsDiff from "diff";
 import {IOasValidationSeverityRegistry, OasValidationProblemSeverity} from "../src/validation/validation";
+import {ValidationRuleMetaData} from "../src/validation/ruleset";
+
 
 class CustomSeverities implements IOasValidationSeverityRegistry {
 
     constructor(private severity: OasValidationProblemSeverity) {}
 
-    public lookupSeverity(ruleCode: string): OasValidationProblemSeverity {
+    public lookupSeverity(rule: ValidationRuleMetaData): OasValidationProblemSeverity {
         return this.severity;
     }
 
@@ -46,6 +48,13 @@ function errorsAsString(errors: OasValidationProblem[]): string {
 
 
 function assertValidationOutput(actual: string, expected: string): void {
+    console.info("========== EXPECTED ==========");
+    console.info(expected);
+    console.info("==============================")
+    console.info("==========  ACTUAL  ==========");
+    console.info(actual);
+    console.info("==============================")
+
     let theDiff: any[] = JsDiff.diffLines(actual, expected);
     let hasDiff: boolean = false;
     theDiff.forEach( change => {
@@ -92,8 +101,8 @@ describe("Validation (2.0)", () => {
 
         let actual: string = errorsAsString(errors);
         let expected: string =
-`[R-002] |2| {/->info} :: Property "info" is required.
-[R-003] |2| {/->paths} :: Property "paths" is required.`;
+`[R-002] |2| {/->info} :: API is missing the 'info' property.
+[R-003] |2| {/->paths} :: API is missing the 'paths' property.`;
 
         assertValidationOutput(actual, expected);
     });
@@ -157,10 +166,10 @@ describe("Validation (2.0)", () => {
         // console.info("+++++");
 
         let expected: string =
-`[SS-001] |2| {/securityDefinitions[notype_auth]->type} :: Property "type" is required.
-[SS-002] |2| {/securityDefinitions[apikey_auth_1]->name} :: API Key Security Scheme is missing a parameter name.
-[SS-003] |2| {/securityDefinitions[apikey_auth_1]->in} :: API Key Security Scheme is missing a parameter location.
-[SS-004] |2| {/securityDefinitions[oauth2_auth_1]->flow} :: Property "flow" is required when "type" property is 'oauth2'.
+`[SS-001] |2| {/securityDefinitions[notype_auth]->type} :: Security Scheme is missing a type.
+[SS-002] |2| {/securityDefinitions[apikey_auth_1]->name} :: API Key Security Scheme is missing a parameter name (e.g. name of a header or query param).
+[SS-003] |2| {/securityDefinitions[apikey_auth_1]->in} :: API Key Security Scheme must describe where the Key can be found (e.g. header, query param, etc).
+[SS-004] |2| {/securityDefinitions[oauth2_auth_1]->flow} :: OAuth Security Scheme is missing a flow type.
 [SS-007] |2| {/securityDefinitions[oauth2_auth_1]->scopes} :: OAuth Security Scheme is missing defined scopes.
 [SS-005] |2| {/securityDefinitions[oauth2_auth_2]->authorizationUrl} :: OAuth Security Scheme is missing an Authorization URL.
 [SS-007] |2| {/securityDefinitions[oauth2_auth_2]->scopes} :: OAuth Security Scheme is missing defined scopes.
@@ -214,7 +223,13 @@ describe("Validation (2.0)", () => {
 [PATH-005] |2| {/paths[/pathstest17/var}]->null} :: Path template "/pathstest17/var}" is not valid.
 [PATH-005] |2| {/paths[/pathstest19/{1var}]->null} :: Path template "/pathstest19/{1var}" is not valid.
 [PATH-007] |2| {/paths[/pathstest22/{var}/{var}]->null} :: Path template "/pathstest22/{var}/{var}" contains duplicate variable names (var).
-[PATH-007] |2| {/paths[/pathstest23/{var1}/{var2}/a{var2}/{var1}]->null} :: Path template "/pathstest23/{var1}/{var2}/a{var2}/{var1}" contains duplicate variable names (var1, var2).`;
+[PATH-007] |2| {/paths[/pathstest23/{var1}/{var2}/a{var2}/{var1}]->null} :: Path template "/pathstest23/{var1}/{var2}/a{var2}/{var1}" contains duplicate variable names (var1, var2).
+[PATH-009] |2| {/paths[/pathstest25/]->null} :: Path template "/pathstest25/" is semantically identical to at least one other path.
+[PATH-009] |2| {/paths[/pathstest25]->null} :: Path template "/pathstest25/" is semantically identical to at least one other path.
+[PATH-009] |2| {/paths[/pathstest26/{var}/]->null} :: Path template "/pathstest26/{var}/" is semantically identical to at least one other path.
+[PATH-009] |2| {/paths[/pathstest26/{var}]->null} :: Path template "/pathstest26/{var}/" is semantically identical to at least one other path.
+[PATH-009] |2| {/paths[/pathstest27/{var2}/]->null} :: Path template "/pathstest27/{var2}/" is semantically identical to at least one other path.
+[PATH-009] |2| {/paths[/pathstest27/{var1}]->null} :: Path template "/pathstest27/{var2}/" is semantically identical to at least one other path.`;
 
         assertValidationOutput(actual, expected);
     });
@@ -228,16 +243,16 @@ describe("Validation (2.0)", () => {
 
         let actual: string = errorsAsString(errors);
         let expected: string =
-`[OP-003] |2| {/paths[/pet]/put->operationId} :: Operation IDs must be unique across all operations.
-[OP-003] |2| {/paths[/pet]/post->operationId} :: Operation IDs must be unique across all operations.
-[PAR-019] |2| {/paths[/pet/findByStatus]/get/parameters[0]->in} :: Duplicate parameter named 'status' found (parameters must be unique by name and location).
-[PAR-019] |2| {/paths[/pet/findByStatus]/get/parameters[1]->in} :: Duplicate parameter named 'status' found (parameters must be unique by name and location).
-[PAR-019] |2| {/paths[/pet/findByTags]/get/parameters[0]->in} :: Duplicate parameter named 'tags' found (parameters must be unique by name and location).
-[PAR-019] |2| {/paths[/pet/findByTags]/get/parameters[1]->in} :: Duplicate parameter named 'tags' found (parameters must be unique by name and location).
-[PAR-019] |2| {/paths[/pet/findByTags]/get/parameters[2]->in} :: Duplicate parameter named 'tags' found (parameters must be unique by name and location).
-[OP-003] |2| {/paths[/pet/{petId}]/get->operationId} :: Operation IDs must be unique across all operations.
-[OP-003] |2| {/paths[/pet/{petId}]/post->operationId} :: Operation IDs must be unique across all operations.
-[OP-003] |2| {/paths[/pet/{petId}]/delete->operationId} :: Operation IDs must be unique across all operations.
+`[OP-003] |2| {/paths[/pet]/put->operationId} :: Duplicate operationId 'addPet' found (operation IDs must be unique across all operations in the API).
+[OP-003] |2| {/paths[/pet]/post->operationId} :: Duplicate operationId 'addPet' found (operation IDs must be unique across all operations in the API).
+[PAR-019] |2| {/paths[/pet/findByStatus]/get/parameters[0]->in} :: Duplicate query parameter named 'status' found (parameters must be unique by name and location).
+[PAR-019] |2| {/paths[/pet/findByStatus]/get/parameters[1]->in} :: Duplicate query parameter named 'status' found (parameters must be unique by name and location).
+[PAR-019] |2| {/paths[/pet/findByTags]/get/parameters[0]->in} :: Duplicate query parameter named 'tags' found (parameters must be unique by name and location).
+[PAR-019] |2| {/paths[/pet/findByTags]/get/parameters[1]->in} :: Duplicate query parameter named 'tags' found (parameters must be unique by name and location).
+[PAR-019] |2| {/paths[/pet/findByTags]/get/parameters[2]->in} :: Duplicate query parameter named 'tags' found (parameters must be unique by name and location).
+[OP-003] |2| {/paths[/pet/{petId}]/get->operationId} :: Duplicate operationId 'getPetById' found (operation IDs must be unique across all operations in the API).
+[OP-003] |2| {/paths[/pet/{petId}]/post->operationId} :: Duplicate operationId 'getPetById' found (operation IDs must be unique across all operations in the API).
+[OP-003] |2| {/paths[/pet/{petId}]/delete->operationId} :: Duplicate operationId 'getPetById' found (operation IDs must be unique across all operations in the API).
 [PAR-020] |2| {/paths[/store/order]/post/parameters[0]->in} :: Operation has multiple "body" parameters.
 [PAR-020] |2| {/paths[/store/order]/post/parameters[1]->in} :: Operation has multiple "body" parameters.
 [TAG-003] |2| {/tags[1]->store} :: Duplicate tag 'store' found (every tag must have a unique name).
@@ -254,7 +269,7 @@ describe("Validation (2.0)", () => {
         let errors: OasValidationProblem[] = library.validate(node);
 
         let actual: string = errorsAsString(errors);
-        let expected: string = `[PATH-001] |2| {/paths[/pet]/post->body} :: Operation may not have both Body and Form Data parameters.`;
+        let expected: string = `[PATH-002] |2| {/paths[/pet]/post->body} :: Operation may not have both Body and Form Data parameters.`;
 
         assertValidationOutput(actual, expected);
     });
@@ -271,7 +286,7 @@ describe("Validation (2.0)", () => {
 `[PAR-018] |2| {/paths[/pet]/put/parameters[1]->$ref} :: Parameter Reference must refer to a valid Parameter Definition.
 [SCH-001] |2| {/paths[/pet]/post/parameters[0]/schema->$ref} :: Schema Reference must refer to a valid Schema Definition.
 [SCH-001] |2| {/paths[/pet/findByStatus]/get/responses[200]/schema/items->$ref} :: Schema Reference must refer to a valid Schema Definition.
-[SREQ-001] |2| {/paths[/pet/findByStatus]/get/security[0]->null} :: Security Requirement 'petstore_auth_notfound' must refer to a valid Security Definition.
+[SREQ-001] |2| {/paths[/pet/findByStatus]/get/security[0]->null} :: Security Requirement 'petstore_auth_notfound' must refer to a valid Security Scheme.
 [RES-002] |2| {/paths[/pet/findByTags]/get/responses[404]->$ref} :: Response Reference must refer to a valid Response Definition.`;
 
         assertValidationOutput(actual, expected);
@@ -325,7 +340,10 @@ describe("Validation (3.0)", () => {
         let node: OasNode = document;
         let errors: OasValidationProblem[] = library.validate(node);
 
-        expect(errors).toEqual([]);
+        let actual: string = errorsAsString(errors);
+        let expected: string = "";
+
+        assertValidationOutput(actual, expected);
     });
 
     it("Invalid Property Format", () => {
@@ -337,10 +355,10 @@ describe("Validation (3.0)", () => {
 
         let actual: string = errorsAsString(errors);
         let expected: string =
-`[CTC-3-004] |2| {/info->termsOfService} :: Terms of Service URL is an incorrect format.
-[CTC-3-001] |2| {/info/contact->url} :: Contact URL is an incorrect format.
-[CTC-3-002] |2| {/info/contact->email} :: Contact email is an incorrect format.
-[LIC-3-002] |2| {/info/license->url} :: License URL is an incorrect format.`;
+`[INF-004] |2| {/info->termsOfService} :: Terms of Service URL is an incorrect format.
+[CTC-001] |2| {/info/contact->url} :: Contact URL is an incorrect format.
+[CTC-002] |2| {/info/contact->email} :: Contact Email is an incorrect format.
+[LIC-002] |2| {/info/license->url} :: License URL is an incorrect format.`;
 
         assertValidationOutput(actual, expected);
     });
@@ -354,7 +372,8 @@ describe("Validation (3.0)", () => {
 
         let actual: string = errorsAsString(errors);
         let expected: string =
-`[HEAD-3-001] |2| {/paths[/pets]/get/responses[200]/content[multipart/form-data]/encoding[id]/headers[Content-Type]->null} :: The "Content-Type" header will be ignored.`;
+`[PAR-021] |2| {/paths[/pets]/get/parameters[2]->name} :: The "Authorization" header parameter will be ignored.
+[HEAD-008] |2| {/paths[/pets]/get/responses[200]/content[multipart/form-data]/encoding[id]/headers[Content-Type]->null} :: The "Content-Type" header will be ignored.`;
 
         assertValidationOutput(actual, expected);
     });
@@ -368,10 +387,10 @@ describe("Validation (3.0)", () => {
 
         let actual: string = errorsAsString(errors);
         let expected: string = [
-            `[SCH-3-004] |2| {/paths[/pets]/get/responses[200]/content[application/json]/schema->items} :: Schema items must be present only for schemas of type 'array'.`,
-            `[SCH-3-003] |2| {/components/schemas[NewPet]/properties[name]->type} :: Schema type value of "invalid" is not allowed.  Must be one of: [string, number, integer, boolean, array, object]`,
-            `[SCH-3-004] |2| {/components/schemas[NewPet]/properties[tags]->items} :: Schema items must be present only for schemas of type 'array'.`,
-            `[SCH-3-003] |2| {/components/schemas[NewPet]/properties[nickNames]/items->type} :: Schema type value of "invalid" is not allowed.  Must be one of: [string, number, integer, boolean, array, object]`
+            `[SCH-004] |2| {/paths[/pets]/get/responses[200]/content[application/json]/schema->items} :: Schema items must be present only for schemas of type 'array'.`,
+            `[SCH-003] |2| {/components/schemas[NewPet]/properties[name]->type} :: Schema type value of "invalid" is not allowed.  Must be one of: [string, number, integer, boolean, array, object]`,
+            `[SCH-004] |2| {/components/schemas[NewPet]/properties[tags]->items} :: Schema items must be present only for schemas of type 'array'.`,
+            `[SCH-003] |2| {/components/schemas[NewPet]/properties[nickNames]/items->type} :: Schema type value of "invalid" is not allowed.  Must be one of: [string, number, integer, boolean, array, object]`
         ].join('\n')
 
         assertValidationOutput(actual, expected);
@@ -386,35 +405,36 @@ describe("Validation (3.0)", () => {
     
         let actual: string = errorsAsString(errors);
         let expected: string =
-`[ENC-3-006] |2| {/paths[/enc-3-006]/post/requestBody/content[multipart/mixed]/encoding[missingProperty]->missingProperty} :: Encoding Property "missingProperty" not found in the associated schema.
-[RES-3-001] |2| {/paths[/pets]/get/responses[Success]->null} :: "Success" is not a valid HTTP response status code.
-[PATH-3-004] |2| {/paths[pets/{id}]->null} :: Path template "pets/{id}" is not valid.
-[PATH-3-005] |2| {/paths[//pathstest11]->null} :: Path template "//pathstest11" contains one or more empty segment.
-[PATH-3-004] |2| {/paths[pathstest12]->null} :: Path template "pathstest12" is not valid.
-[PATH-3-004] |2| {/paths[{pathstest13}]->null} :: Path template "{pathstest13}" is not valid.
-[PATH-3-004] |2| {/paths[/{{pathstest14}}]->null} :: Path template "/{{pathstest14}}" is not valid.
-[PATH-3-004] |2| {/paths[/pathstest15/{var1}{var2}]->null} :: Path template "/pathstest15/{var1}{var2}" is not valid.
-[PATH-3-004] |2| {/paths[/pathstest16/{var]->null} :: Path template "/pathstest16/{var" is not valid.
-[PATH-3-004] |2| {/paths[/pathstest17/var}]->null} :: Path template "/pathstest17/var}" is not valid.
-[PATH-3-004] |2| {/paths[/pathstest19/{1var}]->null} :: Path template "/pathstest19/{1var}" is not valid.
-[PATH-3-006] |2| {/paths[/pathstest22/{var}/{var}]->null} :: Path template "/pathstest22/{var}/{var}" contains duplicate variable names (var).
-[PATH-3-006] |2| {/paths[/pathstest23/{var1}/{var2}/a{var2}/{var1}]->null} :: Path template "/pathstest23/{var1}/{var2}/a{var2}/{var1}" contains duplicate variable names (var1, var2).
-[PATH-3-007] |2| {/paths[/pathstest25/]->null} :: Path template "/pathstest25/" is semantically identical to at least one other path.
-[PATH-3-007] |2| {/paths[/pathstest25]->null} :: Path template "/pathstest25/" is semantically identical to at least one other path.
-[PATH-3-007] |2| {/paths[/pathstest26/{var}/]->null} :: Path template "/pathstest26/{var}/" is semantically identical to at least one other path.
-[PATH-3-007] |2| {/paths[/pathstest26/{var}]->null} :: Path template "/pathstest26/{var}/" is semantically identical to at least one other path.
-[PATH-3-007] |2| {/paths[/pathstest27/{var2}/]->null} :: Path template "/pathstest27/{var2}/" is semantically identical to at least one other path.
-[PATH-3-007] |2| {/paths[/pathstest27/{var1}]->null} :: Path template "/pathstest27/{var2}/" is semantically identical to at least one other path.
-[COMP-3-001] |2| {/components/schemas[Pet+Foo]->name} :: Schema Definition Name is not valid.
-[COMP-3-003] |2| {/components/responses[The Response]->name} :: Response Definition Name is not valid.
-[COMP-3-002] |2| {/components/parameters[Some$Parameter]->parameterName} :: Parameter Definition Name is not valid.
-[COMP-3-005] |2| {/components/examples[Example|1]->name} :: The Example Definition Name is not valid.
-[COMP-3-006] |2| {/components/requestBodies[Request Body]->name} :: The Request Body Definition Name is not valid.
-[COMP-3-007] |2| {/components/headers[[Header]]->name} :: The Header Definition Name is not valid.
-[COMP-3-004] |2| {/components/securitySchemes[Security%Scheme]->schemeName} :: The Security Scheme Name is not valid.
-[COMP-3-008] |2| {/components/links[Link*Twelve]->name} :: The Link Definition Name is not valid.
-[COMP-3-009] |2| {/components/callbacks[Invalid Callback Name]->name} :: The Callback Definition Name is not valid.
-[SREQ-3-001] |2| {/security[1]->null} :: "MissingAuth" does not match a declared Security Scheme.`;
+`[ENC-006] |2| {/paths[/enc-006]/post/requestBody/content[multipart/mixed]/encoding[missingProperty]->missingProperty} :: Encoding Property "missingProperty" not found in the associated schema.
+[RES-003] |2| {/paths[/pets]/get/responses[Success]->statusCode} :: "Success" is not a valid HTTP response status code.
+[PATH-005] |2| {/paths[pets/{id}]->null} :: Path template "pets/{id}" is not valid.
+[PATH-006] |2| {/paths[//pathstest11]->null} :: Path template "//pathstest11" contains one or more empty segment.
+[PATH-005] |2| {/paths[pathstest12]->null} :: Path template "pathstest12" is not valid.
+[PATH-005] |2| {/paths[{pathstest13}]->null} :: Path template "{pathstest13}" is not valid.
+[PATH-005] |2| {/paths[/{{pathstest14}}]->null} :: Path template "/{{pathstest14}}" is not valid.
+[PATH-005] |2| {/paths[/pathstest15/{var1}{var2}]->null} :: Path template "/pathstest15/{var1}{var2}" is not valid.
+[PAR-007] |2| {/paths[/pathstest15/{var1}{var2}]/get/parameters[1]->name} :: Path Parameter "var2" not found in path template.
+[PATH-005] |2| {/paths[/pathstest16/{var]->null} :: Path template "/pathstest16/{var" is not valid.
+[PATH-005] |2| {/paths[/pathstest17/var}]->null} :: Path template "/pathstest17/var}" is not valid.
+[PATH-005] |2| {/paths[/pathstest19/{1var}]->null} :: Path template "/pathstest19/{1var}" is not valid.
+[PATH-007] |2| {/paths[/pathstest22/{var}/{var}]->null} :: Path template "/pathstest22/{var}/{var}" contains duplicate variable names (var).
+[PATH-007] |2| {/paths[/pathstest23/{var1}/{var2}/a{var2}/{var1}]->null} :: Path template "/pathstest23/{var1}/{var2}/a{var2}/{var1}" contains duplicate variable names (var1, var2).
+[PATH-009] |2| {/paths[/pathstest25/]->null} :: Path template "/pathstest25/" is semantically identical to at least one other path.
+[PATH-009] |2| {/paths[/pathstest25]->null} :: Path template "/pathstest25/" is semantically identical to at least one other path.
+[PATH-009] |2| {/paths[/pathstest26/{var}/]->null} :: Path template "/pathstest26/{var}/" is semantically identical to at least one other path.
+[PATH-009] |2| {/paths[/pathstest26/{var}]->null} :: Path template "/pathstest26/{var}/" is semantically identical to at least one other path.
+[PATH-009] |2| {/paths[/pathstest27/{var2}/]->null} :: Path template "/pathstest27/{var2}/" is semantically identical to at least one other path.
+[PATH-009] |2| {/paths[/pathstest27/{var1}]->null} :: Path template "/pathstest27/{var2}/" is semantically identical to at least one other path.
+[SDEF-001] |2| {/components/schemas[Pet+Foo]->name} :: Schema Definition Name is not valid.
+[RDEF-001] |2| {/components/responses[The Response]->name} :: Response Definition Name is not valid.
+[PDEF-001] |2| {/components/parameters[Some$Parameter]->parameterName} :: Parameter Definition Name is not valid.
+[EDEF-001] |2| {/components/examples[Example|1]->name} :: Example Definition Name is not valid.
+[RBDEF-001] |2| {/components/requestBodies[Request Body]->name} :: Request Body Definition Name is not valid.
+[HDEF-001] |2| {/components/headers[[Header]]->name} :: Header Definition Name is not valid.
+[SS-013] |2| {/components/securitySchemes[Security%Scheme]->schemeName} :: Security Scheme Name is not valid.
+[LDEF-001] |2| {/components/links[Link*Twelve]->name} :: Link Definition Name is not valid.
+[CDEF-001] |2| {/components/callbacks[Invalid Callback Name]->name} :: Callback Definition Name is not valid.
+[SREQ-001] |2| {/security[1]->null} :: Security Requirement 'MissingAuth' must refer to a valid Security Scheme.`;
 
         assertValidationOutput(actual, expected);
     });
@@ -428,51 +448,50 @@ describe("Validation (3.0)", () => {
 
         let actual: string = errorsAsString(errors);
         let expected: string =
-`[SVAR-3-003] |2| {/servers[0]/variables[missingProperty]->null} :: Server Variable "missingProperty" is not found in the server url template.
-[ENC-3-001] |2| {/paths[/enc-3-001]/post/requestBody/content[application/x-www-form-urlencoded]/encoding[profileImage]->headers} :: Headers are not allowed for "application/x-www-form-urlencoded" media types.
-[ENC-3-002] |2| {/paths[/enc-3-002]/post/requestBody/content[multipart/form-data]/encoding[historyMetadata]->style} :: Encoding Style is not allowed for "multipart/form-data" media types.
-[ENC-3-003] |2| {/paths[/enc-3-003]/post/requestBody/content[multipart/form-data]/encoding[historyMetadata]->explode} :: "Explode" is not allowed for "multipart/form-data" media types.
-[ENC-3-004] |2| {/paths[/enc-3-004]/post/requestBody/content[multipart/form-data]/encoding[historyMetadata]->allowReserved} :: "Allow Reserved" is not allowed for "multipart/form-data" media types.
-[ENC-3-005] |2| {/paths[/enc-3-005]/post/requestBody/content[application/x-www-form-urlencoded]/encoding[historyMetadata]->style} :: Encoding Style is an invalid value.
-[HEAD-3-003] |2| {/paths[/head-3-003]/post/requestBody/content[multipart/form-data]/encoding[historyMetadata]/headers[X-Header-1]->style} :: Header Style must be "simple".
-[HEAD-3-004] |2| {/paths[/head-3-004]/post/requestBody/content[multipart/form-data]/encoding[historyMetadata]/headers[X-Header-1]->content} :: Header content cannot have multiple media types.
-[LINK-3-002] |2| {/paths[/link-3-002]/get/responses[200]/links[address]->operationId} :: The Operation ID does not refer to an existing Operation.
-[MT-3-003] |2| {/paths[/mt-3-003]/post/requestBody/content[application/json]->encoding} :: Encoding is not allowed for "application/json" media types.
-[OP-3-003] |2| {/paths[/op-3-003]/get->requestBody} :: Request Body is not supported for GET operations.
-[OP-3-005] |2| {/paths[/op-3-005]/get->null} :: Operation must have at least one Response.
-[PAR-3-002] |2| {/paths[/par-3-002]/parameters[0]->in} :: Parameters must be "in" one of: ["path", "query", "header", "cookie"] (Found: 'side')
-[PAR-3-006] |2| {/paths[/par-3-006/{id}]/parameters[0]->required} :: Path Parameter "id" must be marked as "required".
-[PAR-3-007] |2| {/paths[/par-3-007/{id}]/parameters[0]->allowEmptyValue} :: Allow Empty Value is not allowed (only for Query Params).
-[PAR-3-009] |2| {/paths[/par-3-009]/parameters[0]->style} :: Parameter Style must be one of: ["matrix", "label", "form", "simple", "spaceDelimited", "pipeDelimited", "deepObject"] (Found "shallowObject").
-[PAR-3-011] |2| {/paths[/par-3-009]/parameters[0]->style} :: Query Parameter Style must be one of: ["form", "spaceDelimited", "pipeDelimited", "deepObject"] (Found "shallowObject").
-[PAR-3-010] |2| {/paths[/par-3-010/{id}]/parameters[0]->style} :: Path Parameter Style must be one of: ["matrix", "label", "simple"]  (Found "form").
-[PAR-3-011] |2| {/paths[/par-3-011]/parameters[0]->style} :: Query Parameter Style must be one of: ["form", "spaceDelimited", "pipeDelimited", "deepObject"] (Found "label").
-[PAR-3-012] |2| {/paths[/par-3-012]/parameters[0]->style} :: Cookie Parameter style must be "form". (Found "label")
-[PAR-3-013] |2| {/paths[/par-3-013]/parameters[0]->style} :: Header Parameter Style must be "simple". (Found "label").
-[PAR-3-014] |2| {/paths[/par-3-014]/parameters[0]->allowReserved} :: Allow Reserved is only allowed for Query Parameters.
-[PAR-3-016] |2| {/paths[/par-3-016]/parameters[0]->content} :: Parameter content cannot have multiple media types.
-[PAR-3-001] |2| {/paths[/dupesWithinPathItemInlined]/parameters[0]->in} :: Duplicate parameter named 'status' and in 'query' found (parameters must be unique by name and location).
-[PAR-3-001] |2| {/paths[/dupesWithinPathItemInlined]/parameters[1]->in} :: Duplicate parameter named 'status' and in 'query' found (parameters must be unique by name and location).
-[PAR-3-001] |2| {/paths[/dupesWithinPathItemInlineAndRefCombo]/parameters[0]->in} :: Duplicate parameter named 'status' and in 'query' found (parameters must be unique by name and location).
-[PAR-3-001] |2| {/components/parameters[statusParam]->in} :: Duplicate parameter named 'status' and in 'query' found (parameters must be unique by name and location).
-[PAR-3-001] |2| {/paths[/dupesWithinPathItemIndirectReference]/parameters[0]->in} :: Duplicate parameter named 'status' and in 'query' found (parameters must be unique by name and location).
-[PAR-3-001] |2| {/components/parameters[statusParam]->in} :: Duplicate parameter named 'status' and in 'query' found (parameters must be unique by name and location).
-[PAR-3-017] |2| {/paths[/incorrectReferenceWithinPathItem]/parameters[1]->$ref} :: Parameter Reference must refer to a valid Parameter Definition.
-[PAR-3-001] |2| {/paths[/dupesWithinOpInlined]/get/parameters[0]->in} :: Duplicate parameter named 'status' and in 'query' found (parameters must be unique by name and location).
-[PAR-3-001] |2| {/paths[/dupesWithinOpInlined]/get/parameters[1]->in} :: Duplicate parameter named 'status' and in 'query' found (parameters must be unique by name and location).
-[PAR-3-001] |2| {/paths[/dupesWithinOpInlineAndRefCombo]/get/parameters[0]->in} :: Duplicate parameter named 'status' and in 'query' found (parameters must be unique by name and location).
-[PAR-3-001] |2| {/components/parameters[statusParam]->in} :: Duplicate parameter named 'status' and in 'query' found (parameters must be unique by name and location).
-[PAR-3-018] |2| {/paths[/par-3-018/operation/{id}]/get/parameters[1]->name} :: Path Parameter "missing" not found in path template /par-3-018/operation/{id}.
-[PAR-3-018] |2| {/paths[/par-3-018/pathItem/{id}]/parameters[0]->name} :: Path Parameter "missing" not found in path template /par-3-018/pathItem/{id}.
-[OP-3-006] |2| {/paths[/op-3-006/{id}/{sub}]/get->null} :: No definition found for path variable "sub" for path '/op-3-006/{id}/{sub}' and method 'get'.
-[PAR-3-019] |2| {/paths[/par-3-019]/parameters[0]->null} :: Header Parameters "Accept", "Content-Type", and "Authorization" are ignored.
-[SCH-3-001] |2| {/paths[/sch-3-001]/get/responses[200]/content[application/json]/schema/discriminator->discriminator} :: Schema Discriminator is only allowed when using one of: ["oneOf", "anyOf", "allOf"]
-[SREQ-3-002] |2| {/paths[/sreq-3-002]/get/security[0]->api_key} :: Value for Security Requirement "api_key" must be an empty array.
-[XML-3-002] |2| {/components/schemas[xml-3-002]/properties[name]/xml->wrapped} :: "Wrapped" is only valid for 'array' property types.
-[SS-3-008] |2| {/components/securitySchemes[ss-3-008]->type} :: Security Scheme type must be one of: ["apiKey", "http", "oauth2", "openIdConnect"] (Found: 'invalid')
-[SS-3-010] |2| {/components/securitySchemes[ss-3-010]->in} :: Security Scheme API Key must be located "in" one of: ["query", "header", "cookie"] (Found: 'body')
-[SS-3-011] |2| {/components/securitySchemes[ss-3-011]->bearerFormat} :: Security Scheme "Bearer Format" only allowed for HTTP Bearer auth scheme.
-[SS-3-013] |2| {/components/securitySchemes[ss-3-013]->scheme} :: Security Scheme HTTP security scheme must be one of: ["basic", "bearer", "digest", "hoba", "mutual", "negotiate", "oauth", "vapid", "scram-sha-1", "scram-sha-256"] (Found: 'leveraged')`;
+`[SVAR-003] |2| {/servers[0]/variables[missingProperty]->null} :: Server Variable "missingProperty" is not found in the server url template.
+[ENC-001] |2| {/paths[/enc-001]/post/requestBody/content[application/x-www-form-urlencoded]/encoding[profileImage]->headers} :: Headers are not allowed for "application/x-www-form-urlencoded" media types.
+[ENC-002] |2| {/paths[/enc-002]/post/requestBody/content[multipart/form-data]/encoding[historyMetadata]->style} :: Encoding Style is not allowed for "multipart/form-data" media types.
+[ENC-003] |2| {/paths[/enc-003]/post/requestBody/content[multipart/form-data]/encoding[historyMetadata]->explode} :: "Explode" is not allowed for "multipart/form-data" media types.
+[ENC-004] |2| {/paths[/enc-004]/post/requestBody/content[multipart/form-data]/encoding[historyMetadata]->allowReserved} :: "Allow Reserved" is not allowed for "multipart/form-data" media types.
+[ENC-005] |2| {/paths[/enc-005]/post/requestBody/content[application/x-www-form-urlencoded]/encoding[historyMetadata]->style} :: Encoding Style is an invalid value.
+[HEAD-010] |2| {/paths[/head-010]/post/requestBody/content[multipart/form-data]/encoding[historyMetadata]/headers[X-Header-1]->style} :: Header Style must be "simple".
+[HEAD-011] |2| {/paths[/head-011]/post/requestBody/content[multipart/form-data]/encoding[historyMetadata]/headers[X-Header-1]->content} :: Header content cannot have multiple media types.
+[LINK-002] |2| {/paths[/link-002]/get/responses[200]/links[address]->operationId} :: The Operation ID does not refer to an existing Operation.
+[MT-003] |2| {/paths[/mt-003]/post/requestBody/content[application/json]->encoding} :: Encoding is not allowed for "application/json" media types.
+[OP-009] |2| {/paths[/op-009]/get->requestBody} :: Request Body is not supported for GET operations.
+[OP-013] |2| {/paths[/op-013]/get->null} :: Operation must have at least one Response.
+[PAR-022] |2| {/paths[/par-022]/parameters[0]->style} :: Parameter Style must be one of: ["matrix", "label", "form", "simple", "spaceDelimited", "pipeDelimited", "deepObject"] (Found "shallowObject").
+[PAR-023] |2| {/paths[/par-022]/parameters[0]->style} :: Query Parameter Style must be one of: ["form", "spaceDelimited", "pipeDelimited", "deepObject"] (Found "shallowObject").
+[PAR-003] |2| {/paths[/par-003/{id}]/parameters[0]->required} :: Path Parameter "id" must be marked as required.
+[PAR-013] |2| {/paths[/par-013/{id}]/parameters[0]->allowEmptyValue} :: Allow Empty Value is not allowed (only for Query params).
+[PAR-027] |2| {/paths[/par-027/{id}]/parameters[0]->style} :: Path Parameter Style must be one of: ["matrix", "label", "simple"]  (Found "form").
+[PAR-023] |2| {/paths[/par-023]/parameters[0]->style} :: Query Parameter Style must be one of: ["form", "spaceDelimited", "pipeDelimited", "deepObject"] (Found "label").
+[PAR-024] |2| {/paths[/par-024]/parameters[0]->style} :: Cookie Parameter style must be "form". (Found "label")
+[PAR-025] |2| {/paths[/par-025]/parameters[0]->style} :: Header Parameter Style must be "simple". (Found "label").
+[PAR-028] |2| {/paths[/par-028]/parameters[0]->allowReserved} :: Allow Reserved is only allowed for Query Parameters.
+[PAR-029] |2| {/paths[/par-029]/parameters[0]->content} :: Parameter content cannot have multiple media types.
+[PAR-019] |2| {/paths[/dupesWithinPathItemInlined]/parameters[0]->in} :: Duplicate query parameter named 'status' found (parameters must be unique by name and location).
+[PAR-019] |2| {/paths[/dupesWithinPathItemInlined]/parameters[1]->in} :: Duplicate query parameter named 'status' found (parameters must be unique by name and location).
+[PAR-019] |2| {/paths[/dupesWithinPathItemInlineAndRefCombo]/parameters[0]->in} :: Duplicate query parameter named 'status' found (parameters must be unique by name and location).
+[PAR-019] |2| {/paths[/dupesWithinPathItemInlineAndRefCombo]/parameters[1]->in} :: Duplicate query parameter named 'status' found (parameters must be unique by name and location).
+[PAR-019] |2| {/paths[/dupesWithinPathItemIndirectReference]/parameters[0]->in} :: Duplicate query parameter named 'status' found (parameters must be unique by name and location).
+[PAR-019] |2| {/paths[/dupesWithinPathItemIndirectReference]/parameters[1]->in} :: Duplicate query parameter named 'status' found (parameters must be unique by name and location).
+[PAR-018] |2| {/paths[/incorrectReferenceWithinPathItem]/parameters[1]->$ref} :: Parameter Reference must refer to a valid Parameter Definition.
+[PAR-019] |2| {/paths[/dupesWithinOpInlined]/get/parameters[0]->in} :: Duplicate query parameter named 'status' found (parameters must be unique by name and location).
+[PAR-019] |2| {/paths[/dupesWithinOpInlined]/get/parameters[1]->in} :: Duplicate query parameter named 'status' found (parameters must be unique by name and location).
+[PAR-019] |2| {/paths[/dupesWithinOpInlineAndRefCombo]/get/parameters[0]->in} :: Duplicate query parameter named 'status' found (parameters must be unique by name and location).
+[PAR-019] |2| {/paths[/dupesWithinOpInlineAndRefCombo]/get/parameters[1]->in} :: Duplicate query parameter named 'status' found (parameters must be unique by name and location).
+[PAR-007] |2| {/paths[/par-007/operation/{id}]/get/parameters[1]->name} :: Path Parameter "missing" not found in path template.
+[PAR-007] |2| {/paths[/par-007/pathItem/{id}]/parameters[0]->name} :: Path Parameter "missing" not found in path template.
+[OP-011] |2| {/paths[/op-011/{id}/{sub}]/get->null} :: No definition found for path variable "sub" for path '/op-011/{id}/{sub}' and method 'GET'.
+[PAR-021] |2| {/paths[/par-021]/parameters[0]->name} :: The "Content-Type" header parameter will be ignored.
+[SCH-002] |2| {/paths[/sch-002]/get/responses[200]/content[application/json]/schema/discriminator->discriminator} :: Schema Discriminator is only allowed when using one of: ["oneOf", "anyOf", "allOf"]
+[SREQ-002] |2| {/paths[/sreq-002]/get/security[0]->null} :: Security Requirement 'api_key' scopes must be an empty array because the referenced Security Definition not "oauth2" or "openIdConnect".
+[XML-002] |2| {/components/schemas[xml-002]/properties[name]/xml->wrapped} :: XML Wrapped elements can only be used for "array" properties.
+[SS-008] |2| {/components/securitySchemes[ss-008]->type} :: Security Scheme Type must be one of: http, apiKey, oauth2, openIdConnect
+[SS-009] |2| {/components/securitySchemes[ss-009]->in} :: API Key Security Scheme must be located "in" one of: query, header, cookie
+[SS-017] |2| {/components/securitySchemes[ss-017]->bearerFormat} :: Security Scheme "Bearer Format" only allowed for HTTP Bearer auth scheme.
+[SS-016] |2| {/components/securitySchemes[ss-016]->scheme} :: HTTP Security Scheme must be one of: ["basic", "bearer", "digest", "hoba", "mutual", "negotiate", "oauth", "vapid", "scram-sha-1", "scram-sha-256"] (Found: 'leveraged')`;
 
         assertValidationOutput(actual, expected);
     });
@@ -486,21 +505,21 @@ describe("Validation (3.0)", () => {
 
         let actual: string = errorsAsString(errors);
         let expected: string =
-`[CALL-3-001] |2| {/paths[/call-3-001]/get/callbacks[myRefCallback]->$ref} :: Callback Reference must refer to a valid Callback Definition.
-[EX-3-003] |2| {/paths[/ex-3-003]/put/requestBody/content[application/json]/examples[bar]->$ref} :: Example Reference must refer to a valid Example Definition.
-[HEAD-3-005] |2| {/paths[/head-3-005]/get/responses[200]/headers[X-Rate-Limit-Reset]->$ref} :: Header Reference must refer to a valid Header Definition.
-[LINK-3-003] |2| {/paths[/link-3-003]/get/responses[200]/links[MissingLink]->operationRef} :: Link "Operation Reference" must refer to a valid Operation Definition.
-[LINK-3-005] |2| {/paths[/link-3-005]/get/responses[200]/links[MissingLink]->$ref} :: Link Reference must refer to a valid Link Definition.
-[PAR-3-017] |2| {/paths[/par-3-017]/parameters[1]->$ref} :: Parameter Reference must refer to a valid Parameter Definition.
-[RB-3-003] |2| {/paths[/rb-3-003]/post/requestBody->$ref} :: Request Body Reference must refer to a valid Request Body Definition.
-[RES-3-004] |2| {/paths[/res-3-004]/get/responses[200]->$ref} :: Response Reference must refer to a valid Response Definition.
-[SCH-3-002] |2| {/paths[/sch-3-002]/parameters[0]/schema->$ref} :: Schema Reference must refer to a valid Schema Definition.
-[SCH-3-002] |2| {/paths[/ref-loop]/parameters[0]/schema->$ref} :: Schema Reference must refer to a valid Schema Definition.
-[SCH-3-002] |2| {/paths[/missing-indirect-ref]/parameters[0]/schema->$ref} :: Schema Reference must refer to a valid Schema Definition.
-[SCH-3-002] |2| {/components/schemas[SchemaRef1]->$ref} :: Schema Reference must refer to a valid Schema Definition.
-[SCH-3-002] |2| {/components/schemas[SchemaRef2]->$ref} :: Schema Reference must refer to a valid Schema Definition.
-[SCH-3-002] |2| {/components/schemas[MissingIndirectSchemaRef]->$ref} :: Schema Reference must refer to a valid Schema Definition.
-[SS-3-012] |2| {/components/securitySchemes[BASIC]->$ref} :: Security Scheme Reference must refer to a valid Security Scheme Definition.`;
+`[CALL-001] |2| {/paths[/call-001]/get/callbacks[myRefCallback]->$ref} :: Callback Reference must refer to a valid Callback Definition.
+[EX-003] |2| {/paths[/ex-003]/put/requestBody/content[application/json]/examples[bar]->$ref} :: Example Reference must refer to a valid Example Definition.
+[HEAD-012] |2| {/paths[/head-005]/get/responses[200]/headers[X-Rate-Limit-Reset]->$ref} :: Header Reference must refer to a valid Header Definition.
+[LINK-003] |2| {/paths[/link-003]/get/responses[200]/links[MissingLink]->operationRef} :: Link "Operation Reference" must refer to a valid Operation Definition.
+[LINK-005] |2| {/paths[/link-005]/get/responses[200]/links[MissingLink]->$ref} :: Link Reference must refer to a valid Link Definition.
+[PAR-018] |2| {/paths[/par-018]/parameters[1]->$ref} :: Parameter Reference must refer to a valid Parameter Definition.
+[RB-003] |2| {/paths[/rb-003]/post/requestBody->$ref} :: Request Body Reference must refer to a valid Request Body Definition.
+[RES-002] |2| {/paths[/res-002]/get/responses[200]->$ref} :: Response Reference must refer to a valid Response Definition.
+[SCH-001] |2| {/paths[/sch-001]/parameters[0]/schema->$ref} :: Schema Reference must refer to a valid Schema Definition.
+[SCH-001] |2| {/paths[/ref-loop]/parameters[0]/schema->$ref} :: Schema Reference must refer to a valid Schema Definition.
+[SCH-001] |2| {/paths[/missing-indirect-ref]/parameters[0]/schema->$ref} :: Schema Reference must refer to a valid Schema Definition.
+[SCH-001] |2| {/components/schemas[SchemaRef1]->$ref} :: Schema Reference must refer to a valid Schema Definition.
+[SCH-001] |2| {/components/schemas[SchemaRef2]->$ref} :: Schema Reference must refer to a valid Schema Definition.
+[SCH-001] |2| {/components/schemas[MissingIndirectSchemaRef]->$ref} :: Schema Reference must refer to a valid Schema Definition.
+[SS-018] |2| {/components/securitySchemes[BASIC]->$ref} :: Security Scheme Reference must refer to a valid Security Scheme Definition.`;
 
         assertValidationOutput(actual, expected);
     });
@@ -514,12 +533,13 @@ describe("Validation (3.0)", () => {
 
         let actual: string = errorsAsString(errors);
         let expected: string =
-`[MT-3-001] |2| {/components/parameters[mt-3-001]/content[text/plain]->example} :: "Example" and "Examples" are mutually exclusive.
-[PAR-3-008] |2| {/components/parameters[par-3-008]->schema} :: Parameter cannot have both a Schema and Content.
-[PAR-3-015] |2| {/components/parameters[par-3-015]->example} :: "Example" and "Examples" are mutually exclusive.
-[EX-3-002] |2| {/components/examples[ex-3-002]->value} :: "Value" and "External Value" are mutually exclusive.
-[HEAD-3-007] |2| {/components/headers[head-3-007]->example} :: "Example" and "Examples" are mutually exclusive.
-[LINK-3-001] |2| {/components/links[link-3-001]->operationId} :: Operation Reference and Operation cannot both be used.`;
+`[MT-001] |2| {/components/parameters[mt-001]/content[text/plain]->example} :: Media Type "Example" and "Examples" are mutually exclusive.
+[PAR-030] |2| {/components/parameters[par-030]->schema} :: Parameter cannot have both a Schema and Content.
+[PAR-031] |2| {/components/parameters[par-031]->example} :: Parameter "Example" and "Examples" are mutually exclusive.
+[EX-004] |2| {/components/examples[ex-004]->value} :: Example "Value" and "External Value" are mutually exclusive.
+[HEAD-014] |2| {/components/headers[head-014]->schema} :: Header cannot have both a Schema and Content.
+[HEAD-013] |2| {/components/headers[head-013]->example} :: Header "Example" and "Examples" are mutually exclusive.
+[LINK-001] |2| {/components/links[link-001]->operationId} :: Link Operation Reference and Operation ID cannot both be used.`;
         assertValidationOutput(actual, expected);
     });
 
@@ -532,38 +552,38 @@ describe("Validation (3.0)", () => {
 
         let actual: string = errorsAsString(errors);
         let expected: string =
-`[INF-3-001] |2| {/info->title} :: The API is missing a title.
-[INF-3-002] |2| {/info->version} :: The API is missing a version.
-[LIC-3-001] |2| {/info/license->name} :: License must have a name.
-[SRV-3-001] |2| {/servers[0]->url} :: Server is missing a template URL.
-[SVAR-3-001] |2| {/servers[1]/variables[username]->default} :: Server Variable "username" is missing a default value.
-[OP-3-004] |2| {/paths[/op-3-004]/get->responses} :: Operation must have at least one response.
-[PAR-3-003] |2| {/paths[/par-3-003]/parameters[0]->name} :: Parameter is missing a name.
-[PAR-3-004] |2| {/paths[/par-3-004]/parameters[0]->in} :: Parameter location is missing.
-[RES-3-003] |2| {/paths[/res-3-003]/get/responses[200]->description} :: Response (code 200) is missing a description.
-[DISC-3-001] |2| {/components/schemas[disc-3-001]/discriminator->propertyName} :: Discriminator must indicate a property (by name).
-[ED-3-002] |2| {/components/schemas[ed-3-002]/externalDocs->url} :: External Documentation is missing a URL.
-[FLOW-3-001] |2| {/components/securitySchemes[flow-3-001]/flows/implicit->authorizationUrl} :: Implicit OAuth Flow is missing an Authorization URL.
-[FLOW-3-001] |2| {/components/securitySchemes[flow-3-001]/flows/authorizationCode->authorizationUrl} :: Auth Code OAuth Flow is missing an Authorization URL.
-[FLOW-3-002] |2| {/components/securitySchemes[flow-3-002]/flows/clientCredentials->tokenUrl} :: Client Credentials OAuth Flow is missing a Token URL.
-[FLOW-3-002] |2| {/components/securitySchemes[flow-3-002]/flows/authorizationCode->tokenUrl} :: Auth Code OAuth Flow is missing a Token URL.
-[FLOW-3-006] |2| {/components/securitySchemes[flow-3-006]/flows/implicit->scopes} :: OAuth Flow is missing defined scopes.
-[SS-3-001] |2| {/components/securitySchemes[ss-3-001]->type} :: Property "type" is required.
-[SS-3-002] |2| {/components/securitySchemes[ss-3-002]->name} :: API Key Security Scheme is missing a name (e.g. of a header or query param).
-[SS-3-003] |2| {/components/securitySchemes[ss-3-003]->in} :: API Key Security Scheme must describe where the Key can be found (e.g. header, query param, etc).
-[SS-3-004] |2| {/components/securitySchemes[ss-3-004]->scheme} :: HTTP Security Scheme is missing a scheme (Basic, Digest, etc).
-[SS-3-005] |2| {/components/securitySchemes[ss-3-005]->flows} :: OAuth Security Scheme does not define any OAuth flows.
-[SS-3-006] |2| {/components/securitySchemes[ss-3-006]->openIdConnectUrl} :: OpenID Connect Security Scheme is missing a Connect URL.
-[TAG-3-001] |2| {/tags[0]->name} :: Tag is missing a name.`;
+`[INF-001] |2| {/info->title} :: API is missing a title.
+[INF-002] |2| {/info->version} :: API is missing a version.
+[LIC-001] |2| {/info/license->name} :: License is missing a name.
+[SRV-001] |2| {/servers[0]->url} :: Server is missing a template URL.
+[SVAR-001] |2| {/servers[1]/variables[username]->default} :: Server Variable "username" is missing a default value.
+[OP-007] |2| {/paths[/op-007]/get->responses} :: Operation must have at least one response.
+[PAR-001] |2| {/paths[/par-001]/parameters[0]->name} :: Parameter is missing a name.
+[PAR-002] |2| {/paths[/par-002]/parameters[0]->in} :: Parameter is missing a location (Query, Header, etc).
+[RES-001] |2| {/paths[/res-001]/get/responses[200]->description} :: Response (code 200) is missing a description.
+[DISC-001] |2| {/components/schemas[disc-001]/discriminator->propertyName} :: Discriminator must indicate a property (by name).
+[ED-001] |2| {/components/schemas[ed-001]/externalDocs->url} :: External Documentation is missing a URL.
+[FLOW-001] |2| {/components/securitySchemes[flow-001]/flows/implicit->authorizationUrl} :: Implicit OAuth Flow is missing an Authorization URL.
+[FLOW-001] |2| {/components/securitySchemes[flow-001]/flows/authorizationCode->authorizationUrl} :: Auth Code OAuth Flow is missing an Authorization URL.
+[FLOW-002] |2| {/components/securitySchemes[flow-002]/flows/clientCredentials->tokenUrl} :: Client Credentials OAuth Flow is missing a Token URL.
+[FLOW-002] |2| {/components/securitySchemes[flow-002]/flows/authorizationCode->tokenUrl} :: Auth Code OAuth Flow is missing a Token URL.
+[FLOW-006] |2| {/components/securitySchemes[flow-006]/flows/implicit->scopes} :: OAuth Flow is missing defined scopes.
+[SS-001] |2| {/components/securitySchemes[ss-001]->type} :: Security Scheme is missing a type.
+[SS-002] |2| {/components/securitySchemes[ss-002]->name} :: API Key Security Scheme is missing a parameter name (e.g. name of a header or query param).
+[SS-003] |2| {/components/securitySchemes[ss-003]->in} :: API Key Security Scheme must describe where the Key can be found (e.g. header, query param, etc).
+[SS-019] |2| {/components/securitySchemes[ss-019]->scheme} :: HTTP Security Scheme is missing a scheme (Basic, Digest, etc).
+[SS-020] |2| {/components/securitySchemes[ss-020]->flows} :: OAuth Security Scheme does not define any OAuth flows.
+[SS-021] |2| {/components/securitySchemes[ss-021]->openIdConnectUrl} :: OpenID Connect Security Scheme is missing a Connect URL.
+[TAG-001] |2| {/tags[0]->name} :: Tag is missing a name.`;
         assertValidationOutput(actual, expected);
 
         // Now test re-validating just the Info node
         errors = library.validate(document.info);
         actual = errorsAsString(errors);
         expected =
-`[INF-3-001] |2| {/info->title} :: The API is missing a title.
-[INF-3-002] |2| {/info->version} :: The API is missing a version.
-[LIC-3-001] |2| {/info/license->name} :: License must have a name.`
+`[INF-001] |2| {/info->title} :: API is missing a title.
+[INF-002] |2| {/info->version} :: API is missing a version.
+[LIC-001] |2| {/info/license->name} :: License is missing a name.`
         assertValidationOutput(actual, expected);
     });
 
@@ -576,8 +596,8 @@ describe("Validation (3.0)", () => {
 
         let actual: string = errorsAsString(errors);
         let expected: string =
-`[R-3-002] |2| {/->info} :: Property "info" is required.
-[R-3-003] |2| {/->paths} :: Property "paths" is required.`;
+`[R-002] |2| {/->info} :: API is missing the 'info' property.
+[R-003] |2| {/->paths} :: API is missing the 'paths' property.`;
         assertValidationOutput(actual, expected);
     });
 
@@ -590,10 +610,10 @@ describe("Validation (3.0)", () => {
 
         let actual: string = errorsAsString(errors);
         let expected: string =
-`[OP-3-002] |2| {/paths[/foo]/get->operationId} :: Operation IDs must be unique across all operations.
-[OP-3-002] |2| {/paths[/bar]/get->operationId} :: Operation IDs must be unique across all operations.
-[TAG-3-003] |2| {/tags[0]->MyTag} :: Duplicate tag "MyTag" found (every tag must have a unique name).
-[TAG-3-003] |2| {/tags[2]->MyTag} :: Duplicate tag "MyTag" found (every tag must have a unique name).`;
+`[OP-003] |2| {/paths[/foo]/get->operationId} :: Duplicate operationId 'fooId' found (operation IDs must be unique across all operations in the API).
+[OP-003] |2| {/paths[/bar]/get->operationId} :: Duplicate operationId 'fooId' found (operation IDs must be unique across all operations in the API).
+[TAG-003] |2| {/tags[0]->MyTag} :: Duplicate tag 'MyTag' found (every tag must have a unique name).
+[TAG-003] |2| {/tags[2]->MyTag} :: Duplicate tag 'MyTag' found (every tag must have a unique name).`;
         assertValidationOutput(actual, expected);
     });
 
@@ -610,10 +630,10 @@ describe("Validation (3.0)", () => {
 
         let actual: string = errorsAsString(errors2);
         let expected: string =
-`[OP-3-002] |2| {/paths[/foo]/get->operationId} :: Operation IDs must be unique across all operations.
-[OP-3-002] |2| {/paths[/bar]/get->operationId} :: Operation IDs must be unique across all operations.
-[TAG-3-003] |2| {/tags[0]->MyTag} :: Duplicate tag "MyTag" found (every tag must have a unique name).
-[TAG-3-003] |2| {/tags[2]->MyTag} :: Duplicate tag "MyTag" found (every tag must have a unique name).`;
+`[OP-003] |2| {/paths[/foo]/get->operationId} :: Duplicate operationId 'fooId' found (operation IDs must be unique across all operations in the API).
+[OP-003] |2| {/paths[/bar]/get->operationId} :: Duplicate operationId 'fooId' found (operation IDs must be unique across all operations in the API).
+[TAG-003] |2| {/tags[0]->MyTag} :: Duplicate tag 'MyTag' found (every tag must have a unique name).
+[TAG-003] |2| {/tags[2]->MyTag} :: Duplicate tag 'MyTag' found (every tag must have a unique name).`;
         assertValidationOutput(actual, expected);
     });
 
@@ -626,12 +646,13 @@ describe("Validation (3.0)", () => {
 
         let actual: string = errorsAsString(errors);
         let expected: string =
-`[MT-3-001] |1| {/components/parameters[mt-3-001]/content[text/plain]->example} :: "Example" and "Examples" are mutually exclusive.
-[PAR-3-008] |1| {/components/parameters[par-3-008]->schema} :: Parameter cannot have both a Schema and Content.
-[PAR-3-015] |1| {/components/parameters[par-3-015]->example} :: "Example" and "Examples" are mutually exclusive.
-[EX-3-002] |1| {/components/examples[ex-3-002]->value} :: "Value" and "External Value" are mutually exclusive.
-[HEAD-3-007] |1| {/components/headers[head-3-007]->example} :: "Example" and "Examples" are mutually exclusive.
-[LINK-3-001] |1| {/components/links[link-3-001]->operationId} :: Operation Reference and Operation cannot both be used.`;
+`[MT-001] |1| {/components/parameters[mt-001]/content[text/plain]->example} :: Media Type "Example" and "Examples" are mutually exclusive.
+[PAR-030] |1| {/components/parameters[par-030]->schema} :: Parameter cannot have both a Schema and Content.
+[PAR-031] |1| {/components/parameters[par-031]->example} :: Parameter "Example" and "Examples" are mutually exclusive.
+[EX-004] |1| {/components/examples[ex-004]->value} :: Example "Value" and "External Value" are mutually exclusive.
+[HEAD-014] |1| {/components/headers[head-014]->schema} :: Header cannot have both a Schema and Content.
+[HEAD-013] |1| {/components/headers[head-013]->example} :: Header "Example" and "Examples" are mutually exclusive.
+[LINK-001] |1| {/components/links[link-001]->operationId} :: Link Operation Reference and Operation ID cannot both be used.`;
         assertValidationOutput(actual, expected);
 
         // Test @Ignore of problems.
@@ -649,23 +670,23 @@ describe("Validation (3.0)", () => {
         let node: OasNode = document;
         library.validate(node);
 
-        let enode: OasNode = document.paths.pathItem("/par-3-009").parameters[0];
+        let enode: OasNode = document.paths.pathItem("/par-022").parameters[0];
         let errors: OasValidationProblem[] = enode.validationProblems();
 
         let actual: string = errorsAsString(errors);
         let expected: string =
-`[PAR-3-009] |2| {/paths[/par-3-009]/parameters[0]->style} :: Parameter Style must be one of: ["matrix", "label", "form", "simple", "spaceDelimited", "pipeDelimited", "deepObject"] (Found "shallowObject").
-[PAR-3-011] |2| {/paths[/par-3-009]/parameters[0]->style} :: Query Parameter Style must be one of: ["form", "spaceDelimited", "pipeDelimited", "deepObject"] (Found "shallowObject").`;
+`[PAR-022] |2| {/paths[/par-022]/parameters[0]->style} :: Parameter Style must be one of: ["matrix", "label", "form", "simple", "spaceDelimited", "pipeDelimited", "deepObject"] (Found "shallowObject").
+[PAR-023] |2| {/paths[/par-022]/parameters[0]->style} :: Query Parameter Style must be one of: ["form", "spaceDelimited", "pipeDelimited", "deepObject"] (Found "shallowObject").`;
         assertValidationOutput(actual, expected);
 
         let codes: string[] = enode.validationProblemCodes();
-        expect(codes).toEqual([ "PAR-3-009", "PAR-3-011" ]);
+        expect(codes).toEqual([ "PAR-022", "PAR-023" ]);
 
         errors = enode.validationProblemsFor("style");
         actual = errorsAsString(errors);
         expected =
-`[PAR-3-009] |2| {/paths[/par-3-009]/parameters[0]->style} :: Parameter Style must be one of: ["matrix", "label", "form", "simple", "spaceDelimited", "pipeDelimited", "deepObject"] (Found "shallowObject").
-[PAR-3-011] |2| {/paths[/par-3-009]/parameters[0]->style} :: Query Parameter Style must be one of: ["form", "spaceDelimited", "pipeDelimited", "deepObject"] (Found "shallowObject").`;
+`[PAR-022] |2| {/paths[/par-022]/parameters[0]->style} :: Parameter Style must be one of: ["matrix", "label", "form", "simple", "spaceDelimited", "pipeDelimited", "deepObject"] (Found "shallowObject").
+[PAR-023] |2| {/paths[/par-022]/parameters[0]->style} :: Query Parameter Style must be one of: ["form", "spaceDelimited", "pipeDelimited", "deepObject"] (Found "shallowObject").`;
         assertValidationOutput(actual, expected);
 
         errors = enode.validationProblemsFor("in");
@@ -681,8 +702,8 @@ describe("Validation (3.0)", () => {
 
         let actual: string = errorsAsString(errors);
         let expected: string =
-`[UNKNOWN-3-001] |2| {/info/license->unknown-license-property} :: An unexpected property "unknown-license-property" was found.  Extension properties should begin with "x-".
-[UNKNOWN-3-001] |2| {/components/schemas[Error]->unexpected-property-datatype} :: An unexpected property "unexpected-property-datatype" was found.  Extension properties should begin with "x-".`;
+`[UNKNOWN-001] |2| {/info/license->unknown-license-property} :: An unexpected property "unknown-license-property" was found.  Extension properties should begin with "x-".
+[UNKNOWN-001] |2| {/components/schemas[Error]->unexpected-property-datatype} :: An unexpected property "unexpected-property-datatype" was found.  Extension properties should begin with "x-".`;
 
         assertValidationOutput(actual, expected);
     });
@@ -695,7 +716,7 @@ describe("Validation (3.0)", () => {
         let errors: OasValidationProblem[] = library.validate(node, true, new CustomSeverities(OasValidationProblemSeverity.high));
 
         let actual: string = errorsAsString(errors);
-        let expected: string = `[OP-3-007] |3| {/paths[/path]/post->operationId} :: Operation is missing a operation id.`;
+        let expected: string = `[OP-008] |3| {/paths[/path]/post->operationId} :: Operation is missing a operation id.`;
 
         assertValidationOutput(actual, expected);
     });

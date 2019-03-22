@@ -48,6 +48,15 @@
               "type": "integer",
               "format": "int32"
             }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "maximum number of results to return",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {

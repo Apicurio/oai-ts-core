@@ -250,6 +250,7 @@ export abstract class OasCompositeVisitor implements IOasNodeVisitor {
 
 }
 
+
 /**
  * A composite visitor - this class makes it easy to apply multiple visitors to
  * a node at the same time.  It's basically just an array of visitors.
@@ -337,6 +338,66 @@ export class Oas30CompositeVisitor extends OasCompositeVisitor implements IOas30
     public visitServer(node: Oas30Server): void { this._acceptAll(node); }
     public visitServerVariable(node: Oas30ServerVariable): void { this._acceptAll(node); }
 
+}
+
+
+/**
+ * Composite visitor class that works with all versions (both OAS 2.0 and 3.x).  This class makes it easy
+ * to apply multiple visitors concurrently.
+ */
+export class OasCombinedCompositeVisitor extends OasCompositeVisitor implements IOas20NodeVisitor, IOas30NodeVisitor {
+
+    /**
+     * Constructor.
+     * @param visitors
+     */
+    constructor(...visitors: (IOas20NodeVisitor | IOas30NodeVisitor)[]) {
+        super(visitors);
+    }
+
+    visitAdditionalPropertiesSchema(node: Oas20AdditionalPropertiesSchema | Oas30AdditionalPropertiesSchema): void { this._acceptAll(node); }
+    visitAllOfSchema(node: Oas20AllOfSchema | Oas30AllOfSchema): void { this._acceptAll(node); }
+    visitAnyOfSchema(node: Oas30AnyOfSchema): void { this._acceptAll(node); }
+    visitAuthorizationCodeOAuthFlow(node: Oas30AuthorizationCodeOAuthFlow): void { this._acceptAll(node); }
+    visitCallback(node: Oas30Callback): void { this._acceptAll(node); }
+    visitCallbackDefinition(node: Oas30CallbackDefinition): void { this._acceptAll(node); }
+    visitCallbackPathItem(node: Oas30CallbackPathItem): void { this._acceptAll(node); }
+    visitClientCredentialsOAuthFlow(node: Oas30ClientCredentialsOAuthFlow): void { this._acceptAll(node); }
+    visitComponents(node: Oas30Components): void { this._acceptAll(node); }
+    visitDefinitions(node: Oas20Definitions): void { this._acceptAll(node); }
+    visitDiscriminator(node: Oas30Discriminator): void { this._acceptAll(node); }
+    visitEncoding(node: Oas30Encoding): void { this._acceptAll(node); }
+    visitExample(node: Oas20Example | Oas30Example): void { this._acceptAll(node); }
+    visitExampleDefinition(node: Oas30ExampleDefinition): void { this._acceptAll(node); }
+    visitHeaderDefinition(node: Oas30HeaderDefinition): void { this._acceptAll(node); }
+    visitHeaders(node: Oas20Headers): void { this._acceptAll(node); }
+    visitImplicitOAuthFlow(node: Oas30ImplicitOAuthFlow): void { this._acceptAll(node); }
+    visitItems(node: Oas20Items): void { this._acceptAll(node); }
+    visitItemsSchema(node: Oas20ItemsSchema | Oas30ItemsSchema): void { this._acceptAll(node); }
+    visitLink(node: Oas30Link): void { this._acceptAll(node); }
+    visitLinkDefinition(node: Oas30LinkDefinition): void { this._acceptAll(node); }
+    visitLinkParameterExpression(node: Oas30LinkParameterExpression): void { this._acceptAll(node); }
+    visitLinkRequestBodyExpression(node: Oas30LinkRequestBodyExpression): void { this._acceptAll(node); }
+    visitLinkServer(node: Oas30LinkServer): void { this._acceptAll(node); }
+    visitMediaType(node: Oas30MediaType): void { this._acceptAll(node); }
+    visitNotSchema(node: Oas30NotSchema): void { this._acceptAll(node); }
+    visitOAuthFlows(node: Oas30OAuthFlows): void { this._acceptAll(node); }
+    visitOneOfSchema(node: Oas30OneOfSchema): void { this._acceptAll(node); }
+    visitParameter(node: Oas20Parameter | Oas30Parameter): void { this._acceptAll(node); }
+    visitParameterDefinition(node: Oas20ParameterDefinition | Oas30ParameterDefinition): void { this._acceptAll(node); }
+    visitParametersDefinitions(node: Oas20ParametersDefinitions): void { this._acceptAll(node); }
+    visitPasswordOAuthFlow(node: Oas30PasswordOAuthFlow): void { this._acceptAll(node); }
+    visitPropertySchema(node: Oas20PropertySchema | Oas30PropertySchema): void { this._acceptAll(node); }
+    visitRequestBody(node: Oas30RequestBody): void { this._acceptAll(node); }
+    visitRequestBodyDefinition(node: Oas30RequestBodyDefinition): void { this._acceptAll(node); }
+    visitResponse(node: Oas20Response | Oas30Response): void { this._acceptAll(node); }
+    visitResponseDefinition(node: Oas20ResponseDefinition | Oas30ResponseDefinition): void { this._acceptAll(node); }
+    visitResponsesDefinitions(node: Oas20ResponsesDefinitions): void { this._acceptAll(node); }
+    visitSchemaDefinition(node: Oas20SchemaDefinition | Oas30SchemaDefinition): void { this._acceptAll(node); }
+    visitScopes(node: Oas20Scopes): void { this._acceptAll(node); }
+    visitSecurityDefinitions(node: Oas20SecurityDefinitions): void { this._acceptAll(node); }
+    visitServer(node: Oas30Server): void { this._acceptAll(node); }
+    visitServerVariable(node: Oas30ServerVariable): void { this._acceptAll(node); }
 }
 
 

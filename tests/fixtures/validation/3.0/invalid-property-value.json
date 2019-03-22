@@ -32,7 +32,7 @@
     }
   ],
   "paths": {
-    "/enc-3-001": {
+    "/enc-001": {
       "post": {
         "description": "Creates a new pet in the store.  Duplicates are allowed",
         "requestBody": {
@@ -88,7 +88,7 @@
         }
       }
     },
-    "/enc-3-002": {
+    "/enc-002": {
       "post": {
         "description": "Creates a new pet in the store.  Duplicates are allowed",
         "requestBody": {
@@ -134,7 +134,7 @@
         }
       }
     },
-    "/enc-3-003": {
+    "/enc-003": {
       "post": {
         "description": "Creates a new pet in the store.  Duplicates are allowed",
         "requestBody": {
@@ -180,7 +180,7 @@
         }
       }
     },
-    "/enc-3-004": {
+    "/enc-004": {
       "post": {
         "description": "Creates a new pet in the store.  Duplicates are allowed",
         "requestBody": {
@@ -226,7 +226,7 @@
         }
       }
     },
-    "/enc-3-005": {
+    "/enc-005": {
       "post": {
         "description": "Creates a new pet in the store.  Duplicates are allowed",
         "requestBody": {
@@ -274,7 +274,7 @@
         }
       }
     },
-    "/head-3-003": {
+    "/head-010": {
       "post": {
         "description": "Creates a new pet in the store.  Duplicates are allowed",
         "requestBody": {
@@ -328,7 +328,7 @@
         }
       }
     },
-    "/head-3-004": {
+    "/head-011": {
       "post": {
         "description": "Creates a new pet in the store.  Duplicates are allowed",
         "requestBody": {
@@ -391,7 +391,7 @@
         }
       }
     },
-    "/link-3-002": {
+    "/link-002": {
       "get": {
         "responses": {
           "200": {
@@ -421,7 +421,7 @@
         }
       }
     },
-    "/mt-3-003": {
+    "/mt-003": {
       "post": {
         "description": "Creates a new pet in the store.  Duplicates are allowed",
         "requestBody": {
@@ -457,7 +457,7 @@
         }
       }
     },
-    "/op-3-003": {
+    "/op-009": {
       "get": {
         "description": "Creates a new pet in the store.  Duplicates are allowed",
         "requestBody": {
@@ -488,13 +488,13 @@
         }
       }
     },
-    "/op-3-005": {
+    "/op-013": {
       "get": {
         "description": "Creates a new pet in the store.  Duplicates are allowed",
         "responses": {}
       }
     },
-    "/par-3-002": {
+    "/par-022": {
       "parameters": [
         {
           "name": "X-Header-Param",
@@ -502,7 +502,7 @@
         }
       ]
     },
-    "/par-3-006/{id}": {
+    "/par-003/{id}": {
       "parameters": [
         {
           "name": "id",
@@ -510,7 +510,7 @@
         }
       ]
     },
-    "/par-3-007/{id}": {
+    "/par-013/{id}": {
       "parameters": [
         {
           "name": "id",
@@ -520,7 +520,7 @@
         }
       ]
     },
-    "/par-3-009": {
+    "/par-022": {
       "parameters": [
         {
           "name": "id",
@@ -530,7 +530,7 @@
         }
       ]
     },
-    "/par-3-010/{id}": {
+    "/par-027/{id}": {
       "parameters": [
         {
           "name": "id",
@@ -540,7 +540,7 @@
         }
       ]
     },
-    "/par-3-011": {
+    "/par-023": {
       "parameters": [
         {
           "name": "criteria",
@@ -550,7 +550,7 @@
         }
       ]
     },
-    "/par-3-012": {
+    "/par-024": {
       "parameters": [
         {
           "name": "x-cookie",
@@ -560,7 +560,7 @@
         }
       ]
     },
-    "/par-3-013": {
+    "/par-025": {
       "parameters": [
         {
           "name": "X-Header",
@@ -570,7 +570,7 @@
         }
       ]
     },
-    "/par-3-014": {
+    "/par-028": {
       "parameters": [
         {
           "name": "X-Header",
@@ -580,7 +580,7 @@
         }
       ]
     },
-    "/par-3-016": {
+    "/par-029": {
       "parameters": [
         {
           "name": "object",
@@ -858,7 +858,7 @@
         }
       ]
     },
-    "/par-3-018/operation/{id}": {
+    "/par-007/operation/{id}": {
       "get": {
         "description": "Parameter defined inline at operation level but not in path template - invalid",
         "parameters": [
@@ -880,7 +880,7 @@
         }
       }
     },
-    "/par-3-018/pathItem/{id}": {
+    "/par-007/pathItem/{id}": {
       "get": {
         "description": "Parameter defined inline at pathItem level but not in path template - invalid",
         "parameters": [
@@ -904,7 +904,7 @@
         }
       ]
     },
-    "/op-3-006/{id}/{sub}": {
+    "/op-011/{id}/{sub}": {
       "get": {
         "description": "Path parameter defined in template but no matching parameter defined - invalid",
         "parameters": [
@@ -921,7 +921,7 @@
         }
       }
     },
-    "/par-3-019": {
+    "/par-021": {
       "parameters": [
         {
           "name": "Content-Type",
@@ -930,7 +930,7 @@
         }
       ]
     },
-    "/sch-3-001": {
+    "/sch-002": {
       "get": {
         "description": "Creates a new pet in the store.  Duplicates are allowed",
         "responses": {
@@ -955,7 +955,7 @@
         }
       }
     },
-    "/sreq-3-002": {
+    "/sreq-002": {
       "get": {
         "description": "Creates a new pet in the store.  Duplicates are allowed",
         "responses": {
@@ -987,7 +987,7 @@
       }
   },
   "schemas": {
-      "xml-3-002": {
+      "xml-002": {
         "type": "object",
         "properties": {
           "id": {
@@ -1025,20 +1025,20 @@
         "name": "api_key",
         "in": "header"
       },
-      "ss-3-008": {
+      "ss-008": {
         "type": "invalid"
       },
-      "ss-3-010": {
+      "ss-009": {
         "type": "apiKey",
         "in": "body",
         "name": "paramname"
       },
-      "ss-3-011": {
+      "ss-017": {
         "type": "http",
         "scheme": "basic",
         "bearerFormat": "JWT"
       },
-      "ss-3-013": {
+      "ss-016": {
         "type": "http",
         "scheme": "leveraged"
       }

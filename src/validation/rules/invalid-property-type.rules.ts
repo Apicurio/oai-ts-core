@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2018 Red Hat
+ * Copyright 2019 Red Hat
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,19 @@
  * limitations under the License.
  */
 
-import { Oas30ValidationRule } from "./common.rule";
-import { OasValidationRuleUtil } from "../validation";
-import { Oas30Schema, Oas30SchemaDefinition, Oas30ItemsSchema, Oas30PropertySchema, Oas30AllOfSchema, Oas30AnyOfSchema, Oas30OneOfSchema, Oas30NotSchema, Oas30AdditionalPropertiesSchema } from "../../models/3.0/schema.model";
+import {OasValidationRuleUtil} from "../validation";
+import {
+    Oas30AdditionalPropertiesSchema,
+    Oas30AllOfSchema,
+    Oas30AnyOfSchema,
+    Oas30ItemsSchema,
+    Oas30NotSchema,
+    Oas30OneOfSchema,
+    Oas30PropertySchema,
+    Oas30Schema,
+    Oas30SchemaDefinition
+} from "../../models/3.0/schema.model";
+import {OasValidationRule} from "./common.rule";
 
 const allowedTypes = ["string", "number", "integer", "boolean", "array", "object"]
 
@@ -26,14 +36,14 @@ const allowedTypes = ["string", "number", "integer", "boolean", "array", "object
  * for reporting whenever the **type** and **items** of a property fails to conform to the required
  * format defined by the specification
  */
-export class Oas30InvalidPropertyTypeValidationRule extends Oas30ValidationRule {
+export abstract class OasInvalidPropertyTypeValidationRule extends OasValidationRule {
 
     /**
      * Returns true if the type node has a valid type.
      * @param type
      * @return {boolean}
      */
-    private isValidType(type: string): boolean {
+    protected isValidType(type: string): boolean {
         if (this.hasValue(type)) {
             return OasValidationRuleUtil.isValidEnumItem(type, allowedTypes)
         }
@@ -45,19 +55,11 @@ export class Oas30InvalidPropertyTypeValidationRule extends Oas30ValidationRule 
      * @param type
      * @return {boolean}
      */
-    private isValidItems(node: Oas30Schema): boolean {
+    protected isValidItems(node: Oas30Schema): boolean {
         const { type, items } = node;
         if (type == 'array' && !this.hasValue(items)) return false;
         if (type !== 'array' && this.hasValue(items)) return false;
         return true;
-    }
-
-    public visitSchema(node: Oas30Schema) {
-        this.reportIfInvalid("SCH-3-003", this.isValidType(node.type), node, "type",
-            `Schema type value of "${ node.type }" is not allowed.  Must be one of: [${allowedTypes.join(", ")}]`);
-
-        this.reportIfInvalid("SCH-3-004", this.isValidItems(node), node, "items",
-            `Schema items must be present only for schemas of type 'array'.`);
     }
 
     public visitAllOfSchema(node: Oas30AllOfSchema): void { this.visitSchema(node); }
@@ -68,4 +70,30 @@ export class Oas30InvalidPropertyTypeValidationRule extends Oas30ValidationRule 
     public visitItemsSchema(node: Oas30ItemsSchema): void { this.visitSchema(node); }
     public visitAdditionalPropertiesSchema(node: Oas30AdditionalPropertiesSchema): void { this.visitSchema(node); }
     public visitSchemaDefinition(node: Oas30SchemaDefinition): void { this.visitSchema(node); }
+
+}
+
+/**
+ * Implements the Invalid Schema Type Value rule.
+ */
+export class OasInvalidSchemaTypeValueRule extends OasInvalidPropertyTypeValidationRule {
+
+    public visitSchema(node: Oas30Schema) {
+        this.reportIfInvalid(this.isValidType(node.type), node, "type", {
+            type: node.type,
+            allowedTypes: allowedTypes.join(", ")
+        });
+    }
+}
+
+
+/**
+ * Implements the Invalid Shchema Array Items rule.
+ */
+export class OasInvalidSchemaArrayItemsRule extends OasInvalidPropertyTypeValidationRule {
+
+    public visitSchema(node: Oas30Schema) {
+        this.reportIfInvalid(this.isValidItems(node), node, "items");
+    }
+
 }

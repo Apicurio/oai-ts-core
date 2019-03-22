@@ -443,11 +443,11 @@ describe("Node Path (Create 3.0)", () => {
 
         library.validate(document);
 
-        let node: OasValidationProblem = document.info.validationProblem("INF-3-001");
+        let node: OasValidationProblem = document.info.validationProblem("INF-001");
         let path: OasNodePath = library.createNodePath(node);
 
         let actual: string = path.toString();
-        let expected: string = "/info/_validationProblems[INF-3-001]";
+        let expected: string = "/info/_validationProblems[INF-001]";
 
         expect(actual).toEqual(expected);
     });
@@ -532,12 +532,12 @@ describe("Node Path (Resolve 3.0)", () => {
         // Generate validation problems in the data model.
         library.validate(document);
 
-        let path: OasNodePath = new OasNodePath("/info/_validationProblems[INF-3-001]");
+        let path: OasNodePath = new OasNodePath("/info/_validationProblems[INF-001]");
         let resolvedNode: OasNode = path.resolve(document);
 
         let resolvedProblem: OasValidationProblem = resolvedNode as OasValidationProblem;
-        expect(resolvedProblem.errorCode).toEqual("INF-3-001");
-        expect(resolvedProblem.message).toEqual(`The API is missing a title.`);
+        expect(resolvedProblem.errorCode).toEqual("INF-001");
+        expect(resolvedProblem.message).toEqual(`API is missing a title.`);
     });
 
 });

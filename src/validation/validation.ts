@@ -19,6 +19,7 @@ import {OasNode} from "../models/node.model";
 import {Oas20Schema} from "../models/2.0/schema.model";
 import {Oas20Items} from "../models/2.0/items.model";
 import {Oas30Schema} from "../models/3.0/schema.model";
+import {ValidationRuleMetaData} from "./ruleset";
 
 export enum OasValidationProblemSeverity {
     ignore, low, medium, high
@@ -29,32 +30,27 @@ export enum OasValidationProblemSeverity {
  */
 export interface IOasValidationProblemReporter {
 
-    report(code: string, node: OasNode, property: string, message: string): void;
+    report(rule: ValidationRuleMetaData, node: OasNode, property: string, message: string): void;
 
 }
 
 export interface IOasValidationSeverityRegistry {
 
-    lookupSeverity(ruleCode: string): OasValidationProblemSeverity;
+    lookupSeverity(rule: ValidationRuleMetaData): OasValidationProblemSeverity;
 
 }
 
+/**
+ * The default validation severity reqistry simply uses "medium" severity for all spec-mandated
+ * validation rules.  Any rules that are not mandated by the OAI spec will be ignored.
+ */
 export class DefaultValidationSeverityRegistry implements IOasValidationSeverityRegistry {
 
-    /**
-     * By default validation some rules are provided but they do not reflect the requirements in the OpenAPI specification
-     */
-    public static IGNORED_BY_DEFAULT = [
-        "OP-008", // operationId required
-        "OP-3-007" // operationId required
-    ];
-
-    public lookupSeverity(ruleCode: string): OasValidationProblemSeverity {
-        if (DefaultValidationSeverityRegistry.IGNORED_BY_DEFAULT.indexOf(ruleCode) >= 0) {
-            return OasValidationProblemSeverity.ignore;
+    public lookupSeverity(rule: ValidationRuleMetaData): OasValidationProblemSeverity {
+        if (rule.specMandated) {
+            return OasValidationProblemSeverity.medium;
         }
-
-        return OasValidationProblemSeverity.medium;
+        return OasValidationProblemSeverity.ignore;
     }
 
 }

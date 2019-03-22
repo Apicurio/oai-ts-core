@@ -25,14 +25,10 @@ import {
     Oas30JS2ModelReaderVisitor
 } from "./readers/js2model.reader";
 import {Oas20ModelToJSVisitor, Oas30ModelToJSVisitor} from "./visitors/model2js.visitor";
-import {OasTraverserDirection, OasVisitorUtil} from "./visitors/visitor.utils";
-import {
-    Oas20ValidationVisitor,
-    Oas30ValidationVisitor,
-    OasResetValidationProblemsVisitor
-} from "./validation/validation.visitor";
+import {OasVisitorUtil} from "./visitors/visitor.utils";
+import {OasResetValidationProblemsVisitor, OasValidationVisitor} from "./validation/validation.visitor";
 import {OasNodePath} from "./models/node-path";
-import {Oas20NodePathVisitor, Oas30NodePathVisitor} from "./visitors/path.visitor";
+import {OasNodePathUtil} from "./visitors/path.visitor";
 import {DefaultValidationSeverityRegistry, IOasValidationSeverityRegistry} from "./validation/validation";
 import {Oas20Document} from "./models/2.0/document.model";
 import {Oas30Document} from "./models/3.0/document.model";
@@ -159,27 +155,16 @@ export class OasLibraryUtils {
         OasVisitorUtil.visitTree(node, resetter);
 
         // Now validate the data model.
-        if (node.ownerDocument().is2xDocument()) {
-            let visitor: Oas20ValidationVisitor = new Oas20ValidationVisitor();
-            visitor.setSeverityRegistry(severityRegistry);
-            if (recursive) {
-                OasVisitorUtil.visitTree(node, visitor);
-            } else {
-                node.accept(visitor);
-            }
-            return visitor.getValidationErrors();
-        } else if (node.ownerDocument().is3xDocument()) {
-            let visitor: Oas30ValidationVisitor = new Oas30ValidationVisitor();
-            visitor.setSeverityRegistry(severityRegistry);
-            if (recursive) {
-                OasVisitorUtil.visitTree(node, visitor);
-            } else {
-                node.accept(visitor);
-            }
-            return visitor.getValidationErrors();
+        let visitor: OasValidationVisitor = new OasValidationVisitor(node.ownerDocument());
+        visitor.setSeverityRegistry(severityRegistry);
+        if (recursive) {
+            OasVisitorUtil.visitTree(node, visitor);
         } else {
-            throw new Error("OAS version " + node.ownerDocument().getSpecVersion() + " not supported.");
+            OasVisitorUtil.visitNode(node, visitor);
         }
+
+        // Return any validation errors found.
+        return visitor.getValidationErrors();
     }
 
     /**
@@ -188,17 +173,7 @@ export class OasLibraryUtils {
      * @return {OasNodePath}
      */
     public createNodePath(node: OasNode): OasNodePath {
-        if (node.ownerDocument().is2xDocument()) {
-            let viz: Oas20NodePathVisitor = new Oas20NodePathVisitor();
-            OasVisitorUtil.visitTree(node, viz, OasTraverserDirection.up);
-            return viz.path();
-        } else if (node.ownerDocument().is3xDocument()) {
-            let viz: Oas30NodePathVisitor = new Oas30NodePathVisitor();
-            OasVisitorUtil.visitTree(node, viz, OasTraverserDirection.up);
-            return viz.path();
-        } else {
-            throw new Error("OAS version " + node.ownerDocument().getSpecVersion() + " not supported.");
-        }
+        return OasNodePathUtil.createNodePath(node);
     }
 
 }

@@ -108,6 +108,7 @@ export * from "./visitors/traverser";
 
 export * from "./validation/validation";
 export * from "./validation/validation.visitor";
+export * from "./validation/ruleset";
 
 export * from "./transformation/transformation.visitor";
 

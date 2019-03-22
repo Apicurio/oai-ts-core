@@ -21,7 +21,7 @@
     }
   ],
   "paths": {
-    "/enc-3-006": {
+    "/enc-006": {
       "post": {
         "requestBody": {
           "content": {

@@ -6,11 +6,11 @@
   },
   "servers": [
     {
-      "description": "srv-3-001"
+      "description": "srv-001"
     },
     {
       "url": "https://{username}.gigantic-server.com/",
-      "description": "svar-3-001",
+      "description": "svar-001",
       "variables": {
         "username": {
           "description": "this value is assigned by the service provider, in this example `gigantic-server.com`"
@@ -19,7 +19,7 @@
     }
   ],
   "paths": {
-    "/op-3-004": {
+    "/op-007": {
       "summary": "Foo Resource",
       "description": "CRUD for Foos.",
       "get": {
@@ -34,7 +34,7 @@
         "deprecated": false
       }
     },
-    "/par-3-003": {
+    "/par-001": {
       "parameters": [
         {
           "in": "query",
@@ -46,7 +46,7 @@
         }
       ]
     },
-    "/par-3-004": {
+    "/par-002": {
       "parameters": [
         {
           "name": "Foo",
@@ -57,14 +57,14 @@
         }
       ]
     },
-    "/res-3-003": {
+    "/res-001": {
       "get": {
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/disc-3-001"
+                  "$ref": "#/components/schemas/disc-001"
                 }
               }
             }
@@ -75,7 +75,7 @@
   },
   "components": {
     "schemas": {
-      "disc-3-001": {
+      "disc-001": {
         "oneOf": [
           {
             "$ref": "https://gigantic-server.com/schemas/Cat/schema.json"
@@ -91,7 +91,7 @@
           }
         }
       },
-      "ed-3-002": {
+      "ed-001": {
         "type": "string",
         "externalDocs": {
           "description": "More info"
@@ -99,7 +99,7 @@
       }
     },
     "securitySchemes": {
-      "flow-3-001": {
+      "flow-001": {
         "type": "oauth2",
         "flows": {
           "implicit": {
@@ -117,7 +117,7 @@
           }
         }
       },
-      "flow-3-002": {
+      "flow-002": {
         "type": "oauth2",
         "flows": {
           "implicit": {
@@ -141,7 +141,7 @@
           }
         }
       },
-      "flow-3-006": {
+      "flow-006": {
         "type": "oauth2",
         "flows": {
           "implicit": {
@@ -150,34 +150,34 @@
           }
         }
       },
-      "ss-3-001": {},
-      "ss-3-002": {
+      "ss-001": {},
+      "ss-002": {
         "type": "apiKey",
         "in": "header"
       },
-      "ss-3-003": {
+      "ss-003": {
         "type": "apiKey",
         "name": "api_key"
       },
-      "ss-3-004": {
+      "ss-019": {
         "type": "http"
       },
-      "ss-3-005": {
+      "ss-020": {
         "type": "oauth2"
       },
-      "ss-3-006": {
+      "ss-021": {
         "type": "openIdConnect"
       }
     },
     "requestBodies": {
-      "rb-3-002": {
+      "rb-002": {
         "description": "The request body."
       }
     }
   },
   "tags": [
     {
-      "description": "tag-3-001"
+      "description": "tag-001"
     }
   ]
 }

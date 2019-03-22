@@ -19,7 +19,7 @@
   },
   "components": {
     "examples": {
-      "ex-3-002": {
+      "ex-004": {
         "summary": "Example Summary",
         "description": "Description of example.",
         "value": "Some Value",
@@ -27,7 +27,7 @@
       }
     },
     "headers": {
-      "head-3-006": {
+      "head-014": {
         "description": "The number of allowed requests in the current period",
         "schema": {
           "type": "integer"
@@ -40,7 +40,7 @@
           }
         }
       },
-      "head-3-007": {
+      "head-013": {
         "description": "The number of allowed requests in the current period",
         "example": "Some example",
         "examples": {
@@ -53,7 +53,7 @@
       }
     },
     "links": {
-      "link-3-001": {
+      "link-001": {
         "operationRef": "#paths~12.0~1repositories~1{$response.body#/username}",
         "operationId": "getRepositoriesByOwner",
         "parameters": {
@@ -62,7 +62,7 @@
       }
     },
     "parameters": {
-      "mt-3-001": {
+      "mt-001": {
         "name": "fooParam",
         "in": "query",
         "description": "Some parameter desc.",
@@ -85,7 +85,7 @@
           }
         }
       },
-      "par-3-008": {
+      "par-030": {
         "name": "barParam",
         "in": "query",
         "description": "Some parameter desc.",
@@ -100,7 +100,7 @@
           }
         }
       },
-      "par-3-015": {
+      "par-031": {
         "name": "barParam",
         "in": "query",
         "description": "Some parameter desc.",

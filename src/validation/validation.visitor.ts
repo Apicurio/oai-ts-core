@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {Oas20CompositeVisitor, Oas30CompositeVisitor, OasAllNodeVisitor} from "../visitors/visitor.base";
+import {OasAllNodeVisitor, OasCombinedCompositeVisitor} from "../visitors/visitor.base";
 import {
     DefaultValidationSeverityRegistry,
     IOasValidationProblemReporter,
@@ -23,31 +23,12 @@ import {
     OasValidationProblemSeverity
 } from "./validation";
 import {OasNode, OasValidationProblem} from "../models/node.model";
-import {Oas20RequiredPropertyValidationRule} from "./2.0/required-property.rule";
-import {Oas20NodePathVisitor, Oas30NodePathVisitor} from "../visitors/path.visitor";
-import {OasTraverserDirection, OasVisitorUtil} from "../visitors/visitor.utils";
+import {OasNodePathUtil} from "../visitors/path.visitor";
 import {OasNodePath} from "../models/node-path";
-import {Oas20InvalidPropertyFormatValidationRule} from "./2.0/invalid-property-format.rule";
-import {
-    Oas20InvalidPropertyNameValidationRule,
-    Oas20UnknownPropertyValidationRule
-} from "./2.0/invalid-property-name.rule";
-import {Oas20InvalidPropertyValueValidationRule} from "./2.0/invalid-property-value.rule";
-import {Oas20UniquenessValidationRule} from "./2.0/uniqueness.rule";
-import {Oas20MutuallyExclusiveValidationRule} from "./2.0/mutually-exclusive.rule";
-import {Oas20InvalidReferenceValidationRule} from "./2.0/invalid-reference.rule";
-import {Oas30InvalidPropertyFormatValidationRule} from "./3.0/invalid-property-format.rule";
-import {Oas30IgnoredPropertyNameValidationRule} from "./3.0/ignored-property-name.rule";
-import {
-    Oas30InvalidPropertyNameValidationRule,
-    Oas30UnknownPropertyValidationRule
-} from "./3.0/invalid-property-name.rule";
-import {Oas30InvalidPropertyValueValidationRule} from "./3.0/invalid-property-value.rule";
-import {Oas30InvalidReferenceValidationRule} from "./3.0/invalid-reference.rule";
-import {Oas30MutuallyExclusiveValidationRule} from "./3.0/mutually-exclusive.rule";
-import {Oas30RequiredPropertyValidationRule} from "./3.0/required-property.rule";
-import {Oas30UniquenessValidationRule} from "./3.0/uniqueness.rule";
-import { Oas30InvalidPropertyTypeValidationRule } from "./3.0/invalid-property-type.rule";
+import {ValidationRuleMetaData, ValidationRuleset} from "./ruleset";
+import {OasDocument} from "../models/document.model";
+import {OasValidationRule} from "./rules/common.rule";
+
 
 /**
  * Visitor used to clear validation problems.  This is typically done just before
@@ -62,30 +43,27 @@ export class OasResetValidationProblemsVisitor extends OasAllNodeVisitor {
 
 }
 
+
 /**
  * Visitor used to validate a OpenAPI document (or a subsection of the document).  The result
  * of the validation will be a list of validation errors.  In addition, the validator will
  * add the validation errors directly to the offending model nodes as attributes.
  */
-export class Oas20ValidationVisitor extends Oas20CompositeVisitor implements IOasValidationProblemReporter {
+export class OasValidationVisitor extends OasCombinedCompositeVisitor implements IOasValidationProblemReporter {
 
     private errors: OasValidationProblem[] = [];
     private severityRegistry: IOasValidationSeverityRegistry = new DefaultValidationSeverityRegistry();
 
-    constructor() {
+    /**
+     * C'tor.
+     * @param document
+     */
+    constructor(document: OasDocument) {
         super();
-
-        // Add a bunch of validation rules to the array of visitors.
-        this.addVisitors([
-            new Oas20RequiredPropertyValidationRule(this),
-            new Oas20InvalidPropertyFormatValidationRule(this),
-            new Oas20InvalidPropertyNameValidationRule(this),
-            new Oas20InvalidPropertyValueValidationRule(this),
-            new Oas20UniquenessValidationRule(this),
-            new Oas20MutuallyExclusiveValidationRule(this),
-            new Oas20InvalidReferenceValidationRule(this),
-            new Oas20UnknownPropertyValidationRule(this)
-        ]);
+        let ruleset: ValidationRuleset = ValidationRuleset.instance;
+        let rulesFor: OasValidationRule[] = ruleset.getRulesFor(document);
+        rulesFor.forEach( rule => { rule.setReporter(this); });
+        this.addVisitors(rulesFor);
     }
 
     /**
@@ -106,99 +84,22 @@ export class Oas20ValidationVisitor extends Oas20CompositeVisitor implements IOa
 
     /**
      * Called by validation rules when an error is detected.
-     * @param code
+     * @param ruleInfo
      * @param node
      * @param property
      * @param message
      */
-    public report(code: string, node: OasNode, property: string, message: string): void {
-        let severity: OasValidationProblemSeverity = this.lookupSeverity(code);
+    public report(ruleInfo: ValidationRuleMetaData, node: OasNode, property: string, message: string): void {
+        let severity: OasValidationProblemSeverity = this.severityRegistry.lookupSeverity(ruleInfo);
         if (severity === OasValidationProblemSeverity.ignore) {
             return;
         }
 
-        let viz: Oas20NodePathVisitor = new Oas20NodePathVisitor();
-        OasVisitorUtil.visitTree(node, viz, OasTraverserDirection.up);
-        let path: OasNodePath = viz.path();
-        let error: OasValidationProblem = node.addValidationProblem(code, path, property, message, severity);
+        let path: OasNodePath = OasNodePathUtil.createNodePath(node);
+        let error: OasValidationProblem = node.addValidationProblem(ruleInfo.code, path, property, message, severity);
 
         // Include the error in the list of errors found by this visitor.
         this.errors.push(error);
     }
 
-    private lookupSeverity(code: string) {
-        return this.severityRegistry.lookupSeverity(code);
-    }
-}
-
-
-/**
- * Visitor used to validate a OpenAPI document (or a subsection of the document).  The result
- * of the validation will be a list of validation errors.  In addition, the validator will
- * add the validation errors directly to the offending model nodes as attributes.
- */
-export class Oas30ValidationVisitor extends Oas30CompositeVisitor implements IOasValidationProblemReporter {
-
-    private errors: OasValidationProblem[] = [];
-    private severityRegistry: IOasValidationSeverityRegistry = new DefaultValidationSeverityRegistry();
-
-    constructor() {
-        super();
-
-        // Add a bunch of validation rules to the array of visitors.
-        this.addVisitors([
-            new Oas30InvalidPropertyFormatValidationRule(this),
-            new Oas30IgnoredPropertyNameValidationRule(this),
-            new Oas30InvalidPropertyTypeValidationRule(this),
-            new Oas30InvalidPropertyNameValidationRule(this),
-            new Oas30InvalidPropertyValueValidationRule(this),
-            new Oas30InvalidReferenceValidationRule(this),
-            new Oas30MutuallyExclusiveValidationRule(this),
-            new Oas30RequiredPropertyValidationRule(this),
-            new Oas30UniquenessValidationRule(this),
-            new Oas30UnknownPropertyValidationRule(this)
-        ]);
-    }
-
-    /**
-     * Sets the severity registry.
-     * @param {IOasValidationSeverityRegistry} severityRegistry
-     */
-    public setSeverityRegistry(severityRegistry: IOasValidationSeverityRegistry): void {
-        this.severityRegistry = severityRegistry;
-    }
-
-    /**
-     * Returns the array of validation errors found by the visitor.
-     * @return {OasValidationProblem[]}
-     */
-    public getValidationErrors(): OasValidationProblem[] {
-        return this.errors;
-    }
-
-    /**
-     * Called by validation rules when an error is detected.
-     * @param code
-     * @param node
-     * @param property
-     * @param message
-     */
-    public report(code: string, node: OasNode, property: string, message: string): void {
-        let severity: OasValidationProblemSeverity = this.lookupSeverity(code);
-        if (severity === OasValidationProblemSeverity.ignore) {
-            return;
-        }
-
-        let viz: Oas30NodePathVisitor = new Oas30NodePathVisitor();
-        OasVisitorUtil.visitTree(node, viz, OasTraverserDirection.up);
-        let path: OasNodePath = viz.path();
-        let error: OasValidationProblem = node.addValidationProblem(code, path, property, message, severity);
-
-        // Include the error in the list of errors found by this visitor.
-        this.errors.push(error);
-    }
-
-    private lookupSeverity(code: string) {
-        return this.severityRegistry.lookupSeverity(code);
-    }
 }
