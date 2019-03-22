@@ -215,9 +215,9 @@ function template(literals: TemplateStringsArray, ...placeholders: string[]) {
 }
 
 
-export class ValidationRuleset {
+export class OasValidationRuleset {
 
-    public static instance: ValidationRuleset = new ValidationRuleset();
+    public static instance: OasValidationRuleset = new OasValidationRuleset();
 
     private _rules: ValidationRuleMetaData[] = [
         { code: "UNKNOWN-001",  name: "Unknown/Unexpected Property", type: "Unknown Property", entity: "All", versions: [ "2.0", "3.0" ], specMandated: true, messageTemplate: template`An unexpected property "${'property'}" was found.  Extension properties should begin with "x-".`, class: OasUnknownPropertyRule },

@@ -25,7 +25,7 @@ import {
 import {OasNode, OasValidationProblem} from "../models/node.model";
 import {OasNodePathUtil} from "../visitors/path.visitor";
 import {OasNodePath} from "../models/node-path";
-import {ValidationRuleMetaData, ValidationRuleset} from "./ruleset";
+import {ValidationRuleMetaData, OasValidationRuleset} from "./ruleset";
 import {OasDocument} from "../models/document.model";
 import {OasValidationRule} from "./rules/common.rule";
 
@@ -60,7 +60,7 @@ export class OasValidationVisitor extends OasCombinedCompositeVisitor implements
      */
     constructor(document: OasDocument) {
         super();
-        let ruleset: ValidationRuleset = ValidationRuleset.instance;
+        let ruleset: OasValidationRuleset = OasValidationRuleset.instance;
         let rulesFor: OasValidationRule[] = ruleset.getRulesFor(document);
         rulesFor.forEach( rule => { rule.setReporter(this); });
         this.addVisitors(rulesFor);
