@@ -26,7 +26,7 @@
     "core-js": "2.6.5"
   },
   "devDependencies": {
-    "@types/diff": "4.0.1",
+    "@types/diff": "4.0.2",
     "@types/jasmine": "3.3.12",
     "cpx": "1.5.0",
     "diff": "4.0.1",
