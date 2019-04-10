@@ -167,6 +167,11 @@ describe("Transformation", () => {
             input: "tests/fixtures/transformation/responses/spec-example-1.input.json",
             expected: "tests/fixtures/transformation/responses/spec-example-1.expected.json"
         },
+        {
+            name: "Responses (Array Param)",
+            input: "tests/fixtures/transformation/responses/response-array-param.input.json",
+            expected: "tests/fixtures/transformation/responses/response-array-param.expected.json"
+        },
         /** Definition Tests **/
         /** **************** **/
         {

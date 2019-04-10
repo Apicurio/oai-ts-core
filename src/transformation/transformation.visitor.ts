@@ -95,8 +95,13 @@ export class Oas20to30TransformationVisitor implements IOas20NodeVisitor {
 
     private _library: OasLibraryUtils = new OasLibraryUtils();
     private _nodeMap: any = {};
+    private _postProcessResponses: Oas30ResponseBase[] = [];
+    private _postProcessingComplete: boolean = false;
 
     public getResult(): Oas30Document {
+        if (!this._postProcessingComplete) {
+            this.postProcess();
+        }
         return this.doc30;
     }
 
@@ -155,6 +160,7 @@ export class Oas20to30TransformationVisitor implements IOas20NodeVisitor {
     public visitLicense(node: Oas20License): void {
         let info30: Oas30Info = this.lookup(node.parent()) as Oas30Info;
         let license30: Oas30License = info30.createLicense();
+        info30.license = license30;
         license30.name = node.name;
         license30.url = node.url;
 
@@ -435,6 +441,10 @@ export class Oas20to30TransformationVisitor implements IOas20NodeVisitor {
 
                 this.mapNode(schema, schema30);
             });
+            // TODO update: mark the Response as needing Content post-processing
+            if (produces.length > 1) {
+                this._postProcessResponses.push(response30);
+            }
         }
     }
 
@@ -676,6 +686,12 @@ export class Oas20to30TransformationVisitor implements IOas20NodeVisitor {
             schema30.format = "binary";
         }
         if (from.items && !Array.isArray(from.items)) {
+            // This is done so that we can lookup the appropriate parent for an "Items" object later
+            // on in the visit.  This is a special case because we're introducing a new Oas30Schema
+            // entity in between e.g. a Response and the ItemsSchema - whereas in 2.0 the ItemsSchema
+            // is a direct child of Response and Parameter.  So when visiting a Items, we cannot lookup
+            // the new 3.0 Schema using the Items' parent (because the parent maps to something else -
+            // the grandparent, in fact).  THIS IS ONLY A PROBLEM FOR "ITEMS" ON PARAM AND RESPONSE.
             (from.items as OasNode).n_attribute("_transformation_items-parent", schema30);
         } else if (from.items && Array.isArray(from.items)) {
             // TODO handle the case where "items" is an array of items!!
@@ -804,6 +820,40 @@ export class Oas20to30TransformationVisitor implements IOas20NodeVisitor {
             }
         }
         return split.join("/");
+    }
+
+    /**
+     * Called when visiting is complete.  Any additional processing of the result can
+     * be done here.
+     */
+    private postProcess(): void {
+        // Post process all of the responses that require it.  Responses may require post-processing
+        // when a response has multiple @Produces content types, which results in multiple MimeType
+        // entities in the 3.0 Response 'content'.  When this happens, only one of the mime types
+        // will contain the visited (and thus transformed) data model.  So we must post-process them
+        // to "clone" that info to the other mime types.  Otherwise we'll have a full mime type
+        // definition for only ONE of the mime types, and partial definitions for the rest.
+        this._postProcessResponses.forEach( response => {
+            // First, figure out which of the media types is the largest (has the most content)
+            let largest: number = 0;
+            let srcMt: Oas30MediaType = null;
+            response.getMediaTypes().forEach( mt => {
+                let size: number = JSON.stringify(this._library.writeNode(mt.schema)).length;
+                if (size > largest) {
+                    largest = size;
+                    srcMt = mt;
+                }
+            });
+            // Now clone the contents of the largest media type into all the others.
+            response.getMediaTypes().forEach( mt => {
+                if (srcMt !== mt) {
+                    console.info("Cloning Media Type " + srcMt.name() + " into " + mt.name());
+                    let src: any = this._library.writeNode(srcMt.schema);
+                    this._library.readNode(src, mt.schema);
+                }
+            });
+
+        });
     }
 
 }
