@@ -621,21 +621,21 @@
       },
       "parameters": [
         {
-          "name":"status",
-          "in":"query",
-          "description":"Status param in query",
-          "required":false,
+          "name": "status",
+          "in": "query",
+          "description": "Status param in query",
+          "required": false,
           "schema": {
-            "type":"string"
+            "type": "string"
           }
         },
         {
-          "name":"status",
-          "in":"header",
-          "description":"Status param in header",
-          "required":false,
+          "name": "status",
+          "in": "header",
+          "description": "Status param in header",
+          "required": false,
           "schema": {
-            "type":"string"
+            "type": "string"
           }
         }
       ]
@@ -651,21 +651,21 @@
       },
       "parameters": [
         {
-          "name":"status",
-          "in":"query",
-          "description":"Status param in query",
-          "required":false,
+          "name": "status",
+          "in": "query",
+          "description": "Status param in query",
+          "required": false,
           "schema": {
-            "type":"string"
+            "type": "string"
           }
         },
         {
-          "name":"status",
-          "in":"query",
-          "description":"Status param in query",
-          "required":false,
+          "name": "status",
+          "in": "query",
+          "description": "Status param in query",
+          "required": false,
           "schema": {
-            "type":"string"
+            "type": "string"
           }
         }
       ]
@@ -681,12 +681,12 @@
       },
       "parameters": [
         {
-          "name":"status",
-          "in":"query",
-          "description":"Status param in query",
-          "required":false,
+          "name": "status",
+          "in": "query",
+          "description": "Status param in query",
+          "required": false,
           "schema": {
-            "type":"string"
+            "type": "string"
           }
         },
         {
@@ -705,12 +705,12 @@
       },
       "parameters": [
         {
-          "name":"status",
-          "in":"query",
-          "description":"Status param in query",
-          "required":false,
+          "name": "status",
+          "in": "query",
+          "description": "Status param in query",
+          "required": false,
           "schema": {
-            "type":"string"
+            "type": "string"
           }
         },
         {
@@ -729,12 +729,12 @@
       },
       "parameters": [
         {
-          "name":"status",
-          "in":"query",
-          "description":"Status param in query",
-          "required":false,
+          "name": "status",
+          "in": "query",
+          "description": "Status param in query",
+          "required": false,
           "schema": {
-            "type":"string"
+            "type": "string"
           }
         },
         {
@@ -747,21 +747,21 @@
         "description": "Parameters with same name and different locations defined inline within operation - valid",
         "parameters": [
           {
-            "name":"status",
-            "in":"query",
-            "description":"Status param in query",
-            "required":false,
+            "name": "status",
+            "in": "query",
+            "description": "Status param in query",
+            "required": false,
             "schema": {
-              "type":"string"
+              "type": "string"
             }
           },
           {
-            "name":"status",
-            "in":"header",
-            "description":"Status param in header",
-            "required":false,
+            "name": "status",
+            "in": "header",
+            "description": "Status param in header",
+            "required": false,
             "schema": {
-              "type":"string"
+              "type": "string"
             }
           }
         ],
@@ -777,21 +777,21 @@
         "description": "Duplicate parameters (name & in combination) defined inline within operation - invalid",
         "parameters": [
           {
-            "name":"status",
-            "in":"query",
-            "description":"Status param in query",
-            "required":false,
+            "name": "status",
+            "in": "query",
+            "description": "Status param in query",
+            "required": false,
             "schema": {
-              "type":"string"
+              "type": "string"
             }
           },
           {
-            "name":"status",
-            "in":"query",
-            "description":"Status param in query",
-            "required":false,
+            "name": "status",
+            "in": "query",
+            "description": "Status param in query",
+            "required": false,
             "schema": {
-              "type":"string"
+              "type": "string"
             }
           }
         ],
@@ -807,12 +807,12 @@
         "description": "Duplicate parameters (name & in combination) one defined inline within operation and other referenced - invalid",
         "parameters": [
           {
-            "name":"status",
-            "in":"query",
-            "description":"Status param in query",
-            "required":false,
+            "name": "status",
+            "in": "query",
+            "description": "Status param in query",
+            "required": false,
             "schema": {
-              "type":"string"
+              "type": "string"
             }
           },
           {
@@ -831,12 +831,12 @@
         "description": "Parameter defined inline at operation level overriding the one defined inline within pathItem - valid",
         "parameters": [
           {
-            "name":"status",
-            "in":"query",
-            "description":"Status param in query (string)",
-            "required":false,
+            "name": "status",
+            "in": "query",
+            "description": "Status param in query (string)",
+            "required": false,
             "schema": {
-              "type":"string"
+              "type": "string"
             }
           }
         ],
@@ -848,12 +848,12 @@
       },
       "parameters": [
         {
-          "name":"status",
-          "in":"query",
-          "description":"Status param in query (number)",
-          "required":false,
+          "name": "status",
+          "in": "query",
+          "description": "Status param in query (number)",
+          "required": false,
           "schema": {
-            "type":"number"
+            "type": "number"
           }
         }
       ]
@@ -965,7 +965,10 @@
         },
         "security": [
           {
-            "api_key": [ "write:foo", "read:bar" ]
+            "api_key": [
+              "write:foo",
+              "read:bar"
+            ]
           }
         ]
       }
@@ -974,19 +977,19 @@
   "components": {
     "parameters": {
       "statusParam": {
-        "name":"status",
-        "in":"query",
-        "description":"Status param in query",
-        "required":false,
+        "name": "status",
+        "in": "query",
+        "description": "Status param in query",
+        "required": false,
         "schema": {
-          "type":"string"
+          "type": "string"
         }
       },
       "indirectRef": {
         "$ref": "#/components/parameters/statusParam"
       }
-  },
-  "schemas": {
+    },
+    "schemas": {
       "xml-002": {
         "type": "object",
         "properties": {

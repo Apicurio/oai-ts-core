@@ -50,18 +50,6 @@ export abstract class OasInvalidPropertyTypeValidationRule extends OasValidation
         return true;
     }
 
-    /**
-     * Returns true if the type is array and items is defined
-     * @param type
-     * @return {boolean}
-     */
-    protected isValidItems(node: Oas30Schema): boolean {
-        const { type, items } = node;
-        if (type == 'array' && !this.hasValue(items)) return false;
-        if (type !== 'array' && this.hasValue(items)) return false;
-        return true;
-    }
-
     public visitAllOfSchema(node: Oas30AllOfSchema): void { this.visitSchema(node); }
     public visitAnyOfSchema(node: Oas30AnyOfSchema): void { this.visitSchema(node); }
     public visitOneOfSchema(node: Oas30OneOfSchema): void { this.visitSchema(node); }
@@ -88,12 +76,14 @@ export class OasInvalidSchemaTypeValueRule extends OasInvalidPropertyTypeValidat
 
 
 /**
- * Implements the Invalid Shchema Array Items rule.
+ * Implements the Invalid Schema Array Items rule.
  */
 export class OasInvalidSchemaArrayItemsRule extends OasInvalidPropertyTypeValidationRule {
 
     public visitSchema(node: Oas30Schema) {
-        this.reportIfInvalid(this.isValidItems(node), node, "items");
+        if (this.isDefined(node.items) && node.type !== "array") {
+            this.report(node, "items");
+        }
     }
 
 }

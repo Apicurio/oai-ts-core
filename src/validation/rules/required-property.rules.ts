@@ -45,6 +45,15 @@ import {
 import {Oas30RequestBody, Oas30RequestBodyDefinition} from "../../models/3.0/request-body.model";
 import {Oas30Server} from "../../models/3.0/server.model";
 import {Oas30ServerVariable} from "../../models/3.0/server-variable.model";
+import {OasSchema} from "../../models/common/schema.model";
+import {
+    Oas30AdditionalPropertiesSchema,
+    Oas30AllOfSchema,
+    Oas30AnyOfSchema, Oas30ItemsSchema,
+    Oas30NotSchema,
+    Oas30OneOfSchema,
+    Oas30PropertySchema, Oas30SchemaDefinition
+} from "../../models/3.0/schema.model";
 
 /**
  * Base class for all Required Property rules.
@@ -364,6 +373,7 @@ export class OasMissingHeaderArrayInformationRule extends OasRequiredPropertyVal
 
 }
 
+
 /**
  * Implements the Missing Property rule.
  */
@@ -608,5 +618,26 @@ export class OasMissingServerVarDefaultValueRule extends OasRequiredPropertyVali
             name: node.name()
         });
     }
+
+}
+
+
+/**
+ * Implements the Missing Property rule.
+ */
+export class OasMissingSchemaArrayInformationRule extends OasRequiredPropertyValidationRule {
+
+    public visitSchema(node: OasSchema): void {
+        this.requirePropertyWhen(node, "items", "type", "array");
+    }
+
+    public visitAllOfSchema(node: Oas30AllOfSchema): void { this.visitSchema(node); }
+    public visitAnyOfSchema(node: Oas30AnyOfSchema): void { this.visitSchema(node); }
+    public visitOneOfSchema(node: Oas30OneOfSchema): void { this.visitSchema(node); }
+    public visitNotSchema(node: Oas30NotSchema): void { this.visitSchema(node); }
+    public visitPropertySchema(node: Oas30PropertySchema): void { this.visitSchema(node); }
+    public visitItemsSchema(node: Oas30ItemsSchema): void { this.visitSchema(node); }
+    public visitAdditionalPropertiesSchema(node: Oas30AdditionalPropertiesSchema): void { this.visitSchema(node); }
+    public visitSchemaDefinition(node: Oas30SchemaDefinition): void { this.visitSchema(node); }
 
 }

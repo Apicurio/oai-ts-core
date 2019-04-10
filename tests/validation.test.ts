@@ -389,7 +389,7 @@ describe("Validation (3.0)", () => {
         let expected: string = [
             `[SCH-004] |2| {/paths[/pets]/get/responses[200]/content[application/json]/schema->items} :: Schema items must be present only for schemas of type 'array'.`,
             `[SCH-003] |2| {/components/schemas[NewPet]/properties[name]->type} :: Schema type value of "invalid" is not allowed.  Must be one of: [string, number, integer, boolean, array, object]`,
-            `[SCH-004] |2| {/components/schemas[NewPet]/properties[tags]->items} :: Schema items must be present only for schemas of type 'array'.`,
+            `[SCH-005] |2| {/components/schemas[NewPet]/properties[tags]->items} :: Schema is missing array type information.`,
             `[SCH-003] |2| {/components/schemas[NewPet]/properties[nickNames]/items->type} :: Schema type value of "invalid" is not allowed.  Must be one of: [string, number, integer, boolean, array, object]`
         ].join('\n')
 
