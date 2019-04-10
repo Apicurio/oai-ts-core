@@ -347,7 +347,8 @@ export class Oas20to30TransformationVisitor implements IOas20NodeVisitor {
                 });
             }
         } else if (node.in === "formData") {
-            // TODO handle a re-usable formData style param definition - not sure what to do with it though :(
+            // Exclude any re-usable formData parameters - they are currently being inlined elsewhere.  I'm not sure
+            // what we would do with them anyway.
         } else {
             let components30: Oas30Components = this.getOrCreateComponents();
             let paramDef30: Oas30ParameterDefinition = components30.createParameterDefinition(node.parameterName());
@@ -670,6 +671,10 @@ export class Oas20to30TransformationVisitor implements IOas20NodeVisitor {
                      schema30: Oas30Schema, isSchema: boolean): Oas30Schema {
         schema30.type = from.type;
         schema30.format = from.format;
+        if (from.type === "file") {
+            schema30.type = "string";
+            schema30.format = "binary";
+        }
         if (from.items && !Array.isArray(from.items)) {
             (from.items as OasNode).n_attribute("_transformation_items-parent", schema30);
         } else if (from.items && Array.isArray(from.items)) {

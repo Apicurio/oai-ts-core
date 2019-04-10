@@ -261,6 +261,11 @@ describe("Transformation", () => {
             input: "tests/fixtures/transformation/parameters/body-param.input.json",
             expected: "tests/fixtures/transformation/parameters/body-param.expected.json"
         },
+        {
+            name: "Parameters (File)",
+            input: "tests/fixtures/transformation/parameters/file-param.input.json",
+            expected: "tests/fixtures/transformation/parameters/file-param.expected.json"
+        },
         /** Security Schemes **/
         /** **************** **/
         {
@@ -295,7 +300,6 @@ describe("Transformation", () => {
             input: "tests/fixtures/transformation/references/formDataParam-reference.input.json",
             expected: "tests/fixtures/transformation/references/formDataParam-reference.expected.json"
         },
-
     ];
 
     let library: OasLibraryUtils;
