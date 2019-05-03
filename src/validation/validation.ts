@@ -104,7 +104,7 @@ export class OasValidationRuleUtil {
      * @return {boolean}
      */
     public static isDefined(propertyValue: any): boolean {
-        if (propertyValue === undefined) {
+        if (propertyValue === undefined || propertyValue === null) {
             return false;
         } else {
             return true;
