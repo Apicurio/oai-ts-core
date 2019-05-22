@@ -23,7 +23,7 @@
     "package": "rimraf dist && tsc -p tsconfig-package.json && cpx package.json dist && cpx module/*.* dist && mkdirp ./dist/bundles && rollup -c rollup.config.js"
   },
   "dependencies": {
-    "core-js": "2.6.7"
+    "core-js": "2.6.8"
   },
   "devDependencies": {
     "@types/diff": "4.0.2",
