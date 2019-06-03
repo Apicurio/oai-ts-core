@@ -39,7 +39,7 @@
     "karma-jasmine": "2.0.1",
     "karma-read-json": "1.1.0",
     "karma-summary-reporter": "1.6.0",
-    "karma-typescript": "4.0.0",
+    "karma-typescript": "4.1.0",
     "rollup": "0.68.2",
     "rollup-plugin-commonjs": "8.4.1",
     "tslint": "^5.11.0",
